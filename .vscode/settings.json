@@ -1,0 +1,30 @@
+{
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+    },
+    "files.associations": {
+        "*.json": "json",
+        "*.py": "python"
+      },
+      "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+        
+      },
+      "python.formatting.blackArgs": [
+        "--line-length",
+        "100"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        "-v",
+        "--cov=.",
+        "--cov-report=xml",
+        "tests"
+    ]
+}
