@@ -1,0 +1,162 @@
+import pathlib
+from abc import ABC, abstractmethod
+from io import IOBase
+from typing import List, Union
+
+from pydantic import Field
+
+from metabolights_utils.models.common import MetabolightsBaseModel
+from metabolights_utils.models.isa.common import IsaTableFile
+from metabolights_utils.models.isa.parser.filter import TsvFileFilterOption
+from metabolights_utils.models.isa.parser.sort import TsvFileSortOption
+from metabolights_utils.models.parser.common import ParserReport
+
+
+class IsaTableFileReaderResult(MetabolightsBaseModel):
+    isa_table_file: IsaTableFile = Field(IsaTableFile())
+    parser_report: ParserReport = Field(ParserReport())
+
+
+class IsaTableFileReader(ABC):
+    @abstractmethod
+    def get_headers(
+        self,
+        file_buffer: IOBase,
+        file_path: Union[str, pathlib.Path] = None,
+    ) -> IsaTableFileReaderResult:
+        """_summary_
+
+        Args:
+            file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
+            results_per_page (int): Items per page. Defaults: 100.
+            file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
+
+        Returns:
+            IsaTableFileWrapperResult: Returns IsaTableFile without rows and parser messages.
+        """
+        pass
+
+    @abstractmethod
+    def get_total_pages(
+        self,
+        file_buffer: IOBase = None,
+        results_per_page: int = 100,
+        file_path: Union[str, pathlib.Path] = None,
+    ) -> int:
+        """Returns total number of pages according to results_per_page. At least one of the file_buffer and file_path parameters should be defined.
+           If file_buffer is not defined, file_path is not used to read content.
+           If file_path is not defined, file path and name will not be added to messages.
+
+        Args:
+            file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
+            results_per_page (int): Items per page. Defaults: 100.
+            file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
+
+        Returns:
+            int: total number of pages in file.
+        """
+
+    @abstractmethod
+    def get_total_row_count(
+        self,
+        file_buffer: IOBase = None,
+        file_path: Union[str, pathlib.Path] = None,
+    ) -> int:
+        """Returns total number of rows. At least one of the file_buffer and file_path parameters should be defined.
+           If file_buffer is not defined, file_path is not used to read content.
+           If file_path is not defined, file path and name will not be added to messages.
+
+        Args:
+            file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
+            file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
+
+        Returns:
+            int: total number of rows in file. First column is assigned as header row.
+        """
+        pass
+
+    @abstractmethod
+    def get_page(
+        self,
+        file_buffer: IOBase = None,
+        page: int = 1,
+        results_per_page: int = 100,
+        column_names: Union[List[str], None] = None,
+        file_path: Union[str, pathlib.Path] = None,
+        filter_options: List[TsvFileFilterOption] = None,
+        sort_options: List[TsvFileSortOption] = None,
+    ) -> IsaTableFileReaderResult:
+        """Reads file and returns the selected page of file. At least one of the file_buffer and file_path parameters should be defined.
+           If file_buffer is not defined, file_path is not used to read content.
+           If file_path is not defined, file path and name will not be added to messages.
+
+        Args:
+            file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
+            page (int, optional): The page number requested. Defaults to 1.
+            results_per_page (int, optional): Number of rows in each page. Defaults to 100.
+            column_names (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
+            file_path (Union[str, pathlib.Path], optional): File path str or pathlib.Path object
+            filter_options (List[TsvFileFilterOption]): filter column names and filter methods. Defaults to None.
+            sort_options (List[TsvFileSortOption]): Sort column names. Defaults to None.
+        Returns:
+            IsaTableFileReaderResult: IsaTableFile model and parser messages
+        """
+
+    @abstractmethod
+    def get_rows(
+        self,
+        file_buffer: IOBase = None,
+        file_path: Union[str, pathlib.Path] = None,
+        offset: int = 0,
+        limit: Union[int, None] = None,
+        column_names: Union[None, List[str]] = None,
+        filter_options: List[TsvFileFilterOption] = None,
+        sort_options: List[TsvFileSortOption] = None,
+    ) -> IsaTableFileReaderResult:
+        """Reads file and returns rows of the file starting from offset.
+           At least one of the file_buffer and file_path parameters should be defined.
+           If limit is defined, size of the returned rows will be limited to this value.
+
+        Args:
+            file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
+            file_path (Union[str, pathlib.Path], optional): File path. It is required if file_buffer is None. Defaults to None.
+            offset (int, optional): Starting index of rows will be returned. First rows is header and index of second row is 0. Defaults to 0.
+            limit (Union[int, None], optional): Number of rows will be returned. If it is None, return all rows. Defaults to None.
+            column_names (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
+            filter_options (List[TsvFileFilterOption]): filter column names and filter methods. Defaults to None.
+            sort_options (List[TsvFileSortOption]): Sort column names. Defaults to None.
+
+        Returns:
+            IsaTableFileReaderResult: IsaTableFile model and parser messages.
+        """
+
+        pass
+
+    @abstractmethod
+    def read(
+        self,
+        file_path_or_buffer: Union[str, pathlib.Path, IOBase],
+        file_path: Union[str, pathlib.Path] = None,
+        offset: Union[None, int] = 0,
+        limit: Union[None, int] = 1000,
+        column_names: Union[None, List[str]] = None,
+        skip_parser_info_messages: bool = True,
+        filter_options: List[TsvFileFilterOption] = None,
+        sort_options: List[TsvFileSortOption] = None,
+    ) -> IsaTableFileReaderResult:
+        """Reads selected rows with selected columns from tsv file. If sort and filter options are enabled, offset and limit are applied to the final filter and sort result.
+
+        Args:
+            file_path_or_buffer (Union[str, pathlib.Path, IOBase]): File buffer or path to read file content.
+            file path str, io.StringIO, io.TextIOWrapper with open(), etc.
+            file_path (Union[str, pathlib.Path], optional): File path str or pathlib.Path object. It is required if file_path_or_buffer is None. Defaults to None.
+            offset (int, optional): Starting index of rows will be returned. First rows is header and index of the second row is 0. Defaults to 0.
+            limit (Union[int, None], optional): Number of rows will be returned. If it is None, return all rows. Defaults to 1000.
+            column_names (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
+            skip_parser_info_messages (bool, optional): clear INFO messages from parser messages. Defaults to True.
+            filter_options (List[TsvFileFilterOption]): filter column names and filter methods. Defaults to None.
+            sort_options (List[TsvFileSortOption]): Sort column names. Defaults to None.
+        Returns:
+            IsaTableFileReaderResult: IsaTableFile model and parser messages.
+        """
+        pass

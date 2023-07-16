@@ -5,7 +5,11 @@
     },
     "files.associations": {
         "*.json": "json",
-        "*.py": "python"
+        "*.py": "python",
+        "a_*.txt": "tsv",
+        "i_*.txt": "tsv",
+        "m_*.tsv": "tsv",
+        "s_*.txt": "tsv"
       },
       "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter",
@@ -23,8 +27,9 @@
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "-v",
-        "--cov=.",
-        "--cov-report=xml",
-        "tests"
+        // "--cov=${workspaceFolder}/metabolights_utils",
+        // "--cov-report=xml",
+        "${workspaceFolder}/tests/"
     ]
+    
 }

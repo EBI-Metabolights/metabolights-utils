@@ -1,11 +1,113 @@
+from enum import Enum
 from typing import Dict, List, Union
 
 from pydantic import BaseModel, Extra, Field
 
+from metabolights_utils.models.common import MetabolightsBaseModel
 from metabolights_utils.models.isa.enums import ColumnsStructure
 
+INVESTIGATION_FILE_INITIAL_ROWS = [
+    "ONTOLOGY SOURCE REFERENCE",
+    "Term Source Name",
+    "Term Source File",
+    "Term Source Version",
+    "Term Source Description",
+    "INVESTIGATION",
+    "Investigation Identifier",
+    "Investigation Title",
+    "Investigation Description",
+    "Investigation Submission Date",
+    "Investigation Public Release Date",
+    "INVESTIGATION PUBLICATIONS",
+    "Investigation PubMed ID",
+    "Investigation Publication DOI",
+    "Investigation Publication Author List",
+    "Investigation Publication Title",
+    "Investigation Publication Status",
+    "Investigation Publication Status Term Accession Number",
+    "Investigation Publication Status Term Source REF",
+    "INVESTIGATION CONTACTS",
+    "Investigation Person Last Name",
+    "Investigation Person First Name",
+    "Investigation Person Mid Initials",
+    "Investigation Person Email",
+    "Investigation Person Phone",
+    "Investigation Person Fax",
+    "Investigation Person Address",
+    "Investigation Person Affiliation",
+    "Investigation Person Roles",
+    "Investigation Person Roles Term Accession Number",
+    "Investigation Person Roles Term Source REF",
+]
 
-class IsaAbstractModel(BaseModel):
+INVESTIGATION_FILE_STUDY_ROWS = [
+    "STUDY",
+    "Study Identifier",
+    "Study Title",
+    "Study Description",
+    "Study Submission Date",
+    "Study Public Release Date",
+    "Study File Name",
+    "STUDY DESIGN DESCRIPTORS",
+    "Study Design Type",
+    "Study Design Type Term Accession Number",
+    "Study Design Type Term Source REF",
+    "STUDY PUBLICATIONS",
+    "Study PubMed ID",
+    "Study Publication DOI",
+    "Study Publication Author List",
+    "Study Publication Title",
+    "Study Publication Status",
+    "Study Publication Status Term Accession Number",
+    "Study Publication Status Term Source REF",
+    "STUDY FACTORS",
+    "Study Factor Name",
+    "Study Factor Type",
+    "Study Factor Type Term Accession Number",
+    "Study Factor Type Term Source REF",
+    "STUDY ASSAYS",
+    "Study Assay File Name",
+    "Study Assay Measurement Type",
+    "Study Assay Measurement Type Term Accession Number",
+    "Study Assay Measurement Type Term Source REF",
+    "Study Assay Technology Type",
+    "Study Assay Technology Type Term Accession Number",
+    "Study Assay Technology Type Term Source REF",
+    "Study Assay Technology Platform",
+    "STUDY PROTOCOLS",
+    "Study Protocol Name",
+    "Study Protocol Type",
+    "Study Protocol Type Term Accession Number",
+    "Study Protocol Type Term Source REF",
+    "Study Protocol Description",
+    "Study Protocol URI",
+    "Study Protocol Version",
+    "Study Protocol Parameters Name",
+    "Study Protocol Parameters Name Term Accession Number",
+    "Study Protocol Parameters Name Term Source REF",
+    "Study Protocol Components Name",
+    "Study Protocol Components Type",
+    "Study Protocol Components Type Term Accession Number",
+    "Study Protocol Components Type Term Source REF",
+    "STUDY CONTACTS",
+    "Study Person Last Name",
+    "Study Person First Name",
+    "Study Person Mid Initials",
+    "Study Person Email",
+    "Study Person Phone",
+    "Study Person Fax",
+    "Study Person Address",
+    "Study Person Affiliation",
+    "Study Person Roles",
+    "Study Person Roles Term Accession Number",
+    "Study Person Roles Term Source REF",
+]
+
+INVESTIGATION_FILE_INITIAL_ROWS_SET = set(INVESTIGATION_FILE_INITIAL_ROWS)
+INVESTIGATION_FILE_STUDY_ROWS_SET = set(INVESTIGATION_FILE_STUDY_ROWS)
+
+
+class IsaAbstractModel(MetabolightsBaseModel):
     field_order: Union[None, List[str]] = Field(None, auto_fill=False)
 
     class Config:
@@ -121,7 +223,7 @@ class NumericItem(OntologyItem):
     unit: OntologyItem = OntologyItem()
 
 
-class ProtocolField(BaseModel):
+class ProtocolField(MetabolightsBaseModel):
     headerName: str = ""
 
 
@@ -174,13 +276,82 @@ class IsaTableColumn(IsaAbstractModel):
         return hash(self.columnName)
 
 
+class FilterParameterType(str, Enum):
+    AUTO = "AUTO"
+    STRING = "STRING"
+    INTEGER = "INTEGER"
+    FLOAT = "FLOAT"
+    DATETIME = "DATETIME"
+
+
+class FilterOperation(str, Enum):
+    CONTAINS = "like"
+    EQUAL = "eq"
+    STARTSWITH = "startswith"
+    ENDSWITH = "endswith"
+    GREATER = "gt"
+    GREATER_EQUAL = "ge"
+    LESS = "lt"
+    LESS_EQUAL = "le"
+    REGEX = "regex"
+    EMPTY = "empty"
+
+
+class TsvFileFilterOption(BaseModel):
+    column_name: str
+    operation: FilterOperation = FilterOperation.CONTAINS
+    parameter: Union[str, int, float] = ""
+    parameter_type: FilterParameterType = FilterParameterType.AUTO
+    case_sensitive: bool = True
+    negate_result: bool = False
+    default_datetime_pattern: str = "%m/%d/%Y"
+
+
+class SortType(str, Enum):
+    STRING = "STRING"
+    INTEGER = "INTEGER"
+    FLOAT = "FLOAT"
+    DATETIME = "DATETIME"
+
+
+class SortValueClassification(int, Enum):
+    EMPTY = 1
+    INVALID = 2
+    VALID = 3
+
+
+class TsvFileSortValueOrder(int, Enum):
+    EMPTY_INVALID_VALID = 0o123
+    EMPTY_VALID_INVALID = 0o132
+    INVALID_EMPTY_VALID = 0o213
+    INVALID_VALID_EMPTY = 0o231
+    VALID_INVALID_EMPTY = 0o321
+    VALID_EMPTY_INVALID = 0o312
+
+
+class TsvFileSortOption(BaseModel):
+    column_name: str
+    reverse: bool = False
+    column_sort_type: SortType = SortType.STRING
+    case_sensitive: bool = True
+    default_datetime_pattern: str = "%m/%d/%Y"
+    value_order: TsvFileSortValueOrder = TsvFileSortValueOrder.VALID_EMPTY_INVALID
+
+
 class IsaTable(IsaAbstractModel):
     columns: List[str] = Field([])
     headers: List[IsaTableColumn] = Field([])
     data: Dict[str, List[str]] = Field({})
+    rowIndices: List[int] = []
+    columnIndices: List[int] = []
+    filteredTotalRowCount: int = 0
     rowOffset: int = 0
     rowCount: int = 0
     totalRowCount: int = 0
+    selectedColumnCount: int = 0
+    totalColumnCount: int = 0
+    filterOptions: List[TsvFileFilterOption] = []
+    sortOptions: List[TsvFileSortOption] = []
 
 
 class IsaTableFile(IsaAbstractModel):

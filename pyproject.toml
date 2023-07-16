@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "0.9.0"
+version = "0.9.1"
 description = "Metabolights common models, utility methods and classes for python-based Metabolights projects."
 authors = ["Ozgur Yurekten <ozgur@ebi.ac.uk>"]
-readme = "README.rst"
+readme = "README.md"
 packages = [{include = "metabolights_utils"}]
 license = "Apache-2.0"
 homepage = "https://github.com/EBI-Metabolights"
@@ -19,10 +19,8 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.8.1,<3.9"
-psycopg2-binary = "^2.9.6"
+psycopg2-binary = ">=2.8"
 pydantic = "1.10.11"
-pandas = "0.25.3"
-numpy = "1.18.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"

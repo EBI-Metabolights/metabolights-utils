@@ -1,22 +1,28 @@
 import os
 import re
-from io import TextIOWrapper
+from io import IOBase
 from typing import List, Tuple, Union
 
-from pandas import DataFrame
-
 from metabolights_utils.models.isa.common import IsaTableColumn, IsaTableFile
-from metabolights_utils.models.isa.enums import (
-    ColumnsStructure,
-    IsaTableAdditionalColumn,
-    ParserMessageType,
+from metabolights_utils.models.isa.enums import ColumnsStructure, IsaTableAdditionalColumn
+from metabolights_utils.models.isa.parser.common import (
+    SelectedTsvFileContent,
+    TsvFileFilterOption,
+    read_table_file,
 )
-from metabolights_utils.models.isa.messages import ParserMessage
-from metabolights_utils.models.isa.parser.common import read_table_file
+from metabolights_utils.models.isa.parser.sort import TsvFileSortOption
+from metabolights_utils.models.parser.common import ParserMessage
+from metabolights_utils.models.parser.enums import ParserMessageType
 
 
 def parse_isa_table_sheet_from_fs(
-    file_path, expected_patterns: Union[None, List[List[str]]] = None, **kwargs
+    file_path: str,
+    expected_patterns: Union[None, List[List[str]]] = None,
+    selected_columns: Union[None, List[str]] = None,
+    offset: Union[int, None] = None,
+    limit: Union[int, None] = None,
+    filter_options: List[TsvFileFilterOption] = None,
+    sort_options: List[TsvFileSortOption] = None,
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
     basename = os.path.basename(file_path)
     dirname = os.path.basename(os.path.dirname(file_path))
@@ -46,12 +52,16 @@ def parse_isa_table_sheet_from_fs(
 
     with open(file_path, "r") as f:
         read_messages: List[ParserMessage] = []
-        isa_table = get_isa_table(
-            basename,
+        isa_table: IsaTableFile = get_isa_table(
             f,
+            basename,
             messages=read_messages,
             expected_patterns=expected_patterns,
-            **kwargs,
+            selected_columns=selected_columns,
+            offset=offset,
+            limit=limit,
+            filter_options=filter_options,
+            sort_options=sort_options,
         )
         if isa_table.table.columns:
             messages.extend(read_messages)
@@ -59,13 +69,17 @@ def parse_isa_table_sheet_from_fs(
             return isa_table, messages
 
     with open(file_path, "r", errors="backslashreplace") as f:
-        read_messages = []
+        read_messages: List[ParserMessage] = []
         isa_table = get_isa_table(
-            basename,
             f,
+            basename,
             messages=read_messages,
             expected_patterns=expected_patterns,
-            **kwargs,
+            selected_columns=selected_columns,
+            offset=offset,
+            limit=limit,
+            filter_options=filter_options,
+            sort_options=sort_options,
         )
         isa_table.filePath = basename
 
@@ -87,11 +101,15 @@ def parse_isa_table_sheet_from_fs(
 
 
 def get_isa_table(
-    file_name,
-    file_path_or_buffer: TextIOWrapper,
+    file_path_or_buffer: IOBase,
+    file_name: str,
     messages: List[ParserMessage],
-    expected_patterns,
-    **kwargs,
+    expected_patterns: List[List[str]],
+    selected_columns: Union[None, List[str]] = None,
+    offset: Union[int, None] = None,
+    limit: Union[int, None] = None,
+    filter_options: List[TsvFileFilterOption] = None,
+    sort_options: List[TsvFileSortOption] = None,
 ):
     study_table = IsaTableFile()
     if messages is None:
@@ -99,38 +117,36 @@ def get_isa_table(
     if not expected_patterns:
         expected_patterns = []
     file_path_or_buffer.seek(0)
-    df: DataFrame = read_table_file(
-        file_name,
+    content: SelectedTsvFileContent = read_table_file(
         file_path_or_buffer,
         messages,
-        header=0,
-        delimiter="\t",
-        dtype=str,
-        **kwargs,
+        selected_columns,
+        offset,
+        limit,
+        filter_options,
+        sort_options,
     )
-    if df is None:
+    if content is None:
         return study_table
     return update_isa_table_file(
         study_table,
-        df,
+        content,
         file_name,
-        file_path_or_buffer,
         messages,
         expected_patterns,
-        **kwargs,
     )
 
 
 def update_isa_table_file(
     study_table: IsaTableFile,
-    df: DataFrame,
+    content: SelectedTsvFileContent,
     file_name: str,
-    file_path_or_buffer: TextIOWrapper,
     messages: List[ParserMessage],
     expected_patterns,
-    **kwargs,
 ):
-    columns = list(df.columns)
+    # columns = list(df.columns)
+    columns = [x.column_name for x in content.columns]
+    column_indices = {x.column_name: x.column_index for x in content.columns}
     first_column_name = None
     for column_name in columns:
         if not first_column_name:
@@ -141,7 +157,7 @@ def update_isa_table_file(
             cleaned_column_name.strip()
         ):
             message = ParserMessage(type=ParserMessageType.ERROR)
-            column_index = columns.index(column_name)
+            column_index = column_indices[column_name]
             message.column = str(column_index)
             if len(cleaned_column_name.strip()) > 0:
                 message.short = "Column header starts or ends with space"
@@ -156,29 +172,26 @@ def update_isa_table_file(
 
     headers = get_headers(columns, expected_patterns=expected_patterns, messages=messages)
     study_table.table.headers = headers
-    if first_column_name:
-        file_path_or_buffer.seek(0)
-        total_df: DataFrame = read_table_file(
-            file_name,
-            file_path_or_buffer,
-            [],
-            delimiter="\t",
-            usecols=[first_column_name],
-            dtype=str,
-        )
-        if total_df is not None:
-            study_table.table.totalRowCount = len(total_df.index)
-    if "skiprows" in kwargs and kwargs["skiprows"] and len(kwargs["skiprows"]) > 0:
-        offset = len(kwargs["skiprows"])
-        if offset < study_table.table.totalRowCount:
-            study_table.table.rowOffset = len(kwargs["skiprows"])
-        else:
-            study_table.table.rowOffset = 0
+    study_table.table.totalRowCount = content.total_rows
+    study_table.table.rowOffset = content.offset
+    study_table.table.rowCount = content.limit
+    study_table.table.filteredTotalRowCount = content.total_filtered_rows
+    study_table.table.selectedColumnCount = content.selected_column_count
+    study_table.table.totalColumnCount = content.total_columns
+    study_table.table.filterOptions = content.filter_options
+    study_table.table.sortOptions = content.sort_options
 
-    data = df.to_dict(orient="list")
-    study_table.table.data = data
+    filtered_data = {}
+
+    for column in content.columns:
+        if not study_table.table.rowIndices:
+            study_table.table.rowIndices = [x for x in column.rows]
+        filtered_data[column.column_name] = [column.rows[x] for x in column.rows]
+    study_table.table.columnIndices = [column.column_index for column in content.columns]
+    # data = df.to_dict(orient="list")
+    study_table.table.data = filtered_data
     study_table.table.columns = columns
-    study_table.table.rowCount = len(df.index)
+    # study_table.table.rowCount = len(content.columns[0].rows)
     study_table.filePath = file_name
 
     return study_table

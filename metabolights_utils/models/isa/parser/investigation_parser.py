@@ -1,21 +1,27 @@
 import os
 import re
 import sys
+from io import IOBase
 from typing import Dict, List, Tuple, Union
 
 from pydantic import BaseModel
 
 from metabolights_utils.models.isa import investigation_file as model
-from metabolights_utils.models.isa.common import Comment, IsaAbstractModel
-from metabolights_utils.models.isa.enums import ParserMessageType
-from metabolights_utils.models.isa.messages import ParserMessage
+from metabolights_utils.models.isa.common import (
+    INVESTIGATION_FILE_INITIAL_ROWS_SET,
+    INVESTIGATION_FILE_STUDY_ROWS_SET,
+    Comment,
+    IsaAbstractModel,
+)
 from metabolights_utils.models.isa.parser.common import read_investigation_file
+from metabolights_utils.models.parser.common import ParserMessage
+from metabolights_utils.models.parser.enums import ParserMessageType
 
 model_module_name = model.__name__
 
 
 def parse_investigation_from_fs(
-    file_path,
+    file_path: str,
 ) -> Tuple[Union[model.Investigation, None], List[ParserMessage]]:
     messages: List[ParserMessage] = []
     basename = os.path.basename(file_path)
@@ -34,11 +40,11 @@ def parse_investigation_from_fs(
         return None, messages
 
     with open(file_path, "r") as f:
-        investigation = get_investigation(basename, f, file_path, messages=messages)
+        investigation = get_investigation(f, file_path, messages=messages)
         return investigation, messages
 
 
-def get_investigation(file_name, file_path_or_buffer, source, messages: List[ParserMessage]):
+def get_investigation(file_buffer: IOBase, file_path: str, messages: List[ParserMessage]):
     if messages is None:
         messages = []
     index_map = {}
@@ -54,9 +60,7 @@ def get_investigation(file_name, file_path_or_buffer, source, messages: List[Par
     is_study_part = False
     current_section = ""
 
-    result: Dict[int, Dict[int, str]] = read_investigation_file(
-        file_name, file_path_or_buffer, messages
-    )
+    result: Dict[int, Dict[int, str]] = read_investigation_file(file_buffer, messages)
     if result is None:
         return model.Investigation()
 
@@ -73,8 +77,8 @@ def get_investigation(file_name, file_path_or_buffer, source, messages: List[Par
         index_map[line] = index_string
 
         if (
-            index_string not in model.INVESTIGATION_FILE_INITIAL_ROWS_SET
-            and index_string not in model.INVESTIGATION_FILE_STUDY_ROWS_SET
+            index_string not in INVESTIGATION_FILE_INITIAL_ROWS_SET
+            and index_string not in INVESTIGATION_FILE_STUDY_ROWS_SET
         ):
             if index_string.startswith("#"):
                 ignore_comments.append(line)
@@ -124,7 +128,7 @@ def get_investigation(file_name, file_path_or_buffer, source, messages: List[Par
         if not is_study_part:
             if index_string == "STUDY":
                 is_study_part = True
-            elif index_string not in model.INVESTIGATION_FILE_INITIAL_ROWS_SET:
+            elif index_string not in INVESTIGATION_FILE_INITIAL_ROWS_SET:
                 message = ParserMessage(
                     short="Unexpected line in the section", type=ParserMessageType.ERROR
                 )
@@ -147,7 +151,7 @@ def get_investigation(file_name, file_path_or_buffer, source, messages: List[Par
                 study_part_comment_list.append(study_part_comment)
                 study_parts.append(study_part)
 
-            if index_string not in model.INVESTIGATION_FILE_STUDY_ROWS_SET:
+            if index_string not in INVESTIGATION_FILE_STUDY_ROWS_SET:
                 message = ParserMessage(
                     short="Unexpected line in the study section",
                     type=ParserMessageType.ERROR,
@@ -161,7 +165,7 @@ def get_investigation(file_name, file_path_or_buffer, source, messages: List[Par
                 study_part_index[index_string] = line
 
     studies = build_studies(
-        source,
+        file_path,
         messages,
         study_parts,
         study_parts_index_map,
@@ -170,7 +174,7 @@ def get_investigation(file_name, file_path_or_buffer, source, messages: List[Par
     )
 
     investigation, _ = build_investigation(
-        source,
+        file_path,
         initial_part_index_map,
         tab,
         studies,
