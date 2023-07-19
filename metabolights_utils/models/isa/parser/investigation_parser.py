@@ -4,6 +4,7 @@ import sys
 from io import IOBase
 from typing import Dict, List, Tuple, Union
 
+import humps
 from pydantic import BaseModel
 
 from metabolights_utils.models.isa import investigation_file as model
@@ -27,7 +28,9 @@ def parse_investigation_from_fs(
     basename = os.path.basename(file_path)
     if not os.path.exists(file_path):
         print(f"File does not exist: {basename}")
-        message = ParserMessage(short="File does not exist", type=ParserMessageType.CRITICAL)
+        message = ParserMessage(
+            short="File does not exist", type=ParserMessageType.CRITICAL
+        )
         message.detail = f"File does not exist: {basename}"
         messages.append(message)
         return None, messages
@@ -44,7 +47,9 @@ def parse_investigation_from_fs(
         return investigation, messages
 
 
-def get_investigation(file_buffer: IOBase, file_path: str, messages: List[ParserMessage]):
+def get_investigation(
+    file_buffer: IOBase, file_path: str, messages: List[ParserMessage]
+):
     if messages is None:
         messages = []
     index_map = {}
@@ -108,7 +113,9 @@ def get_investigation(file_buffer: IOBase, file_path: str, messages: List[Parser
                     messages.append(message)
                 continue
             else:
-                message = ParserMessage(short="Invalid line", type=ParserMessageType.ERROR)
+                message = ParserMessage(
+                    short="Invalid line", type=ParserMessageType.ERROR
+                )
                 message.detail = f" {index_string}"
                 messages.append(message)
                 message.line = str(line)
@@ -120,8 +127,12 @@ def get_investigation(file_buffer: IOBase, file_path: str, messages: List[Parser
                 continue
 
         if not current_section:
-            message = ParserMessage(short="Invalid start section", type=ParserMessageType.ERROR)
-            message.detail = f"Line {str(line + 1)}: {index_string} is not valid section start"
+            message = ParserMessage(
+                short="Invalid start section", type=ParserMessageType.ERROR
+            )
+            message.detail = (
+                f"Line {str(line + 1)}: {index_string} is not valid section start"
+            )
             messages.append(message)
             message.line = str(line)
 
@@ -264,6 +275,11 @@ def build_investigation(
     return investigation, messages
 
 
+def set_value(obj, key, value):
+    camel_key = humps.decamelize(key)
+    setattr(obj, camel_key, value)
+
+
 def assign_by_field_name(
     file_path,
     data: BaseModel,
@@ -314,14 +330,20 @@ def assign_by_field_name(
             or not field_definition["auto_fill"]
         ):
             continue
-        if "inherit_prefix" in field_definition and not field_definition["inherit_prefix"]:
+        if (
+            "inherit_prefix" in field_definition
+            and not field_definition["inherit_prefix"]
+        ):
             name_prefix = prefix.strip() if prefix else ""
 
         if "$ref" in field_definition and field_definition["$ref"]:
             data_type = "ref"
             ref_object_definition = field_definition["$ref"]
         elif "allOf" in field_definition and field_definition["allOf"]:
-            if "$ref" in field_definition["allOf"][0] and field_definition["allOf"][0]["$ref"]:
+            if (
+                "$ref" in field_definition["allOf"][0]
+                and field_definition["allOf"][0]["$ref"]
+            ):
                 data_type = "ref"
                 ref_object_definition = field_definition["allOf"][0]["$ref"]
         elif "anyOf" in field_definition and field_definition["anyOf"]:
@@ -340,7 +362,10 @@ def assign_by_field_name(
         ):
             text_multiple_value = True
         if field_definition and "header_name" in field_definition:
-            if "section_prefix" in field_definition and field_definition["section_prefix"]:
+            if (
+                "section_prefix" in field_definition
+                and field_definition["section_prefix"]
+            ):
                 field_name = " ".join(
                     [
                         f"{name_prefix}",
@@ -368,10 +393,12 @@ def assign_by_field_name(
                                     ]
                                 )
                             else:
-                                search_field = f"{name_prefix} {field_definition['search_header']}"
+                                search_field = (
+                                    f"{name_prefix} {field_definition['search_header']}"
+                                )
 
                         item_list = []
-                        setattr(data, key, item_list)
+                        set_value(data, key, item_list)
 
                         if search_field not in index_map:
                             print(
@@ -382,7 +409,9 @@ def assign_by_field_name(
 
                         max = len(tab[index])
                         ref_class_name = (
-                            items["$ref"].replace("#/definitions/", "").replace("#/$defs/", "")
+                            items["$ref"]
+                            .replace("#/definitions/", "")
+                            .replace("#/$defs/", "")
                         )
                         ref_class = getattr(
                             sys.modules[model_module_name],
@@ -414,14 +443,16 @@ def assign_by_field_name(
                     items = field_definition["items"]
                     if "$ref" in items and items["$ref"]:
                         ref_class_name = (
-                            items["$ref"].replace("#/definitions/", "").replace("#/$defs/", "")
+                            items["$ref"]
+                            .replace("#/definitions/", "")
+                            .replace("#/$defs/", "")
                         )
                         ref_class = getattr(
                             sys.modules[model_module_name],
                             ref_class_name,
                         )
                         instance = ref_class()
-                        setattr(data, key, [instance])
+                        set_value(data, key, [instance])
                         assign_by_field_name(
                             file_path,
                             instance,
@@ -449,7 +480,8 @@ def assign_by_field_name(
                                 and item_field_definition["seperator"]
                             ):
                                 separator = item_field_definition["seperator"]
-                            item_val = getattr(instance, item_key) or ""
+                            attribute_key = humps.decamelize(item_key)
+                            item_val = getattr(instance, attribute_key) or ""
                             seperated_values = item_val.split(separator)
                             for _ in range(len(seperated_values)):
                                 instance_count = len(new_instances)
@@ -458,7 +490,9 @@ def assign_by_field_name(
                                     for _ in range(instance_count, values_count):
                                         new_instances.append(ref_class())
                                 for j in range(values_count):
-                                    setattr(new_instances[j], item_key, seperated_values[j])
+                                    set_value(
+                                        new_instances[j], item_key, seperated_values[j]
+                                    )
                         count = len(new_instances)
                         for i in range(len(new_instances)):
                             instance_item = new_instances[count - i - 1]
@@ -466,7 +500,7 @@ def assign_by_field_name(
                                 new_instances.pop()
                             else:
                                 break
-                        setattr(data, key, new_instances)
+                        set_value(data, key, new_instances)
                     else:
                         message = ParserMessage(
                             short="Reference item is not valid",
@@ -490,7 +524,7 @@ def assign_by_field_name(
                     message.detail = f"{field_name} is not in {file_path}. "
                     messages.append(message)
                     print(f"{field_name} is not in {file_path}. Skipping")
-                    setattr(data, key, "")
+                    set_value(data, key, "")
                     continue
                 index = index_map[field_name]
                 value = ""
@@ -498,14 +532,14 @@ def assign_by_field_name(
                     value = tab[index][value_index]
                 else:
                     value = ""
-                setattr(data, key, str(value) or "")
+                set_value(data, key, str(value) or "")
             elif data_type == "ref":
-                ref_class_name = ref_object_definition.replace("#/definitions/", "").replace(
-                    "#/$defs/", ""
-                )
+                ref_class_name = ref_object_definition.replace(
+                    "#/definitions/", ""
+                ).replace("#/$defs/", "")
                 ref_class = getattr(sys.modules[model_module_name], ref_class_name)
                 instance = ref_class()
-                setattr(data, key, instance)
+                set_value(data, key, instance)
                 assign_by_field_name(
                     file_path,
                     instance,
@@ -518,7 +552,9 @@ def assign_by_field_name(
                 )
             else:
                 if data_type:
-                    message = ParserMessage(short="Invalid data type", type=ParserMessageType.ERROR)
+                    message = ParserMessage(
+                        short="Invalid data type", type=ParserMessageType.ERROR
+                    )
                     message.detail = f"Invalid data type {data_type} in {file_path}"
                     messages.append(message)
                 else:

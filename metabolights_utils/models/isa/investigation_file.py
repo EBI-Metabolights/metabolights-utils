@@ -6,6 +6,7 @@ from metabolights_utils.models.isa.common import Comment, IsaAbstractModel
 
 module_name = __name__
 
+
 class BaseSection(IsaAbstractModel):
     section_header: str = Field("ONTOLOGY SOURCE REFERENCE", exclude=True)
     section_prefix: str = Field("", exclude=True)
@@ -18,39 +19,52 @@ class BaseSection(IsaAbstractModel):
 
 class OntologySourceReference(IsaAbstractModel):
     field_order: List[str] = [
-        "sourceName",
-        "sourceFile",
-        "sourceVersion",
-        "sourceDescription",
+        "source_name",
+        "source_file",
+        "source_version",
+        "source_description",
     ]
-    sourceName: str = Field("", sourceDescription=True, auto_fill=True, header_name="Source Name")
-    sourceFile: str = Field("", auto_fill=True, header_name="Source File")
-    sourceVersion: str = Field("", auto_fill=True, header_name="Source Version")
-    sourceDescription: str = Field("", auto_fill=True, header_name="Source Description")
+    source_name: str = Field(
+        "", source_description=True, auto_fill=True, header_name="Source Name"
+    )
+    source_file: str = Field("", auto_fill=True, header_name="Source File")
+    source_version: str = Field("", auto_fill=True, header_name="Source Version")
+    source_description: str = Field(
+        "", auto_fill=True, header_name="Source Description"
+    )
 
 
 class OntologyAnnotation(IsaAbstractModel):
-    field_order: List[str] = ["term", "termAccessionNumber", "termSourceRef"]
+    field_order: List[str] = ["term", "term_accession_number", "term_source_ref"]
 
     term: str = Field("", auto_fill=True, header_name="")
-    termAccessionNumber: str = Field("", auto_fill=True, header_name="Term Accession Number")
-    termSourceRef: str = Field("", auto_fill=True, header_name="Term Source REF")
+    term_accession_number: str = Field(
+        "", auto_fill=True, header_name="Term Accession Number"
+    )
+    term_source_ref: str = Field("", auto_fill=True, header_name="Term Source REF")
 
 
 class ValueTypeAnnotation(IsaAbstractModel):
-    field_order: List[str] = ["name", "type", "termAccessionNumber", "termSourceRef"]
+    field_order: List[str] = [
+        "name",
+        "type",
+        "term_accession_number",
+        "term_source_ref",
+    ]
     name: str = Field("", auto_fill=True, header_name="Name")
     type: str = Field("", auto_fill=True, header_name="Type")
-    termAccessionNumber: str = Field("", auto_fill=True, header_name="Type Term Accession Number")
-    termSourceRef: str = Field("", auto_fill=True, header_name="Type Term Source REF")
+    term_accession_number: str = Field(
+        "", auto_fill=True, header_name="Type Term Accession Number"
+    )
+    term_source_ref: str = Field("", auto_fill=True, header_name="Type Term Source REF")
 
 
 class Publication(IsaAbstractModel):
-    field_order: List[str] = ["pubMedID", "doi", "authorList", "title", "status"]
+    field_order: List[str] = ["pub_med_id", "doi", "author_list", "title", "status"]
 
-    pubMedID: str = Field("", auto_fill=True, header_name="PubMed ID")
+    pub_med_id: str = Field("", auto_fill=True, header_name="PubMed ID")
     doi: str = Field("", auto_fill=True, header_name="Publication DOI")
-    authorList: str = Field("", auto_fill=True, header_name="Publication Author List")
+    author_list: str = Field("", auto_fill=True, header_name="Publication Author List")
     title: str = Field("", auto_fill=True, header_name="Publication Title")
     status: OntologyAnnotation = Field(
         OntologyAnnotation(), auto_fill=True, header_name="Publication Status"
@@ -59,9 +73,9 @@ class Publication(IsaAbstractModel):
 
 class Person(IsaAbstractModel):
     field_order: List[str] = [
-        "lastName",
-        "firstName",
-        "midInitials",
+        "last_name",
+        "first_name",
+        "mid_initials",
         "email",
         "phone",
         "fax",
@@ -69,9 +83,9 @@ class Person(IsaAbstractModel):
         "affiliation",
         "roles",
     ]
-    lastName: str = Field("", auto_fill=True, header_name="Last Name")
-    firstName: str = Field("", auto_fill=True, header_name="First Name")
-    midInitials: str = Field("", auto_fill=True, header_name="Mid Initials")
+    last_name: str = Field("", auto_fill=True, header_name="Last Name")
+    first_name: str = Field("", auto_fill=True, header_name="First Name")
+    mid_initials: str = Field("", auto_fill=True, header_name="Mid Initials")
     email: str = Field("", auto_fill=True, header_name="Email")
     phone: str = Field("", auto_fill=True, header_name="Phone")
     fax: str = Field("", auto_fill=True, header_name="Fax")
@@ -89,30 +103,34 @@ class Person(IsaAbstractModel):
 class Factor(IsaAbstractModel):
     field_order: List[str] = ["name", "type"]
     name: str = Field("", auto_fill=True, header_name="Name")
-    type: OntologyAnnotation = Field(OntologyAnnotation(), auto_fill=True, header_name="Type")
+    type: OntologyAnnotation = Field(
+        OntologyAnnotation(), auto_fill=True, header_name="Type"
+    )
 
 
 class Assay(IsaAbstractModel):
     field_order: List[str] = [
-        "fileName",
-        "measurementType",
-        "technologyType",
-        "technologyPlatform",
+        "file_name",
+        "measurement_type",
+        "technology_type",
+        "technology_platform",
     ]
-    fileName: str = Field("", auto_fill=True, header_name="File Name")
-    measurementType: OntologyAnnotation = Field(
+    file_name: str = Field("", auto_fill=True, header_name="File Name")
+    measurement_type: OntologyAnnotation = Field(
         OntologyAnnotation(), auto_fill=True, header_name="Measurement Type"
     )
-    technologyType: OntologyAnnotation = Field(
+    technology_type: OntologyAnnotation = Field(
         OntologyAnnotation(), auto_fill=True, header_name="Technology Type"
     )
-    technologyPlatform: str = Field("", auto_fill=True, header_name="Technology Platform")
+    technology_platform: str = Field(
+        "", auto_fill=True, header_name="Technology Platform"
+    )
 
 
 class Protocol(IsaAbstractModel):
     field_order: List[str] = [
         "name",
-        "protocolType",
+        "protocol_type",
         "description",
         "uri",
         "version",
@@ -120,7 +138,7 @@ class Protocol(IsaAbstractModel):
         "components",
     ]
     name: str = Field("", auto_fill=True, header_name="Name")
-    protocolType: OntologyAnnotation = Field(
+    protocol_type: OntologyAnnotation = Field(
         OntologyAnnotation(), auto_fill=True, header_name="Type"
     )
     description: str = Field("", auto_fill=True, header_name="Description")
@@ -171,14 +189,18 @@ class InvestigationContacts(BaseSection):
     section_prefix: str = Field("Person", exclude=True)
 
     field_order: List[str] = ["people"]
-    people: List[Person] = Field([], auto_fill=True, header_name="", search_header="Last Name")
+    people: List[Person] = Field(
+        [], auto_fill=True, header_name="", search_header="Last Name"
+    )
 
 
 class StudyDesignDescriptors(BaseSection):
-    field_order: List[str] = ["designTypes"]
+    field_order: List[str] = ["design_types"]
     section_header: str = Field("STUDY DESIGN DESCRIPTORS", exclude=True)
     section_prefix: str = Field("Design", exclude=True)
-    designTypes: List[OntologyAnnotation] = Field([], auto_fill=True, header_name="Type")
+    design_types: List[OntologyAnnotation] = Field(
+        [], auto_fill=True, header_name="Type"
+    )
 
 
 class StudyPublications(BaseSection):
@@ -194,28 +216,36 @@ class StudyFactors(BaseSection):
     field_order: List[str] = ["factors"]
     section_header: str = Field("STUDY FACTORS", exclude=True)
     section_prefix: str = Field("Factor", exclude=True)
-    factors: List[Factor] = Field([], auto_fill=True, header_name="", search_header="Name")
+    factors: List[Factor] = Field(
+        [], auto_fill=True, header_name="", search_header="Name"
+    )
 
 
 class StudyAssays(BaseSection):
     field_order: List[str] = ["assays"]
     section_header: str = Field("STUDY ASSAYS", exclude=True)
     section_prefix: str = Field("Assay", exclude=True)
-    assays: List[Assay] = Field([], auto_fill=True, header_name="", search_header="File Name")
+    assays: List[Assay] = Field(
+        [], auto_fill=True, header_name="", search_header="File Name"
+    )
 
 
 class StudyProtocols(BaseSection):
     field_order: List[str] = ["protocols"]
     section_header: str = Field("STUDY PROTOCOLS", exclude=True)
     section_prefix: str = Field("Protocol", exclude=True)
-    protocols: List[Protocol] = Field([], auto_fill=True, header_name="", search_header="Name")
+    protocols: List[Protocol] = Field(
+        [], auto_fill=True, header_name="", search_header="Name"
+    )
 
 
 class StudyContacts(BaseSection):
     field_order: List[str] = ["people"]
     section_header: str = Field("STUDY CONTACTS", exclude=True)
     section_prefix: str = Field("Person", exclude=True)
-    people: List[Person] = Field([], auto_fill=True, header_name="", search_header="Last Name")
+    people: List[Person] = Field(
+        [], auto_fill=True, header_name="", search_header="Last Name"
+    )
 
 
 class Study(BaseSection):
@@ -223,29 +253,35 @@ class Study(BaseSection):
         "identifier",
         "title",
         "description",
-        "submissionDate",
-        "publicReleaseDate",
-        "fileName",
+        "submission_date",
+        "public_release_date",
+        "file_name",
     ]
     section_header: str = Field("STUDY", exclude=True)
     section_prefix: str = Field("Study", exclude=True)
     identifier: str = Field("", auto_fill=True, header_name="Identifier")
     title: str = Field("", auto_fill=True, header_name="Title")
     description: str = Field("", auto_fill=True, header_name="Description")
-    submissionDate: str = Field("", auto_fill=True, header_name="Submission Date")
-    publicReleaseDate: str = Field("", auto_fill=True, header_name="Public Release Date")
-    fileName: str = Field("", auto_fill=True, header_name="File Name")
+    submission_date: str = Field("", auto_fill=True, header_name="Submission Date")
+    public_release_date: str = Field(
+        "", auto_fill=True, header_name="Public Release Date"
+    )
+    file_name: str = Field("", auto_fill=True, header_name="File Name")
 
-    studyDesignDescriptors: StudyDesignDescriptors = Field(
+    study_design_descriptors: StudyDesignDescriptors = Field(
         StudyDesignDescriptors(), auto_fill=True, header_name=""
     )
-    studyPublications: StudyPublications = Field(
+    study_publications: StudyPublications = Field(
         StudyPublications(), auto_fill=True, header_name=""
     )
-    studyFactors: StudyFactors = Field(StudyFactors(), auto_fill=True, header_name="")
-    studyAssays: StudyAssays = Field(StudyAssays(), auto_fill=True, header_name="")
-    studyProtocols: StudyProtocols = Field(StudyProtocols(), auto_fill=True, header_name="")
-    studyContacts: StudyContacts = Field(StudyContacts(), auto_fill=True, header_name="")
+    study_factors: StudyFactors = Field(StudyFactors(), auto_fill=True, header_name="")
+    study_assays: StudyAssays = Field(StudyAssays(), auto_fill=True, header_name="")
+    study_protocols: StudyProtocols = Field(
+        StudyProtocols(), auto_fill=True, header_name=""
+    )
+    study_contacts: StudyContacts = Field(
+        StudyContacts(), auto_fill=True, header_name=""
+    )
 
 
 class Investigation(BaseSection):
@@ -255,25 +291,27 @@ class Investigation(BaseSection):
         "identifier",
         "title",
         "description",
-        "submissionDate",
-        "publicReleaseDate",
+        "submission_date",
+        "public_release_date",
     ]
-    specificationVersion: str = Field("1.0")
-    specificationDate: str = Field("2016-10-28")
+    specification_version: str = Field("1.0")
+    specification_date: str = Field("2016-10-28")
 
     identifier: str = Field("", auto_fill=True, header_name="Identifier")
     title: str = Field("", auto_fill=True, header_name="Title")
     description: str = Field("", auto_fill=True, header_name="Description")
-    submissionDate: str = Field("", auto_fill=True, header_name="Submission Date")
-    publicReleaseDate: str = Field("", auto_fill=True, header_name="Public Release Date")
+    submission_date: str = Field("", auto_fill=True, header_name="Submission Date")
+    public_release_date: str = Field(
+        "", auto_fill=True, header_name="Public Release Date"
+    )
 
-    ontologySourceReferences: OntologySourceReferences = Field(
+    ontology_source_references: OntologySourceReferences = Field(
         OntologySourceReferences(), auto_fill=True, header_name="", inherit_prefix=False
     )
-    investigationPublications: InvestigationPublications = Field(
+    investigation_publications: InvestigationPublications = Field(
         InvestigationPublications(), auto_fill=True, header_name=""
     )
-    investigationContacts: InvestigationContacts = Field(
+    investigation_contacts: InvestigationContacts = Field(
         InvestigationContacts(), auto_fill=True, header_name=""
     )
     studies: List[Study] = []

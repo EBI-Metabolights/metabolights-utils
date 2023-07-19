@@ -3,14 +3,14 @@ from typing import List
 from metabolights_utils.models.isa.common import (
     IsaTableFile,
     OntologyItem,
-    OrganismAndOrganismPartPair,
+    OrganismAndOrganismmPartPair,
 )
 
 
 class SamplesFile(IsaTableFile):
-    sampleNames: List[str] = []
+    sample_names: List[str] = []
     organisms: List[OntologyItem] = []
-    organismParts: List[OntologyItem] = []
-    organismAndOrganismPartPairs: List[OrganismAndOrganismPartPair] = []
+    organism_parts: List[OntologyItem] = []
+    organism_and_organism_part_pairs: List[OrganismAndOrganismmPartPair] = []
     variants: List[OntologyItem] = []
-    sampleTypes: List[OntologyItem] = []
+    sample_types: List[OntologyItem] = []

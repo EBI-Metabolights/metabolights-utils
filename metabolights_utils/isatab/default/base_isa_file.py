@@ -14,7 +14,9 @@ class BaseIsaFile(ABC):
         if not file_buffer and not file_path:
             ValueError("At least file buffer or file path should be defined")
 
-        selected_file_buffer = file_path if file_path and not file_buffer else file_buffer
+        selected_file_buffer = (
+            file_path if file_path and not file_buffer else file_buffer
+        )
         selected_file_path = file_path if file_path else "<processed content>"
         return selected_file_buffer, selected_file_path
 

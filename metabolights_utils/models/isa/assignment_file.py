@@ -4,9 +4,9 @@ from metabolights_utils.models.isa.common import AssayTechnique, IsaTableFile
 
 
 class AssignmentFile(IsaTableFile):
-    identifiedMetaboliteNames: List[str] = []
-    metaboliteAssignments: Dict[str, str] = {}
-    assayTechnique: AssayTechnique = AssayTechnique()
-    numberOfRows: int = 0
-    numberOfAssignedRows: int = 0
-    numberOfUnassignedRows: int = 0
+    identified_metabolite_names: List[str] = []
+    metabolite_assignments: Dict[str, str] = {}
+    assay_technique: AssayTechnique = AssayTechnique()
+    number_of_rows: int = 0
+    number_of_assigned_rows: int = 0
+    number_of_unassigned_rows: int = 0

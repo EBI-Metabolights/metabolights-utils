@@ -1,10 +1,10 @@
 import pathlib
 
-from metabolights_utils.isatab.isa_table_file_reader import (
+from metabolights_utils.isatab import Reader
+from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult,
 )
-from metabolights_utils.isatab.isatab_file_helper import IsaTabFileHelper
 from metabolights_utils.models.isa.common import (
     FilterOperation,
     SortType,
@@ -31,7 +31,7 @@ def test_with_sort_option_01():
     file_path = pathlib.Path(
         "tests/test-data/MTBLS66/a_MTBLS66_GC_metabolite_profiling_mass_spectrometry.txt"
     )
-    helper: IsaTableFileReader = IsaTabFileHelper.get_assay_file_reader()
+    helper: IsaTableFileReader = Reader.get_assay_file_reader()
     result: IsaTableFileReaderResult = helper.get_page(
         page=43,
         results_per_page=100,
@@ -40,7 +40,7 @@ def test_with_sort_option_01():
         selected_columns=None,
     )
     assert len(result.parser_report.messages) == 0
-    assert result.isa_table_file.table.rowCount == 17
+    assert result.isa_table_file.table.row_count == 17
 
 
 def test_with_sort_and_filter_option_02():
@@ -83,7 +83,7 @@ def test_with_sort_and_filter_option_02():
         ),
     ]
     file_path = pathlib.Path("tests/test-data/MTBLS66/s_MTBLS66.txt")
-    helper: IsaTableFileReader = IsaTabFileHelper.get_assay_file_reader()
+    helper: IsaTableFileReader = Reader.get_assay_file_reader()
     result: IsaTableFileReaderResult = helper.get_page(
         page=70,
         results_per_page=100,
@@ -93,7 +93,7 @@ def test_with_sort_and_filter_option_02():
         filter_options=filter_options,
     )
     assert len(result.parser_report.messages) == 0
-    assert result.isa_table_file.table.rowCount == 100
+    assert result.isa_table_file.table.row_count == 100
     result: IsaTableFileReaderResult = helper.get_page(
         page=82,
         results_per_page=100,
@@ -102,7 +102,7 @@ def test_with_sort_and_filter_option_02():
         selected_columns=None,
     )
     assert len(result.parser_report.messages) == 0
-    assert result.isa_table_file.table.rowCount == 67
+    assert result.isa_table_file.table.row_count == 67
 
 
 def test_with_filter_and_sort_option_01():
@@ -133,7 +133,7 @@ def test_with_filter_and_sort_option_01():
     file_path = pathlib.Path(
         "tests/test-data/MTBLS66/a_MTBLS66_GC_metabolite_profiling_mass_spectrometry.txt"
     )
-    helper: IsaTableFileReader = IsaTabFileHelper.get_assay_file_reader()
+    helper: IsaTableFileReader = Reader.get_assay_file_reader()
     result: IsaTableFileReaderResult = helper.get_page(
         page=2,
         results_per_page=111,
@@ -143,7 +143,7 @@ def test_with_filter_and_sort_option_01():
         selected_columns=None,
     )
     assert len(result.parser_report.messages) == 0
-    assert result.isa_table_file.table.rowCount == 111
+    assert result.isa_table_file.table.row_count == 111
 
     filter_options = [
         TsvFileFilterOption(
@@ -168,4 +168,4 @@ def test_with_filter_and_sort_option_01():
         filter_options=filter_options,
     )
     assert len(result.parser_report.messages) == 0
-    assert result.isa_table_file.table.rowCount == 60
+    assert result.isa_table_file.table.row_count == 60

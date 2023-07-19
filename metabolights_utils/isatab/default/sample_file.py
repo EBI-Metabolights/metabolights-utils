@@ -1,21 +1,20 @@
 from typing import List
 
-from metabolights_utils.isatab.helper.base_isa_table_file_helper import BaseIsaTableFileHelper
+from metabolights_utils.isatab.default.base_isa_table_file import BaseIsaTableFileReader
 
 
-class AssayFileHelper(BaseIsaTableFileHelper):
+class DefaultSampleFileReader(BaseIsaTableFileReader):
     patterns = [
-        ["^(Extract Name)$", ""],
+        ["^(Source Name)$", ""],
+        ["^Characteristics\[(\w[ -~]*)\]$", "Characteristics"],
         ["^(Protocol REF)(\.\d+)?$", "Protocol"],
         ["^(Sample Name)$", ""],
-        ["^Parameter Value\[(\w[ -~]*)\]$", "Parameter Value"],
+        ["^Factor Value\[(\w[ -~]*)\]$", "Factor Value"],
         ["^Comment\b\[(\w{1}[ -~]*)\]$", "Comment"],
-        ["^(Labeled Extract Name)$", ""],
-        ["^(Label)$", ""],
     ]
 
     def __init__(self, results_per_page=100) -> None:
         super().__init__(results_per_page=results_per_page)
 
     def _get_expected_patterns(self) -> List[List[str]]:
-        return AssayFileHelper.patterns
+        return DefaultSampleFileReader.patterns

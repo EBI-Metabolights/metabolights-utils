@@ -7,10 +7,16 @@ from typing import Any, Dict, List, Tuple, Union
 
 from pydantic import BaseModel
 
-from metabolights_utils.models.isa.common import SortType, SortValueClassification, TsvFileSortOption
+from metabolights_utils.models.isa.common import (
+    SortType,
+    SortValueClassification,
+    TsvFileSortOption,
+)
 
 
-def get_sort_value_order(sort_option: TsvFileSortOption, classification: SortValueClassification):
+def get_sort_value_order(
+    sort_option: TsvFileSortOption, classification: SortValueClassification
+):
     if sort_option.value_order & 0o007 == classification:
         return 3
     elif (sort_option.value_order & 0o070) >> 3 == classification:
@@ -20,7 +26,9 @@ def get_sort_value_order(sort_option: TsvFileSortOption, classification: SortVal
 
 def sort_by_multiple_column(sequence, sort_order):
     return reduce(
-        lambda s, order: sorted(s, key=order[0], reverse=order[1]), reversed(sort_order), sequence
+        lambda s, order: sorted(s, key=order[0], reverse=order[1]),
+        reversed(sort_order),
+        sequence,
     )
 
 
@@ -38,7 +46,9 @@ def get_sorter(sort_option: TsvFileSortOption, col_index: int):
 
 class AbstractSorter(ABC):
     @abstractmethod
-    def sort(self, sort_option: TsvFileSortOption, value: str) -> Union[int, float, str, datetime]:
+    def sort(
+        self, sort_option: TsvFileSortOption, value: str
+    ) -> Union[int, float, str, datetime]:
         pass
 
 
@@ -56,14 +66,18 @@ class IntegerSorter(AbstractSorter):
     def sort(self, sort_option: TsvFileSortOption, value: str) -> int:
         if not value:
             order = get_sort_value_order(sort_option, SortValueClassification.EMPTY)
-            valid_value_order = get_sort_value_order(sort_option, SortValueClassification.VALID)
+            valid_value_order = get_sort_value_order(
+                sort_option, SortValueClassification.VALID
+            )
             return self.get_int_value_by_order(order, valid_value_order)
 
         try:
             return int(value)
         except Exception as exc:
             order = get_sort_value_order(sort_option, SortValueClassification.INVALID)
-            valid_value_order = get_sort_value_order(sort_option, SortValueClassification.VALID)
+            valid_value_order = get_sort_value_order(
+                sort_option, SortValueClassification.VALID
+            )
             return self.get_int_value_by_order(order, valid_value_order)
 
 
@@ -81,20 +95,28 @@ class FloatSorter(AbstractSorter):
     def sort(self, sort_option: TsvFileSortOption, value: str) -> float:
         if not value:
             order = get_sort_value_order(sort_option, SortValueClassification.EMPTY)
-            valid_value_order = get_sort_value_order(sort_option, SortValueClassification.VALID)
+            valid_value_order = get_sort_value_order(
+                sort_option, SortValueClassification.VALID
+            )
             return self.get_float_value_by_order(order, valid_value_order)
 
         try:
             return float(value)
         except Exception as exc:
             order = get_sort_value_order(sort_option, SortValueClassification.INVALID)
-            valid_value_order = get_sort_value_order(sort_option, SortValueClassification.VALID)
+            valid_value_order = get_sort_value_order(
+                sort_option, SortValueClassification.VALID
+            )
             return self.get_float_value_by_order(order, valid_value_order)
 
 
 class DateTimeSorter(AbstractSorter):
-    DATETIME_MIN_MINUS_1 = datetime.min.replace(microsecond=(datetime.min.microsecond + 1))
-    DATETIME_MAX_MINUS_1 = datetime.max.replace(microsecond=(datetime.max.microsecond - 1))
+    DATETIME_MIN_MINUS_1 = datetime.min.replace(
+        microsecond=(datetime.min.microsecond + 1)
+    )
+    DATETIME_MAX_MINUS_1 = datetime.max.replace(
+        microsecond=(datetime.max.microsecond - 1)
+    )
 
     def get_datetime_value_by_order(self, order: int, valid_value_order: int):
         if order == 1:
@@ -109,14 +131,18 @@ class DateTimeSorter(AbstractSorter):
     def sort(self, sort_option: TsvFileSortOption, value: str) -> datetime:
         if not value:
             order = get_sort_value_order(sort_option, SortValueClassification.EMPTY)
-            valid_value_order = get_sort_value_order(sort_option, SortValueClassification.VALID)
+            valid_value_order = get_sort_value_order(
+                sort_option, SortValueClassification.VALID
+            )
             return self.get_datetime_value_by_order(order, valid_value_order)
 
         try:
             return datetime.strptime(value, sort_option.default_datetime_pattern)
         except Exception as exc:
             order = get_sort_value_order(sort_option, SortValueClassification.INVALID)
-            valid_value_order = get_sort_value_order(sort_option, SortValueClassification.VALID)
+            valid_value_order = get_sort_value_order(
+                sort_option, SortValueClassification.VALID
+            )
             return self.get_datetime_value_by_order(order, valid_value_order)
 
 

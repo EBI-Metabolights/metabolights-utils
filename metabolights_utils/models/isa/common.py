@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Dict, List, Union
+import humps
 
 from pydantic import BaseModel, Extra, Field
 
@@ -114,6 +115,11 @@ class IsaAbstractModel(MetabolightsBaseModel):
         extra = Extra.forbid
 
     @classmethod
+    def get_attribute(cls, model: BaseModel, attribute_name):
+        model_attribute_key = humps.decamelize(attribute_name)
+        return getattr(model, model_attribute_key)
+
+    @classmethod
     def is_empty_model(cls, model: BaseModel):
         schema = model.schema()
         for item_key in schema["properties"]:
@@ -124,7 +130,8 @@ class IsaAbstractModel(MetabolightsBaseModel):
                 or not item_field_definition["auto_fill"]
             ):
                 continue
-            item_val = getattr(model, item_key)
+            model_attribute_key = humps.decamelize(item_key)
+            item_val = cls.get_attribute(model, model_attribute_key)
             if isinstance(item_val, IsaAbstractModel):
                 is_empty = IsaAbstractModel.is_empty_model(item_val)
                 if not is_empty:
@@ -136,9 +143,9 @@ class IsaAbstractModel(MetabolightsBaseModel):
 
 class AssayTechnique(IsaAbstractModel):
     name: str = ""
-    mainTechnique: str = ""
+    main_technique: str = ""
     technique: str = ""
-    subTechnique: str = ""
+    sub_technique: str = ""
 
     def __str__(self) -> str:
         return self.name
@@ -155,13 +162,15 @@ class AssayTechnique(IsaAbstractModel):
 
 class OntologyItem(IsaAbstractModel):
     term: str = ""
-    termSourceRef: str = ""
-    termAccessionNumber: str = ""
+    term_source_ref: str = ""
+    term_accession_number: str = ""
 
     def __str__(self) -> str:
         if self.term:
-            if self.termSourceRef or self.termAccessionNumber:
-                return f"{self.term} [{self.termSourceRef}:{self.termAccessionNumber}]"
+            if self.term_source_ref or self.term_accession_number:
+                return (
+                    f"{self.term} [{self.term_source_ref}:{self.term_accession_number}]"
+                )
             else:
                 return self.term
         return ""
@@ -176,33 +185,33 @@ class OntologyItem(IsaAbstractModel):
         return self.__str__()
 
 
-class OrganismAndOrganismPartPair(IsaAbstractModel):
+class OrganismAndOrganismmPartPair(IsaAbstractModel):
     organism: OntologyItem = OntologyItem()
-    organismPart: OntologyItem = OntologyItem()
+    organism_part: OntologyItem = OntologyItem()
     variant: OntologyItem = OntologyItem()
-    sampleType: OntologyItem = OntologyItem()
+    sample_type: OntologyItem = OntologyItem()
 
     def __str__(self) -> str:
-        if self.organism and self.organismPart and self.variant and self.sampleType:
+        if self.organism and self.organism_part and self.variant and self.sample_type:
             return ":".join(
                 [
                     self.organism.__str__(),
-                    self.organismPart.__str__(),
+                    self.organism_part.__str__(),
                     self.variant.__str__(),
-                    self.sampleType.__str__(),
+                    self.sample_type.__str__(),
                 ]
             )
 
-        if self.organism and self.organismPart and self.variant:
+        if self.organism and self.organism_part and self.variant:
             return ":".join(
                 [
                     self.organism.__str__(),
-                    self.organismPart.__str__(),
+                    self.organism_part.__str__(),
                     self.variant.__str__(),
                 ]
             )
-        if self.organism and self.organismPart:
-            return ":".join([self.organism.__str__(), self.organismPart.__str__()])
+        if self.organism and self.organism_part:
+            return ":".join([self.organism.__str__(), self.organism_part.__str__()])
         if self.organism:
             return self.organism.__str__()
 
@@ -224,7 +233,7 @@ class NumericItem(OntologyItem):
 
 
 class ProtocolField(MetabolightsBaseModel):
-    headerName: str = ""
+    header_name: str = ""
 
 
 class ProtocolOntologyItem(ProtocolField):
@@ -239,22 +248,22 @@ class ProtocolNumericOntologyItem(ProtocolField):
     data: List[NumericItem] = []
 
 
-class ProtocolItem(BaseModel):
+class ProtocolItem(MetabolightsBaseModel):
     name: str = ""
-    textFields: Dict[str, ProtocolTextItem] = {}
-    numericFields: Dict[str, ProtocolNumericOntologyItem] = {}
-    ontologyFields: Dict[str, ProtocolOntologyItem] = {}
+    text_fields: Dict[str, ProtocolTextItem] = {}
+    numeric_fields: Dict[str, ProtocolNumericOntologyItem] = {}
+    ontology_fields: Dict[str, ProtocolOntologyItem] = {}
 
 
-class ProtocolFields(BaseModel):
+class ProtocolFields(MetabolightsBaseModel):
     name: str = ""
-    textFields: Dict[str, ProtocolTextItem] = {}
-    numericFields: Dict[str, ProtocolNumericOntologyItem] = {}
-    ontologyFields: Dict[str, ProtocolOntologyItem] = {}
+    text_fields: Dict[str, ProtocolTextItem] = {}
+    numeric_fields: Dict[str, ProtocolNumericOntologyItem] = {}
+    ontology_fields: Dict[str, ProtocolOntologyItem] = {}
 
-    additionalTextFields: List[ProtocolTextItem] = []
-    additionalNumericFields: List[ProtocolNumericOntologyItem] = []
-    additionalOntologyFields: List[ProtocolOntologyItem] = []
+    additional_text_fields: List[ProtocolTextItem] = []
+    additional_numeric_fields: List[ProtocolNumericOntologyItem] = []
+    additional_ontology_fields: List[ProtocolOntologyItem] = []
 
 
 class Comment(IsaAbstractModel):
@@ -263,17 +272,17 @@ class Comment(IsaAbstractModel):
 
 
 class IsaTableColumn(IsaAbstractModel):
-    columnIndex: Union[int, str] = ""
-    columnName: str = ""
-    columnHeader: str = ""
-    additionalColumns: List[str] = []
-    columnCategory: str = ""
-    colummnStructure: ColumnsStructure = ColumnsStructure.SINGLE_COLUMN
-    columnPrefix: str = ""
-    columnSearchPattern: str = ""
+    column_index: Union[int, str] = ""
+    column_name: str = ""
+    column_header: str = ""
+    additional_columns: List[str] = []
+    column_category: str = ""
+    colummn_structure: ColumnsStructure = ColumnsStructure.SINGLE_COLUMN
+    column_prefix: str = ""
+    column_search_pattern: str = ""
 
     def __hash__(self):
-        return hash(self.columnName)
+        return hash(self.column_name)
 
 
 class FilterParameterType(str, Enum):
@@ -297,7 +306,7 @@ class FilterOperation(str, Enum):
     EMPTY = "empty"
 
 
-class TsvFileFilterOption(BaseModel):
+class TsvFileFilterOption(MetabolightsBaseModel):
     column_name: str
     operation: FilterOperation = FilterOperation.CONTAINS
     parameter: Union[str, int, float] = ""
@@ -329,7 +338,7 @@ class TsvFileSortValueOrder(int, Enum):
     VALID_EMPTY_INVALID = 0o312
 
 
-class TsvFileSortOption(BaseModel):
+class TsvFileSortOption(MetabolightsBaseModel):
     column_name: str
     reverse: bool = False
     column_sort_type: SortType = SortType.STRING
@@ -342,18 +351,18 @@ class IsaTable(IsaAbstractModel):
     columns: List[str] = Field([])
     headers: List[IsaTableColumn] = Field([])
     data: Dict[str, List[str]] = Field({})
-    rowIndices: List[int] = []
-    columnIndices: List[int] = []
-    filteredTotalRowCount: int = 0
-    rowOffset: int = 0
-    rowCount: int = 0
-    totalRowCount: int = 0
-    selectedColumnCount: int = 0
-    totalColumnCount: int = 0
-    filterOptions: List[TsvFileFilterOption] = []
-    sortOptions: List[TsvFileSortOption] = []
+    row_indices: List[int] = []
+    column_indices: List[int] = []
+    filtered_total_row_count: int = 0
+    row_offset: int = 0
+    row_count: int = 0
+    total_row_count: int = 0
+    selected_column_count: int = 0
+    total_column_count: int = 0
+    filter_options: List[TsvFileFilterOption] = []
+    sort_options: List[TsvFileSortOption] = []
 
 
 class IsaTableFile(IsaAbstractModel):
-    filePath: str = ""
+    file_path: str = ""
     table: IsaTable = Field(IsaTable())

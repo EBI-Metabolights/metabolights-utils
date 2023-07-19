@@ -1,9 +1,9 @@
 from typing import List
 
-from metabolights_utils.isatab.helper.base_isa_table_file_helper import BaseIsaTableFileHelper
+from metabolights_utils.isatab.default.base_isa_table_file import BaseIsaTableFileReader
 
 
-class AssignmentFileHelper(BaseIsaTableFileHelper):
+class DefaultAssignmentFileReader(BaseIsaTableFileReader):
     patterns = [
         ["^(datdatabase_identifier)$", ""],
         ["^(chemical_formula)$", ""],
@@ -34,4 +34,4 @@ class AssignmentFileHelper(BaseIsaTableFileHelper):
         super().__init__(results_per_page=results_per_page)
 
     def _get_expected_patterns(self) -> List[List[str]]:
-        return AssignmentFileHelper.patterns
+        return DefaultAssignmentFileReader.patterns

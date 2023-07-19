@@ -4,7 +4,10 @@ from io import IOBase
 from typing import List, Tuple, Union
 
 from metabolights_utils.models.isa.common import IsaTableColumn, IsaTableFile
-from metabolights_utils.models.isa.enums import ColumnsStructure, IsaTableAdditionalColumn
+from metabolights_utils.models.isa.enums import (
+    ColumnsStructure,
+    IsaTableAdditionalColumn,
+)
 from metabolights_utils.models.isa.parser.common import (
     SelectedTsvFileContent,
     TsvFileFilterOption,
@@ -28,7 +31,9 @@ def parse_isa_table_sheet_from_fs(
     dirname = os.path.basename(os.path.dirname(file_path))
     messages: List[ParserMessage] = []
     if not file_path:
-        message = ParserMessage(short="File path is not valid", type=ParserMessageType.CRITICAL)
+        message = ParserMessage(
+            short="File path is not valid", type=ParserMessageType.CRITICAL
+        )
         message.detail = "File path is not valid"
         messages.append(message)
         return IsaTableFile(), messages
@@ -38,7 +43,9 @@ def parse_isa_table_sheet_from_fs(
             short="File does not exist or it is not a file",
             type=ParserMessageType.CRITICAL,
         )
-        message.detail = f"File does not exist or is not a file: {basename} in {dirname}"
+        message.detail = (
+            f"File does not exist or is not a file: {basename} in {dirname}"
+        )
         messages.append(message)
         return IsaTableFile(), messages
 
@@ -81,7 +88,7 @@ def parse_isa_table_sheet_from_fs(
             filter_options=filter_options,
             sort_options=sort_options,
         )
-        isa_table.filePath = basename
+        isa_table.file_path = basename
 
         if isa_table.table.columns:
             message = ParserMessage(
@@ -167,39 +174,45 @@ def update_isa_table_file(
                 )
             else:
                 message.short = "Column header is empty"
-                message.detail = f"'{column_name}' header at column {column_index + 1}  is empty."
+                message.detail = (
+                    f"'{column_name}' header at column {column_index + 1}  is empty."
+                )
             messages.append(message)
 
-    headers = get_headers(columns, expected_patterns=expected_patterns, messages=messages)
+    headers = get_headers(
+        columns, expected_patterns=expected_patterns, messages=messages
+    )
     study_table.table.headers = headers
-    study_table.table.totalRowCount = content.total_rows
-    study_table.table.rowOffset = content.offset
-    study_table.table.rowCount = content.limit
-    study_table.table.filteredTotalRowCount = content.total_filtered_rows
-    study_table.table.selectedColumnCount = content.selected_column_count
-    study_table.table.totalColumnCount = content.total_columns
-    study_table.table.filterOptions = content.filter_options
-    study_table.table.sortOptions = content.sort_options
+    study_table.table.total_row_count = content.total_rows
+    study_table.table.row_offset = content.offset
+    study_table.table.row_count = content.limit
+    study_table.table.filtered_total_row_count = content.total_filtered_rows
+    study_table.table.selected_column_count = content.selected_column_count
+    study_table.table.total_column_count = content.total_columns
+    study_table.table.filter_options = content.filter_options
+    study_table.table.sort_options = content.sort_options
 
     filtered_data = {}
 
     for column in content.columns:
-        if not study_table.table.rowIndices:
-            study_table.table.rowIndices = [x for x in column.rows]
+        if not study_table.table.row_indices:
+            study_table.table.row_indices = [x for x in column.rows]
         filtered_data[column.column_name] = [column.rows[x] for x in column.rows]
-    study_table.table.columnIndices = [column.column_index for column in content.columns]
+    study_table.table.column_indices = [
+        column.column_index for column in content.columns
+    ]
     # data = df.to_dict(orient="list")
     study_table.table.data = filtered_data
     study_table.table.columns = columns
-    # study_table.table.rowCount = len(content.columns[0].rows)
-    study_table.filePath = file_name
+    # study_table.table.row_count = len(content.columns[0].rows)
+    study_table.file_path = file_name
 
     return study_table
 
 
 MULTI_COLUMN_TEMPLATES = {
     ColumnsStructure.ONTOLOGY_COLUMN: {
-        "columnNames": [
+        "column_names": [
             IsaTableAdditionalColumn.TERM_SOURCE_REF,
             IsaTableAdditionalColumn.TERM_ACCSSION_NUMBER,
         ],
@@ -209,7 +222,7 @@ MULTI_COLUMN_TEMPLATES = {
         ],
     },
     ColumnsStructure.SINGLE_COLUMN_AND_UNIT_ONTOLOGY: {
-        "columnNames": [
+        "column_names": [
             IsaTableAdditionalColumn.UNIT,
             IsaTableAdditionalColumn.TERM_SOURCE_REF,
             IsaTableAdditionalColumn.TERM_ACCSSION_NUMBER,
@@ -223,13 +236,17 @@ MULTI_COLUMN_TEMPLATES = {
 }
 
 additional_column_templates = [
-    MULTI_COLUMN_TEMPLATES[ColumnsStructure.SINGLE_COLUMN_AND_UNIT_ONTOLOGY]["searchPatterns"],
+    MULTI_COLUMN_TEMPLATES[ColumnsStructure.SINGLE_COLUMN_AND_UNIT_ONTOLOGY][
+        "searchPatterns"
+    ],
     MULTI_COLUMN_TEMPLATES[ColumnsStructure.ONTOLOGY_COLUMN]["searchPatterns"],
 ]
 
 additional_column_headers = [
-    MULTI_COLUMN_TEMPLATES[ColumnsStructure.SINGLE_COLUMN_AND_UNIT_ONTOLOGY]["columnNames"],
-    MULTI_COLUMN_TEMPLATES[ColumnsStructure.ONTOLOGY_COLUMN]["columnNames"],
+    MULTI_COLUMN_TEMPLATES[ColumnsStructure.SINGLE_COLUMN_AND_UNIT_ONTOLOGY][
+        "column_names"
+    ],
+    MULTI_COLUMN_TEMPLATES[ColumnsStructure.ONTOLOGY_COLUMN]["column_names"],
 ]
 
 multiple_columns_additional_header_patterns = MULTI_COLUMN_TEMPLATES[
@@ -275,7 +292,9 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
     while column_index < columns_count:
         column_name = columns[column_index]
         cleaned_column_name = get_cleaned_header(column_name)
-        column_structure, additional_column_headers = define_column_structure(column_index, columns)
+        column_structure, additional_column_headers = define_column_structure(
+            column_index, columns
+        )
 
         result = None
         pattern_index = -1
@@ -288,13 +307,15 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
                 expected_header = result and result.groups()
                 break
 
-        column = IsaTableColumn(columnIndex=str(column_index), colummnStructure=column_structure)
-        column.columnName = column_name
-        column.columnHeader = cleaned_column_name
+        column = IsaTableColumn(
+            column_index=str(column_index), colummn_structure=column_structure
+        )
+        column.column_name = column_name
+        column.column_header = cleaned_column_name
         linked_columns = []
 
         if column_structure == ColumnsStructure.ADDITIONAL_COLUMN:
-            column.columnCategory = "Additional"
+            column.column_category = "Additional"
             message.type = ParserMessageType.CRITICAL
             message.short = (
                 "Additional column header"
@@ -320,18 +341,18 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
                 column,
             )
         else:
-            column.additionalColumns = additional_column_headers
+            column.additional_columns = additional_column_headers
             additional_column_index = column_index
 
-            for additional_column in column.additionalColumns:
+            for additional_column in column.additional_columns:
                 additional_column_index = additional_column_index + 1
                 linked_column = IsaTableColumn(
-                    columnIndex=str(additional_column_index),
-                    colummnStructure=ColumnsStructure.LINKED_COLUMN,
+                    column_index=str(additional_column_index),
+                    colummn_structure=ColumnsStructure.LINKED_COLUMN,
                 )
-                linked_column.columnHeader = additional_column
-                linked_column.columnCategory = "Linked Column"
-                linked_column.columnName = columns[additional_column_index]
+                linked_column.column_header = additional_column
+                linked_column.column_category = "Linked Column"
+                linked_column.column_name = columns[additional_column_index]
                 linked_columns.append(linked_column)
 
             update_as_multi_column(
@@ -358,13 +379,13 @@ def update_message(messages, column_index, message, column):
     if not message.detail:
         column_message = " ".join(
             [
-                f"Column {(column.columnIndex + 1):03}: '{column.columnCategory}' column",
-                f"column name: '{column.columnHeader}'",
+                f"Column {(column.column_index + 1):03}: '{column.column_category}' column",
+                f"column name: '{column.column_header}'",
             ]
         )
         message.detail = column_message
     if not message.short:
-        message.short = f"'{column.columnCategory}' column: '{column.columnHeader}'"
+        message.short = f"'{column.column_category}' column: '{column.column_header}'"
     message.column = str(column_index)
     messages.append(message)
 
@@ -378,13 +399,15 @@ def update_as_multi_column(
     column: IsaTableColumn,
 ):
     if expected_header:
-        column.columnSearchPattern = expected_patterns[pattern_index][0]
-        column.columnCategory = expected_patterns[pattern_index][1]
-        column.columnPrefix = expected_patterns[pattern_index][1]
+        column.column_search_pattern = expected_patterns[pattern_index][0]
+        column.column_category = expected_patterns[pattern_index][1]
+        column.column_prefix = expected_patterns[pattern_index][1]
     else:
-        column.columnCategory = "Undefined"
+        column.column_category = "Undefined"
         message.type = ParserMessageType.INFO
-        message.short = f"Multi column '{cleaned_column_name}' is not in expected column list."
+        message.short = (
+            f"Multi column '{cleaned_column_name}' is not in expected column list."
+        )
 
 
 def update_as_invalid_column(
@@ -396,11 +419,11 @@ def update_as_invalid_column(
     column: IsaTableColumn,
 ):
     if expected_header:
-        column.columnSearchPattern = expected_patterns[pattern_index][0]
-        column.columnPrefix = expected_patterns[pattern_index][1]
-        column.columnCategory = expected_patterns[pattern_index][1]
+        column.column_search_pattern = expected_patterns[pattern_index][0]
+        column.column_prefix = expected_patterns[pattern_index][1]
+        column.column_category = expected_patterns[pattern_index][1]
     else:
-        column.columnCategory = "Invalid"
+        column.column_category = "Invalid"
         message.type = ParserMessageType.CRITICAL
         message.short = (
             f"Multi column '{cleaned_column_name}'"
@@ -417,13 +440,15 @@ def update_as_single_column(
     column: IsaTableColumn,
 ):
     if expected_header:
-        column.columnSearchPattern = expected_patterns[pattern_index][0]
-        column.columnCategory = expected_patterns[pattern_index][1]
-        column.columnPrefix = expected_patterns[pattern_index][1]
+        column.column_search_pattern = expected_patterns[pattern_index][0]
+        column.column_category = expected_patterns[pattern_index][1]
+        column.column_prefix = expected_patterns[pattern_index][1]
     else:
-        column.columnCategory = "Undefined"
+        column.column_category = "Undefined"
         message.type = ParserMessageType.INFO
-        message.short = f"Single column '{cleaned_column_name}' is not in expected column list."
+        message.short = (
+            f"Single column '{cleaned_column_name}' is not in expected column list."
+        )
 
 
 def define_column_structure(column_index, columns):
@@ -460,7 +485,9 @@ def evalutate_selected_columns(
         else:
             next_column_is_additional = False
             if column_index + 1 < columns_count:
-                for additional_column_pattern in multiple_columns_additional_header_patterns:
+                for (
+                    additional_column_pattern
+                ) in multiple_columns_additional_header_patterns:
                     if re.match(additional_column_pattern, columns[column_index + 1]):
                         next_column_is_additional = True
                         break

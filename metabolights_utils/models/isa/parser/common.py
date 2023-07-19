@@ -7,12 +7,16 @@ from io import IOBase
 from typing import Any, Dict, List, Union
 
 from pydantic import BaseModel
+from metabolights_utils.models.common import MetabolightsBaseModel
 
 from metabolights_utils.models.isa.common import (
     INVESTIGATION_FILE_INITIAL_ROWS_SET,
     INVESTIGATION_FILE_STUDY_ROWS_SET,
 )
-from metabolights_utils.models.isa.parser.filter import TsvFileFilterOption, get_filter_operation
+from metabolights_utils.models.isa.parser.filter import (
+    TsvFileFilterOption,
+    get_filter_operation,
+)
 from metabolights_utils.models.isa.parser.sort import (
     TsvFileSortOption,
     get_sorter,
@@ -55,7 +59,9 @@ def read_investigation_file_lines(file_buffer: IOBase, messages: List[ParserMess
                 if richtext_lines:
                     if not tracked_lines:
                         tracked_lines.append("")
-                    tracked_lines[-1] = tracked_lines[-1] + "\n" + "\n".join(richtext_lines)
+                    tracked_lines[-1] = (
+                        tracked_lines[-1] + "\n" + "\n".join(richtext_lines)
+                    )
                     richtext_lines = []
 
                 tracked_lines.append(token.replace("Comment ", "Comment", 1))
@@ -80,7 +86,9 @@ def read_investigation_file_lines(file_buffer: IOBase, messages: List[ParserMess
                 if cleared_lines:
                     previous: str = cleared_lines[-1]
                     if (
-                        previous.startswith('"') and len(previous) > 1 and previous.endswith('"')
+                        previous.startswith('"')
+                        and len(previous) > 1
+                        and previous.endswith('"')
                     ) or (not previous.startswith('"')):
                         complete_line = True
                 else:
@@ -127,14 +135,14 @@ def read_investigation_file_lines(file_buffer: IOBase, messages: List[ParserMess
     return new_lines
 
 
-class TsvColumn(BaseModel):
+class TsvColumn(MetabolightsBaseModel):
     column_index: int = 0
     column_name: str = ""
     column_header: str = ""
     rows: Dict[int, str] = {}
 
 
-class SelectedTsvFileContent(BaseModel):
+class SelectedTsvFileContent(MetabolightsBaseModel):
     columns: List[TsvColumn] = []
     total_rows: int = 0
     total_filtered_rows = 0
@@ -181,7 +189,9 @@ def read_table_file(
     content.total_filtered_rows = total_data_rows
     offset = 0 if not offset else offset
 
-    content.offset = offset if offset < content.total_filtered_rows else content.total_filtered_rows
+    content.offset = (
+        offset if offset < content.total_filtered_rows else content.total_filtered_rows
+    )
 
     if content.offset < 0:
         content.offset = 0
@@ -228,7 +238,10 @@ def read_table_file(
                 if not limit or (limit and read_rows < limit):
                     read_rows += 1
                     add_tsv_file_data_row(
-                        row, row_index - 1, columns, selected_column_indices=selected_column_indices
+                        row,
+                        row_index - 1,
+                        columns,
+                        selected_column_indices=selected_column_indices,
                     )
     except Exception as exc:
         message = ParserMessage(type=ParserMessageType.CRITICAL)
@@ -275,7 +288,9 @@ def read_table_file_with_filter_and_sort_option(
                         filter_operation = get_filter_operation(filter_option)
                         if filter_option.column_name not in filter_operations:
                             filter_operations[filter_option.column_name] = []
-                        filter_operations[filter_option.column_name].append(filter_operation)
+                        filter_operations[filter_option.column_name].append(
+                            filter_operation
+                        )
             else:
                 if not filter_options:
                     filtered_rows.append((row_index - 1, row))
@@ -285,7 +300,9 @@ def read_table_file_with_filter_and_sort_option(
                     for filter_option in filter_options:
                         col_index = column_name_indices[filter_option.column_name]
                         val = row[col_index]
-                        for filter_operation in filter_operations[filter_option.column_name]:
+                        for filter_operation in filter_operations[
+                            filter_option.column_name
+                        ]:
                             if not filter_operation(val):
                                 selected = False
                                 break
@@ -307,7 +324,9 @@ def read_table_file_with_filter_and_sort_option(
         offset = 0 if not offset else offset
 
         content.offset = (
-            offset if offset < content.total_filtered_rows else content.total_filtered_rows
+            offset
+            if offset < content.total_filtered_rows
+            else content.total_filtered_rows
         )
         remaining_row_count = content.total_filtered_rows - content.offset
         if limit is None:
@@ -317,7 +336,9 @@ def read_table_file_with_filter_and_sort_option(
                 else content.total_filtered_rows
             )
         else:
-            content.limit = remaining_row_count if remaining_row_count < limit else limit
+            content.limit = (
+                remaining_row_count if remaining_row_count < limit else limit
+            )
 
         skipped_rows = 0
         read_rows = 0
@@ -328,7 +349,10 @@ def read_table_file_with_filter_and_sort_option(
             if not limit or (limit and read_rows < limit):
                 read_rows += 1
                 add_tsv_file_data_row(
-                    row, data_row_index, columns, selected_column_indices=selected_column_indices
+                    row,
+                    data_row_index,
+                    columns,
+                    selected_column_indices=selected_column_indices,
                 )
     except Exception as exc:
         message = ParserMessage(type=ParserMessageType.CRITICAL)
@@ -339,7 +363,10 @@ def read_table_file_with_filter_and_sort_option(
 
 
 def add_tsv_file_data_row(
-    data_row, row_index: int, columns: Dict[str, TsvColumn], selected_column_indices: Dict[int, str]
+    data_row,
+    row_index: int,
+    columns: Dict[str, TsvColumn],
+    selected_column_indices: Dict[int, str],
 ):
     for column_index in selected_column_indices:
         column = columns[selected_column_indices[column_index]]
@@ -378,7 +405,9 @@ def prepare_column_names(
                 continue
             elif name == "Term Source REF" or name.startswith("Term Source REF."):
                 continue
-            elif name == "Term Accession Number" or name.startswith("Term Accession Number."):
+            elif name == "Term Accession Number" or name.startswith(
+                "Term Accession Number."
+            ):
                 continue
             elif name not in column_name_indices:
                 invalid_column_names.append(name)
@@ -397,7 +426,9 @@ def prepare_column_names(
                     next: str = column_indices[col_index + term_source_relative_index]
                     if next == "Term Source REF" or next.startswith("Term Source REF."):
                         new_ordered_columns.append(next)
-                        next: str = column_indices[col_index + term_source_relative_index + 1]
+                        next: str = column_indices[
+                            col_index + term_source_relative_index + 1
+                        ]
                         if next == "Term Accession Number" or next.startswith(
                             "Term Accession Number."
                         ):
@@ -405,7 +436,9 @@ def prepare_column_names(
         selected_column_names.clear()
         selected_column_names.extend(new_ordered_columns)
     if invalid_column_names:
-        raise TypeError(f"Column(s) do(es) not exist: " + ", ".join(invalid_column_names))
+        raise TypeError(
+            f"Column(s) do(es) not exist: " + ", ".join(invalid_column_names)
+        )
 
 
 def read_tsv_file_header(
@@ -427,7 +460,9 @@ def read_tsv_file_header(
                 col_index = column_name_indices[column_name]
                 column_header = header_row[col_index]
                 column = TsvColumn(
-                    column_index=col_index, column_header=column_header, column_name=column_name
+                    column_index=col_index,
+                    column_header=column_header,
+                    column_name=column_name,
                 )
                 columns[column_name] = column
                 selected_column_indices[col_index] = column_name
@@ -437,7 +472,9 @@ def read_tsv_file_header(
                 column_name = column_indices[col_index]
                 column_header = header_row[col_index]
                 column = TsvColumn(
-                    column_index=col_index, column_header=column_header, column_name=column_name
+                    column_index=col_index,
+                    column_header=column_header,
+                    column_name=column_name,
                 )
                 columns[column_name] = column
                 selected_column_indices[col_index] = column_name

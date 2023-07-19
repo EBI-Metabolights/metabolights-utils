@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from io import IOBase
 from typing import List, Union
 
-from metabolights_utils.isatab.helper.base_isa_file_helper import BaseIsaFile
-from metabolights_utils.isatab.isa_table_file_reader import (
+from metabolights_utils.isatab.default.base_isa_file import BaseIsaFile
+from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult,
 )
@@ -16,7 +16,7 @@ from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
 
 
-class BaseIsaTableFileHelper(BaseIsaFile, IsaTableFileReader, ABC):
+class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
     def __init__(self, results_per_page=100) -> None:
         self.results_per_page = results_per_page if results_per_page > 0 else 100
 
@@ -33,7 +33,9 @@ class BaseIsaTableFileHelper(BaseIsaFile, IsaTableFileReader, ABC):
         buffer_or_path, path = self._get_file_buffer_and_path(file_buffer, file_path)
 
         total = self.get_total_row_count(buffer_or_path, path)
-        return int(total / results_per_page) + (1 if total % results_per_page > 0 else 0)
+        return int(total / results_per_page) + (
+            1 if total % results_per_page > 0 else 0
+        )
 
     def get_total_row_count(
         self,
@@ -43,7 +45,7 @@ class BaseIsaTableFileHelper(BaseIsaFile, IsaTableFileReader, ABC):
         buffer_or_path, path = self._get_file_buffer_and_path(file_buffer, file_path)
 
         isa_file_result = self.get_headers(buffer_or_path, path)
-        return isa_file_result.isa_table_file.table.totalRowCount
+        return isa_file_result.isa_table_file.table.total_row_count
 
     def get_page(
         self,
@@ -56,7 +58,9 @@ class BaseIsaTableFileHelper(BaseIsaFile, IsaTableFileReader, ABC):
         sort_options: List[TsvFileSortOption] = None,
     ) -> IsaTableFileReaderResult:
         page = page if page and page > 1 else 1
-        results_per_page = results_per_page if results_per_page > 0 else self.results_per_page
+        results_per_page = (
+            results_per_page if results_per_page > 0 else self.results_per_page
+        )
         offset = (page - 1) * results_per_page
         buffer_or_path, path = self._get_file_buffer_and_path(file_buffer, file_path)
         return self.get_rows(
@@ -127,7 +131,9 @@ class BaseIsaTableFileHelper(BaseIsaFile, IsaTableFileReader, ABC):
         buffer: IOBase = None
         read_messages: List[ParserMessage] = []
         try:
-            buffer_or_path, path = self._get_file_buffer_and_path(file_path_or_buffer, file_path)
+            buffer_or_path, path = self._get_file_buffer_and_path(
+                file_path_or_buffer, file_path
+            )
             basename = os.path.basename(str(path))
             file_buffer = self._get_file_buffer(buffer_or_path)
             isa_table = get_isa_table(
@@ -148,4 +154,6 @@ class BaseIsaTableFileHelper(BaseIsaFile, IsaTableFileReader, ABC):
         if skip_parser_info_messages:
             messages = [x for x in read_messages if x.type != ParserMessageType.INFO]
         parser_report = ParserReport(messages=messages)
-        return IsaTableFileReaderResult(isa_table_file=isa_table, parser_report=parser_report)
+        return IsaTableFileReaderResult(
+            isa_table_file=isa_table, parser_report=parser_report
+        )

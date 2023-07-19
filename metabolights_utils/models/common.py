@@ -1,9 +1,8 @@
-from pydantic import BaseModel, Field
-
+from metabolights_utils.common import CamelCaseModel
 from metabolights_utils.models.enums import GenericMessageType
 
 
-class MetabolightsBaseModel(BaseModel):
+class MetabolightsBaseModel(CamelCaseModel):
     pass
 
 
