@@ -367,6 +367,6 @@ def test_assay_file_read_write():
 User can manuplate ISA table files in row, column or cell level.
 
 
-View **actions and model definition** from [a this file](metabolights_utils/tsv/model.py).
+View **actions and model definition** from [a this file](https://github.com/EBI-Metabolights/metabolights-utils/blob/master/metabolights_utils/tsv/model.py).
 
-View **examples** from [a this file](tests/metabolights_utils/isatab/test_isa_table_actions.py).
+View **examples** from [a this file](https://github.com/EBI-Metabolights/metabolights-utils/blob/master/tests/metabolights_utils/isatab/test_isa_table_actions.py).
