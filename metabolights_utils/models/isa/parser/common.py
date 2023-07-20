@@ -1,29 +1,24 @@
 import csv
 import re
-from datetime import datetime
-from enum import Enum
+import sys
 from functools import reduce
 from io import IOBase
-from typing import Any, Dict, List, Union
+from typing import Dict, List, Union
 
-from pydantic import BaseModel
 from metabolights_utils.models.common import MetabolightsBaseModel
-
 from metabolights_utils.models.isa.common import (
     INVESTIGATION_FILE_INITIAL_ROWS_SET,
     INVESTIGATION_FILE_STUDY_ROWS_SET,
 )
-from metabolights_utils.models.isa.parser.filter import (
-    TsvFileFilterOption,
-    get_filter_operation,
-)
-from metabolights_utils.models.isa.parser.sort import (
-    TsvFileSortOption,
-    get_sorter,
-    sort_by_multiple_column,
-)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
+from metabolights_utils.tsv.filter import Filter, FilterRegistry, TsvFileFilterOption
+from metabolights_utils.tsv.sort import (
+    Sorter,
+    SorterRegistry,
+    TsvFileSortOption,
+    TsvSortException,
+)
 
 
 def read_investigation_file(file_buffer: IOBase, messages: List[ParserMessage]):
@@ -266,7 +261,8 @@ def read_table_file_with_filter_and_sort_option(
     column_indices: Dict[int, str] = {}
     selected_column_indices: Dict[int, str] = {}
     column_name_indices: Dict[str, int] = {}
-    filter_operations: Dict[str, List[Any]] = {}
+    filters: List[Filter] = []
+
     try:
         next_row_index = 0
         filtered_rows = []
@@ -285,40 +281,53 @@ def read_table_file_with_filter_and_sort_option(
                 )
                 if filter_options:
                     for filter_option in filter_options:
-                        filter_operation = get_filter_operation(filter_option)
-                        if filter_option.column_name not in filter_operations:
-                            filter_operations[filter_option.column_name] = []
-                        filter_operations[filter_option.column_name].append(
-                            filter_operation
+                        filter_option.search_columns = (
+                            filter_option.search_columns
+                            if filter_option.search_columns
+                            else []
                         )
+                        filter: Filter = FilterRegistry.get_filter(
+                            filter_option, column_name_indices, column_indices
+                        )
+                        filters.append(filter)
+                    # empty search column filters will be moved to end
+                    filters.sort(
+                        key=lambda x: len(x.filter_option.search_columns)
+                        if x.filter_option.search_columns
+                        else sys.maxsize
+                    )
             else:
                 if not filter_options:
                     filtered_rows.append((row_index - 1, row))
                 else:
-                    selected = True
-
-                    for filter_option in filter_options:
-                        col_index = column_name_indices[filter_option.column_name]
-                        val = row[col_index]
-                        for filter_operation in filter_operations[
-                            filter_option.column_name
-                        ]:
-                            if not filter_operation(val):
-                                selected = False
-                                break
-                        if not selected:
+                    select: bool = True
+                    for filter in filters:
+                        select = filter.filter(row)
+                        if not select:
                             break
-                    if selected:
+                    if select:
                         filtered_rows.append((row_index - 1, row))
         reader = None
 
-        sort_list = []
+        sorters: List[Sorter] = []
         if sort_options:
             for sort_option in sort_options:
                 col_index = column_name_indices[sort_option.column_name]
-                row_sorter = get_sorter(sort_option, col_index)
-                sort_list.append((row_sorter, sort_option.reverse))
-        filtered_rows = sort_by_multiple_column(filtered_rows, sort_list)
+                sorter: Sorter = SorterRegistry.get_sorter(
+                    sort_option,
+                    col_index,
+                    column_name_indices,
+                    column_indices,
+                )
+                sorters.append(sorter)
+        if sorters:
+            filtered_rows = reduce(
+                lambda s, sorter: sorted(
+                    s, key=sorter.sort, reverse=sorter.sort_option.reverse
+                ),
+                reversed(sorters),
+                filtered_rows,
+            )
 
         content.total_filtered_rows = len(filtered_rows)
         offset = 0 if not offset else offset

@@ -8,9 +8,9 @@ from pydantic import Field
 from metabolights_utils.models.common import MetabolightsBaseModel
 from metabolights_utils.models.isa.common import IsaTableFile
 from metabolights_utils.models.isa.investigation_file import Investigation
-from metabolights_utils.models.isa.parser.filter import TsvFileFilterOption
-from metabolights_utils.models.isa.parser.sort import TsvFileSortOption
 from metabolights_utils.models.parser.common import ParserReport
+from metabolights_utils.tsv.filter import TsvFileFilterOption
+from metabolights_utils.tsv.sort import TsvFileSortOption
 
 
 class IsaTableFileReaderResult(MetabolightsBaseModel):

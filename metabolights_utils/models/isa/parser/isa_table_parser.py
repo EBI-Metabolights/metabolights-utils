@@ -13,9 +13,9 @@ from metabolights_utils.models.isa.parser.common import (
     TsvFileFilterOption,
     read_table_file,
 )
-from metabolights_utils.models.isa.parser.sort import TsvFileSortOption
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
+from metabolights_utils.tsv.sort import TsvFileSortOption
 
 
 def parse_isa_table_sheet_from_fs(

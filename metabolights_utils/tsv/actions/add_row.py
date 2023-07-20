@@ -3,10 +3,10 @@ import uuid
 from typing import Dict, List
 
 from metabolights_utils.tsv import model
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class AddRowsActionHelper(BaseActionHelper):
+class AddRowsTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -14,7 +14,7 @@ class AddRowsActionHelper(BaseActionHelper):
         action: model.TsvAddRowsAction,
     ) -> model.TsvActionResult:
         result: model.TsvActionResult = model.TsvActionResult(action=action)
-        if action.name != model.TsvActionName.ADD_ROW:
+        if action.type != model.TsvActionType.ADD_ROW:
             result.message = "Action name is not valid"
             return result
 

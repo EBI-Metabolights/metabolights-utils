@@ -29,7 +29,7 @@ def get_writer_factory():
 
 
 class Reader:
-    reader_factory: IsaTabReaderFactory = DefaultIsaTabReaderFactory()
+    reader_factory: IsaTabReaderFactory = get_reader_factory()
 
     @classmethod
     def get_investigation_file_reader(cls) -> InvestigationFileReader:
@@ -55,7 +55,7 @@ class Reader:
 
 
 class Writer:
-    writer_factory: IsaTabWriterFactory = DefaultIsaTabWriterFactory()
+    writer_factory: IsaTabWriterFactory = get_writer_factory()
 
     @classmethod
     def get_investigation_file_writer(cls) -> InvestigationFileWriter:

@@ -2,10 +2,10 @@ import pathlib
 import uuid
 
 from metabolights_utils.tsv import model as actions
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class MoveColumnActionHelper(BaseActionHelper):
+class MoveColumnTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -13,7 +13,7 @@ class MoveColumnActionHelper(BaseActionHelper):
         action: actions.TsvMoveColumnAction,
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
-        if action.name != actions.TsvActionName.MOVE_COLUMN:
+        if action.type != actions.TsvActionType.MOVE_COLUMN:
             result.message = "Action name is not valid"
             return result
 

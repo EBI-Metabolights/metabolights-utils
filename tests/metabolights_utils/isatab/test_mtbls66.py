@@ -5,10 +5,9 @@ from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult,
 )
-from metabolights_utils.models.isa.common import (
-    FilterOperation,
+from metabolights_utils.tsv.filter import FilterOperation, TsvFileFilterOption
+from metabolights_utils.tsv.sort import (
     SortType,
-    TsvFileFilterOption,
     TsvFileSortOption,
     TsvFileSortValueOrder,
 )
@@ -68,14 +67,14 @@ def test_with_sort_and_filter_option_02():
     ]
     filter_options = [
         TsvFileFilterOption(
-            column_name="Sample Name",
+            search_columns=["Sample Name"],
             operation=FilterOperation.STARTSWITH,
             parameter="control",
             case_sensitive=False,
             negate_result=True,
         ),
         TsvFileFilterOption(
-            column_name="Sample Name",
+            search_columns=["Sample Name"],
             operation=FilterOperation.STARTSWITH,
             parameter="blank",
             case_sensitive=False,
@@ -108,14 +107,14 @@ def test_with_sort_and_filter_option_02():
 def test_with_filter_and_sort_option_01():
     filter_options = [
         TsvFileFilterOption(
-            column_name="Sample Name",
+            search_columns=["Sample Name"],
             operation=FilterOperation.STARTSWITH,
             parameter="control",
             case_sensitive=False,
             negate_result=True,
         ),
         TsvFileFilterOption(
-            column_name="Parameter Value[Chromatography Instrument]",
+            search_columns=["Parameter Value[Chromatography Instrument]"],
             operation=FilterOperation.EQUAL,
             parameter="Thermo Scientific TRACE GC Ultra",
             case_sensitive=False,
@@ -147,13 +146,13 @@ def test_with_filter_and_sort_option_01():
 
     filter_options = [
         TsvFileFilterOption(
-            column_name="Sample Name",
+            search_columns=["Sample Name"],
             operation=FilterOperation.REGEX,
             parameter="^PG[\d]5.*_5$",
             case_sensitive=False,
         ),
         TsvFileFilterOption(
-            column_name="Parameter Value[Chromatography Instrument]",
+            search_columns=["Parameter Value[Chromatography Instrument]"],
             operation=FilterOperation.EQUAL,
             parameter="Thermo Scientific TRACE GC Ultra",
             case_sensitive=False,

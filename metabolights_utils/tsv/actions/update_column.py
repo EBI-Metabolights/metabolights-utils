@@ -1,13 +1,12 @@
 import pathlib
-import sys
 import uuid
 from typing import Dict, List
 
 from metabolights_utils.tsv import model as actions
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class UpdateColumnsActionHelper(BaseActionHelper):
+class UpdateColumnsTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -15,7 +14,7 @@ class UpdateColumnsActionHelper(BaseActionHelper):
         action: actions.TsvUpdateColumnsAction,
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
-        if action.name != actions.TsvActionName.UPDATE_COLUMN_DATA:
+        if action.type != actions.TsvActionType.UPDATE_COLUMN_DATA:
             result.message = "Action name is not valid"
             return result
 

@@ -4,10 +4,10 @@ import uuid
 from typing import Dict, List
 
 from metabolights_utils.tsv import model as actions
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class MoveRowActionHelper(BaseActionHelper):
+class MoveRowTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -15,7 +15,7 @@ class MoveRowActionHelper(BaseActionHelper):
         action: actions.TsvMoveRowAction,
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
-        if action.name != actions.TsvActionName.MOVE_ROW:
+        if action.type != actions.TsvActionType.MOVE_ROW:
             result.message = "Action name is not valid"
             return result
 

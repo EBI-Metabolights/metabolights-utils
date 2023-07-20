@@ -13,7 +13,7 @@ class TsvActionException(Exception):
         self.message = message
 
 
-class BaseActionHelper(ABC):
+class BaseTsvAction(ABC):
     @abstractmethod
     def apply_action(
         source_file_path: pathlib.Path,

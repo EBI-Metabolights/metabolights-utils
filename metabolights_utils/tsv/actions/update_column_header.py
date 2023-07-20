@@ -1,13 +1,12 @@
 import pathlib
-import sys
 import uuid
-from typing import Dict, List
+from typing import Dict
 
 from metabolights_utils.tsv import model as actions
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class UpdateColumnHeadersActionHelper(BaseActionHelper):
+class UpdateColumnHeadersTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -15,7 +14,7 @@ class UpdateColumnHeadersActionHelper(BaseActionHelper):
         action: actions.TsvUpdateColumnHeaderAction,
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
-        if action.name != actions.TsvActionName.UPDATE_COLUMN_HEADER:
+        if action.type != actions.TsvActionType.UPDATE_COLUMN_HEADER:
             result.message = "Action name is not valid"
             return result
 

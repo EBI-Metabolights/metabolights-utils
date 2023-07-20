@@ -8,8 +8,16 @@ from metabolights_utils.isatab.default.investigation_file import (
 )
 from metabolights_utils.isatab.default.sample_file import DefaultSampleFileReader
 from metabolights_utils.isatab.default.writer import DefaultIsaTableFileWriter
-from metabolights_utils.isatab.reader import InvestigationFileReader, IsaTabReaderFactory, IsaTableFileReader
-from metabolights_utils.isatab.writer import InvestigationFileWriter, IsaTabWriterFactory, IsaTableFileWriter
+from metabolights_utils.isatab.reader import (
+    InvestigationFileReader,
+    IsaTabReaderFactory,
+    IsaTableFileReader,
+)
+from metabolights_utils.isatab.writer import (
+    InvestigationFileWriter,
+    IsaTabWriterFactory,
+    IsaTableFileWriter,
+)
 
 
 class DefaultIsaTabReaderFactory(IsaTabReaderFactory):

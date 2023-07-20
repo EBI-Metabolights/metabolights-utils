@@ -3,10 +3,10 @@ import uuid
 from typing import Dict
 
 from metabolights_utils.tsv import model as actions
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class UpdateRowsActionHelper(BaseActionHelper):
+class UpdateRowsTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -14,7 +14,7 @@ class UpdateRowsActionHelper(BaseActionHelper):
         action: actions.TsvUpdateRowsAction,
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
-        if action.name != actions.TsvActionName.UPDATE_ROW_DATA:
+        if action.type != actions.TsvActionType.UPDATE_ROW_DATA:
             result.message = "Action name is not valid"
             return result
 

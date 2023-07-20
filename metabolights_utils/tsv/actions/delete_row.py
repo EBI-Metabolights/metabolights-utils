@@ -1,13 +1,12 @@
 import pathlib
-import sys
 import uuid
-from typing import Dict, List
+from typing import List
 
 from metabolights_utils.tsv import model as actions
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class DeleteRowsActionHelper(BaseActionHelper):
+class DeleteRowsTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -15,7 +14,7 @@ class DeleteRowsActionHelper(BaseActionHelper):
         action: actions.TsvDeleteRowsAction,
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
-        if action.name != actions.TsvActionName.DELETE_ROW:
+        if action.type != actions.TsvActionType.DELETE_ROW:
             result.message = "Action name is not valid"
             return result
 

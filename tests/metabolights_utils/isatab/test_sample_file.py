@@ -1,16 +1,12 @@
 import pathlib
-from metabolights_utils.isatab import Reader
 
+from metabolights_utils.isatab import Reader
 from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult,
 )
-from metabolights_utils.models.isa.common import (
-    FilterOperation,
-    SortType,
-    TsvFileFilterOption,
-    TsvFileSortOption,
-)
+from metabolights_utils.tsv.filter import FilterOperation, TsvFileFilterOption
+from metabolights_utils.tsv.sort import SortType, TsvFileSortOption
 
 
 def test_assay_metadata_file_success_01():
@@ -216,12 +212,12 @@ def test_with_filter_and_sort_option():
 
     filter_options = [
         TsvFileFilterOption(
-            column_name="Sample Name",
+            search_columns=["Sample Name"],
             operation=FilterOperation.STARTSWITH,
             parameter="ADG19007u_3",
         ),
         TsvFileFilterOption(
-            column_name="Factor Value[Gender]",
+            search_columns=["Factor Value[Gender]"],
             operation=FilterOperation.EQUAL,
             parameter="Male",
         ),
@@ -230,7 +226,7 @@ def test_with_filter_and_sort_option():
     sort_options = [
         TsvFileSortOption(
             column_name="Factor Value[Metabolic syndrome]",
-            columncolumn_sort_type=SortType.STRING,
+            column_sort_type=SortType.STRING,
             reverse=False,
         ),
         TsvFileSortOption(column_name="Sample Name", reverse=True),

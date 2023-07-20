@@ -6,43 +6,41 @@ import shutil
 import uuid
 from typing import Dict, List, Union
 
-from metabolights_utils.tsv.actions.add_column import AddColumnsActionHelper
-from metabolights_utils.tsv.actions.add_row import AddRowsActionHelper
-from metabolights_utils.tsv.actions.base import BaseActionHelper, TsvActionException
-from metabolights_utils.tsv.actions.copy_column import CopyColumnActionHelper
-from metabolights_utils.tsv.actions.copy_row import CopyRowActionHelper
-from metabolights_utils.tsv.actions.delete_column import DeleteColumnsActionHelper
-from metabolights_utils.tsv.actions.delete_row import DeleteRowsActionHelper
-from metabolights_utils.tsv.actions.move_column import MoveColumnActionHelper
-from metabolights_utils.tsv.actions.move_row import MoveRowActionHelper
-from metabolights_utils.tsv.actions.update_cell import UpdateCellsActionHelper
-from metabolights_utils.tsv.actions.update_column import UpdateColumnsActionHelper
+from metabolights_utils.tsv.actions.add_column import AddColumnsTsvAction
+from metabolights_utils.tsv.actions.add_row import AddRowsTsvAction
+from metabolights_utils.tsv.actions.base import BaseTsvAction, TsvActionException
+from metabolights_utils.tsv.actions.copy_column import CopyColumnTsvAction
+from metabolights_utils.tsv.actions.copy_row import CopyRowTsvAction
+from metabolights_utils.tsv.actions.delete_column import DeleteColumnsTsvAction
+from metabolights_utils.tsv.actions.delete_row import DeleteRowsTsvAction
+from metabolights_utils.tsv.actions.move_column import MoveColumnTsvAction
+from metabolights_utils.tsv.actions.move_row import MoveRowTsvAction
+from metabolights_utils.tsv.actions.update_cell import UpdateCellsTsvAction
+from metabolights_utils.tsv.actions.update_column import UpdateColumnsTsvAction
 from metabolights_utils.tsv.actions.update_column_header import (
-    UpdateColumnHeadersActionHelper,
+    UpdateColumnHeadersTsvAction,
 )
-from metabolights_utils.tsv.actions.update_row import UpdateRowsActionHelper
+from metabolights_utils.tsv.actions.update_row import UpdateRowsTsvAction
 from metabolights_utils.tsv.model import (
     TsvAction,
-    TsvActionName,
     TsvActionReport,
     TsvActionResult,
+    TsvActionType,
 )
 
-ISA_TABLE_ACTION_HELPERS: Dict[TsvActionName, BaseActionHelper] = {}
-ISA_TABLE_ACTION_HELPERS[TsvActionName.ADD_ROW] = AddRowsActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.DELETE_ROW] = DeleteRowsActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.UPDATE_ROW_DATA] = UpdateRowsActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.COPY_ROW] = CopyRowActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.MOVE_ROW] = MoveRowActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.ADD_COLUMN] = AddColumnsActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.DELETE_COLUMN] = DeleteColumnsActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.COPY_COLUMN] = CopyColumnActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.UPDATE_COLUMN_DATA] = UpdateColumnsActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.MOVE_COLUMN] = MoveColumnActionHelper()
-ISA_TABLE_ACTION_HELPERS[
-    TsvActionName.UPDATE_COLUMN_HEADER
-] = UpdateColumnHeadersActionHelper()
-ISA_TABLE_ACTION_HELPERS[TsvActionName.UPDATE_CELL_DATA] = UpdateCellsActionHelper()
+TSV_FILE_ACTIONS: Dict[TsvActionType, BaseTsvAction] = {}
+TSV_FILE_ACTIONS[TsvActionType.ADD_ROW] = AddRowsTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.DELETE_ROW] = DeleteRowsTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.UPDATE_ROW_DATA] = UpdateRowsTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.COPY_ROW] = CopyRowTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.MOVE_ROW] = MoveRowTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.ADD_COLUMN] = AddColumnsTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.DELETE_COLUMN] = DeleteColumnsTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.COPY_COLUMN] = CopyColumnTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.UPDATE_COLUMN_DATA] = UpdateColumnsTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.MOVE_COLUMN] = MoveColumnTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.UPDATE_COLUMN_HEADER] = UpdateColumnHeadersTsvAction()
+TSV_FILE_ACTIONS[TsvActionType.UPDATE_CELL_DATA] = UpdateCellsTsvAction()
 
 
 class TsvFileUpdater:
@@ -101,12 +99,12 @@ class TsvFileUpdater:
         last_file = None
         try:
             for action in actions:
-                if action.name not in ISA_TABLE_ACTION_HELPERS:
-                    report.message = f"Upsupported action: action.name."
+                if action.type not in TSV_FILE_ACTIONS:
+                    report.message = f"Upsupported action: action.type."
                     return report
             shutil.move(file, file_copy_path)
             for action in actions:
-                helper = ISA_TABLE_ACTION_HELPERS[action.name]
+                helper = TSV_FILE_ACTIONS[action.type]
                 result: TsvActionResult = helper.apply_action(
                     source_path, target_path, action
                 )

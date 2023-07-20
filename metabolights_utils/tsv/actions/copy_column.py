@@ -3,10 +3,10 @@ import uuid
 from typing import Dict, List
 
 from metabolights_utils.tsv import model as actions
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class CopyColumnActionHelper(BaseActionHelper):
+class CopyColumnTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -14,7 +14,7 @@ class CopyColumnActionHelper(BaseActionHelper):
         action: actions.TsvCopyColumnAction,
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
-        if action.name != actions.TsvActionName.COPY_COLUMN:
+        if action.type != actions.TsvActionType.COPY_COLUMN:
             result.message = "Action name is not valid"
             return result
 

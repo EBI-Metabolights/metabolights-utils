@@ -3,10 +3,10 @@ import uuid
 from typing import List, Set
 
 from metabolights_utils.tsv import model as actions
-from metabolights_utils.tsv.actions.base import BaseActionHelper
+from metabolights_utils.tsv.actions.base import BaseTsvAction
 
 
-class CopyRowActionHelper(BaseActionHelper):
+class CopyRowTsvAction(BaseTsvAction):
     def apply_action(
         self,
         source_file_path: pathlib.Path,
@@ -14,7 +14,7 @@ class CopyRowActionHelper(BaseActionHelper):
         action: actions.TsvCopyRowAction,
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
-        if action.name != actions.TsvActionName.COPY_ROW:
+        if action.type != actions.TsvActionType.COPY_ROW:
             result.message = "Action name is not valid"
             return result
 

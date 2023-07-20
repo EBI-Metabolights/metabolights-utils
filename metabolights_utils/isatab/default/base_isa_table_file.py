@@ -9,11 +9,11 @@ from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult,
 )
-from metabolights_utils.models.isa.parser.filter import TsvFileFilterOption
 from metabolights_utils.models.isa.parser.isa_table_parser import get_isa_table
-from metabolights_utils.models.isa.parser.sort import TsvFileSortOption
 from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
+from metabolights_utils.tsv.filter import TsvFileFilterOption
+from metabolights_utils.tsv.sort import TsvFileSortOption
 
 
 class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):

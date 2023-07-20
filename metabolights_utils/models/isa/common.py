@@ -1,11 +1,12 @@
-from enum import Enum
 from typing import Dict, List, Union
-import humps
 
+import humps
 from pydantic import BaseModel, Extra, Field
 
 from metabolights_utils.models.common import MetabolightsBaseModel
 from metabolights_utils.models.isa.enums import ColumnsStructure
+from metabolights_utils.tsv.filter import TsvFileFilterOption
+from metabolights_utils.tsv.sort import TsvFileSortOption
 
 INVESTIGATION_FILE_INITIAL_ROWS = [
     "ONTOLOGY SOURCE REFERENCE",
@@ -283,68 +284,6 @@ class IsaTableColumn(IsaAbstractModel):
 
     def __hash__(self):
         return hash(self.column_name)
-
-
-class FilterParameterType(str, Enum):
-    AUTO = "AUTO"
-    STRING = "STRING"
-    INTEGER = "INTEGER"
-    FLOAT = "FLOAT"
-    DATETIME = "DATETIME"
-
-
-class FilterOperation(str, Enum):
-    CONTAINS = "like"
-    EQUAL = "eq"
-    STARTSWITH = "startswith"
-    ENDSWITH = "endswith"
-    GREATER = "gt"
-    GREATER_EQUAL = "ge"
-    LESS = "lt"
-    LESS_EQUAL = "le"
-    REGEX = "regex"
-    EMPTY = "empty"
-
-
-class TsvFileFilterOption(MetabolightsBaseModel):
-    column_name: str
-    operation: FilterOperation = FilterOperation.CONTAINS
-    parameter: Union[str, int, float] = ""
-    parameter_type: FilterParameterType = FilterParameterType.AUTO
-    case_sensitive: bool = True
-    negate_result: bool = False
-    default_datetime_pattern: str = "%m/%d/%Y"
-
-
-class SortType(str, Enum):
-    STRING = "STRING"
-    INTEGER = "INTEGER"
-    FLOAT = "FLOAT"
-    DATETIME = "DATETIME"
-
-
-class SortValueClassification(int, Enum):
-    EMPTY = 1
-    INVALID = 2
-    VALID = 3
-
-
-class TsvFileSortValueOrder(int, Enum):
-    EMPTY_INVALID_VALID = 0o123
-    EMPTY_VALID_INVALID = 0o132
-    INVALID_EMPTY_VALID = 0o213
-    INVALID_VALID_EMPTY = 0o231
-    VALID_INVALID_EMPTY = 0o321
-    VALID_EMPTY_INVALID = 0o312
-
-
-class TsvFileSortOption(MetabolightsBaseModel):
-    column_name: str
-    reverse: bool = False
-    column_sort_type: SortType = SortType.STRING
-    case_sensitive: bool = True
-    default_datetime_pattern: str = "%m/%d/%Y"
-    value_order: TsvFileSortValueOrder = TsvFileSortValueOrder.VALID_EMPTY_INVALID
 
 
 class IsaTable(IsaAbstractModel):

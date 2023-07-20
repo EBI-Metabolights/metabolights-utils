@@ -13,10 +13,18 @@
 MetaboLigts-utils is a lightweight library to read and validate ISA files. 
 
 Selected features:
-1. Read and update ISA investigation files. Reading investigation files has *no pandas library dependency*.
+1. Read and update ISA files without *pandas library dependency*.
 2. Read tab seperated ISA files (s_*.txt, a_*.txt, m_*.txt) with **pagination support**.
+    * Update page size (number of rows in a page) and read results with the selected page size.
+    * Define custom row offset and read rows with a limit. Row indices in a page can be unordered after filter and sort operations. You can get actual row index of the selected row using result.
+    * Read only the selected columns you defined. If a selected column has additional columns (Term Source REF, etc) and these columns are not defined, they will be in result. Column names may be different than header if there are multiple column with same header. 
+    * If no column selected, columns will be ordered. If columns are selected, result will contain columns in the selected order. You can get actual column index of a column using result.
 3. Apply **multi-column filters and sort options** before reading ISA table files. 
-    * Multiple sort options can be defined for different columns. For example; sort by 'Parameter Value\[Gender\]' as ascending and Parameter Value\[Age\] as descending order. Moreover, columns can be sorted as different data type (if column values are valid for the selected data type). Supported data types are str, int, float and datetime. 
+    * Case sensitive or case insensitive multi-column sort is supported.
+        - Multi-column sorts with ascending and descending order can be defined. For example; You can sort  by 'Parameter Value\[Gender\]' as ascending and Parameter Value\[Age\] as descending order. 
+        - Columns can be sorted as different data type. Supported sort data types are str, int, float and datetime. datetime pattern can be defined for datetime data type.
+        - Sort orders for invalid and empty values can be defined. For example, If sort value order is defined as VALID_EMPTY_INVALID, invalid values will follow empty values and empty values will follow valid values. This value order option is applicable for int, datetime and float data types. All combinations are poossible for EMPTY, INVALID, VALID values.
+        - You can define your custom sorters. "enum-sorter" as a custom sorter has been already implemented. It sorts enums with given string values.
     * There are **10 different filters** (with inverse options). Any filter can be applied to any column. Multiple filters can be defined. 
         - CONTAINS / NOT CONTAINS
         - EQUAL / NOT EQUAL
@@ -28,6 +36,16 @@ Selected features:
         - LESS_EQUAL / NOT LESS_EQUAL
         - REGEX (regex match) / NOT REGEX (not regex match)
         - EMPTY / NOT EMPTY (None or empty)
+    * You can define multiple filters. If one filter rejects row, row will not be selected (AND operation).
+    * You can define one or more columns for a filter. If there are multiple columns for a filter. If any column matches the parameter, filter selects the row (OR operation).
+    * If you do not select any column for filter, filter will evaluate all columns of the row. If filter matches the parameter with any column, it will select the row. You can define column names to skip them while evaluating all rows. 
+    * You can define your custom filters. Some custom filters have been already implemented.
+        - "between-equal": Returns row if value between given min and max. Min and max inputs can be datetime, str, int or float.
+        - "valid-datetime" Return row if value is valid datetime with given pattern. Default pattern is DD/MM/YYYY.
+        - "valid-number": Return row if value is valid int or float.
+        - "enum-contains": Gets a map to define a text for each enum value. Returns row if input parameter is in the enum-mapped text. Enums can be any allowed type (str, int, etc.).
+            + Example: Enum values are 1, 2, 3, 4. Enum values are mapped to 1: "In Review", 2: "Published", 3: "In Curation", 4: "Public". If parameter is "Pub", all rows contain enum value 2 and 4 will be returned.
+
 4. Define and **apply actions** to manuplate ISA table files. Supported operations:
     * ADD_ROW: Insert rows to given index
     * DELETE_ROW: delete selected rows
@@ -41,6 +59,8 @@ Selected features:
     * UPDATE_COLUMN_DATA: selected columns
     * UPDATE_COLUMN_HEADER: update column headers
     * UPDATE_CELL_DATA: update cells given with row and column index
+
+
 
 ### Investigation file operations
 
@@ -197,14 +217,14 @@ def test_with_filter_and_sort_option_01():
     # Both filters are applied in case insesitive mode.
     filter_options = [
         TsvFileFilterOption(
-            column_name="Sample Name",
+            search_columns=["Sample Name"],
             operation=FilterOperation.STARTSWITH,
             parameter="control",
             case_sensitive=False,
             negate_result=True,
         ),
         TsvFileFilterOption(
-            column_name="Parameter Value[Chromatography Instrument]",
+            search_columns=["Parameter Value[Chromatography Instrument]"],
             operation=FilterOperation.EQUAL,
             parameter="Thermo Scientific TRACE GC Ultra",
             case_sensitive=False,
@@ -262,13 +282,13 @@ def test_with_filter_and_sort_option_01():
     # Second filter is exact match on Parameter Value[Chromatography Instrument]
     filter_options = [
         TsvFileFilterOption(
-            column_name="Sample Name",
+            search_columns=["Sample Name"],
             operation=FilterOperation.REGEX,
             parameter="^PG[\d]5.*_5$",
             case_sensitive=False,
         ),
         TsvFileFilterOption(
-            column_name="Parameter Value[Chromatography Instrument]",
+            search_columns=["Parameter Value[Chromatography Instrument]"],
             operation=FilterOperation.EQUAL,
             parameter="Thermo Scientific TRACE GC Ultra",
             case_sensitive=False,
@@ -367,6 +387,6 @@ def test_assay_file_read_write():
 User can manuplate ISA table files in row, column or cell level.
 
 
-View **actions and model definition** from [a this file](https://github.com/EBI-Metabolights/metabolights-utils/blob/master/metabolights_utils/tsv/model.py).
+View **actions and model definition** from [this file](https://github.com/EBI-Metabolights/metabolights-utils/blob/master/metabolights_utils/tsv/model.py).
 
-View **examples** from [a this file](https://github.com/EBI-Metabolights/metabolights-utils/blob/master/tests/metabolights_utils/isatab/test_isa_table_actions.py).
+View **examples** from [this file](https://github.com/EBI-Metabolights/metabolights-utils/blob/master/tests/metabolights_utils/isatab/test_isa_table_actions.py).

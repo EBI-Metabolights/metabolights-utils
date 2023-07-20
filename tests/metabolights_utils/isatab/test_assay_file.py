@@ -8,12 +8,8 @@ from metabolights_utils.isatab.reader import (
     IsaTableFileReaderResult,
 )
 from metabolights_utils.isatab.writer import IsaTableFileWriter
-from metabolights_utils.models.isa.common import (
-    FilterOperation,
-    SortType,
-    TsvFileFilterOption,
-    TsvFileSortOption,
-)
+from metabolights_utils.tsv.filter import FilterOperation, TsvFileFilterOption
+from metabolights_utils.tsv.sort import SortType, TsvFileSortOption
 
 
 def test_assay_metadata_file_success_01():
@@ -274,12 +270,12 @@ def test_with_filter_and_sort_option_01():
 
     filter_options = [
         TsvFileFilterOption(
-            column_name="Sample Name",
+            search_columns=["Sample Name"],
             operation=FilterOperation.STARTSWITH,
             parameter="ADG19007u_3",
         ),
         TsvFileFilterOption(
-            column_name="Parameter Value[Sample pH]",
+            search_columns=["Parameter Value[Sample pH]"],
             operation=FilterOperation.GREATER,
             parameter=1.0,
         ),
@@ -289,7 +285,7 @@ def test_with_filter_and_sort_option_01():
         TsvFileSortOption(column_name="Sample Name", reverse=True),
         TsvFileSortOption(
             column_name="Parameter Value[Sample pH]",
-            columncolumn_sort_type=SortType.FLOAT,
+            column_sort_type=SortType.FLOAT,
             reverse=False,
         ),
     ]
