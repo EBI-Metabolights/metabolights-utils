@@ -12,5 +12,5 @@ class GenericMessage(MetabolightsBaseModel):
     detail: str = ""
 
     def __str__(self) -> str:
-        value = f"{self.type}\short: {self.short}\tdetail: {self.detail}"
+        value = f"{self.type}\tshort: {self.short}\tdetail: {self.detail}"
         return value

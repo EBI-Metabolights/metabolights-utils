@@ -255,22 +255,22 @@ multiple_columns_additional_header_patterns = MULTI_COLUMN_TEMPLATES[
 
 
 samples_file_expected_patterns = [
-    ["^(Source Name)$", ""],
-    ["^Characteristics\[(\w[ -~]*)\]$", "Characteristics"],
-    ["^(Protocol REF)(\.\d+)?$", "Protocol"],
-    ["^(Sample Name)$", ""],
-    ["^Factor Value\[(\w[ -~]*)\]$", "Factor Value"],
-    ["^Comment\b\[(\w{1}[ -~]*)\]$", "Comment"],
+    [r"^(Source Name)$", ""],
+    [r"^Characteristics[(\w[ -~]*)]$", "Characteristics"],
+    [r"^(Protocol REF)(.\d+)?$", "Protocol"],
+    [r"^(Sample Name)$", ""],
+    [r"^Factor Value[(\w[ -~]*)]$", "Factor Value"],
+    [r"^Comment\b[(\w{1}[ -~]*)]$", "Comment"],
 ]
 
 assay_file_expected_patterns = [
-    ["^(Extract Name)$", ""],
-    ["^(Protocol REF)(\.\d+)?$", "Protocol"],
-    ["^(Sample Name)$", ""],
-    ["^Parameter Value\[(\w[ -~]*)\]$", "Parameter Value"],
-    ["^Comment\b\[(\w{1}[ -~]*)\]$", "Comment"],
-    ["^(Labeled Extract Name)$", ""],
-    ["^(Label)$", ""],
+    [r"^(Extract Name)$", ""],
+    [r"^(Protocol REF)(.\d+)?$", "Protocol"],
+    [r"^(Sample Name)$", ""],
+    [r"^Parameter Value[(\w[ -~]*)]$", "Parameter Value"],
+    [r"^Comment\b[(\w{1}[ -~]*)]$", "Comment"],
+    [r"^(Labeled Extract Name)$", ""],
+    [r"^(Label)$", ""],
 ]
 
 

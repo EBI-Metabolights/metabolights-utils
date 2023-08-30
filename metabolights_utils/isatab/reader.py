@@ -36,8 +36,7 @@ class InvestigationFileReader(ABC):
            At least one of the file_buffer and file_path parameters should be defined.
 
         Args:
-            file_buffer (IOBase): File buffer to read file content.
-            io.StringIO, io.TextIOWrapper with open(), etc. Defaults to None.
+            file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc. Defaults to None.
             file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object. Defaults to None.
             skip_parser_info_messages (bool, optional): clear INFO messages from parser messages. Defaults to True.
 
@@ -60,7 +59,6 @@ class IsaTableFileReader(ABC):
 
         Args:
             file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
-            results_per_page (int): Items per page. Defaults: 100.
             file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
 
         Returns:
@@ -175,8 +173,7 @@ class IsaTableFileReader(ABC):
         """Reads selected rows with selected columns from tsv file. If sort and filter options are enabled, offset and limit are applied to the final filter and sort result.
 
         Args:
-            file_path_or_buffer (Union[str, pathlib.Path, IOBase]): File buffer or path to read file content.
-            file path str, io.StringIO, io.TextIOWrapper with open(), etc.
+            file_path_or_buffer (Union[str, pathlib.Path, IOBase]): File buffer or path to read file content. file path str, io.StringIO, io.TextIOWrapper with open(), etc.
             file_path (Union[str, pathlib.Path], optional): File path str or pathlib.Path object. It is required if file_path_or_buffer is None. Defaults to None.
             offset (int, optional): Starting index of rows will be returned. First rows is header and index of the second row is 0. Defaults to 0.
             limit (Union[int, None], optional): Number of rows will be returned. If it is None, return all rows. Defaults to 1000.

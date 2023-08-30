@@ -5,13 +5,13 @@ from metabolights_utils.isatab.default.base_isa_table_file import BaseIsaTableFi
 
 class DefaultAssayFileReader(BaseIsaTableFileReader):
     patterns = [
-        ["^(Extract Name)$", ""],
-        ["^(Protocol REF)(\.\d+)?$", "Protocol"],
-        ["^(Sample Name)$", ""],
-        ["^Parameter Value\[(\w[ -~]*)\]$", "Parameter Value"],
-        ["^Comment\b\[(\w{1}[ -~]*)\]$", "Comment"],
-        ["^(Labeled Extract Name)$", ""],
-        ["^(Label)$", ""],
+        [r"^(Extract Name)$", ""],
+        [r"^(Protocol REF)(.\d+)?$", "Protocol"],
+        [r"^(Sample Name)$", ""],
+        [r"^Parameter Value[(\w[ -~]*)]$", "Parameter Value"],
+        [r"^Comment\b[(\w{1}[ -~]*)]$", "Comment"],
+        [r"^(Labeled Extract Name)$", ""],
+        [r"^(Label)$", ""],
     ]
 
     def __init__(self, results_per_page=100) -> None:

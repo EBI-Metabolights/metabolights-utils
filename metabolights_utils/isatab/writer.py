@@ -10,6 +10,8 @@ from metabolights_utils.tsv.model import TsvAction, TsvActionReport
 
 
 class InvestigationFileWriter(ABC):
+    """ISA investigation tsv file reader abstract class."""
+
     @abstractmethod
     def write(
         self,
@@ -67,7 +69,7 @@ class IsaTableFileWriter(ABC):
         Args:
             file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
             file_sha256_hash (str): SH256 of the input file. If file SHA256 does not match, method returns error.
-            actions (List[TsvAction]): List of allowed actions
+            isa_table (IsaTable): isa table model
         Returns:
             TsvActionReport: results of each action. If an action result is not success, result message will be available.
         """

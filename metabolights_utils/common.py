@@ -2,11 +2,9 @@ from humps import camelize
 from pydantic import BaseModel
 
 
-def to_camel(string):
-    return camelize(string)
-
-
 class CamelCaseModel(BaseModel):
+    """Base model class to convert python attributes to camel case"""
+
     class Config:
-        alias_generator = to_camel
+        alias_generator = camelize
         allow_population_by_field_name = True
