@@ -186,7 +186,7 @@ class OntologyItem(IsaAbstractModel):
         return self.__str__()
 
 
-class OrganismAndOrganismmPartPair(IsaAbstractModel):
+class OrganismAndOrganismPartPair(IsaAbstractModel):
     organism: OntologyItem = OntologyItem()
     organism_part: OntologyItem = OntologyItem()
     variant: OntologyItem = OntologyItem()
