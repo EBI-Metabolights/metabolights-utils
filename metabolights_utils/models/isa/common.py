@@ -1,12 +1,26 @@
 from typing import Dict, List, Union
 
-import humps
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, ConfigDict, Field
+from pydantic.alias_generators import to_snake
 
 from metabolights_utils.models.common import MetabolightsBaseModel
 from metabolights_utils.models.isa.enums import ColumnsStructure
 from metabolights_utils.tsv.filter import TsvFileFilterOption
 from metabolights_utils.tsv.sort import TsvFileSortOption
+
+INVESTIGATION_FILE_SECTION_NAMES = {
+    "ONTOLOGY SOURCE REFERENCE",
+    "INVESTIGATION",
+    "INVESTIGATION PUBLICATIONS",
+    "INVESTIGATION CONTACTS",
+    "STUDY",
+    "STUDY DESIGN DESCRIPTORS",
+    "STUDY PUBLICATIONS",
+    "STUDY FACTORS",
+    "STUDY ASSAYS",
+    "STUDY PROTOCOLS",
+    "STUDY CONTACTS",
+}
 
 INVESTIGATION_FILE_INITIAL_ROWS = [
     "ONTOLOGY SOURCE REFERENCE",
@@ -109,20 +123,29 @@ INVESTIGATION_FILE_INITIAL_ROWS_SET = set(INVESTIGATION_FILE_INITIAL_ROWS)
 INVESTIGATION_FILE_STUDY_ROWS_SET = set(INVESTIGATION_FILE_STUDY_ROWS)
 
 
-class IsaAbstractModel(MetabolightsBaseModel):
-    field_order: Union[None, List[str]] = Field(None, auto_fill=False)
+class IsaTabConfig(MetabolightsBaseModel):
+    field_order: Union[None, List[str]] = None
+    section_header: Union[None, str] = None
+    section_prefix: Union[None, str] = None
+    specification_version: str = None
+    specification_date: str = None
 
-    class Config:
-        extra = Extra.forbid
+
+class IsaAbstractModel(MetabolightsBaseModel):
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(),
+        exclude=True,
+    )
+    model_config = ConfigDict(extra="forbid")
 
     @classmethod
     def get_attribute(cls, model: BaseModel, attribute_name):
-        model_attribute_key = humps.decamelize(attribute_name)
+        model_attribute_key = to_snake(attribute_name)
         return getattr(model, model_attribute_key)
 
     @classmethod
     def is_empty_model(cls, model: BaseModel):
-        schema = model.schema()
+        schema = model.model_json_schema()
         for item_key in schema["properties"]:
             item_field_definition = schema["properties"][item_key]
             if (
@@ -131,7 +154,7 @@ class IsaAbstractModel(MetabolightsBaseModel):
                 or not item_field_definition["auto_fill"]
             ):
                 continue
-            model_attribute_key = humps.decamelize(item_key)
+            model_attribute_key = to_snake(item_key)
             item_val = cls.get_attribute(model, model_attribute_key)
             if isinstance(item_val, IsaAbstractModel):
                 is_empty = IsaAbstractModel.is_empty_model(item_val)
@@ -273,7 +296,7 @@ class Comment(IsaAbstractModel):
 
 
 class IsaTableColumn(IsaAbstractModel):
-    column_index: Union[int, str] = ""
+    column_index: Union[int, None] = None
     column_name: str = ""
     column_header: str = ""
     additional_columns: List[str] = []
@@ -304,4 +327,7 @@ class IsaTable(IsaAbstractModel):
 
 class IsaTableFile(IsaAbstractModel):
     file_path: str = ""
+    sha256_hash: str = (
+        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    )
     table: IsaTable = Field(IsaTable())

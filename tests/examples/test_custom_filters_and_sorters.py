@@ -2,20 +2,9 @@ import pathlib
 from enum import Enum
 
 from metabolights_utils.isatab import Reader
-from metabolights_utils.isatab.reader import (
-    IsaTableFileReader,
-    IsaTableFileReaderResult,
-)
-from metabolights_utils.tsv.filter import (
-    FilterDataType,
-    FilterOperation,
-    TsvFileFilterOption,
-)
-from metabolights_utils.tsv.sort import (
-    SortType,
-    TsvFileSortOption,
-    TsvFileSortValueOrder,
-)
+from metabolights_utils.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
+from metabolights_utils.tsv.filter import FilterDataType, FilterOperation, TsvFileFilterOption
+from metabolights_utils.tsv.sort import SortType, TsvFileSortOption, TsvFileSortValueOrder
 
 
 def test_with_custom_filter_between_equal_01():
@@ -85,12 +74,12 @@ def test_with_custom_filter_valid_number_01():
 
 
 class ReplicateTestEnum(Enum):
-    val1 = 1
-    val2 = 2
-    val3 = 3
-    val4 = 4
-    val5 = 5
-    val6 = 6
+    VAL1 = 1
+    VAL2 = 2
+    VAL3 = 3
+    VAL4 = 4
+    VAL5 = 5
+    VAL6 = 6
 
 
 def test_with_custom_sorter_01():

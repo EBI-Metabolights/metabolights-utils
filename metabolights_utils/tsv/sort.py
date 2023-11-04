@@ -2,7 +2,7 @@ import sys
 from abc import ABC, abstractmethod
 from datetime import datetime
 from enum import Enum, EnumMeta
-from typing import Any, Dict, List, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
 from pydantic import Field
 
@@ -96,11 +96,11 @@ class Sorter(ABC):
 
 
 class SorterRegistry:
-    custom_sorters: Dict[str, Any] = {}
-    default_sorters: Dict[str, Any] = {}
+    custom_sorters: Dict[str, Callable] = {}
+    default_sorters: Dict[str, Callable] = {}
 
     @classmethod
-    def register_sorter(cls, name: str, sorter: Any) -> None:
+    def register_sorter(cls, name: str, sorter: Callable) -> None:
         cls.default_sorters[name] = sorter
 
     @classmethod
@@ -134,10 +134,6 @@ class SorterRegistry:
     def unregister_custom_sorter(cls, name: str) -> None:
         if name in cls.custom_sorters:
             del cls.custom_sorters[name]
-
-    @classmethod
-    def get_custom_sorter(cls, sort_option: TsvFileSortOption) -> Sorter:
-        return cls.get_custom_sorter(sort_option)
 
 
 # SORTERS
@@ -199,7 +195,7 @@ class AbstractSorter(Sorter, ABC):
             return self.get_invalid_value(value)
 
     @abstractmethod
-    def get_sorted_string(value: str) -> str:
+    def get_sorted_string(self, value: str) -> str:
         pass
 
 
@@ -221,28 +217,30 @@ class CustomSorter(AbstractSorter, ABC):
         )
 
 
-class CustomSorterProxy(AbstractSorter):
-    def __init__(
-        self,
-        sort_option: TsvFileSortOption,
-        column_idx: int,
-        column_name_indices: Dict[str, int],
-        column_indices: Dict[int, str],
-    ) -> None:
-        super().__init__(sort_option, column_idx, column_name_indices, column_indices)
-        self.custom_sorter: CustomSorter = SorterRegistry.get_sorter(sort_option)
+# class CustomSorterProxy(AbstractSorter):
+#     def __init__(
+#         self,
+#         sort_option: TsvFileSortOption,
+#         column_idx: int,
+#         column_name_indices: Dict[str, int],
+#         column_indices: Dict[int, str],
+#     ) -> None:
+#         super().__init__(sort_option, column_idx, column_name_indices, column_indices)
+#         self.custom_sorter: CustomSorter = SorterRegistry.get_sorter(
+#             sort_option, column_idx, column_name_indices, column_indices
+#         )
 
-    def sort(self, row: Tuple[int, List[str]]) -> str:
-        value = row[1][self.column_idx]
-        if not value:
-            return self.get_none_value()
-        try:
-            sorter = self.custom_sorter
-            order = self.valid_value_order
-            length = self.min_key_length
-            return str(order) + sorter.get_sorted_string(value).zfill(length)
-        except Exception:
-            return self.get_invalid_value(value)
+#     def sort(self, row: Tuple[int, List[str]]) -> str:
+#         value = row[1][self.column_idx]
+#         if not value:
+#             return self.get_none_value()
+#         try:
+#             sorter = self.custom_sorter
+#             order = self.valid_value_order
+#             length = self.min_key_length
+#             return str(order) + sorter.get_sorted_string(value).zfill(length)
+#         except Exception:
+#             return self.get_invalid_value(value)
 
 
 class IntegerSorter(AbstractSorter):
@@ -314,6 +312,7 @@ SorterRegistry.register_sorter(SortType.INTEGER.value, IntegerSorter)
 SorterRegistry.register_sorter(SortType.STRING.value, StringSorter)
 SorterRegistry.register_sorter(SortType.FLOAT.value, FloatSorter)
 SorterRegistry.register_sorter(SortType.DATETIME.value, DateTimeSorter)
+# SorterRegistry.register_sorter(SortType.CUSTOM.value, CustomSorterProxy)
 
 
 class EnumSorter(CustomSorter):
@@ -344,14 +343,14 @@ class EnumSorter(CustomSorter):
                         )
                     else:
                         raise TsvSortException(
-                            f"Selected enum class name is not valid. Use format <module name>:<enum class name>"
+                            "Selected enum class name is not valid. Use format <module name>:<enum class name>"
                         )
             except Exception as exc:
                 if isinstance(exc, TsvSortException):
                     raise exc
                 raise TsvSortException(
-                    f"selected class name is not converted to enum: {str(exc)}"
-                )
+                    "Selected class name is not converted to enum"
+                ) from exc
         if not isinstance(self.enum_class, EnumMeta):
             raise TsvSortException("selected class is not enum")
 

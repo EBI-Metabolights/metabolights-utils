@@ -2,161 +2,255 @@ from typing import List
 
 from pydantic import Field
 
-from metabolights_utils.models.isa.common import Comment, IsaAbstractModel
+from metabolights_utils.models.isa.common import Comment, IsaAbstractModel, IsaTabConfig
 
 module_name = __name__
 
 
 class BaseSection(IsaAbstractModel):
-    section_header: str = Field("ONTOLOGY SOURCE REFERENCE", exclude=True)
-    section_prefix: str = Field("", exclude=True)
-
     comments: List[Comment] = []
-
-    class Config:
-        field_order: List[str] = []
 
 
 class OntologySourceReference(IsaAbstractModel):
-    field_order: List[str] = [
-        "source_name",
-        "source_file",
-        "source_version",
-        "source_description",
-    ]
-    source_name: str = Field(
-        "", source_description=True, auto_fill=True, header_name="Source Name"
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=[
+                "source_name",
+                "source_file",
+                "source_version",
+                "source_description",
+            ]
+        ),
+        exclude=True,
     )
-    source_file: str = Field("", auto_fill=True, header_name="Source File")
-    source_version: str = Field("", auto_fill=True, header_name="Source Version")
+
+    source_name: str = Field(
+        "",
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "Source Name",
+            "source_description": True,
+        },
+    )
+    source_file: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Source File"}
+    )
+    source_version: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Source Version"}
+    )
     source_description: str = Field(
-        "", auto_fill=True, header_name="Source Description"
+        "", json_schema_extra={"auto_fill": True, "header_name": "Source Description"}
     )
 
 
 class OntologyAnnotation(IsaAbstractModel):
-    field_order: List[str] = ["term", "term_accession_number", "term_source_ref"]
-
-    term: str = Field("", auto_fill=True, header_name="")
-    term_accession_number: str = Field(
-        "", auto_fill=True, header_name="Term Accession Number"
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(field_order=["term", "term_accession_number", "term_source_ref"]),
+        exclude=True,
     )
-    term_source_ref: str = Field("", auto_fill=True, header_name="Term Source REF")
+
+    term: str = Field("", json_schema_extra={"auto_fill": True, "header_name": ""})
+    term_accession_number: str = Field(
+        "",
+        json_schema_extra={"auto_fill": True, "header_name": "Term Accession Number"},
+    )
+    term_source_ref: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Term Source REF"}
+    )
 
 
 class ValueTypeAnnotation(IsaAbstractModel):
-    field_order: List[str] = [
-        "name",
-        "type",
-        "term_accession_number",
-        "term_source_ref",
-    ]
-    name: str = Field("", auto_fill=True, header_name="Name")
-    type: str = Field("", auto_fill=True, header_name="Type")
-    term_accession_number: str = Field(
-        "", auto_fill=True, header_name="Type Term Accession Number"
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=[
+                "name",
+                "type",
+                "term_accession_number",
+                "term_source_ref",
+            ]
+        ),
+        exclude=True,
     )
-    term_source_ref: str = Field("", auto_fill=True, header_name="Type Term Source REF")
+
+    name: str = Field("", json_schema_extra={"auto_fill": True, "header_name": "Name"})
+    type: str = Field("", json_schema_extra={"auto_fill": True, "header_name": "Type"})
+    term_accession_number: str = Field(
+        "",
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "Type Term Accession Number",
+        },
+    )
+    term_source_ref: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Type Term Source REF"}
+    )
 
 
 class Publication(IsaAbstractModel):
-    field_order: List[str] = ["pub_med_id", "doi", "author_list", "title", "status"]
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["pub_med_id", "doi", "author_list", "title", "status"]
+        ),
+        exclude=True,
+    )
 
-    pub_med_id: str = Field("", auto_fill=True, header_name="PubMed ID")
-    doi: str = Field("", auto_fill=True, header_name="Publication DOI")
-    author_list: str = Field("", auto_fill=True, header_name="Publication Author List")
-    title: str = Field("", auto_fill=True, header_name="Publication Title")
+    pub_med_id: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "PubMed ID"}
+    )
+    doi: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Publication DOI"}
+    )
+    author_list: str = Field(
+        "",
+        json_schema_extra={"auto_fill": True, "header_name": "Publication Author List"},
+    )
+    title: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Publication Title"}
+    )
     status: OntologyAnnotation = Field(
-        OntologyAnnotation(), auto_fill=True, header_name="Publication Status"
+        OntologyAnnotation(),
+        json_schema_extra={"auto_fill": True, "header_name": "Publication Status"},
     )
 
 
 class Person(IsaAbstractModel):
-    field_order: List[str] = [
-        "last_name",
-        "first_name",
-        "mid_initials",
-        "email",
-        "phone",
-        "fax",
-        "address",
-        "affiliation",
-        "roles",
-    ]
-    last_name: str = Field("", auto_fill=True, header_name="Last Name")
-    first_name: str = Field("", auto_fill=True, header_name="First Name")
-    mid_initials: str = Field("", auto_fill=True, header_name="Mid Initials")
-    email: str = Field("", auto_fill=True, header_name="Email")
-    phone: str = Field("", auto_fill=True, header_name="Phone")
-    fax: str = Field("", auto_fill=True, header_name="Fax")
-    address: str = Field("", auto_fill=True, header_name="Address")
-    affiliation: str = Field("", auto_fill=True, header_name="Affiliation")
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=[
+                "last_name",
+                "first_name",
+                "mid_initials",
+                "email",
+                "phone",
+                "fax",
+                "address",
+                "affiliation",
+                "roles",
+            ]
+        ),
+        exclude=True,
+    )
+
+    last_name: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Last Name"}
+    )
+    first_name: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "First Name"}
+    )
+    mid_initials: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Mid Initials"}
+    )
+    email: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Email"}
+    )
+    phone: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Phone"}
+    )
+    fax: str = Field("", json_schema_extra={"auto_fill": True, "header_name": "Fax"})
+    address: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Address"}
+    )
+    affiliation: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Affiliation"}
+    )
     roles: List[OntologyAnnotation] = Field(
         [],
-        auto_fill=True,
-        header_name="Roles",
-        text_multiple_value=True,
-        seperator=";",
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "Roles",
+            "text_multiple_value": True,
+            "seperator": ";",
+        },
     )
 
 
 class Factor(IsaAbstractModel):
-    field_order: List[str] = ["name", "type"]
-    name: str = Field("", auto_fill=True, header_name="Name")
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(field_order=["name", "type"]),
+        exclude=True,
+    )
+
+    name: str = Field("", json_schema_extra={"auto_fill": True, "header_name": "Name"})
     type: OntologyAnnotation = Field(
-        OntologyAnnotation(), auto_fill=True, header_name="Type"
+        OntologyAnnotation(),
+        json_schema_extra={"auto_fill": True, "header_name": "Type"},
     )
 
 
 class Assay(IsaAbstractModel):
-    field_order: List[str] = [
-        "file_name",
-        "measurement_type",
-        "technology_type",
-        "technology_platform",
-    ]
-    file_name: str = Field("", auto_fill=True, header_name="File Name")
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=[
+                "file_name",
+                "measurement_type",
+                "technology_type",
+                "technology_platform",
+            ]
+        ),
+        exclude=True,
+    )
+
+    file_name: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "File Name"}
+    )
     measurement_type: OntologyAnnotation = Field(
-        OntologyAnnotation(), auto_fill=True, header_name="Measurement Type"
+        OntologyAnnotation(),
+        json_schema_extra={"auto_fill": True, "header_name": "Measurement Type"},
     )
     technology_type: OntologyAnnotation = Field(
-        OntologyAnnotation(), auto_fill=True, header_name="Technology Type"
+        OntologyAnnotation(),
+        json_schema_extra={"auto_fill": True, "header_name": "Technology Type"},
     )
     technology_platform: str = Field(
-        "", auto_fill=True, header_name="Technology Platform"
+        "", json_schema_extra={"auto_fill": True, "header_name": "Technology Platform"}
     )
 
 
 class Protocol(IsaAbstractModel):
-    field_order: List[str] = [
-        "name",
-        "protocol_type",
-        "description",
-        "uri",
-        "version",
-        "parameters",
-        "components",
-    ]
-    name: str = Field("", auto_fill=True, header_name="Name")
-    protocol_type: OntologyAnnotation = Field(
-        OntologyAnnotation(), auto_fill=True, header_name="Type"
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=[
+                "name",
+                "protocol_type",
+                "description",
+                "uri",
+                "version",
+                "parameters",
+                "components",
+            ]
+        ),
+        exclude=True,
     )
-    description: str = Field("", auto_fill=True, header_name="Description")
-    uri: str = Field("", auto_fill=True, header_name="URI")
-    version: str = Field("", auto_fill=True, header_name="Version")
+
+    name: str = Field("", json_schema_extra={"auto_fill": True, "header_name": "Name"})
+    protocol_type: OntologyAnnotation = Field(
+        OntologyAnnotation(),
+        json_schema_extra={"auto_fill": True, "header_name": "Type"},
+    )
+    description: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Description"}
+    )
+    uri: str = Field("", json_schema_extra={"auto_fill": True, "header_name": "URI"})
+    version: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Version"}
+    )
     parameters: List[OntologyAnnotation] = Field(
         [],
-        auto_fill=True,
-        header_name="Parameters Name",
-        text_multiple_value=True,
-        seperator=";",
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "Parameters Name",
+            "text_multiple_value": True,
+            "seperator": ";",
+        },
     )
     components: List[ValueTypeAnnotation] = Field(
         [],
-        auto_fill=True,
-        header_name="Components",
-        text_multiple_value=True,
-        seperator=";",
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "Components",
+            "text_multiple_value": True,
+            "seperator": ";",
+        },
     )
 
 
@@ -166,152 +260,285 @@ class Protocol(IsaAbstractModel):
 
 
 class OntologySourceReferences(BaseSection):
-    field_order: List[str] = ["references"]
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["references"],
+            section_header="ONTOLOGY SOURCE REFERENCE",
+            section_prefix="Term",
+        ),
+        exclude=True,
+    )
 
-    section_header: str = Field("ONTOLOGY SOURCE REFERENCE", exclude=True)
-    section_prefix: str = Field("Term", exclude=True)
     references: List[OntologySourceReference] = Field(
-        [], auto_fill=True, header_name="", search_header="Source Name"
+        [],
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "search_header": "Source Name",
+        },
     )
 
 
 class InvestigationPublications(BaseSection):
-    section_header: str = Field("INVESTIGATION PUBLICATIONS", exclude=True)
-    section_prefix: str = Field("", exclude=True)
-    field_order: List[str] = ["publications"]
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["publications"],
+            section_header="INVESTIGATION PUBLICATIONS",
+            section_prefix=None,
+        ),
+        exclude=True,
+    )
+
     publications: List[Publication] = Field(
-        [], auto_fill=True, header_name="", search_header="Publication Title"
+        [],
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "search_header": "Publication Title",
+        },
     )
 
 
 class InvestigationContacts(BaseSection):
-    section_header: str = Field("INVESTIGATION CONTACTS", exclude=True)
-    section_prefix: str = Field("Person", exclude=True)
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["people"],
+            section_header="INVESTIGATION CONTACTS",
+            section_prefix="Person",
+        ),
+        exclude=True,
+    )
 
-    field_order: List[str] = ["people"]
     people: List[Person] = Field(
-        [], auto_fill=True, header_name="", search_header="Last Name"
+        [],
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "search_header": "Last Name",
+        },
     )
 
 
 class StudyDesignDescriptors(BaseSection):
-    field_order: List[str] = ["design_types"]
-    section_header: str = Field("STUDY DESIGN DESCRIPTORS", exclude=True)
-    section_prefix: str = Field("Design", exclude=True)
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["design_types"],
+            section_header="STUDY DESIGN DESCRIPTORS",
+            section_prefix="Design",
+        ),
+        exclude=True,
+    )
+
     design_types: List[OntologyAnnotation] = Field(
-        [], auto_fill=True, header_name="Type"
+        [], json_schema_extra={"auto_fill": True, "header_name": "Type"}
     )
 
 
 class StudyPublications(BaseSection):
-    field_order: List[str] = ["publications"]
-    section_header: str = Field("STUDY PUBLICATIONS", exclude=True)
-    section_prefix: str = Field("", exclude=True)
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["publications"],
+            section_header="STUDY PUBLICATIONS",
+            section_prefix=None,
+        ),
+        exclude=True,
+    )
+
     publications: List[Publication] = Field(
-        [], auto_fill=True, header_name="", search_header="Publication Title"
+        [],
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "search_header": "Publication Title",
+        },
     )
 
 
 class StudyFactors(BaseSection):
-    field_order: List[str] = ["factors"]
-    section_header: str = Field("STUDY FACTORS", exclude=True)
-    section_prefix: str = Field("Factor", exclude=True)
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["factors"],
+            section_header="STUDY FACTORS",
+            section_prefix="Factor",
+        ),
+        exclude=True,
+    )
+
     factors: List[Factor] = Field(
-        [], auto_fill=True, header_name="", search_header="Name"
+        [],
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "search_header": "Name",
+        },
     )
 
 
 class StudyAssays(BaseSection):
-    field_order: List[str] = ["assays"]
-    section_header: str = Field("STUDY ASSAYS", exclude=True)
-    section_prefix: str = Field("Assay", exclude=True)
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["assays"],
+            section_header="STUDY ASSAYS",
+            section_prefix="Assay",
+        ),
+        exclude=True,
+    )
+
     assays: List[Assay] = Field(
-        [], auto_fill=True, header_name="", search_header="File Name"
+        [],
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "search_header": "File Name",
+        },
     )
 
 
 class StudyProtocols(BaseSection):
-    field_order: List[str] = ["protocols"]
-    section_header: str = Field("STUDY PROTOCOLS", exclude=True)
-    section_prefix: str = Field("Protocol", exclude=True)
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["protocols"],
+            section_header="STUDY PROTOCOLS",
+            section_prefix="Protocol",
+        ),
+        exclude=True,
+    )
+
     protocols: List[Protocol] = Field(
-        [], auto_fill=True, header_name="", search_header="Name"
+        [],
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "search_header": "Name",
+        },
     )
 
 
 class StudyContacts(BaseSection):
-    field_order: List[str] = ["people"]
-    section_header: str = Field("STUDY CONTACTS", exclude=True)
-    section_prefix: str = Field("Person", exclude=True)
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=["people"],
+            section_header="STUDY CONTACTS",
+            section_prefix="Person",
+        ),
+        exclude=True,
+    )
+
     people: List[Person] = Field(
-        [], auto_fill=True, header_name="", search_header="Last Name"
+        [],
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "search_header": "Last Name",
+        },
     )
 
 
 class Study(BaseSection):
-    field_order: List[str] = [
-        "identifier",
-        "title",
-        "description",
-        "submission_date",
-        "public_release_date",
-        "file_name",
-    ]
-    section_header: str = Field("STUDY", exclude=True)
-    section_prefix: str = Field("Study", exclude=True)
-    identifier: str = Field("", auto_fill=True, header_name="Identifier")
-    title: str = Field("", auto_fill=True, header_name="Title")
-    description: str = Field("", auto_fill=True, header_name="Description")
-    submission_date: str = Field("", auto_fill=True, header_name="Submission Date")
-    public_release_date: str = Field(
-        "", auto_fill=True, header_name="Public Release Date"
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=[
+                "identifier",
+                "title",
+                "description",
+                "submission_date",
+                "public_release_date",
+                "file_name",
+            ],
+            section_header="STUDY",
+            section_prefix="Study",
+        ),
+        exclude=True,
     )
-    file_name: str = Field("", auto_fill=True, header_name="File Name")
+
+    identifier: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Identifier"}
+    )
+    title: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Title"}
+    )
+    description: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Description"}
+    )
+    submission_date: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Submission Date"}
+    )
+    public_release_date: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Public Release Date"}
+    )
+    file_name: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "File Name"}
+    )
 
     study_design_descriptors: StudyDesignDescriptors = Field(
-        StudyDesignDescriptors(), auto_fill=True, header_name=""
+        StudyDesignDescriptors(),
+        json_schema_extra={"auto_fill": True, "header_name": ""},
     )
     study_publications: StudyPublications = Field(
-        StudyPublications(), auto_fill=True, header_name=""
+        StudyPublications(), json_schema_extra={"auto_fill": True, "header_name": ""}
     )
-    study_factors: StudyFactors = Field(StudyFactors(), auto_fill=True, header_name="")
-    study_assays: StudyAssays = Field(StudyAssays(), auto_fill=True, header_name="")
+    study_factors: StudyFactors = Field(
+        StudyFactors(), json_schema_extra={"auto_fill": True, "header_name": ""}
+    )
+    study_assays: StudyAssays = Field(
+        StudyAssays(), json_schema_extra={"auto_fill": True, "header_name": ""}
+    )
     study_protocols: StudyProtocols = Field(
-        StudyProtocols(), auto_fill=True, header_name=""
+        StudyProtocols(), json_schema_extra={"auto_fill": True, "header_name": ""}
     )
     study_contacts: StudyContacts = Field(
-        StudyContacts(), auto_fill=True, header_name=""
+        StudyContacts(), json_schema_extra={"auto_fill": True, "header_name": ""}
     )
 
 
 class Investigation(BaseSection):
-    section_header: str = Field("INVESTIGATION", exclude=True)
-    section_prefix: str = Field("Investigation", exclude=True)
-    field_order: List[str] = [
-        "identifier",
-        "title",
-        "description",
-        "submission_date",
-        "public_release_date",
-    ]
-    specification_version: str = Field("1.0")
-    specification_date: str = Field("2016-10-28")
+    isatab_config: IsaTabConfig = Field(
+        IsaTabConfig(
+            field_order=[
+                "identifier",
+                "title",
+                "description",
+                "submission_date",
+                "public_release_date",
+            ],
+            section_header="INVESTIGATION",
+            section_prefix="Investigation",
+            specification_version="1.0",
+            specification_date="2016-10-28",
+        ),
+        exclude=True,
+    )
 
-    identifier: str = Field("", auto_fill=True, header_name="Identifier")
-    title: str = Field("", auto_fill=True, header_name="Title")
-    description: str = Field("", auto_fill=True, header_name="Description")
-    submission_date: str = Field("", auto_fill=True, header_name="Submission Date")
+    identifier: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Identifier"}
+    )
+    title: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Title"}
+    )
+    description: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Description"}
+    )
+    submission_date: str = Field(
+        "", json_schema_extra={"auto_fill": True, "header_name": "Submission Date"}
+    )
     public_release_date: str = Field(
-        "", auto_fill=True, header_name="Public Release Date"
+        "", json_schema_extra={"auto_fill": True, "header_name": "Public Release Date"}
     )
 
     ontology_source_references: OntologySourceReferences = Field(
-        OntologySourceReferences(), auto_fill=True, header_name="", inherit_prefix=False
+        OntologySourceReferences(),
+        json_schema_extra={
+            "auto_fill": True,
+            "header_name": "",
+            "inherit_prefix": False,
+        },
     )
     investigation_publications: InvestigationPublications = Field(
-        InvestigationPublications(), auto_fill=True, header_name=""
+        InvestigationPublications(),
+        json_schema_extra={"auto_fill": True, "header_name": ""},
     )
     investigation_contacts: InvestigationContacts = Field(
-        InvestigationContacts(), auto_fill=True, header_name=""
+        InvestigationContacts(),
+        json_schema_extra={"auto_fill": True, "header_name": ""},
     )
     studies: List[Study] = []

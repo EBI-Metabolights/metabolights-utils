@@ -28,17 +28,17 @@ class UpdateRowsTsvAction(BaseTsvAction):
         row_indices = list(row_data.keys())
         row_indices.sort()
 
-        if action.id:
+        if not action.id:
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
                 header_names = header_line.strip().split("\t")
                 empty_row = [""] * len(header_names)
 
-                with open(target_file_path, "w") as target:
+                with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, header_names)
                     row_index = -1
                     for line in source:

@@ -16,6 +16,7 @@ class TsvActionException(Exception):
 class BaseTsvAction(ABC):
     @abstractmethod
     def apply_action(
+        self,
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
         action: actions.TsvAction,

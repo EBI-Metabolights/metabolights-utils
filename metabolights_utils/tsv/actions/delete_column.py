@@ -30,12 +30,12 @@ class DeleteColumnsTsvAction(BaseTsvAction):
         column_indices: List[int] = list(columns.keys()).copy()
         column_indices.sort()
 
-        if action.id:
+        if not action.id:
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
                 header_names = header_line.strip().split("\t")
                 new_header_names = []
@@ -49,10 +49,9 @@ class DeleteColumnsTsvAction(BaseTsvAction):
 
                     new_header_names.append(value)
 
-                with open(target_file_path, "w") as target:
+                with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, new_header_names)
                     for line in source:
-                        new_row = []
                         row = line.strip().split("\t")
                         new_row = [
                             x[1] for x in enumerate(row) if x[0] not in column_indices

@@ -13,12 +13,7 @@ from metabolights_utils.models.isa.common import (
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.tsv.filter import Filter, FilterRegistry, TsvFileFilterOption
-from metabolights_utils.tsv.sort import (
-    Sorter,
-    SorterRegistry,
-    TsvFileSortOption,
-    TsvSortException,
-)
+from metabolights_utils.tsv.sort import Sorter, SorterRegistry, TsvFileSortOption
 
 
 def read_investigation_file(file_buffer: IOBase, messages: List[ParserMessage]):
@@ -140,9 +135,9 @@ class TsvColumn(MetabolightsBaseModel):
 class SelectedTsvFileContent(MetabolightsBaseModel):
     columns: List[TsvColumn] = []
     total_rows: int = 0
-    total_filtered_rows = 0
-    offset = 0
-    limit = 0
+    total_filtered_rows: int = 0
+    offset: int = 0
+    limit: int = 0
     selected_column_count: int = 0
     total_columns: int = 0
     filter_options: List[TsvFileFilterOption] = []
@@ -240,7 +235,7 @@ def read_table_file(
                     )
     except Exception as exc:
         message = ParserMessage(type=ParserMessageType.CRITICAL)
-        message.short = f"ISA table file can not be read successfully."
+        message.short = "ISA table file can not be read successfully."
         message.detail = f"Returned result is not complete. {str(exc)}"
         messages.append(message)
         return SelectedTsvFileContent()
@@ -286,10 +281,10 @@ def read_table_file_with_filter_and_sort_option(
                             if filter_option.search_columns
                             else []
                         )
-                        filter: Filter = FilterRegistry.get_filter(
+                        selected_filter: Filter = FilterRegistry.get_filter(
                             filter_option, column_name_indices, column_indices
                         )
-                        filters.append(filter)
+                        filters.append(selected_filter)
                     # empty search column filters will be moved to end
                     filters.sort(
                         key=lambda x: len(x.filter_option.search_columns)
@@ -301,8 +296,8 @@ def read_table_file_with_filter_and_sort_option(
                     filtered_rows.append((row_index - 1, row))
                 else:
                     select: bool = True
-                    for filter in filters:
-                        select = filter.filter(row)
+                    for selected_filter in filters:
+                        select = selected_filter.filter(row)
                         if not select:
                             break
                     if select:
@@ -365,7 +360,7 @@ def read_table_file_with_filter_and_sort_option(
                 )
     except Exception as exc:
         message = ParserMessage(type=ParserMessageType.CRITICAL)
-        message.short = f"ISA table file can not be read successfully."
+        message.short = "ISA table file can not be read successfully."
         message.detail = f"Returned result is not complete. {str(exc)}"
         messages.append(message)
     return content
@@ -426,27 +421,32 @@ def prepare_column_names(
                 col_index = column_name_indices[name]
                 term_source_relative_index = 1
                 if col_index + 1 < len(header_row):
-                    next: str = column_indices[col_index + 1]
-                    if next == "Unit" or next.startswith("Unit."):
-                        new_ordered_columns.append(next)
+                    next_item: str = column_indices[col_index + 1]
+                    if next_item == "Unit" or next_item.startswith("Unit."):
+                        new_ordered_columns.append(next_item)
                         term_source_relative_index = 2
 
                 if col_index + term_source_relative_index + 1 < len(header_row):
-                    next: str = column_indices[col_index + term_source_relative_index]
-                    if next == "Term Source REF" or next.startswith("Term Source REF."):
-                        new_ordered_columns.append(next)
-                        next: str = column_indices[
+                    next_item: str = column_indices[
+                        col_index + term_source_relative_index
+                    ]
+                    if next_item == "Term Source REF" or next_item.startswith(
+                        "Term Source REF."
+                    ):
+                        new_ordered_columns.append(next_item)
+                        next_item: str = column_indices[
                             col_index + term_source_relative_index + 1
                         ]
-                        if next == "Term Accession Number" or next.startswith(
-                            "Term Accession Number."
+                        if (
+                            next_item == "Term Accession Number"
+                            or next_item.startswith("Term Accession Number.")
                         ):
-                            new_ordered_columns.append(next)
+                            new_ordered_columns.append(next_item)
         selected_column_names.clear()
         selected_column_names.extend(new_ordered_columns)
     if invalid_column_names:
         raise TypeError(
-            f"Column(s) do(es) not exist: " + ", ".join(invalid_column_names)
+            "Column(s) do(es) not exist: " + ", ".join(invalid_column_names)
         )
 
 

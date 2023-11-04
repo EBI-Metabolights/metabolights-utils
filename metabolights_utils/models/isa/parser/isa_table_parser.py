@@ -16,6 +16,7 @@ from metabolights_utils.models.isa.parser.common import (
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.tsv.sort import TsvFileSortOption
+from metabolights_utils.tsv.utils import calculate_sha256
 
 
 def parse_isa_table_sheet_from_fs(
@@ -57,9 +58,9 @@ def parse_isa_table_sheet_from_fs(
         return IsaTableFile(), messages
     basename = os.path.basename(file_path)
 
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         read_messages: List[ParserMessage] = []
-        isa_table: IsaTableFile = get_isa_table(
+        isa_table_file: IsaTableFile = get_isa_table_file(
             f,
             basename,
             messages=read_messages,
@@ -70,14 +71,16 @@ def parse_isa_table_sheet_from_fs(
             filter_options=filter_options,
             sort_options=sort_options,
         )
-        if isa_table.table.columns:
-            messages.extend(read_messages)
-            messages = [x for x in messages if x.type != ParserMessageType.INFO]
-            return isa_table, messages
+    if os.path.exists(file_path):
+        isa_table_file.sha256_hash = calculate_sha256(file_path)
+    if isa_table_file.table.columns:
+        messages.extend(read_messages)
+        messages = [x for x in messages if x.type != ParserMessageType.INFO]
+        return isa_table_file, messages
 
-    with open(file_path, "r", errors="backslashreplace") as f:
+    with open(file_path, "r", errors="ignore", encoding="utf-8") as f:
         read_messages: List[ParserMessage] = []
-        isa_table = get_isa_table(
+        isa_table_file: IsaTableFile = get_isa_table_file(
             f,
             basename,
             messages=read_messages,
@@ -88,26 +91,28 @@ def parse_isa_table_sheet_from_fs(
             filter_options=filter_options,
             sort_options=sort_options,
         )
-        isa_table.file_path = basename
+    isa_table_file.file_path = basename
+    if os.path.exists(file_path):
+        isa_table_file.sha256_hash = calculate_sha256(file_path)
 
-        if isa_table.table.columns:
-            message = ParserMessage(
-                short="File is read utf-8 encoding and invalid characters errors are replaced with backslash",
-                type=ParserMessageType.WARNING,
-            )
-            message.detail = (
-                "Invalid characters are replaced with backslash characters: "
-                + f"{basename} in {dirname}"
-            )
-            messages.append(message)
-            messages.extend(read_messages)
-            messages = [x for x in messages if x.type != ParserMessageType.INFO]
-            return isa_table, messages
+    if isa_table_file.table.columns:
+        message = ParserMessage(
+            short="File is read utf-8 encoding and invalid characters errors are replaced with backslash",
+            type=ParserMessageType.WARNING,
+        )
+        message.detail = (
+            "Invalid characters are replaced with backslash characters: "
+            + f"{basename} in {dirname}"
+        )
+        messages.append(message)
+        messages.extend(read_messages)
+        messages = [x for x in messages if x.type != ParserMessageType.INFO]
+        return isa_table_file, messages
     messages = [x for x in messages if x.type != ParserMessageType.INFO]
-    return isa_table, messages
+    return isa_table_file, messages
 
 
-def get_isa_table(
+def get_isa_table_file(
     file_path_or_buffer: IOBase,
     file_name: str,
     messages: List[ParserMessage],
@@ -117,7 +122,7 @@ def get_isa_table(
     limit: Union[int, None] = None,
     filter_options: List[TsvFileFilterOption] = None,
     sort_options: List[TsvFileSortOption] = None,
-):
+) -> IsaTableFile:
     study_table = IsaTableFile()
     if messages is None:
         messages = []
@@ -151,7 +156,6 @@ def update_isa_table_file(
     messages: List[ParserMessage],
     expected_patterns,
 ):
-    # columns = list(df.columns)
     columns = [x.column_name for x in content.columns]
     column_indices = {x.column_name: x.column_index for x in content.columns}
     first_column_name = None
@@ -165,7 +169,7 @@ def update_isa_table_file(
         ):
             message = ParserMessage(type=ParserMessageType.ERROR)
             column_index = column_indices[column_name]
-            message.column = str(column_index)
+            message.column = column_index
             if len(cleaned_column_name.strip()) > 0:
                 message.short = "Column header starts or ends with space"
                 message.detail = (
@@ -206,7 +210,6 @@ def update_isa_table_file(
     study_table.table.columns = columns
     # study_table.table.row_count = len(content.columns[0].rows)
     study_table.file_path = file_name
-
     return study_table
 
 
@@ -217,8 +220,8 @@ MULTI_COLUMN_TEMPLATES = {
             IsaTableAdditionalColumn.TERM_ACCSSION_NUMBER,
         ],
         "searchPatterns": [
-            "(Term Source REF)(\.\d+)?",
-            "(Term Accession Number)(\.\d+)?",
+            r"(Term Source REF)(\.\d+)?",
+            r"(Term Accession Number)(\.\d+)?",
         ],
     },
     ColumnsStructure.SINGLE_COLUMN_AND_UNIT_ONTOLOGY: {
@@ -228,9 +231,9 @@ MULTI_COLUMN_TEMPLATES = {
             IsaTableAdditionalColumn.TERM_ACCSSION_NUMBER,
         ],
         "searchPatterns": [
-            "(Unit)(\.\d+)?",
-            "(Term Source REF)(\.\d+)?",
-            "(Term Accession Number)(\.\d+)?",
+            r"(Unit)(\.\d+)?",
+            r"(Term Source REF)(\.\d+)?",
+            r"(Term Accession Number)(\.\d+)?",
         ],
     },
 }
@@ -242,7 +245,7 @@ additional_column_templates = [
     MULTI_COLUMN_TEMPLATES[ColumnsStructure.ONTOLOGY_COLUMN]["searchPatterns"],
 ]
 
-additional_column_headers = [
+ADDITIONAL_COLUMN_HEADERS = [
     MULTI_COLUMN_TEMPLATES[ColumnsStructure.SINGLE_COLUMN_AND_UNIT_ONTOLOGY][
         "column_names"
     ],
@@ -256,19 +259,19 @@ multiple_columns_additional_header_patterns = MULTI_COLUMN_TEMPLATES[
 
 samples_file_expected_patterns = [
     [r"^(Source Name)$", ""],
-    [r"^Characteristics[(\w[ -~]*)]$", "Characteristics"],
-    [r"^(Protocol REF)(.\d+)?$", "Protocol"],
+    [r"^Characteristics\[(\w[ -~]*)\]$", "Characteristics"],
+    [r"^(Protocol REF)(\.\d+)?$", "Protocol"],
     [r"^(Sample Name)$", ""],
-    [r"^Factor Value[(\w[ -~]*)]$", "Factor Value"],
-    [r"^Comment\b[(\w{1}[ -~]*)]$", "Comment"],
+    [r"^Factor Value\[(\w[ -~]*)\]$", "Factor Value"],
+    [r"^Comment\b\[(\w{1}[ -~]*)\]$", "Comment"],
 ]
 
 assay_file_expected_patterns = [
     [r"^(Extract Name)$", ""],
-    [r"^(Protocol REF)(.\d+)?$", "Protocol"],
+    [r"^(Protocol REF)(\.\d+)?$", "Protocol"],
     [r"^(Sample Name)$", ""],
-    [r"^Parameter Value[(\w[ -~]*)]$", "Parameter Value"],
-    [r"^Comment\b[(\w{1}[ -~]*)]$", "Comment"],
+    [r"^[ ]*Parameter[ ]+Value[ ]*\[[ ]*(\w[ -~]*)[ ]*\][ ]*$", "Parameter Value"],
+    [r"^Comment\b\[(\w{1}[ -~]*)\]$", "Comment"],
     [r"^(Labeled Extract Name)$", ""],
     [r"^(Label)$", ""],
 ]
@@ -292,7 +295,7 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
     while column_index < columns_count:
         column_name = columns[column_index]
         cleaned_column_name = get_cleaned_header(column_name)
-        column_structure, additional_column_headers = define_column_structure(
+        column_structure, defined_additional_column_headers = define_column_structure(
             column_index, columns
         )
 
@@ -308,7 +311,7 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
                 break
 
         column = IsaTableColumn(
-            column_index=str(column_index), colummn_structure=column_structure
+            column_index=column_index, colummn_structure=column_structure
         )
         column.column_name = column_name
         column.column_header = cleaned_column_name
@@ -341,13 +344,13 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
                 column,
             )
         else:
-            column.additional_columns = additional_column_headers
+            column.additional_columns = defined_additional_column_headers
             additional_column_index = column_index
 
             for additional_column in column.additional_columns:
                 additional_column_index = additional_column_index + 1
                 linked_column = IsaTableColumn(
-                    column_index=str(additional_column_index),
+                    column_index=additional_column_index,
                     colummn_structure=ColumnsStructure.LINKED_COLUMN,
                 )
                 linked_column.column_header = additional_column
@@ -363,7 +366,7 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
                 message,
                 column,
             )
-            column_index = column_index + len(additional_column_headers)
+            column_index = column_index + len(defined_additional_column_headers)
 
         headers.append(column)
         if linked_columns:
@@ -375,7 +378,9 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
     return headers
 
 
-def update_message(messages, column_index, message, column):
+def update_message(
+    messages, column_index, message: ParserMessage, column: IsaTableColumn
+):
     if not message.detail:
         column_message = " ".join(
             [
@@ -500,19 +505,19 @@ def evalutate_selected_columns(
 def select_additional_columns(column_index, columns: List[str]):
     for i in range(len(additional_column_templates)):
         template = additional_column_templates[i]
-        next = column_index + 1
+        next_item = column_index + 1
         maximum_match = 0
         matched = True
         internal_index = 0
         for pattern in template:
-            if next >= len(columns) or not re.match(pattern, columns[next]):
+            if next_item >= len(columns) or not re.match(pattern, columns[next_item]):
                 matched = False
                 break
-            next = next + 1
+            next_item = next_item + 1
             internal_index = internal_index + 1
             if maximum_match < internal_index:
                 maximum_match = internal_index
 
         if matched:
-            return additional_column_headers[i], maximum_match
+            return ADDITIONAL_COLUMN_HEADERS[i], maximum_match
     return [], maximum_match

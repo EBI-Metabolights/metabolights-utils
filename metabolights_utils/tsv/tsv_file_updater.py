@@ -1,5 +1,4 @@
 import datetime
-import hashlib
 import os
 import pathlib
 import shutil
@@ -27,6 +26,7 @@ from metabolights_utils.tsv.model import (
     TsvActionResult,
     TsvActionType,
 )
+from metabolights_utils.tsv.utils import calculate_sha256
 
 TSV_FILE_ACTIONS: Dict[TsvActionType, BaseTsvAction] = {}
 TSV_FILE_ACTIONS[TsvActionType.ADD_ROW] = AddRowsTsvAction()
@@ -50,7 +50,7 @@ class TsvFileUpdater:
         file_sha256_hash: str,
         actions: List[TsvAction],
     ) -> TsvActionReport:
-        report = TsvActionReport()
+        report: TsvActionReport = TsvActionReport()
         if not file_path:
             report.message = "Invalid input for file path"
             return report
@@ -75,7 +75,7 @@ class TsvFileUpdater:
                 f"File '{str(file)}' does not exist or it is not a regular file."
             )
             return report
-        sha256 = self.calculate_sha256(file)
+        sha256 = calculate_sha256(file)
 
         if sha256 != file_sha256_hash:
             report.message = f"SH256 of '{str(file)}' does not match the input value."
@@ -100,7 +100,7 @@ class TsvFileUpdater:
         try:
             for action in actions:
                 if action.type not in TSV_FILE_ACTIONS:
-                    report.message = f"Upsupported action: action.type."
+                    report.message = "Upsupported action: action.type."
                     return report
             shutil.move(file, file_copy_path)
             for action in actions:
@@ -119,7 +119,7 @@ class TsvFileUpdater:
                 report.results.append(result)
                 if not result.success:
                     raise TsvActionException(message=result.message)
-            new_sha256 = self.calculate_sha256(last_file)
+            new_sha256 = calculate_sha256(last_file)
             report.updated_file_sha256_hash = new_sha256
             report.success = True
         except Exception as exc:
@@ -131,10 +131,3 @@ class TsvFileUpdater:
                 shutil.move(file_copy_path, file)
             shutil.rmtree(temp_folder)
         return report
-
-    def calculate_sha256(self, file_path):
-        sha256_hash = hashlib.sha256()
-        with open(file_path, "rb") as file:
-            for chunk in iter(lambda: file.read(4096), b""):
-                sha256_hash.update(chunk)
-        return sha256_hash.hexdigest()

@@ -1,10 +1,7 @@
 import pathlib
 
 from metabolights_utils.isatab import Reader
-from metabolights_utils.isatab.reader import (
-    IsaTableFileReader,
-    IsaTableFileReaderResult,
-)
+from metabolights_utils.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
 
 
 def test_assay_file_success_01():
@@ -36,9 +33,7 @@ def test_assay_file_success_01():
     assert result.isa_table_file.table.row_count == 88
 
     # get isa table rows. Read 70 rows from offset 14600
-    result: IsaTableFileReaderResult = reader.get_rows(
-        file_path=file_path, offset=14600, limit=70
-    )
+    result: IsaTableFileReaderResult = reader.get_rows(file_path=file_path, offset=14600, limit=70)
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 70
     assert result.isa_table_file.table.row_offset == 14600
@@ -64,7 +59,8 @@ def test_assay_file_success_01():
 
     # get page 2 with selected columns from isa table.
     # read 50 items from offset 50 (page 2)
-    # If addition columns are not added to result even if they are not selected.
+    # Addition columns will be in result even if they are not selected.
+    # Parameter Value[Autosampler model] is ontology column, so Term Source REF and Term Accesion Number columns of it will be added.
     result: IsaTableFileReaderResult = reader.get_page(
         page=2,
         results_per_page=50,

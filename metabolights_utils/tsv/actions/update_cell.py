@@ -1,5 +1,4 @@
 import pathlib
-import sys
 import uuid
 from typing import Dict, List
 
@@ -40,12 +39,12 @@ class UpdateCellsTsvAction(BaseTsvAction):
         row_indices = {x.row_index for x in cells}
         column_indices = {x.column_index for x in cells}
 
-        if action.id:
+        if not action.id:
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
                 header_names = header_line.strip().split("\t")
                 invalid_column_indices = [
@@ -57,7 +56,7 @@ class UpdateCellsTsvAction(BaseTsvAction):
                     )
                     return result
 
-                with open(target_file_path, "w") as target:
+                with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, header_names)
                     row_index = 0
                     for line in source:

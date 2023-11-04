@@ -1,8 +1,7 @@
-import os
 import pathlib
 from abc import ABC
 from io import IOBase
-from typing import Union
+from typing import Tuple, Union
 
 
 class BaseIsaFile(ABC):
@@ -10,9 +9,9 @@ class BaseIsaFile(ABC):
         self,
         file_buffer: IOBase = None,
         file_path: Union[str, pathlib.Path] = None,
-    ) -> int:
+    ) -> Tuple[Union[str, pathlib.Path, IOBase], str]:
         if not file_buffer and not file_path:
-            ValueError("At least file buffer or file path should be defined")
+            raise ValueError("At least file buffer or file path should be defined")
 
         selected_file_buffer = (
             file_path if file_path and not file_buffer else file_buffer
@@ -26,7 +25,7 @@ class BaseIsaFile(ABC):
         elif isinstance(file, pathlib.Path):
             file_buffer = file.open()
         elif isinstance(file, str):
-            file_buffer = open(file=file, mode="r")
+            file_buffer = open(file=file, mode="r", encoding="utf-8")
         else:
             raise ValueError("file type is not defined")
 

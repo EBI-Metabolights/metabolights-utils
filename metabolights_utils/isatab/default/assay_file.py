@@ -8,8 +8,8 @@ class DefaultAssayFileReader(BaseIsaTableFileReader):
         [r"^(Extract Name)$", ""],
         [r"^(Protocol REF)(.\d+)?$", "Protocol"],
         [r"^(Sample Name)$", ""],
-        [r"^Parameter Value[(\w[ -~]*)]$", "Parameter Value"],
-        [r"^Comment\b[(\w{1}[ -~]*)]$", "Comment"],
+        [r"^[ ]*Parameter[ ]+Value[ ]*\[[ ]*(\w[ -~]*)[ ]*\][ ]*$", "Parameter Value"],
+        [r"^[ ]*Comment[ ]*\[[ ]*(\w[ -~]*)[ ]*\][ ]*$", "Comment"],
         [r"^(Labeled Extract Name)$", ""],
         [r"^(Label)$", ""],
     ]
@@ -17,5 +17,5 @@ class DefaultAssayFileReader(BaseIsaTableFileReader):
     def __init__(self, results_per_page=100) -> None:
         super().__init__(results_per_page=results_per_page)
 
-    def _get_expected_patterns(self) -> List[List[str]]:
+    def get_expected_patterns(self) -> List[List[str]]:
         return DefaultAssayFileReader.patterns

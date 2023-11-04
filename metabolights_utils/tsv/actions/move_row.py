@@ -1,7 +1,5 @@
 import pathlib
-import sys
 import uuid
-from typing import Dict, List
 
 from metabolights_utils.tsv import model as actions
 from metabolights_utils.tsv.actions.base import BaseTsvAction
@@ -32,13 +30,13 @@ class MoveRowTsvAction(BaseTsvAction):
             result.message = "There is not source row index"
             return result
 
-        if action.id:
+        if not action.id:
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
         new_source_index = source_index
         moved_row = None
         if source_index >= new_row_index:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 source.readline()
                 row_index = -1
                 for line in source:
@@ -57,10 +55,10 @@ class MoveRowTsvAction(BaseTsvAction):
         moved = False
         source_deleted = False
         try:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
 
-                with open(target_file_path, "w") as target:
+                with open(target_file_path, "w", encoding="utf-8") as target:
                     target.write(header_line)
                     row_index = -1
                     for line in source:
@@ -83,7 +81,7 @@ class MoveRowTsvAction(BaseTsvAction):
                         moved = True
 
             if not moved:
-                result.message = f"Move is failed"
+                result.message = "Move is failed"
                 return result
             result.success = True
         except Exception as exc:

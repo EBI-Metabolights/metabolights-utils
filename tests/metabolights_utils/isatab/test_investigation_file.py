@@ -3,10 +3,7 @@ import pathlib
 import uuid
 
 from metabolights_utils.isatab import Reader, Writer
-from metabolights_utils.isatab.reader import (
-    InvestigationFileReader,
-    InvestigationFileReaderResult,
-)
+from metabolights_utils.isatab.reader import InvestigationFileReader, InvestigationFileReaderResult
 from metabolights_utils.isatab.writer import InvestigationFileWriter
 
 
@@ -21,7 +18,7 @@ def test_investigation_file_success_01():
     writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
     writer.write(result.investigation, file_path=tmp_path)
 
-    with open(tmp_path, "r") as f:
+    with open(tmp_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
         assert len(lines) > 0
     os.remove(tmp_path)

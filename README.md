@@ -15,7 +15,7 @@
 </a>
 
 ![Python](https://img.shields.io/badge/Python-3.8%7C3.9-dark_blue)
-![Coverage](https://img.shields.io/badge/Coverage-82%25-dark_blue)
+![Coverage](https://img.shields.io/badge/Coverage-85%25-dark_blue)
 
 ---
 
@@ -37,25 +37,22 @@
 The following command installs metabolights-utils from the Python Package Index. You will need a working installation of Python 3.8+ and pip3.
 
 ```shell
-pip install -U sphinx
+pip3 install -U metabolights_utils
 ```
 
 
 ### Read and update Investigation files
 ---
-Read and update an investigation file. Returned objects are json serializable so you can use them with REST APIs.  
+Read and update an investigation file. Results are json serializable, so you can use them with REST APIs.  
 
 ```python 
 import os
 import pathlib
 import uuid
-from ast import List
+from typing import List
 
 from metabolights_utils.isatab import Reader, Writer
-from metabolights_utils.isatab.reader import (
-    InvestigationFileReader,
-    InvestigationFileReaderResult,
-)
+from metabolights_utils.isatab.reader import InvestigationFileReader, InvestigationFileReaderResult
 from metabolights_utils.isatab.writer import InvestigationFileWriter
 from metabolights_utils.models.isa.common import OntologyItem
 from metabolights_utils.models.isa.investigation_file import Assay, Study
@@ -87,12 +84,12 @@ def test_investigation_file_write_01():
 
 ```
 
-### ISA table file pagination
+### Read and Update ISA Table Files with Pagination Support
 ---
-* Update page size (number of rows in a page) and read results with the selected page size.
-* Define custom row offset and read rows with a limit. Row indices in a page can be unordered after filter and sort operations. You can get actual row index of the selected row using result.
-* Read only the selected columns you defined. If a selected column has additional columns (Term Source REF, etc) and these columns are not defined, they will be in result. Column names may be different than header if there are multiple column with same header. 
-* If no column selected, columns will be ordered. If columns are selected, result will contain columns in the selected order. You can get actual column index of a column using result.
+* Select page size (number of rows in a page) and read results with the selected page size.
+* Define custom row offset and read only selected rows. Actual row indices in a result may be unordered after filter and sort operations. 
+* Read the selected columns you defined. If a selected column has additional columns (Term Source REF, etc) and these columns are not defined by user, they will also be in the result. Column names may be different than header if there are multiple columns with same header. 
+* If columns are not selected, all table columns will be returned in result. If columns are selected, result will contain only these columns in selected order.
 
 ---
 #### Example 1: Read ISA table file
@@ -105,7 +102,7 @@ import pathlib
 from metabolights_utils.isatab import Reader
 from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
-    IsaTableFileReaderResult,
+    IsaTableFileReaderResult
 )
 
 
@@ -166,7 +163,8 @@ def test_assay_file_success_01():
 
     # get page 2 with selected columns from isa table.
     # read 50 items from offset 50 (page 2)
-    # If addition columns are not added to result even if they are not selected.
+    # Addition columns will be in result even if they are not selected.
+    # Parameter Value[Autosampler model] is ontology column. So 2 new columns will be added to result.
     result: IsaTableFileReaderResult = reader.get_page(
         page=2,
         results_per_page=50,
@@ -179,7 +177,7 @@ def test_assay_file_success_01():
 ```
 
 
-#### Example 2: Read and update ISA table file
+#### Example 2: Update ISA table file
 ---
 
 Load ISA table page and save after update table content
@@ -192,7 +190,7 @@ import shutil
 from metabolights_utils.isatab import Reader, Writer
 from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
-    IsaTableFileReaderResult,
+    IsaTableFileReaderResult
 )
 from metabolights_utils.isatab.writer import IsaTableFileWriter
 
@@ -208,7 +206,7 @@ def test_assay_file_read_write():
     shutil.copy(path_original, file_path)
     helper: IsaTableFileReader = Reader.get_assay_file_reader()
 
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         # read second page of assa file
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer=file_buffer,
@@ -226,11 +224,12 @@ def test_assay_file_read_write():
         assert len(result.isa_table_file.table.columns) == 3
     
     writer: IsaTableFileWriter = Writer.get_assay_file_writer()
-    sha256 = "6ea4c731ce35165f83a5d30438cd8753a6afa5fa9a1109893ffc1c213b1da869"
     isa_table = result.isa_table_file.table
+
+    sha256_hash = result.isa_table_file.sha256_hash
     # save same content without any update
     report = writer.save_isa_table(
-        file_path=str(file_path), file_sha256_hash=sha256, isa_table=isa_table
+        file_path=str(file_path), file_sha256_hash=sha256_hash, isa_table=isa_table
     )
     assert report.success
 
@@ -249,11 +248,12 @@ def test_assay_file_read_write():
 ### Multi-column filters and sort options
 ---
 * Case sensitive or case insensitive multi-column sort is supported.
-    - Multi-column sorts with ascending and descending order can be defined. For example; You can sort  by 'Parameter Value\[Gender\]' as ascending and Parameter Value\[Age\] as descending order. 
-    - Columns can be sorted as different data type. Supported sort data types are str, int, float and datetime. datetime pattern can be defined for datetime data type.
-    - Sort orders for invalid and empty values can be defined. For example, If sort value order is defined as VALID_EMPTY_INVALID, invalid values will follow empty values and empty values will follow valid values. This value order option is applicable for int, datetime and float data types. All combinations are poossible for EMPTY, INVALID, VALID values.
-    - You can define your custom sorters. "enum-sorter" as a custom sorter has been already implemented. It sorts enums with given string values.
-* There are **10 different filters** (with inverse options). Any filter can be applied to any column. Multiple filters can be defined. 
+    - Multi-column sorts can be defined with combination of ascending and descending orders. For example; You can sort 'Parameter Value\[Gender\]' by ascending and Parameter Value\[Age\] by descending order. 
+    - Columns can be sorted as different data type. Supported sort data types are: str, int, float and datetime. datetime pattern can be defined.
+    - Sort orders for invalid and empty values can also be defined. For example, If it is defined as VALID_EMPTY_INVALID, invalid values will be at the end. Empty values will follow valid values. This value order option is applicable for only int, datetime and float data types. All sort placement combinations are poossible for EMPTY, INVALID, VALID values.
+    - You can define your custom sorters. A custom "enum-sorter" sorter has been already implemented. It sorts enums with given string values.
+
+* There are **10 different filters** (plus (NOT) options of them). Any filter can be applied to any column. Multiple filters can be defined. 
     - CONTAINS / NOT CONTAINS
     - EQUAL / NOT EQUAL
     - STARTSWITH / NOT STARTSWITH
@@ -266,13 +266,14 @@ def test_assay_file_read_write():
     - EMPTY / NOT EMPTY (None or empty)
 * You can define multiple filters. If one filter rejects row, row will not be selected (AND operation).
 * You can define one or more columns for a filter. If there are multiple columns for a filter. If any column matches, the filter selects the row (OR operation).
-* If you do not select any column for a filter, the filter will evaluate all columns. If filter matches with any column, it will select the row. You can define column names to skip them while evaluating all rows. 
+* If you do not select any column for a filter, the filter will evaluate all columns. If filter matches with any column, it will select the row. Moreover, you can define some column names to skip them while filter is evaluating a row. 
+
 * You can define your custom filters. Some custom filters have been already implemented.
     - "between-equal": Returns row if value between given min and max. Min and max inputs can be datetime, str, int or float.
     - "valid-datetime" Return row if value is valid datetime with given pattern. Default pattern is DD/MM/YYYY.
     - "valid-number": Return row if value is valid int or float.
-    - "enum-contains": Gets a map to define a text for each enum value. Returns row if input parameter is in the enum-mapped text. Enums can be any allowed type (str, int, etc.).
-        + Example: Enum values are 1, 2, 3, 4. Enum values are mapped to 1: "In Review", 2: "Published", 3: "In Curation", 4: "Public". If parameter is "Pub", all rows contain enum value 2 and 4 will be returned.
+    - "enum-contains": Gets a map to define a text for each enum value. Returns row if input parameter is in the enum text map. Enum data typese can be any allowed type (str, int, etc.).
+        + Example: Enum values are 1, 2, 3, 4 (You store status values as in on database). Enum values are mapped to 1: "In Review", 2: "Published", 3: "In Curation", 4: "Public". If parameter is "Pub", all rows contain enum value 2 or 4 will be returned.
 
 #### Example
 Users can apply multiple filters and sort operations before retriving ISA table rows.
@@ -283,15 +284,14 @@ import pathlib
 from metabolights_utils.isatab import Reader
 from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
-    IsaTableFileReaderResult,
+    IsaTableFileReaderResult
 )
 from metabolights_utils.models.isa.common import (
     FilterOperation,
     SortType,
     TsvFileFilterOption,
     TsvFileSortOption,
-    TsvFileSortValueOrder,
-)
+    TsvFileSortValueOrder)
 
 
 def test_with_filter_and_sort_option_01():

@@ -25,12 +25,12 @@ class UpdateColumnHeadersTsvAction(BaseTsvAction):
         column_indices = list(headers.keys())
         column_indices.sort()
 
-        if action.id:
+        if not action.id:
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
                 header_names = header_line.strip().split("\t")
                 column_count = len(header_names)
@@ -43,7 +43,7 @@ class UpdateColumnHeadersTsvAction(BaseTsvAction):
                         )
                         result.message = f"Invalid column index {column_idx} with column name '{headers[column_idx]}'"
                         return result
-                with open(target_file_path, "w") as target:
+                with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, header_names)
                     for line in source:
                         target.write(line)

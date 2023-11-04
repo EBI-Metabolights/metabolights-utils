@@ -1,15 +1,16 @@
 import pathlib
 
-from metabolights_utils.isatab import Reader
+from metabolights_utils.isatab import Reader, Writer
 from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult,
 )
+from metabolights_utils.isatab.writer import IsaTableFileWriter
 from metabolights_utils.tsv.filter import FilterOperation, TsvFileFilterOption
 from metabolights_utils.tsv.sort import SortType, TsvFileSortOption
 
 
-def test_assay_metadata_file_success_01():
+def test_sample_metadata_file_success_01():
     file_path = pathlib.Path("tests/test-data/MTBLS1/s_MTBLS1.txt")
     helper: IsaTableFileReader = Reader.get_sample_file_reader()
     # with default results_per_page value - 100
@@ -56,55 +57,55 @@ def test_assay_metadata_file_success_01():
     assert len(result.isa_table_file.table.columns) == 4
 
 
-def test_assay_metadata_file_success_02():
+def test_sample_metadata_file_success_02():
     file_path = pathlib.Path("tests/test-data/MTBLS1/s_MTBLS1.txt")
     helper: IsaTableFileReader = Reader.get_sample_file_reader()
     # with default results_per_page value - 100
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         page_count: int = helper.get_total_pages(file_buffer=file_buffer)
         assert page_count == 2
 
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         page_count = helper.get_total_pages(
             file_buffer=file_buffer, results_per_page=20
         )
         assert page_count == 7
 
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         total_rows_count = helper.get_total_row_count(file_buffer=file_buffer)
         assert total_rows_count == 132
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_headers(file_buffer=file_buffer)
         assert len(result.parser_report.messages) == 0
 
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_rows(
             file_buffer=file_buffer, file_path=file_path, limit=88
         )
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 88
 
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_rows(
             file_buffer=file_buffer, file_path=file_path, offset=100, limit=88
         )
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 32
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer=file_buffer, page=2, file_path=file_path
         )
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 32
 
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer=file_buffer, page=2, results_per_page=50, file_path=file_path
         )
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 50
 
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer=file_buffer,
             page=2,
@@ -121,7 +122,7 @@ def test_assay_metadata_file_success_02():
         assert len(result.isa_table_file.table.columns) == 7
 
 
-def test_assay_metadata_file_success_03():
+def test_sample_metadata_file_success_03():
     """
     Test file_path with str type and file_buffer
     """
@@ -129,7 +130,7 @@ def test_assay_metadata_file_success_03():
     helper: IsaTableFileReader = Reader.get_sample_file_reader()
     # with default results_per_page value - 100
 
-    with open(file_path, "r") as file_buffer:
+    with open(file_path, "r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer=file_buffer,
             page=2,
@@ -148,7 +149,7 @@ def test_assay_metadata_file_success_03():
         assert len(result.isa_table_file.table.columns) == 7
 
 
-def test_assay_metadata_file_success_04():
+def test_sample_metadata_file_success_04():
     """
     Test file_path input with str type
     """
@@ -172,7 +173,7 @@ def test_assay_metadata_file_success_04():
     assert len(result.isa_table_file.table.columns) == 7
 
 
-def test_assay_metadata_file_invalid_input_01():
+def test_sample_metadata_file_invalid_input_01():
     file_path = pathlib.Path("tests/test-data/MTBLS1/s_MTBLS1.txt")
     helper: IsaTableFileReader = Reader.get_sample_file_reader()
 
@@ -251,3 +252,10 @@ def test_with_filter_and_sort_option():
     )
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 50
+
+
+def test_sample_metadata_file_success_04():
+    file_path = pathlib.Path("tests/test-data/MTBLS1/s_MTBLS1.txt")
+    helper: IsaTableFileWriter = Writer.get_sample_file_writer()
+
+    # with default results_per_page value - 100

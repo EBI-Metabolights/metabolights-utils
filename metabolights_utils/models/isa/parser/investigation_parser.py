@@ -1,15 +1,18 @@
-import os
+import pathlib
 import re
 import sys
 from io import IOBase
 from typing import Dict, List, Tuple, Union
 
-import humps
 from pydantic import BaseModel
+from pydantic.alias_generators import to_snake
 
 from metabolights_utils.models.isa import investigation_file as model
 from metabolights_utils.models.isa.common import (
+    INVESTIGATION_FILE_INITIAL_ROWS,
     INVESTIGATION_FILE_INITIAL_ROWS_SET,
+    INVESTIGATION_FILE_SECTION_NAMES,
+    INVESTIGATION_FILE_STUDY_ROWS,
     INVESTIGATION_FILE_STUDY_ROWS_SET,
     Comment,
     IsaAbstractModel,
@@ -25,8 +28,9 @@ def parse_investigation_from_fs(
     file_path: str,
 ) -> Tuple[Union[model.Investigation, None], List[ParserMessage]]:
     messages: List[ParserMessage] = []
-    basename = os.path.basename(file_path)
-    if not os.path.exists(file_path):
+    file = pathlib.Path(file_path)
+    basename = pathlib.Path(file).name
+    if not file.exists():
         print(f"File does not exist: {basename}")
         message = ParserMessage(
             short="File does not exist", type=ParserMessageType.CRITICAL
@@ -34,7 +38,7 @@ def parse_investigation_from_fs(
         message.detail = f"File does not exist: {basename}"
         messages.append(message)
         return None, messages
-    file_size = os.stat(file_path).st_size
+    file_size = file.stat().st_size
     if file_size == 0:
         print(f"File is empty: {basename}")
         message = ParserMessage(short="File is empty", type=ParserMessageType.CRITICAL)
@@ -42,7 +46,7 @@ def parse_investigation_from_fs(
         messages.append(message)
         return None, messages
 
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         investigation = get_investigation(f, file_path, messages=messages)
         return investigation, messages
 
@@ -64,18 +68,34 @@ def get_investigation(
     study_part_comment_list = []
     is_study_part = False
     current_section = ""
+    result = None
+    if file_buffer and isinstance(file_buffer, IOBase):
+        result: Dict[int, Dict[int, str]] = read_investigation_file(
+            file_buffer, messages
+        )
+    else:
+        if (
+            file_path
+            and isinstance(file_path, pathlib.Path)
+            or isinstance(file_path, str)
+        ):
+            with open(str(file_path), "r", encoding="utf-8") as f:
+                result: Dict[int, Dict[int, str]] = read_investigation_file(f, messages)
 
-    result: Dict[int, Dict[int, str]] = read_investigation_file(file_buffer, messages)
     if result is None:
         return model.Investigation()
 
     tab: Dict[int, Dict[int, str]] = result
     for line in tab.keys():
         if len(tab[line]) == 0:
-            message = ParserMessage(short="Empty line", type=ParserMessageType.WARNING)
-            message.detail = f"Empty line in {str(line  + 1)}"
-            message.line = str(line)
-            messages.append(message)
+            messages.append(
+                ParserMessage(
+                    short="Empty line",
+                    type=ParserMessageType.WARNING,
+                    detail=f"Empty line in {str(line  + 1)}",
+                    line=str(line),
+                )
+            )
             index_map[line] = ""
             continue
         index_string = tab[line][0]
@@ -113,11 +133,13 @@ def get_investigation(
                     messages.append(message)
                 continue
             else:
-                message = ParserMessage(
-                    short="Invalid line", type=ParserMessageType.ERROR
+                messages.append(
+                    ParserMessage(
+                        short="Invalid line",
+                        type=ParserMessageType.ERROR,
+                        detail=f"{index_string}",
+                    )
                 )
-                message.detail = f" {index_string}"
-                messages.append(message)
                 message.line = str(line)
                 continue
 
@@ -242,6 +264,37 @@ def build_study(
     messages: Union[None, List[ParserMessage]] = None,
 ):
     study: model.Study = model.Study()
+
+    missing_rows = [
+        x
+        for x in INVESTIGATION_FILE_STUDY_ROWS
+        if x not in index_map and x not in INVESTIGATION_FILE_SECTION_NAMES
+    ]
+    if missing_rows:
+        message = ParserMessage(
+            short=f"Some rows are missing for study: {', '.join(missing_rows)}",
+            type=ParserMessageType.CRITICAL,
+        )
+        message.detail = "Investigation file is not complete."
+        messages.append(message)
+        return study, messages
+    extra_rows = [
+        x
+        for x in index_map
+        if x not in INVESTIGATION_FILE_STUDY_ROWS
+        and not x.lower().startswith(
+            "comment[" and x not in INVESTIGATION_FILE_SECTION_NAMES
+        )
+    ]
+    if extra_rows:
+        row_messages = ", ".join([f"Line {index_map[x]}:{x}" for x in extra_rows])
+        message = ParserMessage(
+            short=f"Some rows are missing for study: {row_messages}",
+            type=ParserMessageType.CRITICAL,
+        )
+        message.detail = "Investigation file has unexpected rows."
+        messages.append(message)
+
     assign_by_field_name(
         file_path,
         study,
@@ -263,6 +316,38 @@ def build_investigation(
 ):
     messages = messages if messages is not None else []
     investigation: model.Investigation = model.Investigation()
+
+    missing_rows = [
+        x
+        for x in INVESTIGATION_FILE_INITIAL_ROWS
+        if x not in index_map and x not in INVESTIGATION_FILE_SECTION_NAMES
+    ]
+    if missing_rows:
+        message = ParserMessage(
+            short=f"Some rows are missing for investigation: {', '.join(missing_rows)}",
+            type=ParserMessageType.CRITICAL,
+        )
+        message.detail = "Investigation file is not complete."
+        messages.append(message)
+        return investigation, messages
+
+    extra_rows = [
+        x
+        for x in index_map
+        if x not in INVESTIGATION_FILE_INITIAL_ROWS
+        and not x.lower().startswith(
+            "comment[" and x not in INVESTIGATION_FILE_SECTION_NAMES
+        )
+    ]
+    if extra_rows:
+        row_messages = ", ".join([f"Line {index_map[x]}:{x}" for x in extra_rows])
+        message = ParserMessage(
+            short=f"Some rows are missing for study: {row_messages}",
+            type=ParserMessageType.CRITICAL,
+        )
+        message.detail = "Investigation file has unexpected lines."
+        messages.append(message)
+
     assign_by_field_name(
         file_path,
         investigation,
@@ -276,7 +361,7 @@ def build_investigation(
 
 
 def set_value(obj, key, value):
-    camel_key = humps.decamelize(key)
+    camel_key = to_snake(key)
     setattr(obj, camel_key, value)
 
 
@@ -292,7 +377,7 @@ def assign_by_field_name(
 ) -> None:
     if messages is None:
         messages = []
-    data_schema = data.schema()
+    data_schema = data.model_json_schema()
     if "properties" not in data_schema or not data_schema["properties"]:
         print(f"Properties are not defined in {file_path}")
         message = ParserMessage(
@@ -304,32 +389,41 @@ def assign_by_field_name(
 
     initial_name_prefix = prefix or ""
     section_prefix = ""
-    if hasattr(data, "section_prefix"):
-        section_prefix = data.section_prefix.strip()
+    if isinstance(data, model.BaseSection):
+        section: model.BaseSection = data
+        prefix_value = section.isatab_config.section_prefix
+        section_prefix = prefix_value.strip() if prefix_value else ""
         initial_name_prefix = (
             section_prefix
             if not initial_name_prefix
             else f"{initial_name_prefix.strip()} {section_prefix}".strip()
         )
-    if hasattr(data, "section_header") and hasattr(data, "comments") and comments_map:
-        section_header = data.section_header or ""
+    if isinstance(data, model.BaseSection) and comments_map:
+        section: model.BaseSection = data
+        section_header = section.isatab_config.section_header or ""
         if section_header in comments_map and comments_map[section_header]:
-            data.comments = []
+            section.comments = []
             for comment in comments_map[section_header]:
-                data.comments.append(Comment(name=comment[0], value=comment[1]))
+                section.comments.append(Comment(name=comment[0], value=comment[1]))
 
     for key in data_schema["properties"]:
+        if (
+            key not in data_schema["properties"]
+            or not data_schema["properties"][key]
+            or (
+                "auto_fill" in data_schema["properties"]
+                and data_schema["properties"]["auto_fill"]
+            )
+        ):
+            continue
+
+        field_definition = data_schema["properties"][key]
+
         field_name = ""
         data_type = "invalid"
         ref_object_definition = ""
         name_prefix = initial_name_prefix
-        field_definition = data_schema["properties"][key]
-        if (
-            not field_definition
-            or "auto_fill" not in field_definition
-            or not field_definition["auto_fill"]
-        ):
-            continue
+
         if (
             "inherit_prefix" in field_definition
             and not field_definition["inherit_prefix"]
@@ -352,12 +446,11 @@ def assign_by_field_name(
                 if "type" in field_item and field_item["type"] in primitives:
                     data_type = "string"
                     break
-        elif field_definition and "type" in field_definition:
+        elif "type" in field_definition:
             data_type = field_definition["type"]
         text_multiple_value = False
         if (
-            field_definition
-            and "text_multiple_value" in field_definition
+            "text_multiple_value" in field_definition
             and field_definition["text_multiple_value"]
         ):
             text_multiple_value = True
@@ -381,21 +474,21 @@ def assign_by_field_name(
                     if "$ref" in items and items["$ref"]:
                         search_field = field_name
                         if "search_header" in field_definition:
-                            if (
-                                "section_prefix" in field_definition
-                                and field_definition["section_prefix"]
-                            ):
-                                search_field = " ".join(
-                                    [
-                                        name_prefix,
-                                        field_definition["section_prefix"],
-                                        field_definition["search_header"],
-                                    ]
-                                )
-                            else:
-                                search_field = (
-                                    f"{name_prefix} {field_definition['search_header']}"
-                                )
+                            # if (
+                            #     "section_prefix" in field_definition
+                            #     and field_definition["section_prefix"]
+                            # ):
+                            #     search_field = " ".join(
+                            #         [
+                            #             name_prefix,
+                            #             field_definition["section_prefix"],
+                            #             field_definition["search_header"],
+                            #         ]
+                            #     )
+                            # else:
+                            search_field = (
+                                f"{name_prefix} {field_definition['search_header']}"
+                            )
 
                         item_list = []
                         set_value(data, key, item_list)
@@ -407,7 +500,7 @@ def assign_by_field_name(
                             continue
                         index = index_map[search_field]
 
-                        max = len(tab[index])
+                        max_index = len(tab[index])
                         ref_class_name = (
                             items["$ref"]
                             .replace("#/definitions/", "")
@@ -417,7 +510,7 @@ def assign_by_field_name(
                             sys.modules[model_module_name],
                             ref_class_name,
                         )
-                        for i in range(1, max):
+                        for i in range(1, max_index):
                             instance = ref_class()
                             item_list.append(instance)
                             assign_by_field_name(
@@ -463,7 +556,7 @@ def assign_by_field_name(
                             messages=messages,
                             comments_map=comments_map,
                         )
-                        item_schema = instance.schema()
+                        item_schema = instance.model_json_schema()
 
                         new_instances = []
                         separator = ";"
@@ -480,7 +573,7 @@ def assign_by_field_name(
                                 and item_field_definition["seperator"]
                             ):
                                 separator = item_field_definition["seperator"]
-                            attribute_key = humps.decamelize(item_key)
+                            attribute_key = to_snake(item_key)
                             item_val = getattr(instance, attribute_key) or ""
                             seperated_values = item_val.split(separator)
                             for _ in range(len(seperated_values)):

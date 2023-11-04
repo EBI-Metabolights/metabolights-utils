@@ -34,12 +34,12 @@ class AddColumnsTsvAction(BaseTsvAction):
         column_indices: List[int] = list(column_data.keys()).copy()
         column_indices.sort()
 
-        if action.id:
+        if not action.id:
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
                 header_names = header_line.strip().split("\t")
                 for column_idx in column_indices:
@@ -59,7 +59,7 @@ class AddColumnsTsvAction(BaseTsvAction):
                         return result
                     header_names.insert(column_idx, value.header_name)
 
-                with open(target_file_path, "w") as target:
+                with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, header_names)
                     row_index = 0
                     for line in source:

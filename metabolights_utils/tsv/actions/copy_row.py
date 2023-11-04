@@ -34,11 +34,11 @@ class CopyRowTsvAction(BaseTsvAction):
         row_indices = target_row_indices.copy()
         row_indices.sort()
 
-        if action.id:
+        if not action.id:
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
         copied_row = None
-        with open(source_file_path, "r") as source:
+        with open(source_file_path, "r", encoding="utf-8") as source:
             source.readline()
             row_index = 0
             for line in source:
@@ -53,10 +53,10 @@ class CopyRowTsvAction(BaseTsvAction):
             return result
 
         try:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
 
-                with open(target_file_path, "w") as target:
+                with open(target_file_path, "w", encoding="utf-8") as target:
                     target.write(header_line)
                     row_index = 0
                     for line in source:

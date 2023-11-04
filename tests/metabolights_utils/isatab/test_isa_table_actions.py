@@ -1,7 +1,6 @@
 import os
 import shutil
-from ast import Dict
-from typing import List
+from typing import List, Dict
 
 from metabolights_utils.tsv.model import (
     TsvActionReport,

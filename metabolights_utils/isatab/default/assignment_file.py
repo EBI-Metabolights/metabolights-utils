@@ -33,5 +33,5 @@ class DefaultAssignmentFileReader(BaseIsaTableFileReader):
     def __init__(self, results_per_page=100) -> None:
         super().__init__(results_per_page=results_per_page)
 
-    def _get_expected_patterns(self) -> List[List[str]]:
+    def get_expected_patterns(self) -> List[List[str]]:
         return DefaultAssignmentFileReader.patterns

@@ -22,12 +22,12 @@ class MoveColumnTsvAction(BaseTsvAction):
         source_column_header = action.source_column_header
         new_column_index = action.new_column_index
 
-        if action.id:
+        if not action.id:
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r") as source:
+            with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
                 header_names = header_line.strip().split("\t")
                 new_header_names = []
@@ -52,7 +52,7 @@ class MoveColumnTsvAction(BaseTsvAction):
                 new_header_names = [x for x in header_names if x != source_column_index]
                 new_header_names.insert(new_column_index, moved_header)
 
-                with open(target_file_path, "w") as target:
+                with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, new_header_names)
                     for line in source:
                         row = line.strip().split("\t")

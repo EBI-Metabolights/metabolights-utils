@@ -21,6 +21,8 @@ class IsaTableFileReaderResult(MetabolightsBaseModel):
 class InvestigationFileReaderResult(MetabolightsBaseModel):
     investigation: Investigation = Field(Investigation())
     parser_report: ParserReport = Field(ParserReport())
+    file_path: str = ""
+    sha256_hash: Union[None, str] = None
 
 
 class InvestigationFileReader(ABC):
@@ -109,7 +111,7 @@ class IsaTableFileReader(ABC):
         file_buffer: IOBase = None,
         page: int = 1,
         results_per_page: int = 100,
-        column_names: Union[List[str], None] = None,
+        selected_columns: Union[List[str], None] = None,
         file_path: Union[str, pathlib.Path] = None,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
@@ -122,7 +124,7 @@ class IsaTableFileReader(ABC):
             file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
             page (int, optional): The page number requested. Defaults to 1.
             results_per_page (int, optional): Number of rows in each page. Defaults to 100.
-            column_names (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
+            selected_columns (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
             file_path (Union[str, pathlib.Path], optional): File path str or pathlib.Path object
             filter_options (List[TsvFileFilterOption]): filter column names and filter methods. Defaults to None.
             sort_options (List[TsvFileSortOption]): Sort column names. Defaults to None.
@@ -137,7 +139,7 @@ class IsaTableFileReader(ABC):
         file_path: Union[str, pathlib.Path] = None,
         offset: int = 0,
         limit: Union[int, None] = None,
-        column_names: Union[None, List[str]] = None,
+        selected_columns: Union[None, List[str]] = None,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
     ) -> IsaTableFileReaderResult:
@@ -162,10 +164,10 @@ class IsaTableFileReader(ABC):
     def read(
         self,
         file_path_or_buffer: Union[str, pathlib.Path, IOBase],
+        offset: Union[None, int],
+        limit: Union[None, int],
+        selected_columns: Union[None, List[str]] = None,
         file_path: Union[str, pathlib.Path] = None,
-        offset: Union[None, int] = 0,
-        limit: Union[None, int] = 1000,
-        column_names: Union[None, List[str]] = None,
         skip_parser_info_messages: bool = True,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
@@ -177,7 +179,7 @@ class IsaTableFileReader(ABC):
             file_path (Union[str, pathlib.Path], optional): File path str or pathlib.Path object. It is required if file_path_or_buffer is None. Defaults to None.
             offset (int, optional): Starting index of rows will be returned. First rows is header and index of the second row is 0. Defaults to 0.
             limit (Union[int, None], optional): Number of rows will be returned. If it is None, return all rows. Defaults to 1000.
-            column_names (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
+            selected_columns (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
             skip_parser_info_messages (bool, optional): clear INFO messages from parser messages. Defaults to True.
             filter_options (List[TsvFileFilterOption]): filter column names and filter methods. Defaults to None.
             sort_options (List[TsvFileSortOption]): Sort column names. Defaults to None.

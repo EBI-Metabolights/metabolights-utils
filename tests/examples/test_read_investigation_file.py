@@ -1,13 +1,10 @@
 import os
 import pathlib
 import uuid
-from ast import List
+from typing import List
 
 from metabolights_utils.isatab import Reader, Writer
-from metabolights_utils.isatab.reader import (
-    InvestigationFileReader,
-    InvestigationFileReaderResult,
-)
+from metabolights_utils.isatab.reader import InvestigationFileReader, InvestigationFileReaderResult
 from metabolights_utils.isatab.writer import InvestigationFileWriter
 from metabolights_utils.models.isa.common import OntologyItem
 from metabolights_utils.models.isa.investigation_file import Assay, Study

@@ -12,7 +12,6 @@
         "s_*.txt": "tsv"
       },
       "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.organizeImports": true
@@ -20,15 +19,15 @@
         
       },
       "python.formatting.blackArgs": [
-        "--line-length",
-        "100"
+        // "--line-length",
+        // "100"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "-v",
-        // "--cov=${workspaceFolder}/metabolights_utils",
-        // "--cov-report=xml",
+        "--cov=${workspaceFolder}/metabolights_utils",
+        "--cov-report=html",
         "${workspaceFolder}/tests/"
     ]
     

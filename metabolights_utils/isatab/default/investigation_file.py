@@ -1,10 +1,11 @@
+import os
 import pathlib
 import sys
 from io import IOBase
 from typing import List, Union
 
-import humps
 from pydantic import BaseModel
+from pydantic.alias_generators import to_camel, to_snake
 
 from metabolights_utils.isatab.default.base_isa_file import BaseIsaFile
 from metabolights_utils.isatab.reader import (
@@ -20,6 +21,12 @@ from metabolights_utils.models.isa.investigation_file import (
 from metabolights_utils.models.isa.parser.investigation_parser import get_investigation
 from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
+from metabolights_utils.tsv.utils import calculate_sha256
+
+
+class InvestigationFileException(Exception):
+    def __init__(self, message) -> None:
+        self.message = message
 
 
 class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
@@ -33,16 +40,33 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
         file_buffer = self._get_file_buffer(buffer_or_path)
         try:
             read_messages: List[ParserMessage] = []
-            investigation = get_investigation(file_buffer, path, messages=read_messages)
+            if isinstance(file_buffer, IOBase):
+                investigation = get_investigation(
+                    file_buffer, file_path, messages=read_messages
+                )
+            else:
+                investigation = get_investigation(
+                    None, file_path, messages=read_messages
+                )
             messages = read_messages
             if skip_parser_info_messages:
                 messages = [
                     x for x in read_messages if x.type != ParserMessageType.INFO
                 ]
             report = ParserReport(messages=messages)
-            return InvestigationFileReaderResult(
-                investigation=investigation, parser_report=report
+
+            result = InvestigationFileReaderResult(
+                investigation=investigation, parser_report=report, file_path=str(path)
             )
+
+            if pathlib.Path(path).exists():
+                result.sha256_hash = calculate_sha256(path)
+            elif (
+                isinstance(buffer_or_path, str)
+                or isinstance(buffer_or_path, pathlib.Path)
+            ) and pathlib.Path(str(buffer_or_path)).exists():
+                result.sha256_hash = calculate_sha256(str(buffer_or_path))
+            return result
         except Exception as exc:
             raise exc
         finally:
@@ -68,26 +92,36 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
             if file_buffer:
                 file_buffer.write(content)
             else:
-                with open(buffer_or_path, "w") as f:
+                with open(buffer_or_path, "w", encoding="utf-8") as f:
                     f.write(content)
-
+            report = ParserReport()
             if verify_file_after_update:
                 read_messages: List[ParserMessage] = []
-                new_investigation = get_investigation(
-                    buffer_or_path, path, messages=read_messages
-                )
+                if isinstance(buffer_or_path, IOBase):
+                    investigation = get_investigation(
+                        buffer_or_path, path, messages=read_messages
+                    )
+                else:
+                    investigation = get_investigation(
+                        None, path, messages=read_messages
+                    )
                 messages = read_messages
                 if skip_parser_info_messages:
                     messages = [
                         x for x in read_messages if x.type != ParserMessageType.INFO
                     ]
                 report = ParserReport(messages=messages)
-                return InvestigationFileReaderResult(
-                    investigation=new_investigation, parser_report=report
+
+                result = InvestigationFileReaderResult(
+                    investigation=investigation,
+                    parser_report=report,
+                    file_path=str(path),
                 )
-            return InvestigationFileReaderResult(
-                investigation=investigation, parser_report=ParserReport()
-            )
+            if os.path.exists(path):
+                result.sha256_hash = calculate_sha256(path)
+            elif os.path.exists(str(buffer_or_path)):
+                result.sha256_hash = calculate_sha256(str(buffer_or_path))
+            return result
         except Exception as exc:
             raise exc
 
@@ -121,66 +155,86 @@ class InvestigationFileSerializer(object):
         rows.extend(cls.add_sub_section("", investigation))
         rows.extend(
             cls.add_sub_section(
-                investigation.section_prefix, investigation.investigation_publications
+                investigation.isatab_config.section_prefix,
+                investigation.investigation_publications,
             )
         )
         rows.extend(
             cls.add_sub_section(
-                investigation.section_prefix, investigation.investigation_contacts
+                investigation.isatab_config.section_prefix,
+                investigation.investigation_contacts,
             )
         )
         for study in investigation.studies:
             rows.extend(cls.add_sub_section("", study))
             rows.extend(
                 cls.add_sub_section(
-                    study.section_prefix, study.study_design_descriptors
+                    study.isatab_config.section_prefix, study.study_design_descriptors
                 )
             )
             rows.extend(
-                cls.add_sub_section(study.section_prefix, study.study_publications)
+                cls.add_sub_section(
+                    study.isatab_config.section_prefix, study.study_publications
+                )
             )
-            rows.extend(cls.add_sub_section(study.section_prefix, study.study_factors))
-            rows.extend(cls.add_sub_section(study.section_prefix, study.study_assays))
             rows.extend(
-                cls.add_sub_section(study.section_prefix, study.study_protocols)
+                cls.add_sub_section(
+                    study.isatab_config.section_prefix, study.study_factors
+                )
             )
-            rows.extend(cls.add_sub_section(study.section_prefix, study.study_contacts))
+            rows.extend(
+                cls.add_sub_section(
+                    study.isatab_config.section_prefix, study.study_assays
+                )
+            )
+            rows.extend(
+                cls.add_sub_section(
+                    study.isatab_config.section_prefix, study.study_protocols
+                )
+            )
+            rows.extend(
+                cls.add_sub_section(
+                    study.isatab_config.section_prefix, study.study_contacts
+                )
+            )
         return rows
 
     @staticmethod
     def get_attribute(model, field_name):
-        model_field_name = humps.decamelize(field_name)
+        model_field_name = to_snake(field_name)
         return getattr(model, model_field_name)
 
     @classmethod
     def add_sub_section(cls, prefix, model: BaseSection):
-        rows: List[List[str]] = [[model.section_header]]
+        rows: List[List[str]] = [[model.isatab_config.section_header]]
         header = []
         if prefix:
             header.append(prefix)
-        data_schema = model.schema()
-        field_order = model.field_order
+        data_schema = model.model_json_schema()
+        field_order = model.isatab_config.field_order
         if not field_order:
             field_order = []
-        header_name = model.section_prefix
+        header_name = model.isatab_config.section_prefix
         if header_name:
             header.append(header_name)
 
         for field_name in field_order:
             value = cls.get_attribute(model, field_name)
-            field_key = humps.camelize(field_name)
+            field_key = to_camel(field_name)
             if isinstance(value, list):
                 properties = data_schema["properties"]
                 if "allOf" in properties[field_key] or "items" in properties[field_key]:
-                    if "allOf" in "allOf" in properties[field_key]:
+                    if "allOf" in properties[field_key]:
                         item_ref = properties[field_key]["allOf"][0]["$ref"]
                     else:
                         item_ref = properties[field_key]["items"]["$ref"]
                     default_object_name = item_ref.replace(
                         "#/definitions/", ""
                     ).replace("#/$defs/", "")
-                    obj = getattr(sys.modules[inv_module_name], default_object_name)
-                    props = obj.schema()["properties"]
+                    obj: BaseModel = getattr(
+                        sys.modules[inv_module_name], default_object_name
+                    )
+                    props = obj.model_json_schema()["properties"]
                     header.append(data_schema["properties"][field_key]["header_name"])
                     sub_model_rows = cls.add_model_content(
                         " ".join(header).strip(), value, props
@@ -188,18 +242,20 @@ class InvestigationFileSerializer(object):
                     if sub_model_rows:
                         rows.extend(sub_model_rows)
             elif isinstance(value, str):
-                field_attribute = humps.decamelize(field_name)
-                header_name = model.__fields__[field_attribute].field_info.extra[
+                field_attribute = to_snake(field_name)
+                header_name = model.model_fields[field_attribute].json_schema_extra[
                     "header_name"
                 ]
                 header_name = (
-                    f"{model.section_prefix} {header_name}"
-                    if model.section_prefix
+                    f"{model.isatab_config.section_prefix} {header_name}"
+                    if model.isatab_config.section_prefix
                     else header_name
                 )
                 rows.append([header_name, value])
             else:
-                raise Exception()
+                raise InvestigationFileException(
+                    message=f"Unsopported type {type(value)}. Value {str(value)}"
+                )
 
         cls.add_comments(model, rows)
         return rows
@@ -216,10 +272,10 @@ class InvestigationFileSerializer(object):
     def add_model_content(cls, prefix, items: List[IsaAbstractModel], properties):
         rows = []
         row_map = {}
-        fields = properties["fieldOrder"]["default"]
+        fields = properties["isatabConfig"]["default"]["fieldOrder"]
         for i in range(len(fields)):
             field = fields[i]
-            field_key = humps.camelize(field)
+            field_key = to_camel(field)
             header_name = properties[field_key]["header_name"]
             header_name = f"{prefix} {header_name}".strip() if prefix else header_name
             if "allOf" in properties[field_key] or "items" in properties[field_key]:
@@ -231,7 +287,7 @@ class InvestigationFileSerializer(object):
                     "#/$defs/", ""
                 )
                 obj: BaseModel = getattr(sys.modules[inv_module_name], class_name)
-                props = obj.schema()["properties"]
+                props = obj.model_json_schema()["properties"]
                 input_items = (
                     [cls.get_attribute(item, field_key) for item in items]
                     if items
@@ -249,7 +305,7 @@ class InvestigationFileSerializer(object):
 
     @classmethod
     def assign_type(cls, items, properties, rows, row_map, fields, i, header_name):
-        field_key = humps.camelize(fields[i])
+        field_key = to_camel(fields[i])
         object_type = properties[field_key]["type"]
         if object_type == "string":
             row_map[header_name] = [header_name]
@@ -270,4 +326,6 @@ class InvestigationFileSerializer(object):
             else:
                 row_map[header_name].append("")
         else:
-            raise Exception()
+            raise InvestigationFileException(
+                message=f"Invalid object type {object_type}"
+            )

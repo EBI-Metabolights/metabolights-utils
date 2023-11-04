@@ -77,17 +77,17 @@ class IsaTableFileWriter(ABC):
 
 class IsaTabWriterFactory(ABC):
     @abstractmethod
-    def get_investigation_file_writer() -> InvestigationFileWriter:
+    def get_investigation_file_writer(self) -> InvestigationFileWriter:
         pass
 
     @abstractmethod
-    def get_assay_file_writer() -> IsaTableFileWriter:
+    def get_assay_file_writer(self) -> IsaTableFileWriter:
         pass
 
     @abstractmethod
-    def get_sample_file_writer() -> IsaTableFileWriter:
+    def get_sample_file_writer(self) -> IsaTableFileWriter:
         pass
 
     @abstractmethod
-    def get_assignment_file_writer() -> IsaTableFileWriter:
+    def get_assignment_file_writer(self) -> IsaTableFileWriter:
         pass
