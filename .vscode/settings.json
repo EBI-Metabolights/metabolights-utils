@@ -26,8 +26,8 @@
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
         "-v",
-        "--cov=${workspaceFolder}/metabolights_utils",
-        "--cov-report=html",
+        // "--cov=${workspaceFolder}/metabolights_utils",
+        // "--cov-report=html",
         "${workspaceFolder}/tests/"
     ]
     

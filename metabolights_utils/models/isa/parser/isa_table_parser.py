@@ -113,7 +113,7 @@ def parse_isa_table_sheet_from_fs(
 
 
 def get_isa_table_file(
-    file_path_or_buffer: IOBase,
+    file_buffer_or_path: IOBase,
     file_name: str,
     messages: List[ParserMessage],
     expected_patterns: List[List[str]],
@@ -128,9 +128,9 @@ def get_isa_table_file(
         messages = []
     if not expected_patterns:
         expected_patterns = []
-    file_path_or_buffer.seek(0)
+    file_buffer_or_path.seek(0)
     content: SelectedTsvFileContent = read_table_file(
-        file_path_or_buffer,
+        file_buffer_or_path,
         messages,
         selected_columns,
         offset,

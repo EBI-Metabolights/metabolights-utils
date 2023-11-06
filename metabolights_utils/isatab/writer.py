@@ -16,8 +16,7 @@ class InvestigationFileWriter(ABC):
     def write(
         self,
         investigation: Investigation,
-        file_buffer: IOBase = None,
-        file_path: Union[str, pathlib.Path] = None,
+        file_buffer_or_path: Union[IOBase, str, pathlib.Path],
         values_in_quatation_mark: bool = True,
         verify_file_after_update: bool = True,
         skip_parser_info_messages: bool = True,
@@ -28,8 +27,7 @@ class InvestigationFileWriter(ABC):
 
         Args:
             investigation (Investigation): investigation file object.
-            file_buffer (IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
-            file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
+            file_buffer (IOBase, str, pathlib.Path): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
             values_in_quatation_mark (bool, optional): add values in quatation_mark. Defaults to True.
             verify_file_after_update (bool, optional): Reads investigation file if it is True. Defaults to True.
             skip_parser_info_messages (bool, optional): clear INFO messages from parser messages. Defaults to True.
@@ -43,14 +41,14 @@ class IsaTableFileWriter(ABC):
     @abstractmethod
     def apply_actions(
         self,
-        file_path: Union[str, pathlib.Path],
+        file_buffer_or_path: Union[IOBase, str, pathlib.Path],
         file_sha256_hash: str,
         actions: List[TsvAction],
     ) -> TsvActionReport:
         """Applies
 
         Args:
-            file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
+            file_buffer_or_path (Union[IOBase, str, pathlib.Path], optional): File path, IOBase or pathlib.Path object.
             file_sha256_hash (str): SH256 of the input file. If file SHA256 does not match, method returns error.
             actions (List[TsvAction]): List of allowed actions
         Returns:

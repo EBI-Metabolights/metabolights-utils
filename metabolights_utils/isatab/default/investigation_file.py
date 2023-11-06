@@ -32,22 +32,19 @@ class InvestigationFileException(Exception):
 class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
     def read(
         self,
-        file_buffer: IOBase = None,
-        file_path: Union[str, pathlib.Path] = None,
+        file_buffer_or_path: Union[str, pathlib.Path, IOBase],
         skip_parser_info_messages: bool = True,
     ) -> InvestigationFileReaderResult:
-        buffer_or_path, path = self._get_file_buffer_and_path(file_buffer, file_path)
+        buffer_or_path, path = self._get_file_path(file_buffer_or_path)
         file_buffer = self._get_file_buffer(buffer_or_path)
         try:
             read_messages: List[ParserMessage] = []
             if isinstance(file_buffer, IOBase):
                 investigation = get_investigation(
-                    file_buffer, file_path, messages=read_messages
+                    file_buffer, path, messages=read_messages
                 )
             else:
-                investigation = get_investigation(
-                    None, file_path, messages=read_messages
-                )
+                investigation = get_investigation(None, path, messages=read_messages)
             messages = read_messages
             if skip_parser_info_messages:
                 messages = [
@@ -56,7 +53,7 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
             report = ParserReport(messages=messages)
 
             result = InvestigationFileReaderResult(
-                investigation=investigation, parser_report=report, file_path=str(path)
+                investigation=investigation, parser_report=report
             )
 
             if pathlib.Path(path).exists():
@@ -70,15 +67,14 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
         except Exception as exc:
             raise exc
         finally:
-            self._close_file(file_buffer, file_path)
+            self._close_file(file_buffer_or_path)
 
 
 class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
     def write(
         self,
         investigation: Investigation,
-        file_buffer: IOBase = None,
-        file_path: Union[str, pathlib.Path] = None,
+        file_buffer_or_path: Union[str, pathlib.Path, IOBase] = None,
         values_in_quatation_mark: bool = True,
         verify_file_after_update: bool = True,
         skip_parser_info_messages: bool = True,
@@ -87,23 +83,27 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
             investigation=investigation,
             values_in_quatation_mark=values_in_quatation_mark,
         )
-        buffer_or_path, path = self._get_file_buffer_and_path(file_buffer, file_path)
+        file_path = None
         try:
-            if file_buffer:
-                file_buffer.write(content)
+            if isinstance(file_buffer_or_path, IOBase):
+                file_buffer_or_path.write(content)
+                file_path = file_buffer_or_path.name
             else:
-                with open(buffer_or_path, "w", encoding="utf-8") as f:
+                file_path = str(file_buffer_or_path)
+                with open(file_buffer_or_path, "w", encoding="utf-8") as f:
                     f.write(content)
             report = ParserReport()
             if verify_file_after_update:
                 read_messages: List[ParserMessage] = []
-                if isinstance(buffer_or_path, IOBase):
+                if isinstance(file_buffer_or_path, IOBase):
                     investigation = get_investigation(
-                        buffer_or_path, path, messages=read_messages
+                        file_buffer_or_path,
+                        file_buffer_or_path.name,
+                        messages=read_messages,
                     )
                 else:
                     investigation = get_investigation(
-                        None, path, messages=read_messages
+                        None, file_buffer_or_path, messages=read_messages
                     )
                 messages = read_messages
                 if skip_parser_info_messages:
@@ -115,12 +115,11 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
                 result = InvestigationFileReaderResult(
                     investigation=investigation,
                     parser_report=report,
-                    file_path=str(path),
+                    file_path=str(file_path),
                 )
-            if os.path.exists(path):
-                result.sha256_hash = calculate_sha256(path)
-            elif os.path.exists(str(buffer_or_path)):
-                result.sha256_hash = calculate_sha256(str(buffer_or_path))
+            if os.path.exists(file_path):
+                result.sha256_hash = calculate_sha256(file_path)
+
             return result
         except Exception as exc:
             raise exc

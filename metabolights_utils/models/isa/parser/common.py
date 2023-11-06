@@ -225,7 +225,10 @@ def read_table_file(
                 if offset and skipped_rows < offset:
                     skipped_rows += 1
                     continue
-                if not limit or (limit and read_rows < limit):
+                read_next_row = True
+                if isinstance(limit, int) and read_rows >= limit:
+                    read_next_row = False
+                if read_next_row:
                     read_rows += 1
                     add_tsv_file_data_row(
                         row,
@@ -233,6 +236,9 @@ def read_table_file(
                         columns,
                         selected_column_indices=selected_column_indices,
                     )
+                else:
+                    break
+
     except Exception as exc:
         message = ParserMessage(type=ParserMessageType.CRITICAL)
         message.short = "ISA table file can not be read successfully."
@@ -350,7 +356,10 @@ def read_table_file_with_filter_and_sort_option(
             if offset and skipped_rows < offset:
                 skipped_rows += 1
                 continue
-            if not limit or (limit and read_rows < limit):
+            read_next_row = True
+            if isinstance(limit, int) and read_rows >= limit:
+                read_next_row = False
+            if read_next_row:
                 read_rows += 1
                 add_tsv_file_data_row(
                     row,
@@ -358,6 +367,9 @@ def read_table_file_with_filter_and_sort_option(
                     columns,
                     selected_column_indices=selected_column_indices,
                 )
+            else:
+                break
+
     except Exception as exc:
         message = ParserMessage(type=ParserMessageType.CRITICAL)
         message.short = "ISA table file can not be read successfully."

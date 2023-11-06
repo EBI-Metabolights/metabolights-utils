@@ -5,19 +5,18 @@ from typing import Tuple, Union
 
 
 class BaseIsaFile(ABC):
-    def _get_file_buffer_and_path(
+    def _get_file_path(
         self,
-        file_buffer: IOBase = None,
-        file_path: Union[str, pathlib.Path] = None,
+        file_buffer_or_path: Union[str, pathlib.Path, IOBase],
     ) -> Tuple[Union[str, pathlib.Path, IOBase], str]:
-        if not file_buffer and not file_path:
-            raise ValueError("At least file buffer or file path should be defined")
-
-        selected_file_buffer = (
-            file_path if file_path and not file_buffer else file_buffer
-        )
-        selected_file_path = file_path if file_path else "<processed content>"
-        return selected_file_buffer, selected_file_path
+        if not file_buffer_or_path:
+            return None
+        if isinstance(file_buffer_or_path, IOBase):
+            return file_buffer_or_path, file_buffer_or_path.name
+        if isinstance(file_buffer_or_path, pathlib.Path):
+            return file_buffer_or_path, str(file_buffer_or_path)
+        elif isinstance(file_buffer_or_path, str):
+            return file_buffer_or_path, file_buffer_or_path
 
     def _get_file_buffer(self, file: Union[str, pathlib.Path, IOBase]) -> IOBase:
         if isinstance(file, IOBase):
@@ -33,15 +32,14 @@ class BaseIsaFile(ABC):
 
     def _close_file(
         self,
-        file_buffer_or_path: IOBase,
-        file_path_or_buffer: Union[str, pathlib.Path, IOBase],
+        file_buffer_or_path: Union[str, pathlib.Path, IOBase],
     ):
         # If we opened file, close it
         if (
             not file_buffer_or_path
-            and not file_path_or_buffer
+            and not file_buffer_or_path
             and (
-                isinstance(file_path_or_buffer, str)
+                isinstance(file_buffer_or_path, str)
                 or isinstance(file_buffer_or_path, pathlib.Path)
             )
         ):

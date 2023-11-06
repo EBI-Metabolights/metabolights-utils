@@ -61,7 +61,7 @@ from metabolights_utils.models.isa.investigation_file import Assay, Study
 def test_investigation_file_write_01():
     file_path = pathlib.Path("tests/test-data/MTBLS398/i_Investigation.txt")
     reader: InvestigationFileReader = Reader.get_investigation_file_reader()
-    result: InvestigationFileReaderResult = reader.read(file_path=file_path)
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=file_path)
 
     assay: Assay = result.investigation.studies[0].study_assays.assays[0]
     assay.measurement_type = OntologyItem(
@@ -73,9 +73,9 @@ def test_investigation_file_write_01():
     tmp_file_name = uuid.uuid4().hex
     tmp_path = pathlib.Path(f"/tmp/test_{tmp_file_name}.txt")
     writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
-    writer.write(result.investigation, file_path=tmp_path)
+    writer.write(result.investigation, file_buffer_or_path=tmp_path)
 
-    result: InvestigationFileReaderResult = reader.read(file_path=tmp_path)
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=tmp_path)
     assay_read: Assay = result.investigation.studies[0].study_assays.assays[0]
     assert assay_read.measurement_type.term == "test"
     assert assay_read.measurement_type.term_source_ref == "test source"
@@ -113,50 +113,50 @@ def test_assay_file_success_01():
     reader: IsaTableFileReader = Reader.get_assay_file_reader()
 
     # get page count. Default results per page is 100
-    page_count: int = reader.get_total_pages(file_path=file_path)
+    page_count: int = reader.get_total_pages(file_buffer_or_path=file_path)
     assert page_count == 147
 
     # get page count with custom page count.
-    page_count = reader.get_total_pages(file_path=file_path, results_per_page=50)
+    page_count = reader.get_total_pages(file_buffer_or_path=file_path, results_per_page=50)
     assert page_count == 294
 
     # get total row count
-    total_rows_count = reader.get_total_row_count(file_path=file_path)
+    total_rows_count = reader.get_total_row_count(file_buffer_or_path=file_path)
     assert total_rows_count == 14670
 
     # get isa table headers
-    result: IsaTableFileReaderResult = reader.get_headers(file_path=file_path)
+    result: IsaTableFileReaderResult = reader.get_headers(file_buffer_or_path=file_path)
     assert len(result.parser_report.messages) == 0
     assert "Parameter Value[Column model]" in result.isa_table_file.table.columns
 
     # get isa table rows. Default offset is 0. Read 88 rows
-    result: IsaTableFileReaderResult = reader.get_rows(file_path=file_path, limit=88)
+    result: IsaTableFileReaderResult = reader.get_rows(file_buffer_or_path=file_path, limit=88)
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 88
 
     # get isa table rows. Read 70 rows from offset 14600
     result: IsaTableFileReaderResult = reader.get_rows(
-        file_path=file_path, offset=14600, limit=70
+        file_buffer_or_path=file_path, offset=14600, limit=70
     )
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 70
     assert result.isa_table_file.table.row_offset == 14600
 
     # get page 2 from isa table. Default page limit is 100. Read 100 items from offset 100
-    result: IsaTableFileReaderResult = reader.get_page(page=2, file_path=file_path)
+    result: IsaTableFileReaderResult = reader.get_page(page=2, file_buffer_or_path=file_path)
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 100
 
     # get page 2 from isa table. Read 50 items from offset 50
     result: IsaTableFileReaderResult = reader.get_page(
-        page=2, results_per_page=50, file_path=file_path
+        page=2, results_per_page=50, file_buffer_or_path=file_path
     )
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 50
 
     # get last from isa table. Read 20 items from offset 14650
     result: IsaTableFileReaderResult = reader.get_page(
-        page=294, results_per_page=50, file_path=file_path
+        page=294, results_per_page=50, file_buffer_or_path=file_path
     )
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 20
@@ -168,7 +168,7 @@ def test_assay_file_success_01():
     result: IsaTableFileReaderResult = reader.get_page(
         page=2,
         results_per_page=50,
-        file_path=file_path,
+        file_buffer_or_path=file_path,
         selected_columns=["Sample Name", "Parameter Value[Autosampler model]"],
     )
     assert len(result.parser_report.messages) == 0
@@ -209,7 +209,7 @@ def test_assay_file_read_write():
     with open(file_path, "r", encoding="utf-8") as file_buffer:
         # read second page of assa file
         result: IsaTableFileReaderResult = helper.get_page(
-            file_buffer=file_buffer,
+            file_buffer_or_path=file_buffer,
             page=2,
             results_per_page=50,
             file_path=str(file_path),
@@ -334,7 +334,7 @@ def test_with_filter_and_sort_option_01():
     result: IsaTableFileReaderResult = helper.get_page(
         page=2,
         results_per_page=111,
-        file_path=file_path,
+        file_buffer_or_path=file_path,
         sort_options=sort_options,
         filter_options=filter_options,
         selected_columns=None,
@@ -353,7 +353,7 @@ def test_with_filter_and_sort_option_01():
     result: IsaTableFileReaderResult = helper.get_page(
         page=3,
         results_per_page=50,
-        file_path=file_path,
+        file_buffer_or_path=file_path,
         sort_options=sort_options,
         filter_options=filter_options,
         selected_columns=selected_columns,
@@ -391,7 +391,7 @@ def test_with_filter_and_sort_option_01():
     result: IsaTableFileReaderResult = helper.get_page(
         page=1,
         results_per_page=111,
-        file_path=file_path,
+        file_buffer_or_path=file_path,
         selected_columns=selected_columns,
         filter_options=filter_options,
     )

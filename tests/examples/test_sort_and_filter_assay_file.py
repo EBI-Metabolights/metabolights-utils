@@ -1,7 +1,10 @@
 import pathlib
 
 from metabolights_utils.isatab import Reader
-from metabolights_utils.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
+from metabolights_utils.isatab.reader import (
+    IsaTableFileReader,
+    IsaTableFileReaderResult,
+)
 from metabolights_utils.tsv.filter import FilterOperation, TsvFileFilterOption
 from metabolights_utils.tsv.sort import SortType, TsvFileSortOption
 
@@ -46,7 +49,7 @@ def test_with_filter_and_sort_option_01():
     result: IsaTableFileReaderResult = helper.get_page(
         page=2,
         results_per_page=111,
-        file_path=file_path,
+        file_buffer_or_path=file_path,
         sort_options=sort_options,
         filter_options=filter_options,
         selected_columns=None,
@@ -65,7 +68,7 @@ def test_with_filter_and_sort_option_01():
     result: IsaTableFileReaderResult = helper.get_page(
         page=3,
         results_per_page=50,
-        file_path=file_path,
+        file_buffer_or_path=file_path,
         sort_options=sort_options,
         filter_options=filter_options,
         selected_columns=selected_columns,
@@ -103,7 +106,7 @@ def test_with_filter_and_sort_option_01():
     result: IsaTableFileReaderResult = helper.get_page(
         page=1,
         results_per_page=111,
-        file_path=file_path,
+        file_buffer_or_path=file_path,
         selected_columns=selected_columns,
         filter_options=filter_options,
     )

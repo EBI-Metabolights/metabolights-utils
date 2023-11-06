@@ -56,7 +56,7 @@ def test_parse_investigation_from_fs_invalid_04():
 def test_investigation_file_read_write_success_1():
     file_path = pathlib.Path("tests/test-data/MTBLS1/i_Investigation.txt")
     reader: InvestigationFileReader = Reader.get_investigation_file_reader()
-    result: InvestigationFileReaderResult = reader.read(file_path=file_path)
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=file_path)
     assert len(result.investigation.studies) == 1
     sha25_hash = result.sha256_hash
 
@@ -64,12 +64,14 @@ def test_investigation_file_read_write_success_1():
     tmp_path = pathlib.Path(f"/tmp/test_{tmp_file_name}.txt")
     try:
         writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
-        writer.write(result.investigation, file_path=tmp_path)
+        writer.write(result.investigation, file_buffer_or_path=tmp_path)
         new_sha256 = calculate_sha256(tmp_path)
 
         assert new_sha256 == sha25_hash
         writer.write(
-            result.investigation, file_path=tmp_path, values_in_quatation_mark=False
+            result.investigation,
+            file_buffer_or_path=tmp_path,
+            values_in_quatation_mark=False,
         )
         new_sha256 = calculate_sha256(tmp_path)
         assert new_sha256 != sha25_hash

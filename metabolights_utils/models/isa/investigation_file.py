@@ -527,6 +527,7 @@ class Investigation(BaseSection):
 
     ontology_source_references: OntologySourceReferences = Field(
         OntologySourceReferences(),
+        description="Ontology sources used in the investigation ffile",
         json_schema_extra={
             "auto_fill": True,
             "header_name": "",
@@ -535,10 +536,14 @@ class Investigation(BaseSection):
     )
     investigation_publications: InvestigationPublications = Field(
         InvestigationPublications(),
+        description="All publications prepared to report results of the investigation",
         json_schema_extra={"auto_fill": True, "header_name": ""},
     )
     investigation_contacts: InvestigationContacts = Field(
         InvestigationContacts(),
+        description="People details of the investigation.",
         json_schema_extra={"auto_fill": True, "header_name": ""},
     )
-    studies: List[Study] = []
+    studies: List[Study] = Field(
+        [], description="Studies carried out in the investigation."
+    )
