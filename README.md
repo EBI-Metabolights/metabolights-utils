@@ -37,7 +37,7 @@
 The following command installs metabolights-utils from the Python Package Index. You will need a working installation of Python 3.8+ and pip3.
 
 ```shell
-pip3 install -U metabolights_utils
+pip3 install -U metabolights-utils
 ```
 
 
@@ -51,11 +51,11 @@ import pathlib
 import uuid
 from typing import List
 
-from metabolights_utils.isatab import Reader, Writer
-from metabolights_utils.isatab.reader import InvestigationFileReader, InvestigationFileReaderResult
-from metabolights_utils.isatab.writer import InvestigationFileWriter
-from metabolights_utils.models.isa.common import OntologyItem
-from metabolights_utils.models.isa.investigation_file import Assay, Study
+from metabolights.isatab import Reader, Writer
+from metabolights.isatab.reader import InvestigationFileReader, InvestigationFileReaderResult
+from metabolights.isatab.writer import InvestigationFileWriter
+from metabolights.models.isa.common import OntologyItem
+from metabolights.models.isa.investigation_file import Assay, Study
 
 
 def test_investigation_file_write_01():
@@ -99,8 +99,8 @@ Read selected assay file (a_*.txt) rows and columns with pagination support. You
 ```python
 import pathlib
 
-from metabolights_utils.isatab import Reader
-from metabolights_utils.isatab.reader import (
+from metabolights.isatab import Reader
+from metabolights.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult
 )
@@ -187,12 +187,12 @@ import os
 import pathlib
 import shutil
 
-from metabolights_utils.isatab import Reader, Writer
-from metabolights_utils.isatab.reader import (
+from metabolights.isatab import Reader, Writer
+from metabolights.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult
 )
-from metabolights_utils.isatab.writer import IsaTableFileWriter
+from metabolights.isatab.writer import IsaTableFileWriter
 
 
 def test_assay_file_read_write():
@@ -281,12 +281,12 @@ Users can apply multiple filters and sort operations before retriving ISA table 
 ```python
 import pathlib
 
-from metabolights_utils.isatab import Reader
-from metabolights_utils.isatab.reader import (
+from metabolights.isatab import Reader
+from metabolights.isatab.reader import (
     IsaTableFileReader,
     IsaTableFileReaderResult
 )
-from metabolights_utils.models.isa.common import (
+from metabolights.models.isa.common import (
     FilterOperation,
     SortType,
     TsvFileFilterOption,

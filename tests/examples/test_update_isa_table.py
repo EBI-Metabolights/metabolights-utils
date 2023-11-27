@@ -2,12 +2,9 @@ import os
 import pathlib
 import shutil
 
-from metabolights_utils.isatab import Reader, Writer
-from metabolights_utils.isatab.reader import (
-    IsaTableFileReader,
-    IsaTableFileReaderResult,
-)
-from metabolights_utils.isatab.writer import IsaTableFileWriter
+from metabolights.isatab import Reader, Writer
+from metabolights.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
+from metabolights.isatab.writer import IsaTableFileWriter
 
 
 def test_assay_metadata_file_read_write():

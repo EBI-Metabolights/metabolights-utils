@@ -3,14 +3,14 @@ import pathlib
 import uuid
 from typing import List
 
-from metabolights_utils.isatab import Reader, Writer
-from metabolights_utils.isatab.reader import (
+from metabolights.isatab import Reader, Writer
+from metabolights.isatab.reader import (
     InvestigationFileReader,
     InvestigationFileReaderResult,
 )
-from metabolights_utils.isatab.writer import InvestigationFileWriter
-from metabolights_utils.models.isa.common import OntologyItem
-from metabolights_utils.models.isa.investigation_file import Assay, Study
+from metabolights.isatab.writer import InvestigationFileWriter
+from metabolights.models.isa.common import OntologyItem
+from metabolights.models.isa.investigation_file import Assay, Study
 
 
 def test_investigation_file_read_01():
