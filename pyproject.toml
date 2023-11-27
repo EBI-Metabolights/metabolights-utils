@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "0.9.13"
+version = "0.9.16"
 description = "Metabolights common models, utility methods and classes for python-based Metabolights projects."
 authors = ["MetaboLights Team <metabolights-dev@ebi.ac.uk>"]
 readme = "README.md"

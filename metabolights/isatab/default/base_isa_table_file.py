@@ -117,9 +117,10 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
     ) -> IsaTableFileReaderResult:
         buffer: IOBase = None
         read_messages: List[ParserMessage] = []
+        buffer_or_path, path = self._get_file_path(file_buffer_or_path)
+        basename = os.path.basename(str(path))
+        isa_table_file = None
         try:
-            buffer_or_path, path = self._get_file_path(file_buffer_or_path)
-            basename = os.path.basename(str(path))
             file_buffer = self._get_file_buffer(buffer_or_path)
             isa_table_file: IsaTableFile = get_isa_table_file(
                 file_buffer,
@@ -132,15 +133,47 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
                 filter_options=filter_options,
                 sort_options=sort_options,
             )
+            messages = read_messages
+        except UnicodeDecodeError as err:
+            try:
+                file_buffer = self._get_file_buffer(buffer_or_path, encoding="ascii")
+                isa_table_file: IsaTableFile = get_isa_table_file(
+                    file_buffer,
+                    basename,
+                    messages=read_messages,
+                    expected_patterns=self.get_expected_patterns(),
+                    offset=offset,
+                    limit=limit,
+                    selected_columns=selected_columns,
+                    filter_options=filter_options,
+                    sort_options=sort_options,
+                )
+                messages = read_messages
+            except Exception as exc:
+                read_messages.append(
+                    ParserMessage(
+                        type=ParserMessageType.CRITICAL,
+                        short="Parse error",
+                        detail=(str(exc)),
+                    )
+                )
+        except Exception as exc:
+            read_messages.append(
+                ParserMessage(
+                    type=ParserMessageType.CRITICAL,
+                    short="Parse error",
+                    detail=(str(exc)),
+                )
+            )
+        finally:
+            self._close_file(file_buffer_or_path)
+        if isa_table_file:
             if os.path.exists(path):
                 isa_table_file.sha256_hash = calculate_sha256(path)
             elif os.path.exists(str(file_buffer_or_path)):
                 isa_table_file.sha256_hash = calculate_sha256(str(file_buffer_or_path))
 
-        finally:
-            self._close_file(file_buffer_or_path)
-
-        messages = read_messages
+        
         if skip_parser_info_messages:
             messages = [x for x in read_messages if x.type != ParserMessageType.INFO]
         parser_report = ParserReport(messages=messages)

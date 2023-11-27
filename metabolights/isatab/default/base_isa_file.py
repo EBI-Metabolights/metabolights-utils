@@ -18,13 +18,15 @@ class BaseIsaFile(ABC):
         elif isinstance(file_buffer_or_path, str):
             return file_buffer_or_path, file_buffer_or_path
 
-    def _get_file_buffer(self, file: Union[str, pathlib.Path, IOBase]) -> IOBase:
+    def _get_file_buffer(
+        self, file: Union[str, pathlib.Path, IOBase], encoding="utf-8"
+    ) -> IOBase:
         if isinstance(file, IOBase):
             file_buffer = file
         elif isinstance(file, pathlib.Path):
-            file_buffer = file.open()
+            file_buffer = file.open(mode="r", encoding=encoding)
         elif isinstance(file, str):
-            file_buffer = open(file=file, mode="r", encoding="utf-8")
+            file_buffer = open(file=file, mode="r", encoding=encoding)
         else:
             raise ValueError("file type is not defined")
 

@@ -34,9 +34,11 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
         skip_parser_info_messages: bool = True,
     ) -> InvestigationFileReaderResult:
         buffer_or_path, path = self._get_file_path(file_buffer_or_path)
-        file_buffer = self._get_file_buffer(buffer_or_path)
+        investigation = Investigation()
+        parse_success = False
+        read_messages: List[ParserMessage] = []
         try:
-            read_messages: List[ParserMessage] = []
+            file_buffer = self._get_file_buffer(buffer_or_path)
             if isinstance(file_buffer, IOBase):
                 investigation = get_investigation(
                     file_buffer, path, messages=read_messages
@@ -44,16 +46,48 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
             else:
                 investigation = get_investigation(None, path, messages=read_messages)
             messages = read_messages
-            if skip_parser_info_messages:
-                messages = [
-                    x for x in read_messages if x.type != ParserMessageType.INFO
-                ]
-            report = ParserReport(messages=messages)
-
-            result = InvestigationFileReaderResult(
-                investigation=investigation, parser_report=report
+            parse_success = True
+        except UnicodeDecodeError as err:
+            try:
+                file_buffer = self._get_file_buffer(buffer_or_path, encoding="ascii")
+                if isinstance(file_buffer, IOBase):
+                    investigation = get_investigation(
+                        file_buffer, path, messages=read_messages
+                    )
+                else:
+                    investigation = get_investigation(
+                        None, path, messages=read_messages
+                    )
+                messages = read_messages
+                parse_success = True
+            except Exception as exc:
+                read_messages.append(
+                    ParserMessage(
+                        type=ParserMessageType.CRITICAL,
+                        short="Parse error",
+                        detail=(str(exc)),
+                    )
+                )
+        except Exception as exc:
+            read_messages.append(
+                ParserMessage(
+                    type=ParserMessageType.CRITICAL,
+                    short="Parse error",
+                    detail=(str(exc)),
+                )
             )
+        finally:
+            self._close_file(file_buffer_or_path)
 
+        if skip_parser_info_messages:
+            messages = [x for x in read_messages if x.type != ParserMessageType.INFO]
+        report = ParserReport(messages=messages)
+
+        result = InvestigationFileReaderResult(
+            investigation=investigation, parser_report=report
+        )
+
+        if parse_success:
             if pathlib.Path(path).exists():
                 result.sha256_hash = calculate_sha256(path)
             elif (
@@ -61,11 +95,7 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
                 or isinstance(buffer_or_path, pathlib.Path)
             ) and pathlib.Path(str(buffer_or_path)).exists():
                 result.sha256_hash = calculate_sha256(str(buffer_or_path))
-            return result
-        except Exception as exc:
-            raise exc
-        finally:
-            self._close_file(file_buffer_or_path)
+        return result
 
 
 class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
