@@ -1,9 +1,9 @@
 import pathlib
 
-from metabolights.isatab import Reader
-from metabolights.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
-from metabolights.tsv.filter import FilterOperation, TsvFileFilterOption
-from metabolights.tsv.sort import SortType, TsvFileSortOption
+from metabolights_utils.isatab import Reader
+from metabolights_utils.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
+from metabolights_utils.tsv.filter import FilterOperation, TsvFileFilterOption
+from metabolights_utils.tsv.sort import SortType, TsvFileSortOption
 
 
 def test_with_filter_and_sort_option_01():

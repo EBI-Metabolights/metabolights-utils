@@ -3,12 +3,23 @@ import pathlib
 import shutil
 from enum import Enum
 
-from metabolights.isatab import Reader, Writer
-from metabolights.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
-from metabolights.isatab.writer import IsaTableFileWriter
-from metabolights.tsv.filter import FilterDataType, FilterOperation, TsvFileFilterOption
-from metabolights.tsv.sort import SortType, TsvFileSortOption, TsvFileSortValueOrder
-from metabolights.tsv.utils import calculate_sha256
+from metabolights_utils.isatab import Reader, Writer
+from metabolights_utils.isatab.reader import (
+    IsaTableFileReader,
+    IsaTableFileReaderResult,
+)
+from metabolights_utils.isatab.writer import IsaTableFileWriter
+from metabolights_utils.tsv.filter import (
+    FilterDataType,
+    FilterOperation,
+    TsvFileFilterOption,
+)
+from metabolights_utils.tsv.sort import (
+    SortType,
+    TsvFileSortOption,
+    TsvFileSortValueOrder,
+)
+from metabolights_utils.tsv.utils import calculate_sha256
 
 
 def test_assay_metadata_file_success_01():

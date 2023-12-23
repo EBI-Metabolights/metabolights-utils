@@ -1,7 +1,7 @@
-from metabolights.models.isa.assay_file import AssayFile
-from metabolights.models.isa.assignment_file import AssignmentFile
-from metabolights.models.isa.samples_file import SamplesFile
-from metabolights.models.metabolights.metabolights_study import (
+from metabolights_utils.models.isa.assay_file import AssayFile
+from metabolights_utils.models.isa.assignment_file import AssignmentFile
+from metabolights_utils.models.isa.samples_file import SamplesFile
+from metabolights_utils.models.metabolights.metabolights_study import (
     BaseMetabolightsStudyModel,
 )
 

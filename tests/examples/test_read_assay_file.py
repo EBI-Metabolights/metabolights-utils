@@ -1,7 +1,10 @@
 import pathlib
 
-from metabolights.isatab import Reader
-from metabolights.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
+from metabolights_utils.isatab import Reader
+from metabolights_utils.isatab.reader import (
+    IsaTableFileReader,
+    IsaTableFileReaderResult,
+)
 
 
 def test_assay_file_success_01():

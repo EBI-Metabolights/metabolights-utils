@@ -1,9 +1,16 @@
 import pathlib
 
-from metabolights.isatab import Reader
-from metabolights.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
-from metabolights.tsv.filter import FilterOperation, TsvFileFilterOption
-from metabolights.tsv.sort import SortType, TsvFileSortOption, TsvFileSortValueOrder
+from metabolights_utils.isatab import Reader
+from metabolights_utils.isatab.reader import (
+    IsaTableFileReader,
+    IsaTableFileReaderResult,
+)
+from metabolights_utils.tsv.filter import FilterOperation, TsvFileFilterOption
+from metabolights_utils.tsv.sort import (
+    SortType,
+    TsvFileSortOption,
+    TsvFileSortValueOrder,
+)
 
 
 def test_with_sort_option_01():
@@ -141,7 +148,7 @@ def test_with_filter_and_sort_option_01():
         TsvFileFilterOption(
             search_columns=["Sample Name"],
             operation=FilterOperation.REGEX,
-            parameter="^PG[\d]5.*_5$",
+            parameter=r"^PG[\d]5.*_5$",
             case_sensitive=False,
         ),
         TsvFileFilterOption(

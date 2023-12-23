@@ -1,11 +1,13 @@
 import pathlib
 
-from metabolights.isatab.default.assay_file import DefaultAssayFileReader
-from metabolights.isatab.default.assignment_file import DefaultAssignmentFileReader
-from metabolights.isatab.default.parser.isa_table_parser import (
+from metabolights_utils.isatab.default.assay_file import DefaultAssayFileReader
+from metabolights_utils.isatab.default.assignment_file import (
+    DefaultAssignmentFileReader,
+)
+from metabolights_utils.isatab.default.parser.isa_table_parser import (
     parse_isa_table_sheet_from_fs,
 )
-from metabolights.isatab.default.sample_file import DefaultSampleFileReader
+from metabolights_utils.isatab.default.sample_file import DefaultSampleFileReader
 
 
 def test_parse_isa_table_sheet_from_fs_valid_assay_01():

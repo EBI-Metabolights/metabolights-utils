@@ -1,10 +1,10 @@
 import pathlib
 
-from metabolights.isatab import Reader, Writer
-from metabolights.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
-from metabolights.isatab.writer import IsaTableFileWriter
-from metabolights.tsv.filter import FilterOperation, TsvFileFilterOption
-from metabolights.tsv.sort import SortType, TsvFileSortOption
+from metabolights_utils.isatab import Reader, Writer
+from metabolights_utils.isatab.reader import IsaTableFileReader, IsaTableFileReaderResult
+from metabolights_utils.isatab.writer import IsaTableFileWriter
+from metabolights_utils.tsv.filter import FilterOperation, TsvFileFilterOption
+from metabolights_utils.tsv.sort import SortType, TsvFileSortOption
 
 
 def test_sample_metadata_file_success_01():

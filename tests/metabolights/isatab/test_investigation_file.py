@@ -2,12 +2,12 @@ import os
 import pathlib
 import uuid
 
-from metabolights.isatab import Reader, Writer
-from metabolights.isatab.reader import (
+from metabolights_utils.isatab import Reader, Writer
+from metabolights_utils.isatab.reader import (
     InvestigationFileReader,
     InvestigationFileReaderResult,
 )
-from metabolights.isatab.writer import InvestigationFileWriter
+from metabolights_utils.isatab.writer import InvestigationFileWriter
 
 
 def test_investigation_file_success_01():

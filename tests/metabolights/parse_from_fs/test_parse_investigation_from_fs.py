@@ -2,16 +2,16 @@ import os
 import pathlib
 import uuid
 
-from metabolights.isatab import Reader, Writer
-from metabolights.isatab.default.parser.investigation_parser import (
+from metabolights_utils.isatab import Reader, Writer
+from metabolights_utils.isatab.default.parser.investigation_parser import (
     parse_investigation_from_fs,
 )
-from metabolights.isatab.reader import (
+from metabolights_utils.isatab.reader import (
     InvestigationFileReader,
     InvestigationFileReaderResult,
 )
-from metabolights.isatab.writer import InvestigationFileWriter
-from metabolights.tsv.utils import calculate_sha256
+from metabolights_utils.isatab.writer import InvestigationFileWriter
+from metabolights_utils.tsv.utils import calculate_sha256
 
 
 def test_parse_investigation_from_fs_valid_01():

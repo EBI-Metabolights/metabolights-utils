@@ -2,7 +2,7 @@ import os
 import shutil
 from typing import Dict, List
 
-from metabolights.tsv.model import (
+from metabolights_utils.tsv.model import (
     TsvActionReport,
     TsvAddColumnsAction,
     TsvAddRowsAction,
@@ -20,7 +20,7 @@ from metabolights.tsv.model import (
     TsvUpdateColumnsAction,
     TsvUpdateRowsAction,
 )
-from metabolights.tsv.tsv_file_updater import TsvFileUpdater
+from metabolights_utils.tsv.tsv_file_updater import TsvFileUpdater
 
 
 def test_add_row_action_01():
