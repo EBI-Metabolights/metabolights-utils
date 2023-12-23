@@ -172,8 +172,9 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
                 isa_table_file.sha256_hash = calculate_sha256(path)
             elif os.path.exists(str(file_buffer_or_path)):
                 isa_table_file.sha256_hash = calculate_sha256(str(file_buffer_or_path))
+        else:
+            isa_table_file = IsaTableFile()
 
-        
         if skip_parser_info_messages:
             messages = [x for x in read_messages if x.type != ParserMessageType.INFO]
         parser_report = ParserReport(messages=messages)
