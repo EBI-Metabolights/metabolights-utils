@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "0.9.19"
+version = "0.9.21"
 description = "Metabolights common models, utility methods and classes for python-based Metabolights projects."
 authors = ["MetaboLights Team <metabolights-dev@ebi.ac.uk>"]
 readme = "README.md"
-packages = [{include = "metabolights"}]
+packages = [{include = "metabolights_utils"}]
 license = "Apache-2.0"
 homepage = "https://github.com/EBI-Metabolights/metabolights-utils"
 repository = "https://github.com/EBI-Metabolights/metabolights-utils"

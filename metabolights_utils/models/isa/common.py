@@ -322,13 +322,13 @@ class IsaTableColumn(IsaAbstractModel):
 
     column_category: Annotated[str, Field(description="")] = ""
 
-    colummn_structure: Annotated[
+    column_structure: Annotated[
         ColumnsStructure, Field(description="")
     ] = ColumnsStructure.SINGLE_COLUMN
 
     column_prefix: Annotated[str, Field(description="")] = ""
 
-    column_search_pattern: Annotated[List[str], Field(description="")] = []
+    column_search_pattern: Annotated[str, Field(description="")] = ""
 
     def __hash__(self):
         return hash(self.column_name)
@@ -394,11 +394,11 @@ class IsaTable(IsaAbstractModel):
 
 class IsaTableFile(IsaAbstractModel):
     file_path: Annotated[
-        List[str],
+        str,
         Field(
             description="Relative file path of ISA table file (s_*.txt, a_*.txt, m_*.tsv)."
         ),
-    ] = []
+    ] = ""
 
     sha256_hash: Annotated[
         str,

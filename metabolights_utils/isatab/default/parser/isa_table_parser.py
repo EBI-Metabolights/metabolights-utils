@@ -311,7 +311,7 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
                 break
 
         column = IsaTableColumn(
-            column_index=column_index, colummn_structure=column_structure
+            column_index=column_index, column_structure=column_structure
         )
         column.column_name = column_name
         column.column_header = cleaned_column_name
@@ -351,7 +351,7 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
                 additional_column_index = additional_column_index + 1
                 linked_column = IsaTableColumn(
                     column_index=additional_column_index,
-                    colummn_structure=ColumnsStructure.LINKED_COLUMN,
+                    column_structure=ColumnsStructure.LINKED_COLUMN,
                 )
                 linked_column.column_header = additional_column
                 linked_column.column_category = "Linked Column"

@@ -71,7 +71,7 @@ class BaseMetabolightsStudyModel(MetabolightsBaseModel):
     metabolite_assignments: Annotated[
         Dict[str, AssignmentFile],
         Field(description="Metabolite assignment files and their contents."),
-    ] = []
+    ] = {}
 
     tags: Annotated[
         List[str],
