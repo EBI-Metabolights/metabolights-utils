@@ -1,7 +1,8 @@
 import os
 import re
+from functools import partial
 from io import IOBase
-from typing import List, Tuple, Union
+from typing import Callable, List, Tuple, Union
 
 from metabolights_utils.isatab.default.parser.common import (
     SelectedTsvFileContent,
@@ -19,6 +20,51 @@ from metabolights_utils.tsv.sort import TsvFileSortOption
 from metabolights_utils.tsv.utils import calculate_sha256
 
 
+def parse_isa_file_content(
+    parser: Callable,
+    file_path: str,
+    messages: List[ParserMessage],
+    fix_unicode_exceptions: bool = False,
+) -> Tuple[IsaTableFile, List[ParserMessage]]:
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            model = parser(file_buffer_or_path=f, messages=messages)
+            return model, messages
+    except UnicodeDecodeError as ex:
+        if fix_unicode_exceptions:
+            try:
+                with open(file_path, "r", encoding="latin-1") as f:
+                    model = parser(f, file_path, messages=messages)
+                    message = ParserMessage(
+                        short="File is read with latin-1 encoding",
+                        type=ParserMessageType.WARNING,
+                    )
+                    message.detail = f"FFile is read with latin-1 encoding"
+                    messages.append(message)
+                    return model, messages
+            except Exception as ex:
+                message = ParserMessage(
+                    short="File read exception", type=ParserMessageType.CRITICAL
+                )
+                message.detail = f"File parse error: {str(ex)}"
+                messages.append(message)
+                return None, messages
+        else:
+            message = ParserMessage(
+                short="File read exception", type=ParserMessageType.CRITICAL
+            )
+            message.detail = f"File parse error: {str(ex)}"
+            messages.append(message)
+            return None, messages
+    except Exception as ex:
+        message = ParserMessage(
+            short="File read exception", type=ParserMessageType.CRITICAL
+        )
+        message.detail = f"File parse error: {str(ex)}"
+        messages.append(message)
+        return None, messages
+
+
 def parse_isa_table_sheet_from_fs(
     file_path: str,
     expected_patterns: Union[None, List[List[str]]] = None,
@@ -27,6 +73,7 @@ def parse_isa_table_sheet_from_fs(
     limit: Union[int, None] = None,
     filter_options: List[TsvFileFilterOption] = None,
     sort_options: List[TsvFileSortOption] = None,
+    fix_unicode_exceptions: bool = False,
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
     basename = os.path.basename(file_path)
     dirname = os.path.basename(os.path.dirname(file_path))
@@ -56,21 +103,27 @@ def parse_isa_table_sheet_from_fs(
         message.detail = f"File is empty: {basename} in {dirname}"
         messages.append(message)
         return IsaTableFile(), messages
+
     basename = os.path.basename(file_path)
+    parser = partial(
+        get_isa_table_file,
+        file_name=basename,
+        expected_patterns=expected_patterns,
+        selected_columns=selected_columns,
+        offset=offset,
+        limit=limit,
+        filter_options=filter_options,
+        sort_options=sort_options,
+    )
+    read_messages: List[ParserMessage] = []
+    table, read_messages = parse_isa_file_content(
+        parser,
+        file_path=file_path,
+        messages=read_messages,
+        fix_unicode_exceptions=fix_unicode_exceptions,
+    )
+    isa_table_file: IsaTableFile = table
 
-    with open(file_path, "r", encoding="utf-8") as f:
-        read_messages: List[ParserMessage] = []
-        isa_table_file: IsaTableFile = get_isa_table_file(
-            f,
-            basename,
-            messages=read_messages,
-            expected_patterns=expected_patterns,
-            selected_columns=selected_columns,
-            offset=offset,
-            limit=limit,
-            filter_options=filter_options,
-            sort_options=sort_options,
-        )
     if os.path.exists(file_path):
         isa_table_file.sha256_hash = calculate_sha256(file_path)
     if isa_table_file.table.columns:
@@ -78,36 +131,6 @@ def parse_isa_table_sheet_from_fs(
         messages = [x for x in messages if x.type != ParserMessageType.INFO]
         return isa_table_file, messages
 
-    with open(file_path, "r", errors="ignore", encoding="utf-8") as f:
-        read_messages: List[ParserMessage] = []
-        isa_table_file: IsaTableFile = get_isa_table_file(
-            f,
-            basename,
-            messages=read_messages,
-            expected_patterns=expected_patterns,
-            selected_columns=selected_columns,
-            offset=offset,
-            limit=limit,
-            filter_options=filter_options,
-            sort_options=sort_options,
-        )
-    isa_table_file.file_path = basename
-    if os.path.exists(file_path):
-        isa_table_file.sha256_hash = calculate_sha256(file_path)
-
-    if isa_table_file.table.columns:
-        message = ParserMessage(
-            short="File is read utf-8 encoding and invalid characters errors are replaced with backslash",
-            type=ParserMessageType.WARNING,
-        )
-        message.detail = (
-            "Invalid characters are replaced with backslash characters: "
-            + f"{basename} in {dirname}"
-        )
-        messages.append(message)
-        messages.extend(read_messages)
-        messages = [x for x in messages if x.type != ParserMessageType.INFO]
-        return isa_table_file, messages
     messages = [x for x in messages if x.type != ParserMessageType.INFO]
     return isa_table_file, messages
 

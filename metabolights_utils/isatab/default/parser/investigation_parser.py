@@ -2,12 +2,14 @@ import pathlib
 import re
 import sys
 from io import IOBase
-from typing import Dict, List, Tuple, Union
+from typing import Callable, Dict, List, Tuple, Union
 
 from pydantic import BaseModel
 from pydantic.alias_generators import to_snake
 
-from metabolights_utils.isatab.default.parser.common import read_investigation_file
+from metabolights_utils.isatab.default.parser.common import (
+    read_investigation_file,
+)
 from metabolights_utils.models.isa import investigation_file as model
 from metabolights_utils.models.isa.common import (
     INVESTIGATION_FILE_INITIAL_ROWS,
@@ -24,8 +26,54 @@ from metabolights_utils.models.parser.enums import ParserMessageType
 model_module_name = model.__name__
 
 
-def parse_investigation_from_fs(
+def parse_investigation_file_content(
+    parser: Callable,
     file_path: str,
+    messages: List[ParserMessage],
+    fix_unicode_exceptions: bool = False,
+) -> Tuple[model.Investigation, List[ParserMessage]]:
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            model = parser(f, file_path, messages=messages)
+            return model, messages
+    except UnicodeDecodeError as ex:
+        if fix_unicode_exceptions:
+            try:
+                with open(file_path, "r", encoding="latin-1") as f:
+                    model = parser(f, file_path, messages=messages)
+                    message = ParserMessage(
+                        short="File is read with latin-1 encoding",
+                        type=ParserMessageType.WARNING,
+                    )
+                    message.detail = f"File is read with latin-1 encoding"
+                    messages.append(message)
+                    return model, messages
+            except Exception as ex:
+                message = ParserMessage(
+                    short="File read exception", type=ParserMessageType.CRITICAL
+                )
+                message.detail = f"File parse error: {str(ex)}"
+                messages.append(message)
+                return None, messages
+        else:
+            message = ParserMessage(
+                short="File read exception", type=ParserMessageType.CRITICAL
+            )
+            message.detail = f"File parse error: {str(ex)}"
+            messages.append(message)
+            return None, messages
+
+    except Exception as ex:
+        message = ParserMessage(
+            short="File read exception", type=ParserMessageType.CRITICAL
+        )
+        message.detail = f"File parse error: {str(ex)}"
+        messages.append(message)
+        return None, messages
+
+
+def parse_investigation_from_fs(
+    file_path: str, fix_unicode_exceptions: bool = False
 ) -> Tuple[Union[model.Investigation, None], List[ParserMessage]]:
     messages: List[ParserMessage] = []
     file = pathlib.Path(file_path)
@@ -45,10 +93,9 @@ def parse_investigation_from_fs(
         message.detail = f"File is empty: {basename}"
         messages.append(message)
         return None, messages
-
-    with open(file_path, "r", encoding="utf-8") as f:
-        investigation = get_investigation(f, file_path, messages=messages)
-        return investigation, messages
+    return parse_investigation_file_content(
+        get_investigation, file_path, messages, fix_unicode_exceptions
+    )
 
 
 def get_investigation(
