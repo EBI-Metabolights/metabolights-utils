@@ -7,9 +7,7 @@ from typing import Callable, Dict, List, Tuple, Union
 from pydantic import BaseModel
 from pydantic.alias_generators import to_snake
 
-from metabolights_utils.isatab.default.parser.common import (
-    read_investigation_file,
-)
+from metabolights_utils.isatab.default.parser.common import read_investigation_file
 from metabolights_utils.models.isa import investigation_file as model
 from metabolights_utils.models.isa.common import (
     INVESTIGATION_FILE_INITIAL_ROWS,
@@ -672,7 +670,7 @@ def assign_by_field_name(
                     value = tab[index][value_index]
                 else:
                     value = ""
-                set_value(data, key, str(value) or "")
+                set_value(data, key, str(value).strip('"').strip() or "")
             elif data_type == "ref":
                 ref_class_name = ref_object_definition.replace(
                     "#/definitions/", ""

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from pydantic import Field
 from typing_extensions import Annotated
@@ -42,7 +42,7 @@ class OntologySourceReference(IsaAbstractModel):
         ),
     ] = ""
     source_version: Annotated[
-        str,
+        Union[str, int],
         Field(
             description="",
             json_schema_extra={"auto_fill": True, "header_name": "Source Version"},
