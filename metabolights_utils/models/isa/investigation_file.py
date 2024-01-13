@@ -793,7 +793,7 @@ class Investigation(BaseSection):
     ontology_source_references: Annotated[
         OntologySourceReferences,
         Field(
-            description="Ontology sources used in the investigation ffile",
+            description="Ontology sources used in the investigation file",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",

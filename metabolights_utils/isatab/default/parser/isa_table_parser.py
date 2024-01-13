@@ -34,12 +34,12 @@ def parse_isa_file_content(
         if fix_unicode_exceptions:
             try:
                 with open(file_path, "r", encoding="latin-1") as f:
-                    model = parser(f, file_path, messages=messages)
+                    model = parser(file_buffer_or_path=f, messages=messages)
                     message = ParserMessage(
                         short="File is read with latin-1 encoding",
                         type=ParserMessageType.WARNING,
                     )
-                    message.detail = f"FFile is read with latin-1 encoding"
+                    message.detail = f"File is read with latin-1 encoding"
                     messages.append(message)
                     return model, messages
             except Exception as ex:
