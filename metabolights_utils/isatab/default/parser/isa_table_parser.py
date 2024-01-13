@@ -123,13 +123,13 @@ def parse_isa_table_sheet_from_fs(
         fix_unicode_exceptions=fix_unicode_exceptions,
     )
     isa_table_file: IsaTableFile = table
-
-    if os.path.exists(file_path):
-        isa_table_file.sha256_hash = calculate_sha256(file_path)
-    if isa_table_file.table.columns:
-        messages.extend(read_messages)
-        messages = [x for x in messages if x.type != ParserMessageType.INFO]
-        return isa_table_file, messages
+    if isa_table_file:
+        if os.path.exists(file_path):
+            isa_table_file.sha256_hash = calculate_sha256(file_path)
+        if isa_table_file.table.columns:
+            messages.extend(read_messages)
+            messages = [x for x in messages if x.type != ParserMessageType.INFO]
+            return isa_table_file, messages
 
     messages = [x for x in messages if x.type != ParserMessageType.INFO]
     return isa_table_file, messages

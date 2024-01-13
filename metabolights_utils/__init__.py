@@ -22,6 +22,7 @@ from metabolights_utils.models.isa import assay_file, assignment_file
 from metabolights_utils.models.isa import common as isa_commons
 from metabolights_utils.models.isa import enums as isa_enums
 from metabolights_utils.models.isa import investigation_file, samples_file
+
 from metabolights_utils.models.metabolights import metabolights_study
 from metabolights_utils.models.parser import common as parser_common
 from metabolights_utils.models.parser import enums as parser_enums
