@@ -8,15 +8,16 @@ from pydantic import BaseModel
 from pydantic.alias_generators import to_camel, to_snake
 
 from metabolights_utils.isatab.default.base_isa_file import BaseIsaFile
-from metabolights_utils.isatab.default.parser.investigation_parser import get_investigation
-from metabolights_utils.isatab.reader import (
-    InvestigationFileReader,
-    InvestigationFileReaderResult,
-)
+from metabolights_utils.isatab.default.parser.investigation_parser import \
+    get_investigation
+from metabolights_utils.isatab.reader import (InvestigationFileReader,
+                                              InvestigationFileReaderResult)
 from metabolights_utils.isatab.writer import InvestigationFileWriter
 from metabolights_utils.models.isa.common import IsaAbstractModel
-from metabolights_utils.models.isa.investigation_file import BaseSection, Investigation
-from metabolights_utils.models.isa.investigation_file import module_name as inv_module_name
+from metabolights_utils.models.isa.investigation_file import (BaseSection,
+                                                              Investigation)
+from metabolights_utils.models.isa.investigation_file import \
+    module_name as inv_module_name
 from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.tsv.utils import calculate_sha256
@@ -327,6 +328,11 @@ class InvestigationFileSerializer(object):
                 cls.assign_type(
                     items, properties, rows, row_map, fields, i, header_name
                 )
+            elif "anyOf" in properties[field_key]:
+                
+                cls.assign_string_type(
+                    items, rows, row_map, fields, i, header_name
+                )
 
         return rows
 
@@ -356,3 +362,24 @@ class InvestigationFileSerializer(object):
             raise InvestigationFileException(
                 message=f"Invalid object type {object_type}"
             )
+
+    @classmethod
+    def assign_string_type(cls, items, rows, row_map, fields, i, header_name):
+        field_key = to_camel(fields[i])
+        row_map[header_name] = [header_name]
+        rows.append(row_map[header_name])
+        if items:
+            for item in items:
+                if isinstance(item, list):
+                    sub_items = []
+                    if item:
+                        for sub_item in item:
+                            sub_items.append(str(cls.get_attribute(sub_item, field_key)))
+                    else:
+                        sub_items.append("")
+                    row_map[header_name].append(";".join(sub_items))
+                else:
+                    value = str(cls.get_attribute(item, field_key))
+                    row_map[header_name].append(value)
+        else:
+            row_map[header_name].append("")

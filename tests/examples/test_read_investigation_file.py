@@ -42,8 +42,8 @@ def test_investigation_file_write_01():
     writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
     writer.write(result.investigation, file_buffer_or_path=tmp_path)
 
-    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=tmp_path)
-    assay_read: Assay = result.investigation.studies[0].study_assays.assays[0]
+    result2: InvestigationFileReaderResult = reader.read(file_buffer_or_path=tmp_path)
+    assay_read: Assay = result2.investigation.studies[0].study_assays.assays[0]
     assert assay_read.measurement_type.term == "test"
     assert assay_read.measurement_type.term_source_ref == "test source"
     assert assay_read.measurement_type.term_accession_number == "test accesion"
