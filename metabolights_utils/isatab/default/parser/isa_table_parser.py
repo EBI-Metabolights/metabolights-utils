@@ -192,7 +192,7 @@ def update_isa_table_file(
         ):
             message = ParserMessage(type=ParserMessageType.ERROR)
             column_index = column_indices[column_name]
-            message.column = column_index
+            message.column = str(column_index)
             if len(cleaned_column_name.strip()) > 0:
                 message.short = "Column header starts or ends with space"
                 message.detail = (
