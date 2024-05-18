@@ -46,7 +46,7 @@ class UpdateCellsTsvAction(BaseTsvAction):
         try:
             with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
-                header_names = header_line.strip().split("\t")
+                header_names = header_line.strip("\n").split("\t")
                 invalid_column_indices = [
                     x for x in column_indices if x < 0 or x > len(header_names)
                 ]
@@ -60,7 +60,7 @@ class UpdateCellsTsvAction(BaseTsvAction):
                     self.write_row(target, header_names)
                     row_index = 0
                     for line in source:
-                        row = line.strip().split("\t")
+                        row = line.strip("\n").split("\t")
                         if row_index in row_data:
                             row_data_item = row_data[row_index]
                             for column_idx in row_data_item.values:

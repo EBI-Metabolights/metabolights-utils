@@ -11,7 +11,7 @@ from metabolights_utils.isatab.reader import (
     InvestigationFileReaderResult,
 )
 from metabolights_utils.isatab.writer import InvestigationFileWriter
-from metabolights_utils.tsv.utils import calculate_sha256
+from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 
 def test_parse_investigation_from_fs_valid_01():
@@ -65,15 +65,15 @@ def test_investigation_file_read_write_success_1():
     try:
         writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
         writer.write(result.investigation, file_buffer_or_path=tmp_path)
-        new_sha256 = calculate_sha256(tmp_path)
+        new_sha256 = HashUtils.sha256sum(tmp_path)
 
         assert new_sha256 == sha25_hash
         writer.write(
             result.investigation,
             file_buffer_or_path=tmp_path,
-            values_in_quatation_mark=False,
+            values_in_quotation_mark=False,
         )
-        new_sha256 = calculate_sha256(tmp_path)
+        new_sha256 = HashUtils.sha256sum(tmp_path)
         assert new_sha256 != sha25_hash
     except Exception as exc:
         raise exc

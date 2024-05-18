@@ -35,7 +35,7 @@ class DeleteRowsTsvAction(BaseTsvAction):
         try:
             with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
-                header_names = header_line.strip().split("\t")
+                header_names = header_line.strip("\n").split("\t")
 
                 with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, header_names)

@@ -40,7 +40,7 @@ class CopyColumnTsvAction(BaseTsvAction):
         try:
             with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
-                header_names = header_line.strip().split("\t")
+                header_names = header_line.strip("\n").split("\t")
                 source_column_found: bool = False
                 for column_idx, value in enumerate(header_names):
                     if column_idx == source_column_index:
@@ -68,7 +68,7 @@ class CopyColumnTsvAction(BaseTsvAction):
                     self.write_row(target, header_names)
                     row_index = 0
                     for line in source:
-                        row = line.strip().split("\t")
+                        row = line.strip("\n").split("\t")
                         for column_idx in columns:
                             if (
                                 not selected_row_indices

@@ -53,9 +53,9 @@ class TsvFileFilterOption(CamelCaseModel):
         ),
     ] = []
 
-    operation: Annotated[
-        FilterOperation, Field(description="Filter operation")
-    ] = FilterOperation.CONTAINS
+    operation: Annotated[FilterOperation, Field(description="Filter operation")] = (
+        FilterOperation.CONTAINS
+    )
 
     parameter: Annotated[
         Union[str, int, float, datetime],
@@ -243,40 +243,9 @@ class FilterRegistry:
         if name in cls.custom_filters:
             del cls.custom_filters[name]
 
-    # @classmethod
-    # def get_custom_filter(
-    #     cls,
-    #     filter_option: TsvFileFilterOption,
-    #     column_name_indices: Dict[str, int],
-    #     column_indices: Dict[int, str],
-    # ) -> Filter:
-    #     name = filter_option.custom_filter_name
-    #     if name and name in cls.custom_filters:
-    #         return cls.custom_filters[name](
-    #             filter_option, column_name_indices, column_indices
-    #         )
-    #     return None
-
-
-# FILTERS
-
-
-# class CustomFilterProxy(Filter):
-#     def __init__(
-#         self,
-#         filter_option: TsvFileFilterOption,
-#         column_name_indices: Dict[str, int],
-#         column_indices: Dict[int, str],
-#     ) -> None:
-#         super().__init__(filter_option, column_name_indices, column_indices)
-#         self.custom_filter: CustomFilter = FilterRegistry.get_custom_filter(
-#             self.filter_option, column_name_indices, column_indices
-#         )
-
-#     def evaluate(self, row_value: str) -> bool:
-#         if not self.custom_filter:
-#             return False
-#         return self.custom_filter.evaluate(row_value)
+    @classmethod
+    def get_custom_filter_names(cls) -> List[str]:
+        return list(cls.custom_filters.keys())
 
 
 class ContainsFilter(Filter):

@@ -45,7 +45,7 @@ class CopyRowTsvAction(BaseTsvAction):
                 if row_index > source_index:
                     break
                 if row_index == source_index:
-                    copied_row = line.strip().split("\t")
+                    copied_row = line.strip("\n").split("\t")
                     break
                 row_index += 1
         if not copied_row:
@@ -64,7 +64,7 @@ class CopyRowTsvAction(BaseTsvAction):
                             if not selected_column_indices:
                                 self.write_row(target, copied_row)
                             else:
-                                new_row = line.strip().split("\t")
+                                new_row = line.strip("\n").split("\t")
                                 for index in selected_column_indices:
                                     new_row[index] = copied_row[index]
                                     self.write_row(target, new_row)

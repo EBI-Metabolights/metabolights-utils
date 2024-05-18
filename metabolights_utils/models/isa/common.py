@@ -295,9 +295,9 @@ class ProtocolFields(MetabolightsBaseModel):
         Dict[str, ProtocolOntologyItem], Field(description="")
     ] = {}
 
-    additional_text_fields: Annotated[
-        List[ProtocolTextItem], Field(description="")
-    ] = []
+    additional_text_fields: Annotated[List[ProtocolTextItem], Field(description="")] = (
+        []
+    )
     additional_numeric_fields: Annotated[
         List[ProtocolNumericOntologyItem], Field(description="")
     ] = []
@@ -322,9 +322,9 @@ class IsaTableColumn(IsaAbstractModel):
 
     column_category: Annotated[str, Field(description="")] = ""
 
-    column_structure: Annotated[
-        ColumnsStructure, Field(description="")
-    ] = ColumnsStructure.SINGLE_COLUMN
+    column_structure: Annotated[ColumnsStructure, Field(description="")] = (
+        ColumnsStructure.SINGLE_COLUMN
+    )
 
     column_prefix: Annotated[str, Field(description="")] = ""
 
@@ -340,13 +340,23 @@ class IsaTable(IsaAbstractModel):
         Field(description="Unique column names of this table."),
     ] = []
 
+    column_baseline: Annotated[
+        List[str],
+        Field(description="Baseline (before modification) column names of this table."),
+    ] = []
+
     headers: Annotated[
         List[IsaTableColumn], Field(description="Metadata of columns.")
     ] = []
 
-    data: Annotated[
-        Dict[str, List[str]], Field(description="Data of each column.")
-    ] = {}
+    data: Annotated[Dict[str, List[str]], Field(description="Data of each column.")] = (
+        {}
+    )
+
+    row_baseline: Annotated[
+        List[int],
+        Field(description="Baseline (before modification) rows of this table."),
+    ] = []
 
     row_indices: Annotated[
         List[int], Field(description="Current rows' positions in ISA table.")

@@ -37,7 +37,7 @@ class DeleteColumnsTsvAction(BaseTsvAction):
         try:
             with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
-                header_names = header_line.strip().split("\t")
+                header_names = header_line.strip("\n").split("\t")
                 new_header_names = []
                 for column_idx, value in enumerate(header_names):
                     if column_idx in column_indices:
@@ -52,7 +52,7 @@ class DeleteColumnsTsvAction(BaseTsvAction):
                 with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, new_header_names)
                     for line in source:
-                        row = line.strip().split("\t")
+                        row = line.strip("\n").split("\t")
                         new_row = [
                             x[1] for x in enumerate(row) if x[0] not in column_indices
                         ]

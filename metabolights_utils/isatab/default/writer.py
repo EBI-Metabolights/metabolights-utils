@@ -20,7 +20,7 @@ class DefaultIsaTableFileWriter(TsvFileUpdater, IsaTableFileWriter):
     ) -> TsvActionReport:
         column_indices = dict(zip(isa_table.columns, isa_table.column_indices))
         headers = {
-            column_indices[x.column_header]: x.column_header for x in isa_table.headers
+            column_indices[x.column_name]: x.column_header for x in isa_table.headers
         }
 
         columns: Dict[int, TsvColumnData] = {}

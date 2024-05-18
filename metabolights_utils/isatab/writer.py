@@ -17,7 +17,7 @@ class InvestigationFileWriter(ABC):
         self,
         investigation: Investigation,
         file_buffer_or_path: Union[IOBase, str, pathlib.Path],
-        values_in_quatation_mark: bool = True,
+        values_in_quotation_mark: bool = True,
         verify_file_after_update: bool = True,
         skip_parser_info_messages: bool = True,
     ) -> InvestigationFileReaderResult:
@@ -28,7 +28,7 @@ class InvestigationFileWriter(ABC):
         Args:
             investigation (Investigation): investigation file object.
             file_buffer (IOBase, str, pathlib.Path): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
-            values_in_quatation_mark (bool, optional): add values in quatation_mark. Defaults to True.
+            values_in_quotation_mark (bool, optional): add values in quatation_mark. Defaults to True.
             verify_file_after_update (bool, optional): Reads investigation file if it is True. Defaults to True.
             skip_parser_info_messages (bool, optional): clear INFO messages from parser messages. Defaults to True.
         Returns:

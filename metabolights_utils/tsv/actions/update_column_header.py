@@ -32,7 +32,7 @@ class UpdateColumnHeadersTsvAction(BaseTsvAction):
         try:
             with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
-                header_names = header_line.strip().split("\t")
+                header_names = header_line.strip("\n").split("\t")
                 column_count = len(header_names)
                 for column_idx in column_indices:
                     if column_idx < column_count and headers[column_idx]:

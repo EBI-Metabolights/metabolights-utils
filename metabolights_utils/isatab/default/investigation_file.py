@@ -8,19 +8,22 @@ from pydantic import BaseModel
 from pydantic.alias_generators import to_camel, to_snake
 
 from metabolights_utils.isatab.default.base_isa_file import BaseIsaFile
-from metabolights_utils.isatab.default.parser.investigation_parser import \
-    get_investigation
-from metabolights_utils.isatab.reader import (InvestigationFileReader,
-                                              InvestigationFileReaderResult)
+from metabolights_utils.isatab.default.parser.investigation_parser import (
+    get_investigation,
+)
+from metabolights_utils.isatab.reader import (
+    InvestigationFileReader,
+    InvestigationFileReaderResult,
+)
 from metabolights_utils.isatab.writer import InvestigationFileWriter
 from metabolights_utils.models.isa.common import IsaAbstractModel
-from metabolights_utils.models.isa.investigation_file import (BaseSection,
-                                                              Investigation)
-from metabolights_utils.models.isa.investigation_file import \
-    module_name as inv_module_name
+from metabolights_utils.models.isa.investigation_file import BaseSection, Investigation
+from metabolights_utils.models.isa.investigation_file import (
+    module_name as inv_module_name,
+)
 from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
-from metabolights_utils.tsv.utils import calculate_sha256
+from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 
 class InvestigationFileException(Exception):
@@ -90,12 +93,12 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
 
         if parse_success:
             if pathlib.Path(path).exists():
-                result.sha256_hash = calculate_sha256(path)
+                result.sha256_hash = HashUtils.sha256sum(path)
             elif (
                 isinstance(buffer_or_path, str)
                 or isinstance(buffer_or_path, pathlib.Path)
             ) and pathlib.Path(str(buffer_or_path)).exists():
-                result.sha256_hash = calculate_sha256(str(buffer_or_path))
+                result.sha256_hash = HashUtils.sha256sum(str(buffer_or_path))
         return result
 
 
@@ -104,13 +107,13 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
         self,
         investigation: Investigation,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase] = None,
-        values_in_quatation_mark: bool = True,
+        values_in_quotation_mark: bool = True,
         verify_file_after_update: bool = True,
         skip_parser_info_messages: bool = True,
     ) -> InvestigationFileReaderResult:
         content = InvestigationFileSerializer.to_isa_file_string(
             investigation=investigation,
-            values_in_quatation_mark=values_in_quatation_mark,
+            values_in_quotation_mark=values_in_quotation_mark,
         )
         file_path = None
         try:
@@ -147,7 +150,7 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
                     file_path=str(file_path),
                 )
             if os.path.exists(file_path):
-                result.sha256_hash = calculate_sha256(file_path)
+                result.sha256_hash = HashUtils.sha256sum(file_path)
 
             return result
         except Exception as exc:
@@ -157,22 +160,22 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
 class InvestigationFileSerializer(object):
     @classmethod
     def to_isa_file_lines(
-        cls, investigation: Investigation, values_in_quatation_mark: bool = False
+        cls, investigation: Investigation, values_in_quotation_mark: bool = False
     ):
         file_lines = []
         for row in cls.to_isa_file_line_list(investigation):
             for i in range(len(row)):
                 item = row[i].strip('"')
-                row[i] = f'"{item}"' if i > 0 and values_in_quatation_mark else item
+                row[i] = f'"{item}"' if i > 0 and values_in_quotation_mark else item
             file_lines.append("\t".join(row))
 
         return file_lines
 
     @classmethod
     def to_isa_file_string(
-        cls, investigation: Investigation, values_in_quatation_mark: bool = False
+        cls, investigation: Investigation, values_in_quotation_mark: bool = False
     ):
-        file_lines = cls.to_isa_file_lines(investigation, values_in_quatation_mark)
+        file_lines = cls.to_isa_file_lines(investigation, values_in_quotation_mark)
 
         return "\n".join(file_lines) + "\n"
 
@@ -329,10 +332,8 @@ class InvestigationFileSerializer(object):
                     items, properties, rows, row_map, fields, i, header_name
                 )
             elif "anyOf" in properties[field_key]:
-                
-                cls.assign_string_type(
-                    items, rows, row_map, fields, i, header_name
-                )
+
+                cls.assign_string_type(items, rows, row_map, fields, i, header_name)
 
         return rows
 
@@ -374,7 +375,9 @@ class InvestigationFileSerializer(object):
                     sub_items = []
                     if item:
                         for sub_item in item:
-                            sub_items.append(str(cls.get_attribute(sub_item, field_key)))
+                            sub_items.append(
+                                str(cls.get_attribute(sub_item, field_key))
+                            )
                     else:
                         sub_items.append("")
                     row_map[header_name].append(";".join(sub_items))

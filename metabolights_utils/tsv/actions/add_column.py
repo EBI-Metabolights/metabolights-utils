@@ -41,7 +41,7 @@ class AddColumnsTsvAction(BaseTsvAction):
         try:
             with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
-                header_names = header_line.strip().split("\t")
+                header_names = header_line.strip("\n").split("\t")
                 for column_idx in column_indices:
                     if column_idx < 0:
                         column_idx = len(header_names)
@@ -63,7 +63,7 @@ class AddColumnsTsvAction(BaseTsvAction):
                     self.write_row(target, header_names)
                     row_index = 0
                     for line in source:
-                        row = line.strip().split("\t")
+                        row = line.strip("\n").split("\t")
                         for column_idx in column_indices:
                             default_value = (
                                 cell_default_values[column_idx]

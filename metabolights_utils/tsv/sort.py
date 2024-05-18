@@ -234,32 +234,6 @@ class CustomSorter(AbstractSorter, ABC):
         )
 
 
-# class CustomSorterProxy(AbstractSorter):
-#     def __init__(
-#         self,
-#         sort_option: TsvFileSortOption,
-#         column_idx: int,
-#         column_name_indices: Dict[str, int],
-#         column_indices: Dict[int, str],
-#     ) -> None:
-#         super().__init__(sort_option, column_idx, column_name_indices, column_indices)
-#         self.custom_sorter: CustomSorter = SorterRegistry.get_sorter(
-#             sort_option, column_idx, column_name_indices, column_indices
-#         )
-
-#     def sort(self, row: Tuple[int, List[str]]) -> str:
-#         value = row[1][self.column_idx]
-#         if not value:
-#             return self.get_none_value()
-#         try:
-#             sorter = self.custom_sorter
-#             order = self.valid_value_order
-#             length = self.min_key_length
-#             return str(order) + sorter.get_sorted_string(value).zfill(length)
-#         except Exception:
-#             return self.get_invalid_value(value)
-
-
 class IntegerSorter(AbstractSorter):
     def __init__(
         self,

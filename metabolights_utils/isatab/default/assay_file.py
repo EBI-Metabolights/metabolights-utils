@@ -8,8 +8,11 @@ class DefaultAssayFileReader(BaseIsaTableFileReader):
         [r"^(Extract Name)$", ""],
         [r"^(Protocol REF)(.\d+)?$", "Protocol"],
         [r"^(Sample Name)$", ""],
-        [r"^[ ]*Parameter[ ]+Value[ ]*\[[ ]*(\w[ -~]*)[ ]*\][ ]*$", "Parameter Value"],
-        [r"^[ ]*Comment[ ]*\[[ ]*(\w[ -~]*)[ ]*\][ ]*$", "Comment"],
+        [
+            r"^[ ]*Parameter[ ]+Value[ ]*\[[ ]*(\w[ -~]*)[ ]*\](.\d+)?$",
+            "Parameter Value",
+        ],
+        [r"^[ ]*Comment[ ]*\[[ ]*(\w[ -~]*)[ ]*\](.\d+)?$", "Comment"],
         [r"^(Labeled Extract Name)$", ""],
         [r"^(Label)$", ""],
     ]

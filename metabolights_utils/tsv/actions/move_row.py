@@ -44,7 +44,7 @@ class MoveRowTsvAction(BaseTsvAction):
                     if row_index > source_index:
                         break
                     if row_index == source_index:
-                        moved_row = line.strip().split("\t")
+                        moved_row = line.strip("\n").split("\t")
                         break
 
             if not moved_row:
@@ -72,7 +72,7 @@ class MoveRowTsvAction(BaseTsvAction):
                         else:
                             if row_index == new_source_index and not source_deleted:
                                 source_deleted = True
-                                moved_row = line.strip().split("\t")
+                                moved_row = line.strip("\n").split("\t")
                                 row_index -= 1
                             else:
                                 target.write(line)

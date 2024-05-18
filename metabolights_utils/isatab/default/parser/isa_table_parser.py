@@ -17,7 +17,7 @@ from metabolights_utils.models.isa.enums import (
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.tsv.sort import TsvFileSortOption
-from metabolights_utils.tsv.utils import calculate_sha256
+from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 
 def parse_isa_file_content(
@@ -125,7 +125,7 @@ def parse_isa_table_sheet_from_fs(
     isa_table_file: IsaTableFile = table
     if isa_table_file:
         if os.path.exists(file_path):
-            isa_table_file.sha256_hash = calculate_sha256(file_path)
+            isa_table_file.sha256_hash = HashUtils.sha256sum(file_path)
         if isa_table_file.table.columns:
             messages.extend(read_messages)
             messages = [x for x in messages if x.type != ParserMessageType.INFO]
@@ -282,25 +282,25 @@ multiple_columns_additional_header_patterns = MULTI_COLUMN_TEMPLATES[
 
 samples_file_expected_patterns = [
     [r"^(Source Name)$", ""],
-    [r"^Characteristics\[(\w[ -~]*)\]$", "Characteristics"],
+    [r"^Characteristics\[(\w[ -~]*)\](\.\d+)?$", "Characteristics"],
     [r"^(Protocol REF)(\.\d+)?$", "Protocol"],
     [r"^(Sample Name)$", ""],
-    [r"^Factor Value\[(\w[ -~]*)\]$", "Factor Value"],
-    [r"^Comment\b\[(\w{1}[ -~]*)\]$", "Comment"],
+    [r"^Factor Value\[(\w[ -~]*)\](\.\d+)?$", "Factor Value"],
+    [r"^Comment\b\[(\w{1}[ -~]*)\](\.\d+)?$", "Comment"],
 ]
 
-assay_file_expected_patterns = [
+assay_file_expected_patterns: List[List[str]] = [
     [r"^(Extract Name)$", ""],
     [r"^(Protocol REF)(\.\d+)?$", "Protocol"],
     [r"^(Sample Name)$", ""],
-    [r"^[ ]*Parameter[ ]+Value[ ]*\[[ ]*(\w[ -~]*)[ ]*\][ ]*$", "Parameter Value"],
-    [r"^Comment\b\[(\w{1}[ -~]*)\]$", "Comment"],
+    [r"^[ ]*Parameter[ ]+Value[ ]*\[[ ]*(\w[ -~]*)[ ]*\](\.\d+)?$", "Parameter Value"],
+    [r"^Comment\b\[(\w{1}[ -~]*)\](\.\d+)?$", "Comment"],
     [r"^(Labeled Extract Name)$", ""],
     [r"^(Label)$", ""],
 ]
 
 
-def get_cleaned_header(column_name):
+def get_cleaned_header(column_name: str) -> str:
     cleaned_column_name = column_name
     last_dot = column_name.rfind(".")
     if last_dot > 0:
@@ -311,7 +311,11 @@ def get_cleaned_header(column_name):
     return cleaned_column_name
 
 
-def get_headers(columns: List[str], expected_patterns, messages: List[ParserMessage]):
+def get_headers(
+    columns: List[str],
+    expected_patterns: List[List[str]],
+    messages: List[ParserMessage],
+):
     headers = []
     column_index = 0
     columns_count = len(columns)
@@ -370,13 +374,14 @@ def get_headers(columns: List[str], expected_patterns, messages: List[ParserMess
             column.additional_columns = defined_additional_column_headers
             additional_column_index = column_index
 
-            for additional_column in column.additional_columns:
+            for item in column.additional_columns:
+                additional_column: IsaTableAdditionalColumn = item
                 additional_column_index = additional_column_index + 1
                 linked_column = IsaTableColumn(
                     column_index=additional_column_index,
                     column_structure=ColumnsStructure.LINKED_COLUMN,
                 )
-                linked_column.column_header = additional_column
+                linked_column.column_header = additional_column.value
                 linked_column.column_category = "Linked Column"
                 linked_column.column_name = columns[additional_column_index]
                 linked_columns.append(linked_column)
@@ -431,7 +436,7 @@ def update_as_multi_column(
         column.column_category = expected_patterns[pattern_index][1]
         column.column_prefix = expected_patterns[pattern_index][1]
     else:
-        column.column_category = "Undefined"
+        # column.column_category = "Undefined"
         message.type = ParserMessageType.INFO
         message.short = (
             f"Multi column '{cleaned_column_name}' is not in expected column list."

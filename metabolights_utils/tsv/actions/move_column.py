@@ -29,7 +29,7 @@ class MoveColumnTsvAction(BaseTsvAction):
         try:
             with open(source_file_path, "r", encoding="utf-8") as source:
                 header_line = source.readline()
-                header_names = header_line.strip().split("\t")
+                header_names = header_line.strip("\n").split("\t")
                 new_header_names = []
                 if source_column_index < 0 or source_column_index >= len(header_names):
                     result.message = (
@@ -55,7 +55,7 @@ class MoveColumnTsvAction(BaseTsvAction):
                 with open(target_file_path, "w", encoding="utf-8") as target:
                     self.write_row(target, new_header_names)
                     for line in source:
-                        row = line.strip().split("\t")
+                        row = line.strip("\n").split("\t")
                         moved_data = row[source_column_index]
                         new_row = [x for x in row if x != source_column_index]
                         new_row.insert(new_column_index, moved_data)

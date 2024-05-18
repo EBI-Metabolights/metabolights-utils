@@ -16,7 +16,9 @@ from metabolights_utils.tsv.actions.move_column import MoveColumnTsvAction
 from metabolights_utils.tsv.actions.move_row import MoveRowTsvAction
 from metabolights_utils.tsv.actions.update_cell import UpdateCellsTsvAction
 from metabolights_utils.tsv.actions.update_column import UpdateColumnsTsvAction
-from metabolights_utils.tsv.actions.update_column_header import UpdateColumnHeadersTsvAction
+from metabolights_utils.tsv.actions.update_column_header import (
+    UpdateColumnHeadersTsvAction,
+)
 from metabolights_utils.tsv.actions.update_row import UpdateRowsTsvAction
 from metabolights_utils.tsv.model import (
     TsvAction,
@@ -24,7 +26,7 @@ from metabolights_utils.tsv.model import (
     TsvActionResult,
     TsvActionType,
 )
-from metabolights_utils.tsv.utils import calculate_sha256
+from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 TSV_FILE_ACTIONS: Dict[TsvActionType, BaseTsvAction] = {}
 TSV_FILE_ACTIONS[TsvActionType.ADD_ROW] = AddRowsTsvAction()
@@ -55,9 +57,6 @@ class TsvFileUpdater:
         if not file_sha256_hash:
             report.message = "Invalid input for file hash value"
             return report
-        if not file_sha256_hash:
-            report.message = "Invalid input for file hash value"
-            return report
 
         if not actions:
             report.message = "Invalid input for action list"
@@ -73,14 +72,14 @@ class TsvFileUpdater:
                 f"File '{str(file)}' does not exist or it is not a regular file."
             )
             return report
-        sha256 = calculate_sha256(file)
+        sha256 = HashUtils.sha256sum(file)
 
         if sha256 != file_sha256_hash:
             report.message = f"SH256 of '{str(file)}' does not match the input value."
             return report
 
         task_id = str(uuid.uuid4().hex)
-        timestamp = str(int(datetime.datetime.now().timestamp()))
+        timestamp = str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
         temp_folder = pathlib.Path(f"/tmp/isa_table_actions/{timestamp}/{task_id}")
         os.makedirs(str(temp_folder))
 
@@ -98,7 +97,7 @@ class TsvFileUpdater:
         try:
             for action in actions:
                 if action.action_type not in TSV_FILE_ACTIONS:
-                    report.message = "Upsupported action: action.action_type."
+                    report.message = "Unsupported action: action.action_type."
                     return report
             shutil.move(file, file_copy_path)
             for action in actions:
@@ -117,7 +116,7 @@ class TsvFileUpdater:
                 report.results.append(result)
                 if not result.success:
                     raise TsvActionException(message=result.message)
-            new_sha256 = calculate_sha256(last_file)
+            new_sha256 = HashUtils.sha256sum(last_file)
             report.updated_file_sha256_hash = new_sha256
             report.success = True
         except Exception as exc:
