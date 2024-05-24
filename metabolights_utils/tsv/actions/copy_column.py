@@ -12,6 +12,8 @@ class CopyColumnTsvAction(BaseTsvAction):
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
         action: actions.TsvCopyColumnAction,
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
         if action.action_type != actions.TsvActionType.COPY_COLUMN:
@@ -38,14 +40,14 @@ class CopyColumnTsvAction(BaseTsvAction):
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r", encoding="utf-8") as source:
+            with open(source_file_path, "r", encoding=read_encoding) as source:
                 header_line = source.readline()
                 header_names = header_line.strip("\n").split("\t")
                 source_column_found: bool = False
                 for column_idx, value in enumerate(header_names):
                     if column_idx == source_column_index:
                         if source_column_header != value:
-                            result.message = f"Input header name does not math the actual one for index {column_idx}. Expected: {source_column_header}, found: {value}"
+                            result.message = f"Input header name does not match the actual one for index {column_idx}. Expected: {source_column_header}, found: {value}"
                             return result
                         source_column_found = True
                         break
@@ -64,7 +66,7 @@ class CopyColumnTsvAction(BaseTsvAction):
                     result.message = f"Target column indices are not valid: {', '.join(invalid_targets)}."
                     return result
 
-                with open(target_file_path, "w", encoding="utf-8") as target:
+                with open(target_file_path, "w", encoding=write_encoding) as target:
                     self.write_row(target, header_names)
                     row_index = 0
                     for line in source:

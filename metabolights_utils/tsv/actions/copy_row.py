@@ -12,6 +12,8 @@ class CopyRowTsvAction(BaseTsvAction):
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
         action: actions.TsvCopyRowAction,
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
         if action.action_type != actions.TsvActionType.COPY_ROW:
@@ -38,7 +40,7 @@ class CopyRowTsvAction(BaseTsvAction):
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
         copied_row = None
-        with open(source_file_path, "r", encoding="utf-8") as source:
+        with open(source_file_path, "r", encoding=read_encoding) as source:
             source.readline()
             row_index = 0
             for line in source:
@@ -53,10 +55,10 @@ class CopyRowTsvAction(BaseTsvAction):
             return result
 
         try:
-            with open(source_file_path, "r", encoding="utf-8") as source:
+            with open(source_file_path, "r", encoding=read_encoding) as source:
                 header_line = source.readline()
 
-                with open(target_file_path, "w", encoding="utf-8") as target:
+                with open(target_file_path, "w", encoding=write_encoding) as target:
                     target.write(header_line)
                     row_index = 0
                     for line in source:

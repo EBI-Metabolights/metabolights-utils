@@ -340,10 +340,10 @@ class IsaTable(IsaAbstractModel):
         Field(description="Unique column names of this table."),
     ] = []
 
-    column_baseline: Annotated[
-        List[str],
-        Field(description="Baseline (before modification) column names of this table."),
-    ] = []
+    # column_baseline: Annotated[
+    #     List[str],
+    #     Field(description="Baseline (before modification) column names of this table."),
+    # ] = []
 
     headers: Annotated[
         List[IsaTableColumn], Field(description="Metadata of columns.")
@@ -353,10 +353,10 @@ class IsaTable(IsaAbstractModel):
         {}
     )
 
-    row_baseline: Annotated[
-        List[int],
-        Field(description="Baseline (before modification) rows of this table."),
-    ] = []
+    # row_baseline: Annotated[
+    #     List[int],
+    #     Field(description="Baseline (before modification) rows of this table."),
+    # ] = []
 
     row_indices: Annotated[
         List[int], Field(description="Current rows' positions in ISA table.")

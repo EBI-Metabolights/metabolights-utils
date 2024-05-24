@@ -17,6 +17,8 @@ class DefaultIsaTableFileWriter(TsvFileUpdater, IsaTableFileWriter):
         file_path: Union[str, pathlib.Path],
         file_sha256_hash: str,
         isa_table: IsaTable,
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> TsvActionReport:
         column_indices = dict(zip(isa_table.columns, isa_table.column_indices))
         headers = {
@@ -34,9 +36,12 @@ class DefaultIsaTableFileWriter(TsvFileUpdater, IsaTableFileWriter):
             )
 
         column_update_action = TsvUpdateColumnsAction(columns=columns)
+
         report = self.apply_actions(
             file_path=file_path,
             file_sha256_hash=file_sha256_hash,
             actions=[column_update_action],
+            read_encoding=read_encoding,
+            write_encoding=write_encoding,
         )
         return report

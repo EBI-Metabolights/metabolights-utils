@@ -11,6 +11,8 @@ class MoveRowTsvAction(BaseTsvAction):
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
         action: actions.TsvMoveRowAction,
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
         if action.action_type != actions.TsvActionType.MOVE_ROW:
@@ -36,7 +38,7 @@ class MoveRowTsvAction(BaseTsvAction):
         new_source_index = source_index
         moved_row = None
         if source_index >= new_row_index:
-            with open(source_file_path, "r", encoding="utf-8") as source:
+            with open(source_file_path, "r", encoding=read_encoding) as source:
                 source.readline()
                 row_index = -1
                 for line in source:
@@ -55,10 +57,10 @@ class MoveRowTsvAction(BaseTsvAction):
         moved = False
         source_deleted = False
         try:
-            with open(source_file_path, "r", encoding="utf-8") as source:
+            with open(source_file_path, "r", encoding=read_encoding) as source:
                 header_line = source.readline()
 
-                with open(target_file_path, "w", encoding="utf-8") as target:
+                with open(target_file_path, "w", encoding=write_encoding) as target:
                     target.write(header_line)
                     row_index = -1
                     for line in source:

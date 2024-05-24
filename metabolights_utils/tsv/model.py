@@ -180,22 +180,25 @@ class TsvUpdateColumnsAction(TsvAction):
 
 class TsvUpdateCellsAction(TsvAction):
     action_type: TsvActionType = TsvActionType.UPDATE_CELL_DATA
-    cells: Annotated[
-        List[TsvCellData], Field(description="Updated cell data list")
-    ] = []
+    cells: Annotated[List[TsvCellData], Field(description="Updated cell data list")] = (
+        []
+    )
 
 
 class TsvUpdateColumnHeaderAction(TsvAction):
     action_type: TsvActionType = TsvActionType.UPDATE_COLUMN_HEADER
     new_headers: Annotated[
-        Dict[int, str], Field(description="Column indices and updated column headers")
+        Dict[int, str], Field(description="Column indices and new column headers")
+    ] = {}
+    current_headers: Annotated[
+        Dict[int, str], Field(description="Current column indices and column headers")
     ] = {}
 
 
 class TsvActionResult(CamelCaseModel):
-    action: Annotated[
-        TsvAction, Field(description="Applied action details.")
-    ] = TsvAction()
+    action: Annotated[TsvAction, Field(description="Applied action details.")] = (
+        TsvAction()
+    )
     success: Annotated[bool, Field(description="Result of action.")] = False
     message: Annotated[
         str, Field(description="Error or success message after action.")
@@ -207,9 +210,9 @@ class TsvActionReport(CamelCaseModel):
         List[TsvActionResult],
         Field(description="Ordered results of the applied actions."),
     ] = []
-    success: Annotated[
-        bool, Field(description="Result of all applied actions.")
-    ] = False
+    success: Annotated[bool, Field(description="Result of all applied actions.")] = (
+        False
+    )
     message: Annotated[str, Field(description="Message after  applied actions.")] = ""
     updated_file_sha256_hash: Annotated[
         str, Field(description="Last SHA256 hash value of the updated file.")

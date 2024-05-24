@@ -12,6 +12,8 @@ class DeleteColumnsTsvAction(BaseTsvAction):
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
         action: actions.TsvDeleteColumnsAction,
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
         if action.action_type != actions.TsvActionType.DELETE_COLUMN:
@@ -35,7 +37,7 @@ class DeleteColumnsTsvAction(BaseTsvAction):
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r", encoding="utf-8") as source:
+            with open(source_file_path, "r", encoding=read_encoding) as source:
                 header_line = source.readline()
                 header_names = header_line.strip("\n").split("\t")
                 new_header_names = []
@@ -43,13 +45,13 @@ class DeleteColumnsTsvAction(BaseTsvAction):
                     if column_idx in column_indices:
                         header_name = columns[column_idx]
                         if header_name != value:
-                            result.message = f"Input header name does not math the actual one for index {column_idx}. Expected: {header_name}, found: {value}"
+                            result.message = f"Input header name does not match the actual one for index {column_idx}. Expected: {header_name}, found: {value}"
                             return result
                         continue
 
                     new_header_names.append(value)
 
-                with open(target_file_path, "w", encoding="utf-8") as target:
+                with open(target_file_path, "w", encoding=write_encoding) as target:
                     self.write_row(target, new_header_names)
                     for line in source:
                         row = line.strip("\n").split("\t")

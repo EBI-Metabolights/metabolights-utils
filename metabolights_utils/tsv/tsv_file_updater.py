@@ -49,6 +49,8 @@ class TsvFileUpdater:
         file_path: Union[str, pathlib.Path],
         file_sha256_hash: str,
         actions: List[TsvAction],
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> TsvActionReport:
         report: TsvActionReport = TsvActionReport()
         if not file_path:
@@ -103,7 +105,11 @@ class TsvFileUpdater:
             for action in actions:
                 helper = TSV_FILE_ACTIONS[action.action_type]
                 result: TsvActionResult = helper.apply_action(
-                    source_path, target_path, action
+                    source_path,
+                    target_path,
+                    action,
+                    read_encoding=read_encoding,
+                    write_encoding=write_encoding,
                 )
                 last_file = target_path
                 source_path = last_file

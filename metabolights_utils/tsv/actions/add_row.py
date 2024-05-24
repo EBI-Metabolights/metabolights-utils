@@ -12,6 +12,8 @@ class AddRowsTsvAction(BaseTsvAction):
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
         action: model.TsvAddRowsAction,
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> model.TsvActionResult:
         result: model.TsvActionResult = model.TsvActionResult(action=action)
         if action.action_type != model.TsvActionType.ADD_ROW:
@@ -37,12 +39,12 @@ class AddRowsTsvAction(BaseTsvAction):
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r", encoding="utf-8") as source:
+            with open(source_file_path, "r", encoding=read_encoding) as source:
                 header_line = source.readline()
                 header_names = header_line.strip("\n").split("\t")
                 empty_row = [""] * len(header_names)
 
-                with open(target_file_path, "w", encoding="utf-8") as target:
+                with open(target_file_path, "w", encoding=write_encoding) as target:
                     self.write_row(target, header_names)
                     row_index = -1
                     for line in source:

@@ -12,6 +12,8 @@ class UpdateColumnHeadersTsvAction(BaseTsvAction):
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
         action: actions.TsvUpdateColumnHeaderAction,
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> actions.TsvActionResult:
         result: actions.TsvActionResult = actions.TsvActionResult(action=action)
         if action.action_type != actions.TsvActionType.UPDATE_COLUMN_HEADER:
@@ -30,7 +32,7 @@ class UpdateColumnHeadersTsvAction(BaseTsvAction):
             action.id = uuid_value
 
         try:
-            with open(source_file_path, "r", encoding="utf-8") as source:
+            with open(source_file_path, "r", encoding=read_encoding) as source:
                 header_line = source.readline()
                 header_names = header_line.strip("\n").split("\t")
                 column_count = len(header_names)
@@ -38,12 +40,10 @@ class UpdateColumnHeadersTsvAction(BaseTsvAction):
                     if column_idx < column_count and headers[column_idx]:
                         header_names[column_idx] = headers[column_idx]
                     else:
-                        headers[column_idx] = (
-                            headers[column_idx] if headers[column_idx] else ""
-                        )
-                        result.message = f"Invalid column index {column_idx} with column name '{headers[column_idx]}'"
+                        name = headers[column_idx] if headers[column_idx] else ""
+                        result.message = f"Invalid column index {column_idx} with column name '{name}'"
                         return result
-                with open(target_file_path, "w", encoding="utf-8") as target:
+                with open(target_file_path, "w", encoding=write_encoding) as target:
                     self.write_row(target, header_names)
                     for line in source:
                         target.write(line)

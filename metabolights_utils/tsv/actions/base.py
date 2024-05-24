@@ -20,6 +20,8 @@ class BaseTsvAction(ABC):
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
         action: actions.TsvAction,
+        read_encoding: str = "utf-8",
+        write_encoding: str = "utf-8",
     ) -> actions.TsvActionResult:
         pass
 
@@ -36,10 +38,8 @@ class BaseTsvAction(ABC):
         column_indices = range(len(empty_row))
         data_values = input_row.values
 
-        merge = (
-            lambda x: data_values[x]
-            if data_values and x in data_values
-            else empty_row[x]
+        merge = lambda x: (
+            data_values[x] if data_values and x in data_values else empty_row[x]
         )
         map_result = map(merge, column_indices)
         return list(map_result)
