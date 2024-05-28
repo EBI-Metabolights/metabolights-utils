@@ -81,7 +81,7 @@ class TsvFileSortOption(CamelCaseModel):
 
 
 class TsvSortException(Exception):
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: str="") -> None:
         super().__init__(message)
 
 

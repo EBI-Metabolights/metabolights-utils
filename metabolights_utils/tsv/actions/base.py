@@ -9,7 +9,7 @@ from metabolights_utils.tsv import model as actions
 
 
 class TsvActionException(Exception):
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: str = "") -> None:
         self.message = message
 
 

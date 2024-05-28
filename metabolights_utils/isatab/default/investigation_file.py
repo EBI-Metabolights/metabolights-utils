@@ -27,7 +27,7 @@ from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUti
 
 
 class InvestigationFileException(Exception):
-    def __init__(self, message) -> None:
+    def __init__(self, message="") -> None:
         self.message = message
 
 

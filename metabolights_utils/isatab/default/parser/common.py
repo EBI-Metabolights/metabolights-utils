@@ -293,9 +293,11 @@ def read_table_file_with_filter_and_sort_option(
                         filters.append(selected_filter)
                     # empty search column filters will be moved to end
                     filters.sort(
-                        key=lambda x: len(x.filter_option.search_columns)
-                        if x.filter_option.search_columns
-                        else sys.maxsize
+                        key=lambda x: (
+                            len(x.filter_option.search_columns)
+                            if x.filter_option.search_columns
+                            else sys.maxsize
+                        )
                     )
             else:
                 if not filter_options:

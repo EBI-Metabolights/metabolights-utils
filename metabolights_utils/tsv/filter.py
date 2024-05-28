@@ -12,7 +12,7 @@ from metabolights_utils.common import CamelCaseModel
 
 
 class TsvFilterException(Exception):
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: str="") -> None:
         super().__init__(message)
 
 
