@@ -125,8 +125,10 @@ class TsvFileUpdater:
             new_sha256 = HashUtils.sha256sum(last_file)
             report.updated_file_sha256_hash = new_sha256
             report.success = True
+        except TsvActionException as exc:
+            report.message = exc.message
         except Exception as exc:
-            raise exc
+            report.message = str(exc)
         finally:
             if report.success and last_file:
                 shutil.move(last_file, file)
