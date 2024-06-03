@@ -79,7 +79,12 @@ class AbstractFolderMetadataCollector(ABC):
         pass
 
     @abstractmethod
-    def get_folder_metadata(self, study_path) -> StudyFolderMetadata:
+    def get_folder_metadata(
+        self,
+        study_path,
+        calculate_data_folder_size: bool = False,
+        calculate_metadata_size: bool = False,
+    ) -> StudyFolderMetadata:
         pass
 
 
