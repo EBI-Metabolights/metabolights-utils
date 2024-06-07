@@ -1,8 +1,6 @@
-import json
 import os
 from abc import ABC, abstractmethod
-from functools import lru_cache
-from typing import Dict, List, Set, Union
+from typing import List, Set, Tuple, Union
 
 from metabolights_utils.isatab.default.parser.investigation_parser import (
     parse_investigation_from_fs,
@@ -16,7 +14,6 @@ from metabolights_utils.models.common import GenericMessage, GenericMessageType
 from metabolights_utils.models.isa.assay_file import AssayFile
 from metabolights_utils.models.isa.assignment_file import AssignmentFile
 from metabolights_utils.models.isa.common import (
-    AssayTechnique,
     IsaTableFile,
     OntologyItem,
     OrganismAndOrganismPartPair,
@@ -30,38 +27,10 @@ from metabolights_utils.models.metabolights.model import (
 )
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
-
-IGNORED_FILE_PATTERNS = {r"^AUDIT_FILES(/|$)(.*)", r"^INTERNAL_FILES(/|$)(.*)"}
-
-
-STUDY_FIELDS = [
-    "id",
-    "acc",
-    "obfuscationcode",
-    "submissiondate",
-    "releasedate",
-    "updatedate",
-    "studysize",
-    "status_date",
-    "studytype",
-    "status",
-    "override",
-    "comment",
-]
-
-SUBMITTER_FIELDS = [
-    "id",
-    "orcid",
-    "address",
-    "joindate",
-    "username",
-    "firstname",
-    "lastname",
-    "status",
-    "affiliation",
-    "affiliationurl",
-    "role",
-]
+from metabolights_utils.provider.utils import (
+    find_assay_technique,
+    get_unique_file_extensions,
+)
 
 
 class AbstractDbMetadataCollector(ABC):
@@ -70,7 +39,20 @@ class AbstractDbMetadataCollector(ABC):
         pass
 
     @abstractmethod
-    def get_study_metadata_from_db(self, study_id: str, connection) -> StudyDBMetadata:
+    def get_study_metadata_from_db(
+        self, study_id: str, connection
+    ) -> Tuple[Union[StudyDBMetadata, None], List[GenericMessage]]:
+        """_summary_
+
+        Args:
+            study_id (str): MetaboLights study accession number.
+            connection (Any): remote db connection to fetch study metadata.
+
+
+        Returns:
+            StudyDBMetadata: study metadata object that contains all the study db metadata fields.
+            messages: List[GenericMessage]: list of messages to be populated with any errors or warnings.
+        """
         pass
 
 
@@ -84,157 +66,25 @@ class AbstractFolderMetadataCollector(ABC):
         study_path,
         calculate_data_folder_size: bool = False,
         calculate_metadata_size: bool = False,
-    ) -> StudyFolderMetadata:
+    ) -> Tuple[Union[StudyFolderMetadata, None], List[GenericMessage]]:
+        """_summary_
+
+        Args:
+            study_path (_type_): MetaboLights study accession number.
+            calculate_data_folder_size (bool, optional): calculate study FILES folder size. Defaults to False.
+            calculate_metadata_size (bool, optional): calculate size of study ISA metadata files
+                even if they are referenced or not. Defaults to False.
+                If calculate_data_folder_size and calculate_metadata_size are False, folder size will be set to -1.
+
+        Returns:
+            StudyFolderMetadata: study folder metadata object that contains all descriptors of the study folders and files.
+                .d, .raw and .m folders are included but not their content. If there is an error, None is returned.
+            messages: List[GenericMessage]: list of messages to be populated with any errors or warnings.
+        """
         pass
 
 
 class MetabolightsStudyProvider(object):
-
-    assay_technique_keywords: Dict[str, str] = {
-        "Liquid Chromatography MS": "LC-MS",
-        "Diode array detection MS": "LC-DAD",
-        "Gas Chromatography MS": "GC-MS",
-        "Tandem Gas Chromatography MS": "GCxGC-MS",
-        "Flame ionisation detector MS": "GC-FID",
-        "Mass spectrometry": "MS",
-        "Direct infusion MS": "DI-MS",
-        "Flow injection analysis MS": "FIA-MS",
-        "Capillary electrophoresis MS": "CE-MS",
-        "Matrix-assisted laser desorption-ionisation imaging MS": "MALDI-MS",
-        "Solid-Phase Extraction Ion Mobility Spectrometry MS": "SPE-IMS-MS",
-        "MS Imaging": "MSImaging",
-        "Nuclear Magnetic Resonance (NMR)": "NMR",
-        "Magnetic resonance imaging": "MRImaging",
-    }
-
-    assay_technique_labels: Dict[str, str] = {
-        "LC-MS": "Liquid Chromatography MS",
-        "LC-DAD": "Diode array detection MS",
-        "GC-MS": "Gas Chromatography MS",
-        "GCxGC-MS": "Tandem Gas Chromatography MS",
-        "GC-FID": "Flame ionisation detector MS",
-        "MS": "Mass spectrometry",
-        "DI-MS": "Direct infusion MS",
-        "FIA-MS": "Flow injection analysis MS",
-        "CE-MS": "Capillary electrophoresis MS",
-        "MALDI-MS": "Matrix-assisted laser desorption-ionisation imaging MS",
-        "SPE-IMS-MS": "Solid-Phase Extraction Ion Mobility Spectrometry MS",
-        "MSImaging": "MS Imaging",
-        "NMR": "Nuclear Magnetic Resonance (NMR)",
-        "MRImaging": "Magnetic resonance imaging",
-    }
-
-    manual_assignments = {
-        "3D LAESI imaging MS": "MSImaging",
-        "3D MALDI imaging MS": "MSImaging",
-        "3D MALDI imaging MS simulation": "MSImaging",
-        "3D MALDI imaging MS,3D DESI imaging MS": "MSImaging",
-        "CE-TOF-MS": "CE-MS",
-        "DI-FT-ICR-MS": "DI-MS",
-        "DI-FT-ICR-MS/MS": "DI-MS",
-        "DI-LTQ-MS": "DI-MS",
-        "DI-LTQ-MS/MS": "DI-MS",
-        "FIA-LTQ-MS": "FIA-MS",
-        "FIA-LTQ-MS/MS": "FIA-MS",
-        "FIA-MS": "FIA-MS",
-        "FIA-QTOF-MS": "FIA-MS",
-        "GC-Q-MS": "GC-MS",
-        "GC-TOF-MS": "GC-MS",
-        "HPLC-LTQ-MS": "LC-MS",
-        "LC-LTQ-MS": "LC-MS",
-        "LC-QTOF-MS": "LC-MS",
-        "LC-TOF-MS": "LC-MS",
-        "LC-TQ-MS": "LC-MS",
-        "MALDI-TOF/TOF-MS": "MALDI-MS",
-        "MS": "MS",
-        "PTR-MS": "MS",
-        "REI-QTOF-MS": "DI-MS",
-        "SESI-LTQ-MS": "DI-MS",
-        "SPE-IMS-MS": "LC-MS",
-        "UPLC-LTQ-MS": "LC-MS",
-        "UPLC-LTQ-MS/MS": "LC-MS",
-        "UPLC-LTQ-MS/MS,UPLC-TQ-MS/MS": "LC-MS",
-        "UPLC-MS/MS": "LC-MS",
-        "UPLC-QTOF-MS": "LC-MS",
-        "UPLC-QTOF-MS/MS": "LC-MS",
-        "UPLC-TQ-MS": "LC-MS",
-        "UPLC-TQ-MS MTBLS935 dupe?": "LC-MS",
-        "UPLC-TQ-MS MTBLS936 dupe?": "LC-MS",
-    }
-    assay_techniques = {
-        "LC-MS": AssayTechnique(
-            name="LC-MS", mainTechnique="MS", technique="LC-MS", subTechnique="LC"
-        ),
-        "LC-DAD": AssayTechnique(
-            name="LC-DAD", mainTechnique="MS", technique="LC-MS", subTechnique="LC-DAD"
-        ),
-        "GC-MS": AssayTechnique(
-            name="GC-MS", mainTechnique="MS", technique="GC-MS", subTechnique="GC"
-        ),
-        "GCxGC-MS": AssayTechnique(
-            name="GCxGC-MS",
-            mainTechnique="MS",
-            technique="GC-MS",
-            subTechnique="Tandem (GCxGC)",
-        ),
-        "GC-FID": AssayTechnique(
-            name="GC-FID", mainTechnique="MS", technique="GC-MS", subTechnique="GC-FID"
-        ),
-        "MS": AssayTechnique(
-            name="MS",
-            mainTechnique="MS",
-            technique="Direct Injection",
-            subTechnique="MS",
-        ),
-        "DI-MS": AssayTechnique(
-            name="DI-MS",
-            mainTechnique="MS",
-            technique="Direct Injection",
-            subTechnique="Direct infusion (DI)",
-        ),
-        "FIA-MS": AssayTechnique(
-            name="FIA-MS",
-            mainTechnique="MS",
-            technique="Direct Injection",
-            subTechnique="Flow injection analysis (FIA)",
-        ),
-        "CE-MS": AssayTechnique(
-            name="CE-MS",
-            mainTechnique="MS",
-            technique="Direct Injection",
-            subTechnique="Capillary electrophoresis (CE)",
-        ),
-        "MALDI-MS": AssayTechnique(
-            name="MALDI-MS",
-            mainTechnique="MS",
-            technique="Direct Injection",
-            subTechnique="Matrix-assisted laser desorption-ionisation imaging mass spectrometry (MALDI)",
-        ),
-        "SPE-IMS-MS": AssayTechnique(
-            name="SPE-IMS-MS",
-            mainTechnique="MS",
-            technique="Direct Injection",
-            subTechnique="Solid-Phase Extraction Ion Mobility Spectrometry (SPE-IMS)",
-        ),
-        "MSImaging": AssayTechnique(
-            name="MSImaging",
-            mainTechnique="MS",
-            technique="MS Imaging",
-            subTechnique="MS Imaging",
-        ),
-        "NMR": AssayTechnique(
-            name="NMR",
-            mainTechnique="NMR",
-            technique="NMR",
-            subTechnique="Nuclear magnetic resonance",
-        ),
-        "MRImaging": AssayTechnique(
-            name="MRImaging",
-            mainTechnique="NMR",
-            technique="MRI",
-            subTechnique="Magnetic resonance imaging",
-        ),
-    }
 
     def __init__(
         self,
@@ -254,233 +104,69 @@ class MetabolightsStudyProvider(object):
             model.parser_messages[fileName] = []
         model.parser_messages[fileName].extend(self.filter_messages(messages))
 
-    def get_unique_file_extensions(self, files: Set):
-        extensions = set()
-
-        for item in files:
-            name1, ext1 = os.path.splitext(item)
-            _, ext2 = os.path.splitext(name1)
-            if ext1:
-                if ext2 and len(ext2) < 5:
-                    extensions.add(f"{ext2.lower()}{ext1.lower()}")
-                else:
-                    extensions.add(f"{ext1.lower()}")
-        return extensions
-
-    def find_assay_technique(
-        self,
-        model: MetabolightsStudyModel,
-        assay_file: AssayFile,
-        assay_file_subset: AssayFile,
-    ):
-        for study in model.investigation.studies:
-            for assay in study.study_assays.assays:
-                if assay.file_name == assay_file.file_path:
-                    for technique in self.assay_technique_keywords:
-                        if technique in assay.technology_platform:
-                            return self.assay_techniques[
-                                self.assay_technique_keywords[technique]
-                            ]
-        if (
-            "NMR Assay Name" in assay_file.table.columns
-            and "MS Assay Name" in assay_file.table.columns
-        ):
-            return AssayTechnique()
-
-        if "NMR Assay Name" in assay_file.table.columns:
-            if (
-                "Parameter Value[Tomography]" in assay_file.table.columns
-                and "Parameter Value[Magnetic pulse sequence name]"
-                in assay_file.table.columns
-            ):
-                return self.assay_techniques["MRImaging"]
-            else:
-                return self.assay_techniques["NMR"]
-        elif "MS Assay Name" in assay_file.table.columns:
-            if "Parameter Value[DI Instrument]" in assay_file.table.columns:
-                return self.assay_techniques["DI-MS"]
-            elif "Parameter Value[FIA Instrument]" in assay_file.table.columns:
-                return self.assay_techniques["FIA-MS"]
-            elif "Parameter Value[CE Instrument]" in assay_file.table.columns:
-                return self.assay_techniques["CE-MS"]
-            elif (
-                "Parameter Value[Column type 1]" in assay_file.table.columns
-                and "Parameter Value[Column type 2]" in assay_file.table.columns
-            ):
-                return self.assay_techniques["GCxGC-MS"]
-            elif "Parameter Value[SPE-IMS Instrument]" in assay_file.table.columns:
-                return self.assay_techniques["SPE-IMS-MS"]
-            elif "Thermal Desorption unit" in assay_file.table.columns:
-                return self.assay_techniques["TD-GC-MS"]
-            elif "Parameter Value[Sectioning instrument]" in assay_file.table.columns:
-                return self.assay_techniques["MSImaging"]
-            elif (
-                "Parameter Value[Signal range]" in assay_file.table.columns
-                and "Parameter Value[Resolution]" in assay_file.table.columns
-            ):
-                return self.assay_techniques["LC-DAD"]
-            else:
-                if "Parameter Value[Column type]" in assay_file_subset.table.columns:
-                    if assay_file_subset.table.data["Parameter Value[Column type]"]:
-                        values = assay_file_subset.table.data[
-                            "Parameter Value[Column type]"
-                        ]
-                        for i in range(len(values) if len(values) < 3 else 3):
-                            if values[i]:
-                                columnType = values[i].lower()
-                                if "hilic" in columnType or "reverse" in columnType:
-                                    return self.assay_techniques["LC-MS"]
-                                elif (
-                                    "low polarity" in columnType
-                                    or "high polarity" in columnType
-                                    or "medium polarity" in columnType
-                                ):
-                                    return self.assay_techniques["GC-MS"]
-
-            if model.study_db_metadata.study_types:
-                study_type_str = ",".join(model.study_db_metadata.study_types)
-                if study_type_str in self.manual_assignments:
-                    manual_map = self.manual_assignments[study_type_str]
-                    return self.assay_techniques[manual_map]
-
-            if "_FIA" in assay_file.file_path:
-                return self.assay_techniques["FIA-MS"]
-
-        if model.investigation and model.investigation.studies:
-            file_found = False
-            for study_item in model.investigation.studies:
-                if (
-                    study_item
-                    and study_item.study_assays
-                    and study_item.study_assays.assays
-                ):
-                    for assay_item in study_item.study_assays.assays:
-                        if assay_item.file_name == assay_file.file_path:
-                            if "mass spectrometry" in assay_item.technology_type.term:
-                                return self.assay_techniques["MS"]
-                            elif "NMR spectrometry" in assay_item.technology_type.term:
-                                return self.assay_techniques["NMR"]
-                            file_found = True
-                            break
-                if file_found:
-                    break
-        return AssayTechnique()
-
-    def set_organisms(self, samples_file: SamplesFile, table: SamplesFile):
-        organism_set = set()
-        organism_part_set = set()
-        variant_set = set()
-
-        sample_type_set = set()
+    def set_organisms(self, samples_file: SamplesFile, isa_table: SamplesFile):
         pairs = set()
-        columns = table.table.columns
-        data = table.table.data
-        for i in range(samples_file.table.total_row_count):
-            organism = ""
-            organismPart = ""
-            variant = ""
-            if "Characteristics[Organism]" in columns:
-                organism = data["Characteristics[Organism]"][i]
+        columns = isa_table.table.columns
+        data = isa_table.table.data
+        characteristics_columns = [
+            "Characteristics[Organism]",
+            "Characteristics[Organism part]",
+            "Characteristics[Variant]",
+            "Characteristics[Sample type]",
+        ]
+        characteristics_set = {x: set() for x in characteristics_columns}
+        source_ref_column_prefix = "Term Source REF"
+        accession_column_prefix = "Term Accession Number"
+        characteristics_column_indices = {
+            x: columns.index(x) for x in characteristics_columns if x in columns
+        }
+        if not samples_file.table.data or not samples_file.table.columns:
+            return
 
-            sampleType = ""
-            if "Characteristics[Sample type]" in columns:
-                sampleType = data["Characteristics[Sample type]"][i]
+        for i in range(len(data[columns[0]])):
+            characteristics: Tuple[
+                OntologyItem, OntologyItem, OntologyItem, OntologyItem
+            ] = (OntologyItem(), OntologyItem(), OntologyItem(), OntologyItem())
+            for idx, column_name in enumerate(characteristics_columns):
+                if column_name in columns:
+                    characteristics[idx].term = data[column_name][i]
+                index = characteristics_column_indices[column_name]
+                source_ref = columns[index + 1] if index + 1 < len(columns) else ""
 
-            if "Characteristics[Organism part]" in columns:
-                organismPart = data["Characteristics[Organism part]"][i]
+                if source_ref.startswith(source_ref_column_prefix):
+                    characteristics[idx].term_source_ref = data[columns[index + 1]][i]
+                accession = columns[index + 2] if index + 2 < len(columns) else ""
 
-            if "Characteristics[Variant]" in columns:
-                variant = data["Characteristics[Variant]"][i]
-
-            if organism:
-                organism_term: OntologyItem = OntologyItem(
-                    term=organism, term_source_ref="", term_accession_number=""
-                )
-                index = columns.index("Characteristics[Organism]")
-
-                if index + 1 < len(columns) and columns[index + 1].startswith(
-                    "Term Source REF"
-                ):
-                    organism_term.term_source_ref = data[columns[index + 1]][i]
-                if index + 2 < len(columns) and columns[index + 2].startswith(
-                    "Term Accession Number"
-                ):
-                    organism_term.term_accession_number = data[columns[index + 2]][i]
-                    organism_set.add(organism_term)
-            else:
-                organism_term = OntologyItem()
-
-            if organismPart:
-                organismPartTerm: OntologyItem = OntologyItem(
-                    term=organismPart, term_source_ref="", term_accession_number=""
-                )
-                index = columns.index("Characteristics[Organism part]")
-
-                if index + 1 < len(columns) and columns[index + 1].startswith(
-                    "Term Source REF"
-                ):
-                    organismPartTerm.term_source_ref = data[columns[index + 1]][i]
-                if index + 2 < len(columns) and columns[index + 2].startswith(
-                    "Term Accession Number"
-                ):
-                    organismPartTerm.term_accession_number = data[columns[index + 2]][i]
-                organism_part_set.add(organismPartTerm)
-            else:
-                organismPartTerm = OntologyItem()
-
-            if variant:
-                variantTerm = OntologyItem(
-                    term=variant, term_source_ref="", term_accession_number=""
-                )
-                index = columns.index("Characteristics[Variant]")
-
-                if index + 1 < len(columns) and columns[index + 1].startswith(
-                    "Term Source REF"
-                ):
-                    variantTerm.term_source_ref = data[columns[index + 1]][i]
-                if index + 2 < len(columns) and columns[index + 2].startswith(
-                    "Term Accession Number"
-                ):
-                    variantTerm.term_accession_number = data[columns[index + 2]][i]
-                variant_set.add(variantTerm)
-            else:
-                variantTerm = OntologyItem()
-
-            if sampleType:
-                sampleTypeTerm = OntologyItem(
-                    term=sampleType, term_source_ref="", term_accession_number=""
-                )
-                index = columns.index("Characteristics[Sample type]")
-
-                if index + 1 < len(columns) and columns[index + 1].startswith(
-                    "Term Source REF"
-                ):
-                    sampleTypeTerm.term_source_ref = data[columns[index + 1]][i]
-                if index + 2 < len(columns) and columns[index + 2].startswith(
-                    "Term Accession Number"
-                ):
-                    sampleTypeTerm.term_accession_number = data[columns[index + 2]][i]
-                sample_type_set.add(sampleTypeTerm)
-            else:
-                sampleTypeTerm = OntologyItem()
-
-            if organism_term.term:
+                if accession.startswith(accession_column_prefix):
+                    characteristics[idx].term_accession_number = data[
+                        columns[index + 2]
+                    ][i]
+                if characteristics[idx].term and characteristics[idx].term.strip():
+                    characteristics_set[column_name].add(characteristics[idx])
+            if characteristics[0].term and characteristics[0].term.strip():
                 pairs.add(
                     OrganismAndOrganismPartPair(
-                        organism=organism_term,
-                        organismPart=organismPartTerm,
-                        variant=variantTerm,
-                        sampleType=sampleTypeTerm,
+                        organism=characteristics[0],
+                        organismPart=characteristics[1],
+                        variant=characteristics[2],
+                        sampleType=characteristics[3],
                     )
                 )
-        samples_file.organisms = list(organism_set)
-        samples_file.organism_parts = list(organism_part_set)
-        samples_file.variants = list(variant_set)
-        samples_file.sample_types = list(sample_type_set)
+        samples_file.organisms = list(characteristics_set[characteristics_columns[0]])
+        samples_file.organism_parts = list(
+            characteristics_set[characteristics_columns[1]]
+        )
+        samples_file.variants = list(characteristics_set[characteristics_columns[2]])
+        samples_file.sample_types = list(
+            characteristics_set[characteristics_columns[3]]
+        )
         samples_file.organism_and_organism_part_pairs = list(pairs)
 
     def get_phase1_input_data(
-        self, study_id: str, folder: Union[str, None] = None, connection=None
+        self,
+        study_id: str,
+        folder: Union[str, None] = None,
+        connection=None,
     ) -> MetabolightsStudyModel:
         model: MetabolightsStudyModel = MetabolightsStudyModel()
 
@@ -492,6 +178,13 @@ class MetabolightsStudyProvider(object):
                 study_id=study_id,
                 connection=connection,
             )
+        else:
+            message = GenericMessage(
+                type=GenericMessageType.WARNING,
+                short=f"Database metadata collection is skipped for {study_id}",
+                detail=f"Database metadata collection is skipped for {study_id}",
+            )
+            model.db_reader_messages.append(message)
 
         if not model.investigation.studies:
             return model
@@ -632,13 +325,13 @@ class MetabolightsStudyProvider(object):
                         raw_files.update(file_set)
                         assay_raw_files.update(file_list)
                         assay_raw_file_extensions.update(
-                            self.get_unique_file_extensions(file_list)
+                            get_unique_file_extensions(file_list)
                         )
                     elif column.startswith("Derived Spectral Data File"):
                         derived_files.update(file_set)
                         assay_derived_files.update(file_list)
                         assay_derived_file_extensions.update(
-                            self.get_unique_file_extensions(file_list)
+                            get_unique_file_extensions(file_list)
                         )
                     elif column.startswith("Metabolite Assignment File"):
                         assignment_files.update(file_set)
@@ -647,7 +340,7 @@ class MetabolightsStudyProvider(object):
                         assay_file.sample_names = file_list
                     elif column == "MS Assay Name" or column == "NMR Assay Name":
                         assay_file.assay_names = file_list
-                assay_file.assay_technique = self.find_assay_technique(
+                assay_file.assay_technique = find_assay_technique(
                     model, assay_file, assay_file_subset
                 )
 
@@ -773,12 +466,10 @@ class MetabolightsStudyProvider(object):
             model.samples[study_item.file_name].sha256_hash = (
                 samples_isa_table.sha256_hash
             )
-            if samples_isa_table.table.data:
-                model.samples[study_item.file_name].table.row_count = len(
-                    samples_isa_table.table.data[samples_isa_table.table.columns[0]]
-                )
-            else:
-                model.samples[study_item.file_name].table.row_count = 0
+            table = samples_isa_table.table
+            table.row_count = 0
+            if table.data:
+                table.row_count = len(table.data[samples_isa_table.table.columns[0]])
 
             model.parser_messages[study_item.file_name].extend(
                 self.filter_messages(messages)
@@ -915,38 +606,76 @@ class MetabolightsStudyProvider(object):
         folder: Union[str, None] = None,
         connection=None,
         model: MetabolightsStudyModel = None,
+        calculate_data_folder_size: bool = False,
+        calculate_metadata_size: bool = False,
     ) -> MetabolightsStudyModel:
         if not model:
             model = self.get_phase2_input_data(study_id, folder, connection)
-        study_folder_metadata = self.folder_metadata_collector.get_folder_metadata(
-            folder
-        )
-        model.study_folder_metadata = study_folder_metadata
-        if folder:
-            model.has_folder_metadata = True
-        return model
+        try:
+            metadata, messages = self.folder_metadata_collector.get_folder_metadata(
+                folder,
+                calculate_data_folder_size=calculate_data_folder_size,
+                calculate_metadata_size=calculate_metadata_size,
+            )
 
-    def filter_messages(self, messages: List[ParserMessage]):
-        return [
-            f
-            for f in messages
-            if f.type == ParserMessageType.CRITICAL
-            or f.type == ParserMessageType.ERROR
-            or f.type == ParserMessageType.WARNING
-        ]
+            if messages:
+                model.folder_reader_messages.extend(messages)
+            if metadata:
+                model.study_folder_metadata = metadata
+                model.has_folder_metadata = True
+        except Exception as ex:
+            msg = f"Error while reading folder metadata: {str(ex)}"
+            model.folder_reader_messages.append(
+                GenericMessage(
+                    type=GenericMessageType.ERROR,
+                    short=msg,
+                    detail=msg,
+                )
+            )
+        return model
 
     def get_metabolights_study_model(
-        self, study_id: str, folder: str, connection
+        self,
+        study_id: str,
+        folder: str,
+        connection,
+        load_sample_file: bool = True,
+        load_assay_files: bool = True,
+        load_maf_files: bool = True,
+        load_folder_metadata: bool = True,
+        samples_sheet_offset: Union[int, None] = None,
+        samples_sheet_limit: Union[int, None] = None,
+        assay_sheet_offset: Union[int, None] = None,
+        assay_sheet_limit: Union[int, None] = None,
+        assignment_sheet_offset: Union[int, None] = None,
+        assignment_sheet_limit: Union[int, None] = None,
+        calculate_data_folder_size: bool = False,
+        calculate_metadata_size: bool = False,
     ) -> MetabolightsStudyModel:
-        model = self.get_phase4_input_data(study_id, folder, connection)
-        model = self.get_phase3_input_data(study_id, folder, connection, model=model)
-        return model
+        return self.load_study(
+            study_id,
+            folder,
+            connection,
+            load_sample_file=load_sample_file,
+            load_assay_files=load_assay_files,
+            load_maf_files=load_maf_files,
+            load_folder_metadata=load_folder_metadata,
+            samples_sheet_offset=samples_sheet_offset,
+            samples_sheet_limit=samples_sheet_limit,
+            assay_sheet_offset=assay_sheet_offset,
+            assay_sheet_limit=assay_sheet_limit,
+            assignment_sheet_offset=assignment_sheet_offset,
+            assignment_sheet_limit=assignment_sheet_limit,
+            calculate_data_folder_size=calculate_data_folder_size,
+            calculate_metadata_size=calculate_metadata_size,
+        )
 
     def load_study(
         self,
         study_id: str,
         study_path: str,
         connection=None,
+        load_sample_file: bool = False,
         load_assay_files: bool = False,
         load_maf_files: bool = False,
         load_folder_metadata: bool = False,
@@ -956,9 +685,20 @@ class MetabolightsStudyProvider(object):
         assay_sheet_limit: Union[int, None] = None,
         assignment_sheet_offset: Union[int, None] = None,
         assignment_sheet_limit: Union[int, None] = None,
+        calculate_data_folder_size: bool = False,
+        calculate_metadata_size: bool = False,
     ) -> MetabolightsStudyModel:
 
         model = self.get_phase1_input_data(study_id, study_path, connection)
+        if load_sample_file and not load_assay_files and not load_folder_metadata:
+            model = self.get_sample_file_input(
+                study_id,
+                study_path,
+                connection,
+                model=model,
+                samples_sheet_offset=samples_sheet_offset,
+                samples_sheet_limit=samples_sheet_limit,
+            )
 
         if load_assay_files or load_folder_metadata:
             model = self.get_phase2_input_data(
@@ -973,7 +713,21 @@ class MetabolightsStudyProvider(object):
             )
 
         if load_folder_metadata:
-            model = self.get_phase4_input_data(study_id, study_path, connection)
+            model = self.get_phase4_input_data(
+                study_id,
+                study_path,
+                connection=connection,
+                model=model,
+                calculate_data_folder_size=calculate_data_folder_size,
+                calculate_metadata_size=calculate_metadata_size,
+            )
+        else:
+            message = GenericMessage(
+                type=GenericMessageType.WARNING,
+                short=f"Folder metadata collection is skipped for {study_id}",
+                detail=f"Folder metadata collection is skipped for {study_id}",
+            )
+            model.folder_reader_messages.append(message)
 
         if load_maf_files:
             model = self.get_phase3_input_data(
@@ -984,6 +738,7 @@ class MetabolightsStudyProvider(object):
                 assignment_sheet_limit=assignment_sheet_limit,
                 assignment_sheet_offset=assignment_sheet_offset,
             )
+
         return model
 
     def update_investigation_file(
@@ -1010,11 +765,14 @@ class MetabolightsStudyProvider(object):
         connection,
     ):
         try:
-            study_db_metadata = collector.get_study_metadata_from_db(
+            study_db_metadata, messages = collector.get_study_metadata_from_db(
                 study_id, connection
             )
-            model.study_db_metadata = study_db_metadata
-            model.has_assignment_table_data = True
+            if messages:
+                model.db_reader_messages.extend(messages)
+            if study_db_metadata:
+                model.study_db_metadata = study_db_metadata
+                model.has_db_metadata = True
         except Exception as ex:
             message = GenericMessage(
                 type=GenericMessageType.ERROR,
@@ -1023,6 +781,15 @@ class MetabolightsStudyProvider(object):
             )
             model.db_reader_messages.append(message)
         return model
+
+    def filter_messages(self, messages: List[ParserMessage]):
+        return [
+            f
+            for f in messages
+            if f.type == ParserMessageType.CRITICAL
+            or f.type == ParserMessageType.ERROR
+            or f.type == ParserMessageType.WARNING
+        ]
 
 
 if __name__ == "__main__":

@@ -6,9 +6,10 @@
     "configurations": [
         {
             "name": "Python: Run Current file",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
+            "args": ["MTBLS1"],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "env": {"PYTHONPATH": "${cwd}"},

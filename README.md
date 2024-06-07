@@ -19,12 +19,15 @@
 
 ---
 
-#### **MetaboLigts-utils** is a *lightweight library* to read and update ISA files, download MetaboLights studies.
+#### **MetaboLigts-utils** is a *lightweight library* to read and update ISA metadata files, download MetaboLights studies.
 ---
 ### Selected Features
 ---
 
 * **Read and update ISA files** with minimum pyhton package dependency.
+* **mtbls** command line interface (CLI) to download and list MetaboLights studies.
+* Read MetaboLights study metadata files
+* Calculate hash value of each ISA metadata file or study ISA metadata folder
 * Read ISA table files (s_*.txt, a_*.txt, m_*.txt) with **Pagination support**.
 * **Multi-column filters and sort options** on ISA table files.
 * Define **custom filters and sorters**
@@ -34,10 +37,110 @@
 
 ### Installation
 ---
-The following command installs metabolights-utils from the Python Package Index. You will need a working installation of Python 3.8+ and pip3.
+The following command installs metabolights-utils from the Python Package Index. You will need an installation of Python 3.8+ and pip3.
 
 ```shell
 pip3 install -U metabolights-utils
+```
+
+### Usage **mtbls** command line interface
+After installation of metabolights-utils, you can use the mtbls command line interface to download and list MetaboLights studies.
+
+```shell
+
+
+# prints mtbls study command usage
+mtbls study --help
+
+        # Usage: mtbls study [OPTIONS] COMMAND [ARGS]...
+
+        # Options:
+        # --help  Show this message and exit.
+
+        # Commands:
+        # describe  View summary of any public study content.
+        # download  Download study data and metadata files from MetaboLights FTP...
+        # list      List studies and study folder content.
+        # remove    Delete local study data and metadata files.
+
+# prints mtbls study list command
+mtbls study list --help
+
+# lists all public studies listed on FTP server
+mtbls study list
+
+# lists all public studies on local storage
+mtbls study list -l
+
+# list root directory content of study
+mtbls study list MTBLS3
+
+# lists the content of FILES folder
+mtbls study list MTBLS3 FILES
+
+
+# downloads study metadata files from MetaboLights FTP server.
+mtbls study download MTBLS3
+
+    # DOWNLOADED      a_MTBLS3_live_metabolite_profiling_mass_spectrometry.txt
+    # DOWNLOADED      s_MTBLS3.txt
+    # DOWNLOADED      m_MTBLS3_live_metabolite_profiling_mass_spectrometry_v2_maf.tsv
+    # DOWNLOADED      i_Investigation.txt
+
+# uses local copies of study metadata files
+mtbls study download MTBLS3
+    # SKIPPED m_MTBLS3_live_metabolite_profiling_mass_spectrometry_v2_maf.tsv
+    # SKIPPED a_MTBLS3_live_metabolite_profiling_mass_spectrometry.txt
+    # SKIPPED i_Investigation.txt
+    # SKIPPED s_MTBLS3.txt
+
+# force to download study metadata files
+mtbls study download MTBLS3 -o
+
+
+# downloads study FILES folder (data files) from MetaboLights FTP server.
+mtbls study download MTBLS3 FILES
+
+# downloads a study data file from MetaboLights FTP server.
+mtbls study download MTBLS3 FILES/Cecilia_AA_rerun45.raw
+
+
+
+# help for mtbls study describe command
+mtbls study describe --help
+
+# prints summary of MTBLS3 study.
+mtbls study describe MTBLS3
+
+# prints MTBLS3 study title.
+mtbls study describe MTBLS3 "$.investigation.studies[0].title"
+
+# prints MTBLS3 study protocol names.
+mtbls study describe MTBLS3 "$.investigation.studies[0].study_protocols[*].protocols[*].name"
+
+# deletes local data and metadata files of MTBLS1 study.
+mtbls study remove MTBLS1
+
+
+```
+
+
+### Load MetaboLights study folder
+---
+Read i_Investigation.txt, s_*,txt, a_*.txt and m_*.tsv files in a study folder.
+
+```python 
+    provider = MetabolightsStudyProvider()
+    model, messages = provider.load_study(
+        study_id,
+        study_path,
+        connection=connection,
+        load_assay_files=True,
+        load_sample_file=True,
+        load_maf_files=True,
+        calculate_data_folder_size=True,
+        calculate_metadata_size=True,
+    )
 ```
 
 

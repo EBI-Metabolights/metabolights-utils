@@ -1,7 +1,8 @@
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Union
 
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
+from typing_extensions import Annotated
 
 from metabolights_utils.common import CamelCaseModel
 from metabolights_utils.models.common import GenericMessage
@@ -72,68 +73,90 @@ class StudyStatus(str, Enum):
 
 
 class StudyFileDescriptor(IsaAbstractModel):
-    file_path: str = ""
-    base_name: str = ""
-    parent_directory: str = ""
-    extension: str = ""
-    size_in_bytes: int = 0
-    is_directory: bool = False
-    is_link: bool = False
-    modified_at: int = 0
-    created_at: int = 0
-    mode: str = ""
-    tags: List[str] = []
+    file_path: Annotated[str, Field(description="")] = ""
+    base_name: Annotated[str, Field(description="")] = ""
+    parent_directory: Annotated[str, Field(description="")] = ""
+    extension: Annotated[str, Field(description="")] = ""
+    size_in_bytes: Annotated[int, Field(description="")] = 0
+    is_directory: Annotated[bool, Field(description="")] = False
+    is_link: Annotated[bool, Field(description="")] = False
+    modified_at: Annotated[int, Field(description="")] = 0
+    created_at: Annotated[int, Field(description="")] = 0
+    mode: Annotated[str, Field(description="")] = ""
+    tags: Annotated[List[str], Field(description="")] = []
 
 
 class StudyFolderMetadata(IsaAbstractModel):
-    folder_size_in_bytes: int = -1
-    folder_size_in_str: str = ""
-    folders: Dict[str, StudyFileDescriptor] = {}
-    files: Dict[str, StudyFileDescriptor] = {}
+    folder_size_in_bytes: Annotated[int, Field(description="")] = -1
+    folder_size_in_str: Annotated[str, Field(description="")] = ""
+    folders: Annotated[Dict[str, StudyFileDescriptor], Field(description="")] = {}
+    files: Annotated[Dict[str, StudyFileDescriptor], Field(description="")] = {}
 
 
 class Submitter(CamelCaseModel):
-    db_id: int = -1
-    orcid: str = ""
-    address: str = ""
-    join_date: str = ""
-    user_name: str = ""
-    first_name: str = ""
-    last_name: str = ""
-    affiliation: str = ""
-    affiliation_url: str = ""
-    status: UserStatus = UserStatus.FROZEN
-    role: UserRole = UserRole.ANONYMOUS
+    db_id: Annotated[int, Field(description="")] = -1
+    orcid: Annotated[str, Field(description="")] = ""
+    address: Annotated[str, Field(description="")] = ""
+    join_date: Annotated[str, Field(description="")] = ""
+    user_name: Annotated[str, Field(description="")] = ""
+    first_name: Annotated[str, Field(description="")] = ""
+    last_name: Annotated[str, Field(description="")] = ""
+    affiliation: Annotated[str, Field(description="")] = ""
+    affiliation_url: Annotated[str, Field(description="")] = ""
+    status: Annotated[UserStatus, Field(description="")] = UserStatus.FROZEN
+    role: Annotated[UserRole, Field(description="")] = UserRole.ANONYMOUS
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class StudyDBMetadata(CamelCaseModel):
-    db_id: int = -1
-    study_id: str = ""
-    numeric_study_id: int = -1
-    obfuscation_code: str = ""
-    study_size: Optional[int] = -1
-    submission_date: str = ""
-    release_date: str = ""
-    update_date: str = ""
-    status_date: str = ""
-    study_types: List[str] = []
-    status: StudyStatus = StudyStatus.DORMANT
-    curation_request: CurationRequest = CurationRequest.MANUAL_CURATION
-    overrides: Dict[str, str] = {}
-    submitters: List[Submitter] = []
+    db_id: Annotated[int, Field(description="")] = -1
+    study_id: Annotated[str, Field(description="")] = ""
+    numeric_study_id: Annotated[int, Field(description="")] = -1
+    obfuscation_code: Annotated[str, Field(description="")] = ""
+    study_size: Annotated[Union[None, int], Field(description="")] = -1
+    submission_date: Annotated[str, Field(description="")] = ""
+    release_date: Annotated[str, Field(description="")] = ""
+    update_date: Annotated[str, Field(description="")] = ""
+    status_date: Annotated[str, Field(description="")] = ""
+    study_types: Annotated[List[str], Field(description="")] = []
+    status: Annotated[StudyStatus, Field(description="")] = StudyStatus.DORMANT
+    curation_request: Annotated[CurationRequest, Field(description="")] = (
+        CurationRequest.MANUAL_CURATION
+    )
+    overrides: Annotated[Dict[str, str], Field(description="")] = {}
+    submitters: Annotated[List[Submitter], Field(description="")] = []
 
 
 class MetabolightsStudyModel(BaseMetabolightsStudyModel):
-    study_db_metadata: StudyDBMetadata = StudyDBMetadata()
-    study_folder_metadata: StudyFolderMetadata = StudyFolderMetadata()
+    study_db_metadata: Annotated[StudyDBMetadata, Field(description="")] = (
+        StudyDBMetadata()
+    )
+    study_folder_metadata: Annotated[StudyFolderMetadata, Field(description="")] = (
+        StudyFolderMetadata()
+    )
 
-    folder_reader_messages: List[GenericMessage] = []
-    db_reader_messages: List[GenericMessage] = []
-    has_db_metadata: bool = False
-    has_sample_table_data: bool = False
-    has_assay_table_data: bool = False
-    has_assignment_table_data: bool = False
-    has_folder_metadata: bool = False
-    has_investigation_data: bool = False
+    folder_reader_messages: Annotated[
+        List[GenericMessage], Field(description="Folder ")
+    ] = []
+    db_reader_messages: Annotated[
+        List[GenericMessage], Field(description="DB reader messages.")
+    ] = []
+    has_db_metadata: Annotated[
+        bool, Field(description="True if database metadata is loaded.")
+    ] = False
+    has_sample_table_data: Annotated[
+        bool, Field(description="True if sample file is loaded.")
+    ] = False
+    has_assay_table_data: Annotated[
+        bool, Field(description="True if assay files are loaded.")
+    ] = False
+    has_assignment_table_data: Annotated[
+        bool, Field(description="True if assignment files are loaded")
+    ] = False
+    has_folder_metadata: Annotated[
+        bool, Field(description="True if folder metadata is complete.")
+    ] = False
+    has_investigation_data: Annotated[
+        bool, Field(description="True if investtigation file is loaded.")
+    ] = False

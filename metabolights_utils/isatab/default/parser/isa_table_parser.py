@@ -28,13 +28,13 @@ def parse_isa_file_content(
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
     try:
         with open(file_path, "r", encoding="utf-8") as f:
-            model = parser(file_buffer_or_path=f, messages=messages)
+            model = parser(f, messages=messages)
             return model, messages
     except UnicodeDecodeError as ex:
         if fix_unicode_exceptions:
             try:
                 with open(file_path, "r", encoding="latin-1") as f:
-                    model = parser(file_buffer_or_path=f, messages=messages)
+                    model = parser(f, messages=messages)
                     message = ParserMessage(
                         short="File is read with latin-1 encoding",
                         type=ParserMessageType.WARNING,

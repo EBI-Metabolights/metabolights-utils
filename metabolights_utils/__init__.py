@@ -150,7 +150,7 @@ from metabolights_utils.tsv.sort import (
 )
 from metabolights_utils.tsv.tsv_file_updater import TSV_FILE_ACTIONS, TsvFileUpdater
 from metabolights_utils.utils.audit_utils import MetabolightsAuditUtils
-from metabolights_utils.utils.filename_utils import MetabolightsFileNamehUtils
+from metabolights_utils.utils.filename_utils import MetabolightsFileNameUtils
 from metabolights_utils.utils.hash_utils import (
     EMPTY_FILE_HASH,
     IsaMetadataFolderHash,
@@ -291,7 +291,7 @@ __all__ = [
     # utils
     "MetabolightsAuditUtils",
     "MetabolightsSearchUtils",
-    "MetabolightsFileNamehUtils",
+    "MetabolightsFileNameUtils",
     # hash utils
     "MetabolightsHashUtils",
     "IsaMetadataFolderHash",

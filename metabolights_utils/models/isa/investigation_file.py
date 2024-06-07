@@ -92,6 +92,16 @@ class OntologyAnnotation(IsaAbstractModel):
         ),
     ] = ""
 
+    def __str__(self) -> str:
+        if self.term:
+            if self.term_source_ref or self.term_accession_number:
+                return (
+                    f"{self.term} [{self.term_source_ref}:{self.term_accession_number}]"
+                )
+            else:
+                return self.term
+        return ""
+
 
 class ValueTypeAnnotation(IsaAbstractModel):
     isatab_config: Annotated[IsaTabConfig, Field(exclude=True)] = IsaTabConfig(
@@ -296,6 +306,9 @@ class Factor(IsaAbstractModel):
             json_schema_extra={"auto_fill": True, "header_name": "Type"},
         ),
     ] = OntologyAnnotation()
+
+    def __str__(self):
+        return f"{self.name if self.name else ''} ({str(self.type)})"
 
 
 class Assay(IsaAbstractModel):

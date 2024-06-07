@@ -43,25 +43,19 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
         read_messages: List[ParserMessage] = []
         try:
             file_buffer = self._get_file_buffer(buffer_or_path)
-            if isinstance(file_buffer, IOBase):
-                investigation = get_investigation(
-                    file_buffer, path, messages=read_messages
-                )
-            else:
-                investigation = get_investigation(None, path, messages=read_messages)
+            investigation = get_investigation(file_buffer, path, messages=read_messages)
+
             messages = read_messages
             parse_success = True
         except UnicodeDecodeError as err:
             try:
                 file_buffer = self._get_file_buffer(buffer_or_path, encoding="ascii")
-                if isinstance(file_buffer, IOBase):
-                    investigation = get_investigation(
-                        file_buffer, path, messages=read_messages
-                    )
-                else:
-                    investigation = get_investigation(
-                        None, path, messages=read_messages
-                    )
+                investigation = get_investigation(
+                    file_buffer,
+                    path,
+                    messages=read_messages,
+                )
+
                 messages = read_messages
                 parse_success = True
             except Exception as exc:

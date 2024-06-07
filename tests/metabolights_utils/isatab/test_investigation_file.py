@@ -1,8 +1,14 @@
 import os
 import pathlib
 import uuid
+from unittest.mock import patch
+
+from pytest_mock import MockFixture
 
 from metabolights_utils.isatab import Reader, Writer
+from metabolights_utils.isatab.default.investigation_file import (
+    DefaultInvestigationFileReader,
+)
 from metabolights_utils.isatab.reader import (
     InvestigationFileReader,
     InvestigationFileReaderResult,
@@ -25,3 +31,21 @@ def test_investigation_file_success_01():
         lines = f.readlines()
         assert len(lines) > 0
     os.remove(tmp_path)
+
+
+def test_investigation_file_fail_01(mocker: MockFixture):
+    class CustomError(UnicodeDecodeError):
+        def __init__(self) -> None:
+            super().__init__("utf-8", b"", -1, -1, "")
+
+    def error(**argv):
+        raise CustomError()
+
+    file_path = "tests/test-data/MTBLS1/i_Investigation.txt"
+    mocker.patch(
+        "metabolights_utils.isatab.default.investigation_file.get_investigation",
+        side_effect=CustomError,
+    )
+    reader: DefaultInvestigationFileReader = DefaultInvestigationFileReader()
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=file_path)
+    assert result.parser_report.messages

@@ -4,7 +4,7 @@ from typing import Union
 import unidecode
 
 
-class MetabolightsFileNamehUtils(object):
+class MetabolightsFileNameUtils(object):
     @staticmethod
     def sanitise_filename(
         filename: str,
@@ -16,10 +16,10 @@ class MetabolightsFileNamehUtils(object):
 
         if not replacement_chars_pattern:
             replacement_chars_pattern = "[^/a-zA-Z0-9_.-]"
-        filename = unidecode(filename.strip())
+        filename = unidecode.unidecode(filename.strip())
         filename = filename.replace("+", "_PLUS_")
         if not allow_spaces:
-            filename = "".join(
+            filename = "_".join(
                 [x.strip() for x in filename.strip().split() if x.strip()]
             )
 
