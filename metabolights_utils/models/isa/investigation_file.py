@@ -9,7 +9,12 @@ module_name = __name__
 
 
 class BaseSection(IsaAbstractModel):
-    comments: List[Comment] = []
+    comments: Annotated[
+        List[Comment],
+        Field(
+            description="List of comments linked to the related section",
+        ),
+    ] = []
 
 
 class OntologySourceReference(IsaAbstractModel):
@@ -25,7 +30,8 @@ class OntologySourceReference(IsaAbstractModel):
     source_name: Annotated[
         str,
         Field(
-            description="",
+            description="The name of the source of a term; i.e. the source controlled vocabulary or ontology."
+            " These names will be used in all corresponding Term Source REF fields that occur elsewhere.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "Source Name",
@@ -37,21 +43,21 @@ class OntologySourceReference(IsaAbstractModel):
     source_file: Annotated[
         str,
         Field(
-            description="",
+            description="A file name or a URI of an official resource.",
             json_schema_extra={"auto_fill": True, "header_name": "Source File"},
         ),
     ] = ""
     source_version: Annotated[
         Union[str, int],
         Field(
-            description="",
+            description="The version number of the Term Source to support terms tracking.",
             json_schema_extra={"auto_fill": True, "header_name": "Source Version"},
         ),
     ] = ""
     source_description: Annotated[
         str,
         Field(
-            description="",
+            description="Description of source. Use for disambiguating resources when homologous prefixes have been used.",
             json_schema_extra={"auto_fill": True, "header_name": "Source Description"},
         ),
     ] = ""
@@ -66,7 +72,7 @@ class OntologyAnnotation(IsaAbstractModel):
     term: Annotated[
         str,
         Field(
-            description="",
+            description="Ontology term",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -77,7 +83,7 @@ class OntologyAnnotation(IsaAbstractModel):
     term_accession_number: Annotated[
         str,
         Field(
-            description="",
+            description="The accession number from the Term Source associated with the term.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "Term Accession Number",
@@ -87,7 +93,8 @@ class OntologyAnnotation(IsaAbstractModel):
     term_source_ref: Annotated[
         str,
         Field(
-            description="",
+            description="Source reference name of ontology term. e.g., EFO, OBO, NCIT. "
+            "Ontology source reference names should be defined in ontology source references section in i_Investigation.txt file",
             json_schema_extra={"auto_fill": True, "header_name": "Term Source REF"},
         ),
     ] = ""
@@ -160,21 +167,21 @@ class Publication(IsaAbstractModel):
     pub_med_id: Annotated[
         str,
         Field(
-            description="",
+            description="The PubMed IDs of the publication.",
             json_schema_extra={"auto_fill": True, "header_name": "PubMed ID"},
         ),
     ] = ""
     doi: Annotated[
         str,
         Field(
-            description="",
+            description="A Digital Object Identifier (DOI) for the publication.",
             json_schema_extra={"auto_fill": True, "header_name": "Publication DOI"},
         ),
     ] = ""
     author_list: Annotated[
         str,
         Field(
-            description="",
+            description="The list of authors associated with the publication. Comma (,) is recommended to define multiple authors.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "Publication Author List",
@@ -184,14 +191,14 @@ class Publication(IsaAbstractModel):
     title: Annotated[
         str,
         Field(
-            description="",
+            description="The title of publication associated with the investigation.",
             json_schema_extra={"auto_fill": True, "header_name": "Publication Title"},
         ),
     ] = ""
     status: Annotated[
         OntologyAnnotation,
         Field(
-            description="",
+            description="A term describing the status of that publication (i.e. EFO:submitted, EFO:in preparation, EFO:published).",
             json_schema_extra={"auto_fill": True, "header_name": "Publication Status"},
         ),
     ] = OntologyAnnotation()
@@ -220,61 +227,65 @@ class Person(IsaAbstractModel):
     last_name: Annotated[
         str,
         Field(
-            description="",
+            description="Last name of a person associated with the investigation or study.",
             json_schema_extra={"auto_fill": True, "header_name": "Last Name"},
         ),
     ] = ""
     first_name: Annotated[
         str,
         Field(
-            description="",
+            description="First name of person associated with the investigation or study.",
             json_schema_extra={"auto_fill": True, "header_name": "First Name"},
         ),
     ] = ""
     mid_initials: Annotated[
         str,
         Field(
-            description="",
+            description="Middle name initials (if exists) of person associated with the investigation or study",
             json_schema_extra={"auto_fill": True, "header_name": "Mid Initials"},
         ),
     ] = ""
     email: Annotated[
         str,
         Field(
-            description="",
+            description="Email address of person associated with the investigation or study",
             json_schema_extra={"auto_fill": True, "header_name": "Email"},
         ),
     ] = ""
     phone: Annotated[
         str,
         Field(
-            description="",
+            description="Phone number of person associated with the investigation or study",
             json_schema_extra={"auto_fill": True, "header_name": "Phone"},
         ),
     ] = ""
     fax: Annotated[
         str,
         Field(
-            description="", json_schema_extra={"auto_fill": True, "header_name": "Fax"}
+            description="Fax number of person associated with the investigation or study",
+            json_schema_extra={"auto_fill": True, "header_name": "Fax"},
         ),
     ] = ""
     address: Annotated[
         str,
         Field(
-            description="",
+            description="Address of person associated with the investigation or study",
             json_schema_extra={"auto_fill": True, "header_name": "Address"},
         ),
     ] = ""
     affiliation: Annotated[
         str,
         Field(
-            description="",
+            description="Affiliation of person associated with the investigation or study",
             json_schema_extra={"auto_fill": True, "header_name": "Affiliation"},
         ),
     ] = ""
     roles: Annotated[
         List[OntologyAnnotation],
         Field(
+            description="Roles of person associated with the investigation or study. "
+            "Multiple role can be defined for each person. Role is defined as an ontology term. "
+            "e.g., NCIT:Investigator, NCIT:Author",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "Roles",
@@ -296,13 +307,16 @@ class Factor(IsaAbstractModel):
     name: Annotated[
         str,
         Field(
-            description="", json_schema_extra={"auto_fill": True, "header_name": "Name"}
+            description="The name of one factor used in the Study files. "
+            "A factor corresponds to an independent variable manipulated by the experimentalist "
+            "with the intention to affect biological systems in a way that can be measured by an assay.",
+            json_schema_extra={"auto_fill": True, "header_name": "Name"},
         ),
     ] = ""
     type: Annotated[
         OntologyAnnotation,
         Field(
-            description="",
+            description="A term allowing the classification of the factor into categories. The term is a controlled vocabulary or an ontology",
             json_schema_extra={"auto_fill": True, "header_name": "Type"},
         ),
     ] = OntologyAnnotation()
@@ -329,28 +343,28 @@ class Assay(IsaAbstractModel):
     file_name: Annotated[
         str,
         Field(
-            description="",
+            description="Assay file name. Expected filename pattern is a_*.txt",
             json_schema_extra={"auto_fill": True, "header_name": "File Name"},
         ),
     ] = ""
     measurement_type: Annotated[
         OntologyAnnotation,
         Field(
-            description="",
+            description="A term to qualify what is being measured (e.g. metabolite identification).",
             json_schema_extra={"auto_fill": True, "header_name": "Measurement Type"},
         ),
     ] = OntologyAnnotation()
     technology_type: Annotated[
         OntologyAnnotation,
         Field(
-            description="",
+            description="Term to identify the technology used to perform the measurement, e.g. NMR spectrometry assay, mass spectrometry assay",
             json_schema_extra={"auto_fill": True, "header_name": "Technology Type"},
         ),
     ] = OntologyAnnotation()
     technology_platform: Annotated[
         str,
         Field(
-            description="",
+            description="Platform information such as assay technique name, polarity, column model, manufacturer, platform name.",
             json_schema_extra={"auto_fill": True, "header_name": "Technology Platform"},
         ),
     ] = ""
@@ -377,39 +391,42 @@ class Protocol(IsaAbstractModel):
     name: Annotated[
         str,
         Field(
-            description="", json_schema_extra={"auto_fill": True, "header_name": "Name"}
+            description="Protocol name.",
+            json_schema_extra={"auto_fill": True, "header_name": "Name"},
         ),
     ] = ""
     protocol_type: Annotated[
         OntologyAnnotation,
         Field(
-            description="",
+            description="Term to classify the protocol.",
             json_schema_extra={"auto_fill": True, "header_name": "Type"},
         ),
     ] = OntologyAnnotation()
     description: Annotated[
         str,
         Field(
-            description="",
+            description="Protocol description.",
             json_schema_extra={"auto_fill": True, "header_name": "Description"},
         ),
     ] = ""
     uri: Annotated[
         str,
         Field(
-            description="", json_schema_extra={"auto_fill": True, "header_name": "URI"}
+            description="Pointer to external protocol resources that can be accessed by their Uniform Resource Identifier (URI).",
+            json_schema_extra={"auto_fill": True, "header_name": "URI"},
         ),
     ] = ""
     version: Annotated[
         str,
         Field(
-            description="",
+            description="An identifier for the version to ensure protocol tracking..",
             json_schema_extra={"auto_fill": True, "header_name": "Version"},
         ),
     ] = ""
     parameters: Annotated[
         List[OntologyAnnotation],
         Field(
+            description="Protocol's parameters.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "Parameters Name",
@@ -421,6 +438,7 @@ class Protocol(IsaAbstractModel):
     components: Annotated[
         List[ValueTypeAnnotation],
         Field(
+            description="Protocol’s components; e.g. instrument names, software names, and reagents names.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "Components",
@@ -451,7 +469,7 @@ class OntologySourceReferences(BaseSection):
     references: Annotated[
         List[OntologySourceReference],
         Field(
-            description="",
+            description="List of ontology sources used in ISA metadata files.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -476,7 +494,7 @@ class InvestigationPublications(BaseSection):
     publications: Annotated[
         List[Publication],
         Field(
-            description="",
+            description="Investigation publications.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -501,7 +519,7 @@ class InvestigationContacts(BaseSection):
     people: Annotated[
         List[Person],
         Field(
-            description="",
+            description="Investigation contact list.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -526,7 +544,8 @@ class StudyDesignDescriptors(BaseSection):
     design_types: Annotated[
         List[OntologyAnnotation],
         Field(
-            description="", json_schema_extra={"auto_fill": True, "header_name": "Type"}
+            description="Design descriptors defined in study design descriptors section.",
+            json_schema_extra={"auto_fill": True, "header_name": "Type"},
         ),
     ] = []
 
@@ -546,7 +565,7 @@ class StudyPublications(BaseSection):
     publications: Annotated[
         List[Publication],
         Field(
-            description="",
+            description="Publications defined in study publications section.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -571,7 +590,7 @@ class StudyFactors(BaseSection):
     factors: Annotated[
         List[Factor],
         Field(
-            description="",
+            description="Factors defined in study factors section.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -584,9 +603,7 @@ class StudyFactors(BaseSection):
 class StudyAssays(BaseSection):
     isatab_config: Annotated[
         IsaTabConfig,
-        Field(
-            exclude=True,
-        ),
+        Field(exclude=True),
     ] = IsaTabConfig(
         field_order=["assays"],
         section_header="STUDY ASSAYS",
@@ -596,7 +613,7 @@ class StudyAssays(BaseSection):
     assays: Annotated[
         List[Assay],
         Field(
-            description="",
+            description="List of assays defined in study assay section.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -621,7 +638,7 @@ class StudyProtocols(BaseSection):
     protocols: Annotated[
         List[Protocol],
         Field(
-            description="",
+            description="Protocols defined in study protocol section.",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -646,7 +663,7 @@ class StudyContacts(BaseSection):
     people: Annotated[
         List[Person],
         Field(
-            description="",
+            description="Contacts defined in study contacts section",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -678,42 +695,42 @@ class Study(BaseSection):
     identifier: Annotated[
         str,
         Field(
-            description="",
+            description="A unique identifier, either a temporary identifier generated by MetaboLights repository.",
             json_schema_extra={"auto_fill": True, "header_name": "Identifier"},
         ),
     ] = ""
     title: Annotated[
         str,
         Field(
-            description="",
+            description="A concise phrase used to encapsulate the purpose and goal of the study.",
             json_schema_extra={"auto_fill": True, "header_name": "Title"},
         ),
     ] = ""
     description: Annotated[
         str,
         Field(
-            description="",
+            description="A textual description of the study, with components such as objective or goals.",
             json_schema_extra={"auto_fill": True, "header_name": "Description"},
         ),
     ] = ""
     submission_date: Annotated[
         str,
         Field(
-            description="",
+            description="The date on which the study is submitted to an archive. String formatted as ISO8601 date YYYY-MM-DD",
             json_schema_extra={"auto_fill": True, "header_name": "Submission Date"},
         ),
     ] = ""
     public_release_date: Annotated[
         str,
         Field(
-            description="",
+            description="The date on which the study SHOULD be released publicly. String formatted as ISO8601 date YYYY-MM-DD",
             json_schema_extra={"auto_fill": True, "header_name": "Public Release Date"},
         ),
     ] = ""
     file_name: Annotated[
         str,
         Field(
-            description="",
+            description="Name of the Sample Table file corresponding the definition of that Study.",
             json_schema_extra={"auto_fill": True, "header_name": "File Name"},
         ),
     ] = ""
@@ -721,29 +738,44 @@ class Study(BaseSection):
     study_design_descriptors: Annotated[
         StudyDesignDescriptors,
         Field(
-            description="",
+            description="Content of study design descriptors section.",
             json_schema_extra={"auto_fill": True, "header_name": ""},
         ),
     ] = StudyDesignDescriptors()
     study_publications: Annotated[
         StudyPublications,
-        Field(description="", json_schema_extra={"auto_fill": True, "header_name": ""}),
+        Field(
+            description="Content of study publications section.",
+            json_schema_extra={"auto_fill": True, "header_name": ""},
+        ),
     ] = StudyPublications()
     study_factors: Annotated[
         StudyFactors,
-        Field(description="", json_schema_extra={"auto_fill": True, "header_name": ""}),
+        Field(
+            description="Content of study factors section.",
+            json_schema_extra={"auto_fill": True, "header_name": ""},
+        ),
     ] = StudyFactors()
     study_assays: Annotated[
         StudyAssays,
-        Field(description="", json_schema_extra={"auto_fill": True, "header_name": ""}),
+        Field(
+            description="Study assay section of i_Investigation.txt file. This section contains study assays and comments.",
+            json_schema_extra={"auto_fill": True, "header_name": ""},
+        ),
     ] = StudyAssays()
     study_protocols: Annotated[
         StudyProtocols,
-        Field(description="", json_schema_extra={"auto_fill": True, "header_name": ""}),
+        Field(
+            description="Content of study protocols section.",
+            json_schema_extra={"auto_fill": True, "header_name": ""},
+        ),
     ] = StudyProtocols()
     study_contacts: Annotated[
         StudyContacts,
-        Field(description="", json_schema_extra={"auto_fill": True, "header_name": ""}),
+        Field(
+            description="Content of study contacts section.",
+            json_schema_extra={"auto_fill": True, "header_name": ""},
+        ),
     ] = StudyContacts()
 
 
@@ -770,35 +802,35 @@ class Investigation(BaseSection):
     identifier: Annotated[
         str,
         Field(
-            description="",
+            description="Investigation identifier.",
             json_schema_extra={"auto_fill": True, "header_name": "Identifier"},
         ),
     ] = ""
     title: Annotated[
         str,
         Field(
-            description="",
+            description="A concise name given to the investigation.",
             json_schema_extra={"auto_fill": True, "header_name": "Title"},
         ),
     ] = ""
     description: Annotated[
         str,
         Field(
-            description="",
+            description="A textual description of the investigation.",
             json_schema_extra={"auto_fill": True, "header_name": "Description"},
         ),
     ] = ""
     submission_date: Annotated[
         str,
         Field(
-            description="",
+            description="The date on which the investigation was reported to the MetaboLights repository. String formatted as ISO8601 date YYYY-MM-DD",
             json_schema_extra={"auto_fill": True, "header_name": "Submission Date"},
         ),
     ] = ""
     public_release_date: Annotated[
         str,
         Field(
-            description="",
+            description="The date on which the investigation was released publicly. String formatted as ISO8601 date YYYY-MM-DD",
             json_schema_extra={"auto_fill": True, "header_name": "Public Release Date"},
         ),
     ] = ""
@@ -806,7 +838,7 @@ class Investigation(BaseSection):
     ontology_source_references: Annotated[
         OntologySourceReferences,
         Field(
-            description="Ontology sources used in the investigation file",
+            description="Ontology sources used in the i_Investigation.txt file",
             json_schema_extra={
                 "auto_fill": True,
                 "header_name": "",
@@ -818,7 +850,7 @@ class Investigation(BaseSection):
     investigation_publications: Annotated[
         InvestigationPublications,
         Field(
-            description="All publications prepared to report results of the investigation",
+            description="All publications prepared to report results of the investigation.",
             json_schema_extra={"auto_fill": True, "header_name": ""},
         ),
     ] = InvestigationPublications()

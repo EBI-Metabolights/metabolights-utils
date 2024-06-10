@@ -115,6 +115,10 @@ mtbls study describe MTBLS3
 # prints MTBLS3 study title.
 mtbls study describe MTBLS3 "$.investigation.studies[0].title"
 
+
+# prints MTBLS3 study title.
+mtbls study describe MTBLS3 "$.investigation.studies[0].study_assays.assays[*].assay_technique.name"
+
 # prints MTBLS3 study protocol names.
 mtbls study describe MTBLS3 "$.investigation.studies[0].study_protocols[*].protocols[*].name"
 

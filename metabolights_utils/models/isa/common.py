@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_snake
@@ -168,10 +168,15 @@ class IsaAbstractModel(MetabolightsBaseModel):
 
 
 class AssayTechnique(IsaAbstractModel):
-    name: Annotated[str, Field(description="")] = ""
-    main_technique: Annotated[str, Field(description="")] = ""
-    technique: Annotated[str, Field(description="")] = ""
-    sub_technique: Annotated[str, Field(description="")] = ""
+    name: Annotated[
+        str, Field(description="Technique name used to identify metabolites.")
+    ] = ""
+    main_technique: Annotated[
+        Literal["MS", "NMR"],
+        Field(description="Main category of metabolite identification technique."),
+    ] = ""
+    technique: Annotated[str, Field(description="Technique")] = ""
+    sub_technique: Annotated[str, Field(description="Sub-techniique")] = ""
 
     def __str__(self) -> str:
         return self.name
@@ -187,9 +192,16 @@ class AssayTechnique(IsaAbstractModel):
 
 
 class OntologyItem(IsaAbstractModel):
-    term: Annotated[str, Field(description="")] = ""
-    term_source_ref: Annotated[str, Field(description="")] = ""
-    term_accession_number: Annotated[str, Field(description="")] = ""
+    term: Annotated[str, Field(description="Ontology term.")] = ""
+    term_source_ref: Annotated[
+        str,
+        Field(
+            description="Source reference name of ontology term. e.g., EFO, OBO, NCIT."
+        ),
+    ] = ""
+    term_accession_number: Annotated[
+        str, Field(description="Accession number of ontology term.")
+    ] = ""
 
     def __str__(self) -> str:
         if self.term:
@@ -212,10 +224,18 @@ class OntologyItem(IsaAbstractModel):
 
 
 class OrganismAndOrganismPartPair(IsaAbstractModel):
-    organism: Annotated[OntologyItem, Field(description="")] = OntologyItem()
-    organism_part: Annotated[OntologyItem, Field(description="")] = OntologyItem()
-    variant: Annotated[OntologyItem, Field(description="")] = OntologyItem()
-    sample_type: Annotated[OntologyItem, Field(description="")] = OntologyItem()
+    organism: Annotated[OntologyItem, Field(description="Organism ontology value.")] = (
+        OntologyItem()
+    )
+    organism_part: Annotated[
+        OntologyItem, Field(description="Organism part ontology value.")
+    ] = OntologyItem()
+    variant: Annotated[OntologyItem, Field(description="Variant ontology value.")] = (
+        OntologyItem()
+    )
+    sample_type: Annotated[
+        OntologyItem, Field(description="Sample type ontology value.")
+    ] = OntologyItem()
 
     def __str__(self) -> str:
         if self.organism and self.organism_part and self.variant and self.sample_type:
@@ -295,9 +315,9 @@ class ProtocolFields(MetabolightsBaseModel):
         Dict[str, ProtocolOntologyItem], Field(description="")
     ] = {}
 
-    additional_text_fields: Annotated[List[ProtocolTextItem], Field(description="")] = (
-        []
-    )
+    additional_text_fields: Annotated[
+        List[ProtocolTextItem], Field(description="Additional text")
+    ] = []
     additional_numeric_fields: Annotated[
         List[ProtocolNumericOntologyItem], Field(description="")
     ] = []
@@ -308,27 +328,52 @@ class ProtocolFields(MetabolightsBaseModel):
 
 class Comment(IsaAbstractModel):
     name: Annotated[str, Field(description="Name of comment")] = ""
-    value: Annotated[List[str], Field(description="Values of a comment")] = []
+    value: Annotated[List[str], Field(description="Values of comment")] = []
 
 
 class IsaTableColumn(IsaAbstractModel):
-    column_index: Annotated[Union[int, None], Field(description="")] = None
+    column_index: Annotated[
+        Union[int, None],
+        Field(description="Index of column in ISA Table. First column index is 0."),
+    ] = None
 
-    column_name: Annotated[str, Field(description="")] = ""
+    column_name: Annotated[
+        str,
+        Field(
+            description="Unique name of column. It is same if column header is unique in ISA table."
+        ),
+    ] = ""
 
-    column_header: Annotated[str, Field(description="")] = ""
+    column_header: Annotated[str, Field(description="Header of ISA table column.")] = ""
 
-    additional_columns: Annotated[List[str], Field(description="")] = []
+    additional_columns: Annotated[
+        List[str],
+        Field(
+            description="Linked column names. If column is ontology or a column with unit ontology column, it lists the following column headers."
+        ),
+    ] = []
 
-    column_category: Annotated[str, Field(description="")] = ""
+    column_category: Annotated[
+        str,
+        Field(
+            description="Column category. e.g., Parameter Value, Factor Value, protocol"
+        ),
+    ] = ""
 
-    column_structure: Annotated[ColumnsStructure, Field(description="")] = (
-        ColumnsStructure.SINGLE_COLUMN
-    )
+    column_structure: Annotated[
+        ColumnsStructure, Field(description="Structure of column in ISA table.")
+    ] = ColumnsStructure.SINGLE_COLUMN
 
-    column_prefix: Annotated[str, Field(description="")] = ""
+    column_prefix: Annotated[
+        str, Field(description="Column prefix if header has a value between [].")
+    ] = ""
 
-    column_search_pattern: Annotated[str, Field(description="")] = ""
+    column_search_pattern: Annotated[
+        str,
+        Field(
+            description="Search regex expression to fetch value if if header has a value between []."
+        ),
+    ] = ""
 
     def __hash__(self):
         return hash(self.column_name)
@@ -337,7 +382,9 @@ class IsaTableColumn(IsaAbstractModel):
 class IsaTable(IsaAbstractModel):
     columns: Annotated[
         List[str],
-        Field(description="Unique column names of this table."),
+        Field(
+            description="Unique column names of ISA table. If there are dublicate column headers, column names are created with the following pattern: header name + '.X' where X is sequencial number for each duplicate header name."
+        ),
     ] = []
 
     # column_baseline: Annotated[
@@ -346,12 +393,15 @@ class IsaTable(IsaAbstractModel):
     # ] = []
 
     headers: Annotated[
-        List[IsaTableColumn], Field(description="Metadata of columns.")
+        List[IsaTableColumn],
+        Field(
+            description="Metadata of ISA table columns. e.i., header name, column name, column index"
+        ),
     ] = []
 
-    data: Annotated[Dict[str, List[str]], Field(description="Data of each column.")] = (
-        {}
-    )
+    data: Annotated[
+        Dict[str, List[str]], Field(description="Data columns and their row values.")
+    ] = {}
 
     # row_baseline: Annotated[
     #     List[int],
@@ -359,7 +409,10 @@ class IsaTable(IsaAbstractModel):
     # ] = []
 
     row_indices: Annotated[
-        List[int], Field(description="Current rows' positions in ISA table.")
+        List[int],
+        Field(
+            description="Current rows' positions in ISA table. e.g., [2, 3, 5]: First three rows of 'data' are 2nd, 3th and 5th rows in ISA Table."
+        ),
     ] = []
 
     column_indices: Annotated[

@@ -204,7 +204,12 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                 )
 
         except Exception as ex:
-            messages.append(ErrorMessage(str(ex)))
+            messages.append(
+                ErrorMessage(
+                    short="Download metadata file failure. Try -l option if there is a local copy.",
+                    detail=str(ex),
+                )
+            )
         if model:
             parent = os.path.dirname(model_cache_path)
             os.makedirs(parent, exist_ok=True)

@@ -17,17 +17,20 @@ class BaseMetabolightsStudyModel(MetabolightsBaseModel):
     ] = "v1.0"
 
     investigation_file_path: Annotated[
-        str, Field(description="relative path of investigation file")
+        str,
+        Field(
+            description="Relative path of investigation file. e.g., i_Investigation.txt"
+        ),
     ] = ""
 
     investigation: Annotated[
-        Investigation, Field(description="Content of investigation file.")
+        Investigation, Field(description="Content of i_Investigation.txt file.")
     ] = Investigation()
 
     samples: Annotated[
         Dict[str, SamplesFile],
         Field(
-            description="Samples files and their contents. "
+            description="Dictionary of sample files and their content. "
             "Only one sample file can be referenced in investigation file."
         ),
     ] = {}
@@ -42,7 +45,9 @@ class BaseMetabolightsStudyModel(MetabolightsBaseModel):
 
     parser_messages: Annotated[
         Dict[str, List[ParserMessage]],
-        Field(description="Parser messages for each file."),
+        Field(
+            description="An dictionary to store parser message list for each ISA metadata file contains any type of parser message."
+        ),
     ] = {}
 
     referenced_assignment_files: Annotated[
@@ -75,5 +80,5 @@ class BaseMetabolightsStudyModel(MetabolightsBaseModel):
 
     tags: Annotated[
         List[str],
-        Field(description="Tags for study."),
+        Field(description="Tag values for the study."),
     ] = []

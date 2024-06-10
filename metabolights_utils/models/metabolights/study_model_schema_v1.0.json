@@ -3,10 +3,29 @@
         "Assay": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "file_name",
+                            "measurement_type",
+                            "technology_type",
+                            "technology_platform"
+                        ],
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "fileName": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Assay file name. Expected filename pattern is a_*.txt",
                     "header_name": "File Name",
                     "title": "Filename",
                     "type": "string"
@@ -23,7 +42,7 @@
                         "termAccessionNumber": "",
                         "termSourceRef": ""
                     },
-                    "description": "",
+                    "description": "A term to qualify what is being measured (e.g. metabolite identification).",
                     "header_name": "Measurement Type"
                 },
                 "technologyType": {
@@ -38,30 +57,38 @@
                         "termAccessionNumber": "",
                         "termSourceRef": ""
                     },
-                    "description": "",
+                    "description": "Term to identify the technology used to perform the measurement, e.g. NMR spectrometry assay, mass spectrometry assay",
                     "header_name": "Technology Type"
                 },
                 "technologyPlatform": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Platform information such as assay technique name, polarity, column model, manufacturer, platform name.",
                     "header_name": "Technology Platform",
                     "title": "Technologyplatform",
                     "type": "string"
                 }
             },
-            "required": [
-                "fileName",
-                "measurementType",
-                "technologyType",
-                "technologyPlatform"
-            ],
             "title": "Assay",
             "type": "object"
         },
         "AssayFile": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "filePath": {
                     "default": "",
                     "description": "Relative file path of ISA table file (s_*.txt, a_*.txt, m_*.tsv).",
@@ -181,63 +208,75 @@
                     "type": "integer"
                 }
             },
-            "required": [
-                "filePath",
-                "sha256Hash",
-                "table",
-                "sampleNames",
-                "assayNames",
-                "referencedAssignmentFiles",
-                "referencedRawFiles",
-                "referencedDerivedFiles",
-                "referencedRawFileExtensions",
-                "referencedDerivedFileExtensions",
-                "assayTechnique",
-                "numberOfAssayRows"
-            ],
             "title": "AssayFile",
             "type": "object"
         },
         "AssayTechnique": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "name": {
                     "default": "",
-                    "description": "",
+                    "description": "Technique name used to identify metabolites.",
                     "title": "Name",
                     "type": "string"
                 },
                 "mainTechnique": {
                     "default": "",
-                    "description": "",
+                    "description": "Main category of metabolite identification technique.",
+                    "enum": [
+                        "MS",
+                        "NMR"
+                    ],
                     "title": "Maintechnique",
                     "type": "string"
                 },
                 "technique": {
                     "default": "",
-                    "description": "",
+                    "description": "Technique",
                     "title": "Technique",
                     "type": "string"
                 },
                 "subTechnique": {
                     "default": "",
-                    "description": "",
+                    "description": "Sub-techniique",
                     "title": "Subtechnique",
                     "type": "string"
                 }
             },
-            "required": [
-                "name",
-                "mainTechnique",
-                "technique",
-                "subTechnique"
-            ],
             "title": "AssayTechnique",
             "type": "object"
         },
         "AssignmentFile": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "filePath": {
                     "default": "",
                     "description": "Relative file path of ISA table file (s_*.txt, a_*.txt, m_*.tsv).",
@@ -275,7 +314,7 @@
                 },
                 "identifiedMetaboliteNames": {
                     "default": [],
-                    "description": "",
+                    "description": "Names of metabolites defined in the ISA table.",
                     "items": {
                         "type": "string"
                     },
@@ -287,7 +326,7 @@
                         "type": "string"
                     },
                     "default": {},
-                    "description": "",
+                    "description": "Metabolite names and assigned CHEBI id values in the ISA table.",
                     "title": "Metaboliteassignments",
                     "type": "object"
                 },
@@ -303,38 +342,27 @@
                         "technique": "",
                         "subTechnique": ""
                     },
-                    "description": ""
+                    "description": "Assay technique of assays that reference the current m_*.tsv file."
                 },
                 "numberOfRows": {
                     "default": 0,
-                    "description": "",
+                    "description": "Number of rows in ISA table.",
                     "title": "Numberofrows",
                     "type": "integer"
                 },
                 "numberOfAssignedRows": {
                     "default": 0,
-                    "description": "",
+                    "description": "Number of rows assigned a CHEBI id.",
                     "title": "Numberofassignedrows",
                     "type": "integer"
                 },
                 "numberOfUnassignedRows": {
                     "default": 0,
-                    "description": "",
+                    "description": "Number of rows not assigned a CHEBI id.",
                     "title": "Numberofunassignedrows",
                     "type": "integer"
                 }
             },
-            "required": [
-                "filePath",
-                "sha256Hash",
-                "table",
-                "identifiedMetaboliteNames",
-                "metaboliteAssignments",
-                "assayTechnique",
-                "numberOfRows",
-                "numberOfAssignedRows",
-                "numberOfUnassignedRows"
-            ],
             "title": "AssignmentFile",
             "type": "object"
         },
@@ -345,8 +373,7 @@
                 "SINGLE_COLUMN_AND_UNIT_ONTOLOGY",
                 "LINKED_COLUMN",
                 "ADDITIONAL_COLUMN",
-                "INVALID_MULTI_COLUMN",
-                "UNKNOWN"
+                "INVALID_MULTI_COLUMN"
             ],
             "title": "ColumnsStructure",
             "type": "string"
@@ -354,6 +381,20 @@
         "Comment": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "name": {
                     "default": "",
                     "description": "Name of comment",
@@ -362,7 +403,7 @@
                 },
                 "value": {
                     "default": [],
-                    "description": "Values of a comment",
+                    "description": "Values of comment",
                     "items": {
                         "type": "string"
                     },
@@ -370,20 +411,42 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "name",
-                "value"
-            ],
             "title": "Comment",
             "type": "object"
+        },
+        "CurationRequest": {
+            "enum": [
+                "MANUAL_CURATION",
+                "NO_CURATION",
+                "SEMI_AUTOMATED_CURATION"
+            ],
+            "title": "CurationRequest",
+            "type": "string"
         },
         "Factor": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "name",
+                            "type"
+                        ],
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "name": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The name of one factor used in the Study files. A factor corresponds to an independent variable manipulated by the experimentalist with the intention to affect biological systems in a way that can be measured by an assay.",
                     "header_name": "Name",
                     "title": "Name",
                     "type": "string"
@@ -400,14 +463,10 @@
                         "termAccessionNumber": "",
                         "termSourceRef": ""
                     },
-                    "description": "",
+                    "description": "A term allowing the classification of the factor into categories. The term is a controlled vocabulary or an ontology",
                     "header_name": "Type"
                 }
             },
-            "required": [
-                "name",
-                "type"
-            ],
             "title": "Factor",
             "type": "object"
         },
@@ -448,7 +507,7 @@
                         }
                     ],
                     "default": "ERROR",
-                    "description": ""
+                    "description": "Message type."
                 },
                 "short": {
                     "default": "",
@@ -463,11 +522,6 @@
                     "type": "string"
                 }
             },
-            "required": [
-                "type",
-                "short",
-                "detail"
-            ],
             "title": "GenericMessage",
             "type": "object"
         },
@@ -484,8 +538,29 @@
         "Investigation": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "identifier",
+                            "title",
+                            "description",
+                            "submission_date",
+                            "public_release_date"
+                        ],
+                        "sectionHeader": "INVESTIGATION",
+                        "sectionPrefix": "Investigation",
+                        "specificationVersion": "1.0",
+                        "specificationDate": "2016-10-28"
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -495,7 +570,7 @@
                 "identifier": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Investigation identifier.",
                     "header_name": "Identifier",
                     "title": "Identifier",
                     "type": "string"
@@ -503,7 +578,7 @@
                 "title": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "A concise name given to the investigation.",
                     "header_name": "Title",
                     "title": "Title",
                     "type": "string"
@@ -511,7 +586,7 @@
                 "description": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "A textual description of the investigation.",
                     "header_name": "Description",
                     "title": "Description",
                     "type": "string"
@@ -519,7 +594,7 @@
                 "submissionDate": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The date on which the investigation was reported to the MetaboLights repository. String formatted as ISO8601 date YYYY-MM-DD",
                     "header_name": "Submission Date",
                     "title": "Submissiondate",
                     "type": "string"
@@ -527,7 +602,7 @@
                 "publicReleaseDate": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The date on which the investigation was released publicly. String formatted as ISO8601 date YYYY-MM-DD",
                     "header_name": "Public Release Date",
                     "title": "Publicreleasedate",
                     "type": "string"
@@ -543,7 +618,7 @@
                         "comments": [],
                         "references": []
                     },
-                    "description": "Ontology sources used in the investigation ffile",
+                    "description": "Ontology sources used in the i_Investigation.txt file",
                     "header_name": "",
                     "inherit_prefix": false
                 },
@@ -558,7 +633,7 @@
                         "comments": [],
                         "publications": []
                     },
-                    "description": "All publications prepared to report results of the investigation",
+                    "description": "All publications prepared to report results of the investigation.",
                     "header_name": ""
                 },
                 "investigationContacts": {
@@ -585,26 +660,31 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "identifier",
-                "title",
-                "description",
-                "submissionDate",
-                "publicReleaseDate",
-                "ontologySourceReferences",
-                "investigationPublications",
-                "investigationContacts",
-                "studies"
-            ],
             "title": "Investigation",
             "type": "object"
         },
         "InvestigationContacts": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "people"
+                        ],
+                        "sectionHeader": "INVESTIGATION CONTACTS",
+                        "sectionPrefix": "Person",
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -614,7 +694,7 @@
                 "people": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "Investigation contact list.",
                     "header_name": "",
                     "items": {
                         "$ref": "#/$defs/Person"
@@ -624,18 +704,31 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "people"
-            ],
             "title": "InvestigationContacts",
             "type": "object"
         },
         "InvestigationPublications": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "publications"
+                        ],
+                        "sectionHeader": "INVESTIGATION PUBLICATIONS",
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -645,7 +738,7 @@
                 "publications": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "Investigation publications.",
                     "header_name": "",
                     "items": {
                         "$ref": "#/$defs/Publication"
@@ -655,19 +748,89 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "publications"
-            ],
             "title": "InvestigationPublications",
+            "type": "object"
+        },
+        "IsaTabConfig": {
+            "properties": {
+                "fieldOrder": {
+                    "anyOf": [
+                        {
+                            "items": {
+                                "type": "string"
+                            },
+                            "type": "array"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "",
+                    "title": "Fieldorder"
+                },
+                "sectionHeader": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "",
+                    "title": "Sectionheader"
+                },
+                "sectionPrefix": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "",
+                    "title": "Sectionprefix"
+                },
+                "specificationVersion": {
+                    "default": "",
+                    "description": "",
+                    "title": "Specificationversion",
+                    "type": "string"
+                },
+                "specificationDate": {
+                    "default": "",
+                    "description": "",
+                    "title": "Specificationdate",
+                    "type": "string"
+                }
+            },
+            "title": "IsaTabConfig",
             "type": "object"
         },
         "IsaTable": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "columns": {
                     "default": [],
-                    "description": "Unique column names of this table.",
+                    "description": "Unique column names of ISA table. If there are dublicate column headers, column names are created with the following pattern: header name + '.X' where X is sequencial number for each duplicate header name.",
                     "items": {
                         "type": "string"
                     },
@@ -676,7 +839,7 @@
                 },
                 "headers": {
                     "default": [],
-                    "description": "Metadata of columns.",
+                    "description": "Metadata of ISA table columns. e.i., header name, column name, column index",
                     "items": {
                         "$ref": "#/$defs/IsaTableColumn"
                     },
@@ -691,13 +854,13 @@
                         "type": "array"
                     },
                     "default": {},
-                    "description": "Data of each column.",
+                    "description": "Data columns and their row values.",
                     "title": "Data",
                     "type": "object"
                 },
                 "rowIndices": {
                     "default": [],
-                    "description": "Current rows' positions in ISA table.",
+                    "description": "Current rows' positions in ISA table. e.g., [2, 3, 5]: First three rows of 'data' are 2nd, 3th and 5th rows in ISA Table.",
                     "items": {
                         "type": "integer"
                     },
@@ -768,27 +931,26 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "columns",
-                "headers",
-                "data",
-                "rowIndices",
-                "columnIndices",
-                "filteredTotalRowCount",
-                "rowOffset",
-                "rowCount",
-                "totalRowCount",
-                "selectedColumnCount",
-                "totalColumnCount",
-                "filterOptions",
-                "sortOptions"
-            ],
             "title": "IsaTable",
             "type": "object"
         },
         "IsaTableColumn": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "columnIndex": {
                     "anyOf": [
                         {
@@ -799,24 +961,24 @@
                         }
                     ],
                     "default": null,
-                    "description": "",
+                    "description": "Index of column in ISA Table. First column index is 0.",
                     "title": "Columnindex"
                 },
                 "columnName": {
                     "default": "",
-                    "description": "",
+                    "description": "Unique name of column. It is same if column header is unique in ISA table.",
                     "title": "Columnname",
                     "type": "string"
                 },
                 "columnHeader": {
                     "default": "",
-                    "description": "",
+                    "description": "Header of ISA table column.",
                     "title": "Columnheader",
                     "type": "string"
                 },
                 "additionalColumns": {
                     "default": [],
-                    "description": "",
+                    "description": "Linked column names. If column is ontology or a column with unit ontology column, it lists the following column headers.",
                     "items": {
                         "type": "string"
                     },
@@ -825,7 +987,7 @@
                 },
                 "columnCategory": {
                     "default": "",
-                    "description": "",
+                    "description": "Column category. e.g., Parameter Value, Factor Value, protocol",
                     "title": "Columncategory",
                     "type": "string"
                 },
@@ -836,41 +998,49 @@
                         }
                     ],
                     "default": "SINGLE_COLUMN",
-                    "description": ""
+                    "description": "Structure of column in ISA table."
                 },
                 "columnPrefix": {
                     "default": "",
-                    "description": "",
+                    "description": "Column prefix if header has a value between [].",
                     "title": "Columnprefix",
                     "type": "string"
                 },
                 "columnSearchPattern": {
                     "default": "",
-                    "description": "",
+                    "description": "Search regex expression to fetch value if if header has a value between [].",
                     "title": "Columnsearchpattern",
                     "type": "string"
                 }
             },
-            "required": [
-                "columnIndex",
-                "columnName",
-                "columnHeader",
-                "additionalColumns",
-                "columnCategory",
-                "columnStructure",
-                "columnPrefix",
-                "columnSearchPattern"
-            ],
             "title": "IsaTableColumn",
             "type": "object"
         },
         "OntologyAnnotation": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "term",
+                            "term_accession_number",
+                            "term_source_ref"
+                        ],
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "term": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Ontology term",
                     "header_name": "",
                     "title": "Term",
                     "type": "string"
@@ -878,7 +1048,7 @@
                 "termAccessionNumber": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The accession number from the Term Source associated with the term.",
                     "header_name": "Term Accession Number",
                     "title": "Termaccessionnumber",
                     "type": "string"
@@ -886,57 +1056,80 @@
                 "termSourceRef": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Source reference name of ontology term. e.g., EFO, OBO, NCIT. Ontology source reference names should be defined in ontology source references section in i_Investigation.txt file",
                     "header_name": "Term Source REF",
                     "title": "Termsourceref",
                     "type": "string"
                 }
             },
-            "required": [
-                "term",
-                "termAccessionNumber",
-                "termSourceRef"
-            ],
             "title": "OntologyAnnotation",
             "type": "object"
         },
         "OntologyItem": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "term": {
                     "default": "",
-                    "description": "",
+                    "description": "Ontology term.",
                     "title": "Term",
                     "type": "string"
                 },
                 "termSourceRef": {
                     "default": "",
-                    "description": "",
+                    "description": "Source reference name of ontology term. e.g., EFO, OBO, NCIT.",
                     "title": "Termsourceref",
                     "type": "string"
                 },
                 "termAccessionNumber": {
                     "default": "",
-                    "description": "",
+                    "description": "Accession number of ontology term.",
                     "title": "Termaccessionnumber",
                     "type": "string"
                 }
             },
-            "required": [
-                "term",
-                "termSourceRef",
-                "termAccessionNumber"
-            ],
             "title": "OntologyItem",
             "type": "object"
         },
         "OntologySourceReference": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "source_name",
+                            "source_file",
+                            "source_version",
+                            "source_description"
+                        ],
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "sourceName": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The name of the source of a term; i.e. the source controlled vocabulary or ontology. These names will be used in all corresponding Term Source REF fields that occur elsewhere.",
                     "header_name": "Source Name",
                     "source_description": true,
                     "title": "Sourcename",
@@ -945,42 +1138,60 @@
                 "sourceFile": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "A file name or a URI of an official resource.",
                     "header_name": "Source File",
                     "title": "Sourcefile",
                     "type": "string"
                 },
                 "sourceVersion": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The version number of the Term Source to support terms tracking.",
                     "header_name": "Source Version",
-                    "title": "Sourceversion",
-                    "type": "string"
+                    "title": "Sourceversion"
                 },
                 "sourceDescription": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Description of source. Use for disambiguating resources when homologous prefixes have been used.",
                     "header_name": "Source Description",
                     "title": "Sourcedescription",
                     "type": "string"
                 }
             },
-            "required": [
-                "sourceName",
-                "sourceFile",
-                "sourceVersion",
-                "sourceDescription"
-            ],
             "title": "OntologySourceReference",
             "type": "object"
         },
         "OntologySourceReferences": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "references"
+                        ],
+                        "sectionHeader": "ONTOLOGY SOURCE REFERENCE",
+                        "sectionPrefix": "Term",
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -990,7 +1201,7 @@
                 "references": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "List of ontology sources used in ISA metadata files.",
                     "header_name": "",
                     "items": {
                         "$ref": "#/$defs/OntologySourceReference"
@@ -1000,16 +1211,26 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "references"
-            ],
             "title": "OntologySourceReferences",
             "type": "object"
         },
         "OrganismAndOrganismPartPair": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "organism": {
                     "allOf": [
                         {
@@ -1021,7 +1242,7 @@
                         "termSourceRef": "",
                         "termAccessionNumber": ""
                     },
-                    "description": ""
+                    "description": "Organism ontology value."
                 },
                 "organismPart": {
                     "allOf": [
@@ -1034,7 +1255,7 @@
                         "termSourceRef": "",
                         "termAccessionNumber": ""
                     },
-                    "description": ""
+                    "description": "Organism part ontology value."
                 },
                 "variant": {
                     "allOf": [
@@ -1047,7 +1268,7 @@
                         "termSourceRef": "",
                         "termAccessionNumber": ""
                     },
-                    "description": ""
+                    "description": "Variant ontology value."
                 },
                 "sampleType": {
                     "allOf": [
@@ -1060,15 +1281,9 @@
                         "termSourceRef": "",
                         "termAccessionNumber": ""
                     },
-                    "description": ""
+                    "description": "Sample type ontology value."
                 }
             },
-            "required": [
-                "organism",
-                "organismPart",
-                "variant",
-                "sampleType"
-            ],
             "title": "OrganismAndOrganismPartPair",
             "type": "object"
         },
@@ -1081,47 +1296,39 @@
                         }
                     ],
                     "default": "WARNING",
-                    "description": ""
+                    "description": "Message type. Valid values: INFO, WARNING, ERROR, CRITICAL."
                 },
                 "short": {
                     "default": "",
-                    "description": "",
+                    "description": "Short information about message.",
                     "title": "Short",
                     "type": "string"
                 },
                 "detail": {
                     "default": "",
-                    "description": "",
+                    "description": "Detailed information about message.",
                     "title": "Detail",
                     "type": "string"
                 },
                 "section": {
                     "default": "",
-                    "description": "",
+                    "description": "Section name if it is i_Investigation.txt file",
                     "title": "Section",
                     "type": "string"
                 },
                 "line": {
                     "default": "",
-                    "description": "",
+                    "description": "File line number. It is valid only for i_Investigation.txt file.",
                     "title": "Line",
                     "type": "string"
                 },
                 "column": {
                     "default": "",
-                    "description": "",
+                    "description": "ISA file table column name.",
                     "title": "Column",
                     "type": "string"
                 }
             },
-            "required": [
-                "type",
-                "short",
-                "detail",
-                "section",
-                "line",
-                "column"
-            ],
             "title": "ParserMessage",
             "type": "object"
         },
@@ -1138,10 +1345,34 @@
         "Person": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "last_name",
+                            "first_name",
+                            "mid_initials",
+                            "email",
+                            "phone",
+                            "fax",
+                            "address",
+                            "affiliation",
+                            "roles"
+                        ],
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "lastName": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Last name of a person associated with the investigation or study.",
                     "header_name": "Last Name",
                     "title": "Lastname",
                     "type": "string"
@@ -1149,7 +1380,7 @@
                 "firstName": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "First name of person associated with the investigation or study.",
                     "header_name": "First Name",
                     "title": "Firstname",
                     "type": "string"
@@ -1157,7 +1388,7 @@
                 "midInitials": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Middle name initials (if exists) of person associated with the investigation or study",
                     "header_name": "Mid Initials",
                     "title": "Midinitials",
                     "type": "string"
@@ -1165,7 +1396,7 @@
                 "email": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Email address of person associated with the investigation or study",
                     "header_name": "Email",
                     "title": "Email",
                     "type": "string"
@@ -1173,7 +1404,7 @@
                 "phone": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Phone number of person associated with the investigation or study",
                     "header_name": "Phone",
                     "title": "Phone",
                     "type": "string"
@@ -1181,7 +1412,7 @@
                 "fax": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Fax number of person associated with the investigation or study",
                     "header_name": "Fax",
                     "title": "Fax",
                     "type": "string"
@@ -1189,7 +1420,7 @@
                 "address": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Address of person associated with the investigation or study",
                     "header_name": "Address",
                     "title": "Address",
                     "type": "string"
@@ -1197,7 +1428,7 @@
                 "affiliation": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Affiliation of person associated with the investigation or study",
                     "header_name": "Affiliation",
                     "title": "Affiliation",
                     "type": "string"
@@ -1205,6 +1436,7 @@
                 "roles": {
                     "auto_fill": true,
                     "default": [],
+                    "description": "Roles of person associated with the investigation or study. Multiple role can be defined for each person. Role is defined as an ontology term. e.g., NCIT:Investigator, NCIT:Author",
                     "header_name": "Roles",
                     "items": {
                         "$ref": "#/$defs/OntologyAnnotation"
@@ -1215,27 +1447,38 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "lastName",
-                "firstName",
-                "midInitials",
-                "email",
-                "phone",
-                "fax",
-                "address",
-                "affiliation",
-                "roles"
-            ],
             "title": "Person",
             "type": "object"
         },
         "Protocol": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "name",
+                            "protocol_type",
+                            "description",
+                            "uri",
+                            "version",
+                            "parameters",
+                            "components"
+                        ],
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "name": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Protocol name.",
                     "header_name": "Name",
                     "title": "Name",
                     "type": "string"
@@ -1252,13 +1495,13 @@
                         "termAccessionNumber": "",
                         "termSourceRef": ""
                     },
-                    "description": "",
+                    "description": "Term to classify the protocol.",
                     "header_name": "Type"
                 },
                 "description": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Protocol description.",
                     "header_name": "Description",
                     "title": "Description",
                     "type": "string"
@@ -1266,7 +1509,7 @@
                 "uri": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Pointer to external protocol resources that can be accessed by their Uniform Resource Identifier (URI).",
                     "header_name": "URI",
                     "title": "Uri",
                     "type": "string"
@@ -1274,7 +1517,7 @@
                 "version": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "An identifier for the version to ensure protocol tracking..",
                     "header_name": "Version",
                     "title": "Version",
                     "type": "string"
@@ -1282,6 +1525,7 @@
                 "parameters": {
                     "auto_fill": true,
                     "default": [],
+                    "description": "Protocol's parameters.",
                     "header_name": "Parameters Name",
                     "items": {
                         "$ref": "#/$defs/OntologyAnnotation"
@@ -1294,6 +1538,7 @@
                 "components": {
                     "auto_fill": true,
                     "default": [],
+                    "description": "Protocol\u2019s components; e.g. instrument names, software names, and reagents names.",
                     "header_name": "Components",
                     "items": {
                         "$ref": "#/$defs/ValueTypeAnnotation"
@@ -1304,25 +1549,36 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "name",
-                "protocolType",
-                "description",
-                "uri",
-                "version",
-                "parameters",
-                "components"
-            ],
             "title": "Protocol",
             "type": "object"
         },
         "Publication": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "pub_med_id",
+                            "doi",
+                            "author_list",
+                            "title",
+                            "status"
+                        ],
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "pubMedId": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The PubMed IDs of the publication.",
                     "header_name": "PubMed ID",
                     "title": "Pubmedid",
                     "type": "string"
@@ -1330,7 +1586,7 @@
                 "doi": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "A Digital Object Identifier (DOI) for the publication.",
                     "header_name": "Publication DOI",
                     "title": "Doi",
                     "type": "string"
@@ -1338,7 +1594,7 @@
                 "authorList": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The list of authors associated with the publication. Comma (,) is recommended to define multiple authors.",
                     "header_name": "Publication Author List",
                     "title": "Authorlist",
                     "type": "string"
@@ -1346,7 +1602,7 @@
                 "title": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The title of publication associated with the investigation.",
                     "header_name": "Publication Title",
                     "title": "Title",
                     "type": "string"
@@ -1363,23 +1619,30 @@
                         "termAccessionNumber": "",
                         "termSourceRef": ""
                     },
-                    "description": "",
+                    "description": "A term describing the status of that publication (i.e. EFO:submitted, EFO:in preparation, EFO:published).",
                     "header_name": "Publication Status"
                 }
             },
-            "required": [
-                "pubMedId",
-                "doi",
-                "authorList",
-                "title",
-                "status"
-            ],
             "title": "Publication",
             "type": "object"
         },
         "SamplesFile": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "filePath": {
                     "default": "",
                     "description": "Relative file path of ISA table file (s_*.txt, a_*.txt, m_*.tsv).",
@@ -1417,7 +1680,7 @@
                 },
                 "sampleNames": {
                     "default": [],
-                    "description": "",
+                    "description": "Unique values in `Sample Name` column in the sample file.",
                     "items": {
                         "type": "string"
                     },
@@ -1426,7 +1689,7 @@
                 },
                 "organisms": {
                     "default": [],
-                    "description": "",
+                    "description": "Unique organism values in the sample file.",
                     "items": {
                         "$ref": "#/$defs/OntologyItem"
                     },
@@ -1435,7 +1698,7 @@
                 },
                 "organismParts": {
                     "default": [],
-                    "description": "",
+                    "description": "Unique organism part values in the sample file.",
                     "items": {
                         "$ref": "#/$defs/OntologyItem"
                     },
@@ -1444,7 +1707,7 @@
                 },
                 "organismAndOrganismPartPairs": {
                     "default": [],
-                    "description": "",
+                    "description": "Unique organism, organism part, variant and sample type values in the sample file.",
                     "items": {
                         "$ref": "#/$defs/OrganismAndOrganismPartPair"
                     },
@@ -1453,7 +1716,7 @@
                 },
                 "variants": {
                     "default": [],
-                    "description": "",
+                    "description": "Unique variant values in the sample file.",
                     "items": {
                         "$ref": "#/$defs/OntologyItem"
                     },
@@ -1462,7 +1725,7 @@
                 },
                 "sampleTypes": {
                     "default": [],
-                    "description": "",
+                    "description": "Unique sample type values in the sample file.",
                     "items": {
                         "$ref": "#/$defs/OntologyItem"
                     },
@@ -1470,17 +1733,6 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "filePath",
-                "sha256Hash",
-                "table",
-                "sampleNames",
-                "organisms",
-                "organismParts",
-                "organismAndOrganismPartPairs",
-                "variants",
-                "sampleTypes"
-            ],
             "title": "SamplesFile",
             "type": "object"
         },
@@ -1498,8 +1750,30 @@
         "Study": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "identifier",
+                            "title",
+                            "description",
+                            "submission_date",
+                            "public_release_date",
+                            "file_name"
+                        ],
+                        "sectionHeader": "STUDY",
+                        "sectionPrefix": "Study",
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -1509,7 +1783,7 @@
                 "identifier": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "A unique identifier, either a temporary identifier generated by MetaboLights repository.",
                     "header_name": "Identifier",
                     "title": "Identifier",
                     "type": "string"
@@ -1517,7 +1791,7 @@
                 "title": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "A concise phrase used to encapsulate the purpose and goal of the study.",
                     "header_name": "Title",
                     "title": "Title",
                     "type": "string"
@@ -1525,7 +1799,7 @@
                 "description": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "A textual description of the study, with components such as objective or goals.",
                     "header_name": "Description",
                     "title": "Description",
                     "type": "string"
@@ -1533,7 +1807,7 @@
                 "submissionDate": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The date on which the study is submitted to an archive. String formatted as ISO8601 date YYYY-MM-DD",
                     "header_name": "Submission Date",
                     "title": "Submissiondate",
                     "type": "string"
@@ -1541,7 +1815,7 @@
                 "publicReleaseDate": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "The date on which the study SHOULD be released publicly. String formatted as ISO8601 date YYYY-MM-DD",
                     "header_name": "Public Release Date",
                     "title": "Publicreleasedate",
                     "type": "string"
@@ -1549,7 +1823,7 @@
                 "fileName": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "",
+                    "description": "Name of the Sample Table file corresponding the definition of that Study.",
                     "header_name": "File Name",
                     "title": "Filename",
                     "type": "string"
@@ -1565,7 +1839,7 @@
                         "comments": [],
                         "designTypes": []
                     },
-                    "description": "",
+                    "description": "Content of study design descriptors section.",
                     "header_name": ""
                 },
                 "studyPublications": {
@@ -1579,7 +1853,7 @@
                         "comments": [],
                         "publications": []
                     },
-                    "description": "",
+                    "description": "Content of study publications section.",
                     "header_name": ""
                 },
                 "studyFactors": {
@@ -1593,7 +1867,7 @@
                         "comments": [],
                         "factors": []
                     },
-                    "description": "",
+                    "description": "Content of study factors section.",
                     "header_name": ""
                 },
                 "studyAssays": {
@@ -1607,7 +1881,7 @@
                         "comments": [],
                         "assays": []
                     },
-                    "description": "",
+                    "description": "Study assay section of i_Investigation.txt file. This section contains study assays and comments.",
                     "header_name": ""
                 },
                 "studyProtocols": {
@@ -1621,7 +1895,7 @@
                         "comments": [],
                         "protocols": []
                     },
-                    "description": "",
+                    "description": "Content of study protocols section.",
                     "header_name": ""
                 },
                 "studyContacts": {
@@ -1635,33 +1909,35 @@
                         "comments": [],
                         "people": []
                     },
-                    "description": "",
+                    "description": "Content of study contacts section.",
                     "header_name": ""
                 }
             },
-            "required": [
-                "comments",
-                "identifier",
-                "title",
-                "description",
-                "submissionDate",
-                "publicReleaseDate",
-                "fileName",
-                "studyDesignDescriptors",
-                "studyPublications",
-                "studyFactors",
-                "studyAssays",
-                "studyProtocols",
-                "studyContacts"
-            ],
             "title": "Study",
             "type": "object"
         },
         "StudyAssays": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "assays"
+                        ],
+                        "sectionHeader": "STUDY ASSAYS",
+                        "sectionPrefix": "Assay",
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -1671,7 +1947,7 @@
                 "assays": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "List of assays defined in study assay section.",
                     "header_name": "",
                     "items": {
                         "$ref": "#/$defs/Assay"
@@ -1681,18 +1957,31 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "assays"
-            ],
             "title": "StudyAssays",
             "type": "object"
         },
         "StudyContacts": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "people"
+                        ],
+                        "sectionHeader": "STUDY CONTACTS",
+                        "sectionPrefix": "Person",
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -1702,7 +1991,7 @@
                 "people": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "Contacts defined in study contacts section",
                     "header_name": "",
                     "items": {
                         "$ref": "#/$defs/Person"
@@ -1712,10 +2001,6 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "people"
-            ],
             "title": "StudyContacts",
             "type": "object"
         },
@@ -1723,21 +2008,25 @@
             "properties": {
                 "dbId": {
                     "default": -1,
+                    "description": "Database unique id for study.",
                     "title": "Dbid",
                     "type": "integer"
                 },
                 "studyId": {
                     "default": "",
+                    "description": "Study accession number.",
                     "title": "Studyid",
                     "type": "string"
                 },
                 "numericStudyId": {
                     "default": -1,
+                    "description": "Numarical part of study accession number. e.g., 123 for MTBLS123",
                     "title": "Numericstudyid",
                     "type": "integer"
                 },
                 "obfuscationCode": {
                     "default": "",
+                    "description": "Obfusication code of study.",
                     "title": "Obfuscationcode",
                     "type": "string"
                 },
@@ -1751,30 +2040,36 @@
                         }
                     ],
                     "default": -1,
+                    "description": "Total size (bytes) of study folder.",
                     "title": "Studysize"
                 },
                 "submissionDate": {
                     "default": "",
+                    "description": "Study submission date.",
                     "title": "Submissiondate",
                     "type": "string"
                 },
                 "releaseDate": {
                     "default": "",
+                    "description": "Study public release date (actual or anticipated.)",
                     "title": "Releasedate",
                     "type": "string"
                 },
                 "updateDate": {
                     "default": "",
+                    "description": "Last update date of study.",
                     "title": "Updatedate",
                     "type": "string"
                 },
                 "statusDate": {
                     "default": "",
+                    "description": "Last status update date of study.",
                     "title": "Statusdate",
                     "type": "string"
                 },
                 "studyTypes": {
                     "default": [],
+                    "description": "Study types defined by curators.",
                     "items": {
                         "type": "string"
                     },
@@ -1787,18 +2082,30 @@
                             "$ref": "#/$defs/StudyStatus"
                         }
                     ],
-                    "default": "DORMANT"
+                    "default": "DORMANT",
+                    "description": "Status of study."
+                },
+                "curationRequest": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/CurationRequest"
+                        }
+                    ],
+                    "default": "MANUAL_CURATION",
+                    "description": "Curation request. e.g., no curation request, manual curation request."
                 },
                 "overrides": {
                     "additionalProperties": {
                         "type": "string"
                     },
                     "default": {},
+                    "description": "Overrided validation rules.",
                     "title": "Overrides",
                     "type": "object"
                 },
                 "submitters": {
                     "default": [],
+                    "description": "Submitters of study.",
                     "items": {
                         "$ref": "#/$defs/Submitter"
                     },
@@ -1806,29 +2113,31 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "dbId",
-                "studyId",
-                "numericStudyId",
-                "obfuscationCode",
-                "studySize",
-                "submissionDate",
-                "releaseDate",
-                "updateDate",
-                "statusDate",
-                "studyTypes",
-                "status",
-                "overrides",
-                "submitters"
-            ],
             "title": "StudyDBMetadata",
             "type": "object"
         },
         "StudyDesignDescriptors": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "design_types"
+                        ],
+                        "sectionHeader": "STUDY DESIGN DESCRIPTORS",
+                        "sectionPrefix": "Design",
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -1838,7 +2147,7 @@
                 "designTypes": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "Design descriptors defined in study design descriptors section.",
                     "header_name": "Type",
                     "items": {
                         "$ref": "#/$defs/OntologyAnnotation"
@@ -1847,18 +2156,31 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "designTypes"
-            ],
             "title": "StudyDesignDescriptors",
             "type": "object"
         },
         "StudyFactors": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "factors"
+                        ],
+                        "sectionHeader": "STUDY FACTORS",
+                        "sectionPrefix": "Factor",
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -1868,7 +2190,7 @@
                 "factors": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "Factors defined in study factors section.",
                     "header_name": "",
                     "items": {
                         "$ref": "#/$defs/Factor"
@@ -1878,68 +2200,89 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "factors"
-            ],
             "title": "StudyFactors",
             "type": "object"
         },
         "StudyFileDescriptor": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "filePath": {
                     "default": "",
+                    "description": "File relative path. e.g., FILES/RAW_FILES/raw_data.d",
                     "title": "Filepath",
                     "type": "string"
                 },
                 "baseName": {
                     "default": "",
+                    "description": "File basename. e.g., raw_data.d for FILES/RAW_FILES/raw_data.d",
                     "title": "Basename",
                     "type": "string"
                 },
                 "parentDirectory": {
                     "default": "",
+                    "description": "Relative parent directory. e.g., FILES/RAW_FILES for FILES/RAW_FILES/raw_data.d",
                     "title": "Parentdirectory",
                     "type": "string"
                 },
                 "extension": {
                     "default": "",
+                    "description": "File extension. e.g., .d for raw_data.d for FILES/RAW_FILES/raw_data.d",
                     "title": "Extension",
                     "type": "string"
                 },
                 "sizeInBytes": {
                     "default": 0,
+                    "description": "Size of file in bytes.",
                     "title": "Sizeinbytes",
                     "type": "integer"
                 },
                 "isDirectory": {
                     "default": false,
+                    "description": "True if the file is a folder.",
                     "title": "Isdirectory",
                     "type": "boolean"
                 },
                 "isLink": {
                     "default": false,
+                    "description": "True if the file is a symbolic link.",
                     "title": "Islink",
                     "type": "boolean"
                 },
                 "modifiedAt": {
                     "default": 0,
+                    "description": "Modified time of the file. The value is a timestamp in UTC.",
                     "title": "Modifiedat",
                     "type": "integer"
                 },
                 "createdAt": {
                     "default": 0,
+                    "description": "Creation time of the file. The value is a timestamp in UTC.",
                     "title": "Createdat",
                     "type": "integer"
                 },
                 "mode": {
                     "default": "",
+                    "description": "File permission mode in octal. e.g., 775",
                     "title": "Mode",
                     "type": "string"
                 },
                 "tags": {
                     "default": [],
+                    "description": "Tag values for the file.",
                     "items": {
                         "type": "string"
                     },
@@ -1947,32 +2290,47 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "filePath",
-                "baseName",
-                "parentDirectory",
-                "extension",
-                "sizeInBytes",
-                "isDirectory",
-                "isLink",
-                "modifiedAt",
-                "createdAt",
-                "mode",
-                "tags"
-            ],
             "title": "StudyFileDescriptor",
             "type": "object"
         },
         "StudyFolderMetadata": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": null,
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
+                "dataFolderSizeCalculated": {
+                    "default": false,
+                    "description": "True if data folder size is calculated.",
+                    "title": "Datafoldersizecalculated",
+                    "type": "boolean"
+                },
+                "metadataFolderSizeCalculated": {
+                    "default": false,
+                    "description": "True if metadata folder size is calculated.",
+                    "title": "Metadatafoldersizecalculated",
+                    "type": "boolean"
+                },
                 "folderSizeInBytes": {
                     "default": -1,
+                    "description": "Study folder size in bytes. Folder size may be size of metadata files, data files or both depends on data_folder_size_calculated or metadata_folder_size_calculated.",
                     "title": "Foldersizeinbytes",
                     "type": "integer"
                 },
                 "folderSizeInStr": {
                     "default": "",
+                    "description": "Human readable study folder size in MB or GB",
                     "title": "Foldersizeinstr",
                     "type": "string"
                 },
@@ -1981,6 +2339,7 @@
                         "$ref": "#/$defs/StudyFileDescriptor"
                     },
                     "default": {},
+                    "description": "Folders and summary information about each one within a study folder.",
                     "title": "Folders",
                     "type": "object"
                 },
@@ -1989,24 +2348,36 @@
                         "$ref": "#/$defs/StudyFileDescriptor"
                     },
                     "default": {},
+                    "description": "Files and summary information about each one within a study folder.",
                     "title": "Files",
                     "type": "object"
                 }
             },
-            "required": [
-                "folderSizeInBytes",
-                "folderSizeInStr",
-                "folders",
-                "files"
-            ],
             "title": "StudyFolderMetadata",
             "type": "object"
         },
         "StudyProtocols": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "protocols"
+                        ],
+                        "sectionHeader": "STUDY PROTOCOLS",
+                        "sectionPrefix": "Protocol",
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -2016,7 +2387,7 @@
                 "protocols": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "Protocols defined in study protocol section.",
                     "header_name": "",
                     "items": {
                         "$ref": "#/$defs/Protocol"
@@ -2026,18 +2397,31 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "protocols"
-            ],
             "title": "StudyProtocols",
             "type": "object"
         },
         "StudyPublications": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "publications"
+                        ],
+                        "sectionHeader": "STUDY PUBLICATIONS",
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "comments": {
                     "default": [],
+                    "description": "List of comments linked to the related section",
                     "items": {
                         "$ref": "#/$defs/Comment"
                     },
@@ -2047,7 +2431,7 @@
                 "publications": {
                     "auto_fill": true,
                     "default": [],
-                    "description": "",
+                    "description": "Publications defined in study publications section.",
                     "header_name": "",
                     "items": {
                         "$ref": "#/$defs/Publication"
@@ -2057,10 +2441,6 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "comments",
-                "publications"
-            ],
             "title": "StudyPublications",
             "type": "object"
         },
@@ -2079,46 +2459,55 @@
             "properties": {
                 "dbId": {
                     "default": -1,
+                    "description": "Database unique id for submitter.",
                     "title": "Dbid",
                     "type": "integer"
                 },
                 "orcid": {
                     "default": "",
+                    "description": "ORCID of submitter.",
                     "title": "Orcid",
                     "type": "string"
                 },
                 "address": {
                     "default": "",
+                    "description": "Address of submitter.",
                     "title": "Address",
                     "type": "string"
                 },
                 "joinDate": {
-                    "default": "",
+                    "default": "R",
+                    "description": "Registration date of submitter.",
                     "title": "Joindate",
                     "type": "string"
                 },
                 "userName": {
                     "default": "",
+                    "description": "username (email address) of submitter.",
                     "title": "Username",
                     "type": "string"
                 },
                 "firstName": {
                     "default": "",
+                    "description": "First name of submitter.",
                     "title": "Firstname",
                     "type": "string"
                 },
                 "lastName": {
                     "default": "",
+                    "description": "Last name of submitter.",
                     "title": "Lastname",
                     "type": "string"
                 },
                 "affiliation": {
                     "default": "",
+                    "description": "Submitter's affiliation.",
                     "title": "Affiliation",
                     "type": "string"
                 },
                 "affiliationUrl": {
                     "default": "",
+                    "description": "Submitter's affiliation webpage URL.",
                     "title": "Affiliationurl",
                     "type": "string"
                 },
@@ -2128,7 +2517,8 @@
                             "$ref": "#/$defs/UserStatus"
                         }
                     ],
-                    "default": "FROZEN"
+                    "default": "FROZEN",
+                    "description": "Status of user."
                 },
                 "role": {
                     "allOf": [
@@ -2136,22 +2526,10 @@
                             "$ref": "#/$defs/UserRole"
                         }
                     ],
-                    "default": "ANONYMOUS"
+                    "default": "ANONYMOUS",
+                    "description": "Role of submmiter."
                 }
             },
-            "required": [
-                "dbId",
-                "orcid",
-                "address",
-                "joinDate",
-                "userName",
-                "firstName",
-                "lastName",
-                "affiliation",
-                "affiliationUrl",
-                "status",
-                "role"
-            ],
             "title": "Submitter",
             "type": "object"
         },
@@ -2244,18 +2622,6 @@
                     "type": "string"
                 }
             },
-            "required": [
-                "searchColumns",
-                "searchIgnoreColumns",
-                "operation",
-                "parameter",
-                "dataType",
-                "caseSensitive",
-                "negateResult",
-                "defaultDatetimePattern",
-                "customFilterArguments",
-                "customFilterName"
-            ],
             "title": "TsvFileFilterOption",
             "type": "object"
         },
@@ -2322,17 +2688,6 @@
                     "type": "integer"
                 }
             },
-            "required": [
-                "columnName",
-                "reverse",
-                "columnSortType",
-                "caseSensitive",
-                "defaultDatetimePattern",
-                "valueOrder",
-                "customSorterName",
-                "customSorterArguments",
-                "minKeyLength"
-            ],
             "title": "TsvFileSortOption",
             "type": "object"
         },
@@ -2370,6 +2725,25 @@
         "ValueTypeAnnotation": {
             "additionalProperties": false,
             "properties": {
+                "isatabConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTabConfig"
+                        }
+                    ],
+                    "default": {
+                        "fieldOrder": [
+                            "name",
+                            "type",
+                            "term_accession_number",
+                            "term_source_ref"
+                        ],
+                        "sectionHeader": null,
+                        "sectionPrefix": null,
+                        "specificationVersion": "",
+                        "specificationDate": ""
+                    }
+                },
                 "name": {
                     "auto_fill": true,
                     "default": "",
@@ -2403,12 +2777,6 @@
                     "type": "string"
                 }
             },
-            "required": [
-                "name",
-                "type",
-                "termAccessionNumber",
-                "termSourceRef"
-            ],
             "title": "ValueTypeAnnotation",
             "type": "object"
         }
@@ -2422,7 +2790,7 @@
         },
         "investigationFilePath": {
             "default": "",
-            "description": "relative path of investigation file",
+            "description": "Relative path of investigation file. e.g., i_Investigation.txt",
             "title": "Investigationfilepath",
             "type": "string"
         },
@@ -2453,14 +2821,14 @@
                 },
                 "studies": []
             },
-            "description": "Content of investigation file."
+            "description": "Content of i_Investigation.txt file."
         },
         "samples": {
             "additionalProperties": {
                 "$ref": "#/$defs/SamplesFile"
             },
             "default": {},
-            "description": "Samples files and their contents. Only one sample file can be referenced in investigation file.",
+            "description": "Dictionary of sample files and their content. Only one sample file can be referenced in investigation file.",
             "title": "Samples",
             "type": "object"
         },
@@ -2481,7 +2849,7 @@
                 "type": "array"
             },
             "default": {},
-            "description": "Parser messages for each file.",
+            "description": "An dictionary to store parser message list for each ISA metadata file contains any type of parser message.",
             "title": "Parsermessages",
             "type": "object"
         },
@@ -2532,6 +2900,7 @@
         },
         "tags": {
             "default": [],
+            "description": "Tag values for the study.",
             "items": {
                 "type": "string"
             },
@@ -2556,9 +2925,11 @@
                 "statusDate": "",
                 "studyTypes": [],
                 "status": "DORMANT",
+                "curationRequest": "MANUAL_CURATION",
                 "overrides": {},
                 "submitters": []
-            }
+            },
+            "description": "Basic metatada information (status, database id, etc.) stored in database."
         },
         "studyFolderMetadata": {
             "allOf": [
@@ -2567,14 +2938,18 @@
                 }
             ],
             "default": {
+                "dataFolderSizeCalculated": false,
+                "metadataFolderSizeCalculated": false,
                 "folderSizeInBytes": -1,
                 "folderSizeInStr": "",
                 "folders": {},
                 "files": {}
-            }
+            },
+            "description": "Descriptors of files and folders within study folder."
         },
         "folderReaderMessages": {
             "default": [],
+            "description": "Folder reader messages.",
             "items": {
                 "$ref": "#/$defs/GenericMessage"
             },
@@ -2583,31 +2958,50 @@
         },
         "dbReaderMessages": {
             "default": [],
+            "description": "DB reader messages.",
             "items": {
                 "$ref": "#/$defs/GenericMessage"
             },
             "title": "Dbreadermessages",
             "type": "array"
+        },
+        "hasDbMetadata": {
+            "default": false,
+            "description": "True if database metadata is loaded.",
+            "title": "Hasdbmetadata",
+            "type": "boolean"
+        },
+        "hasSampleTableData": {
+            "default": false,
+            "description": "True if sample file is loaded.",
+            "title": "Hassampletabledata",
+            "type": "boolean"
+        },
+        "hasAssayTableData": {
+            "default": false,
+            "description": "True if assay files are loaded.",
+            "title": "Hasassaytabledata",
+            "type": "boolean"
+        },
+        "hasAssignmentTableData": {
+            "default": false,
+            "description": "True if assignment files are loaded",
+            "title": "Hasassignmenttabledata",
+            "type": "boolean"
+        },
+        "hasFolderMetadata": {
+            "default": false,
+            "description": "True if folder metadata is complete.",
+            "title": "Hasfoldermetadata",
+            "type": "boolean"
+        },
+        "hasInvestigationData": {
+            "default": false,
+            "description": "True if investtigation file is loaded.",
+            "title": "Hasinvestigationdata",
+            "type": "boolean"
         }
     },
-    "required": [
-        "version",
-        "investigationFilePath",
-        "investigation",
-        "samples",
-        "assays",
-        "parserMessages",
-        "referencedAssignmentFiles",
-        "referencedRawFiles",
-        "referencedDerivedFiles",
-        "foldersInHierarchy",
-        "metaboliteAssignments",
-        "tags",
-        "studyDbMetadata",
-        "studyFolderMetadata",
-        "folderReaderMessages",
-        "dbReaderMessages"
-    ],
     "title": "MetabolightsStudyModel",
     "type": "object"
 }

@@ -8,18 +8,26 @@ from metabolights_utils.models.parser.enums import ParserMessageType
 
 
 class ParserMessage(MetabolightsBaseModel):
-    type: Annotated[ParserMessageType, Field(description="")] = (
-        ParserMessageType.WARNING
+    type: Annotated[
+        ParserMessageType,
+        Field(
+            description="Message type. Valid values: INFO, WARNING, ERROR, CRITICAL."
+        ),
+    ] = ParserMessageType.WARNING
+    short: Annotated[str, Field(description="Short information about message.")] = ""
+    detail: Annotated[str, Field(description="Detailed information about message.")] = (
+        ""
     )
-    short: Annotated[str, Field(description="")] = ""
-    detail: Annotated[str, Field(description="")] = ""
     section: Annotated[
-        str, Field(description="Section name if it is investigation file")
+        str, Field(description="Section name if it is i_Investigation.txt file")
     ] = ""
-    line: Annotated[str, Field(description="")] = ""
-    column: Annotated[str, Field(description="")] = (
-        "Column name in ISA metadata table file"
-    )
+    line: Annotated[
+        str,
+        Field(
+            description="File line number. It is valid only for i_Investigation.txt file."
+        ),
+    ] = ""
+    column: Annotated[str, Field(description="ISA file table column name.")] = ""
 
     def __str__(self) -> str:
         return "\t".join(
