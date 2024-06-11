@@ -11,6 +11,9 @@ from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.folder_metadata_collector import FolderIndex
 from metabolights_utils.provider.ftp.model import FtpFiles
 from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
+from metabolights_utils.provider.local_folder_metadata_collector import (
+    LocalFolderMetadataCollector,
+)
 
 valid_metadata_files = [
     "tests/test-data/MTBLS60/a_MTBLS60_dippA_UPLC_MS.txt",
@@ -498,3 +501,18 @@ def test_get_study_folder_content_01(mocker: MockerFixture):
         assert False, "Error while testing test_get_study_folder_content_01"
     finally:
         shutil.rmtree(local_path, ignore_errors=True)
+
+
+def test_get_study_folder_content_01(mocker: MockerFixture):
+    study_path = "tests/test-data/MTBLS1"
+    real_path = os.path.realpath(study_path)
+    collector = LocalFolderMetadataCollector()
+    metadata, messages = collector.get_folder_metadata(
+        study_path=real_path,
+        calculate_data_folder_size=True,
+        calculate_metadata_size=True,
+    )
+
+    assert metadata
+    assert metadata.files
+    assert not messages

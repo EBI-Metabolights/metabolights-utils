@@ -87,7 +87,7 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
             messages.append(f"{directory} directory permission error {str(ex)}")
         except Exception as exc:
             print(f"Directory error: {directory} {str(exc)}")
-            messages.append(f"{directory} directory error {str(ex)}")
+            messages.append(f"{directory} directory error {str(exc)}")
 
     def get_folder_metadata(
         self,

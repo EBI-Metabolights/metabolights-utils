@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "0.9.46"
-description = "Metabolights common models, utility methods and classes for python-based Metabolights projects."
+version = "0.9.47"
+description = "MetaboLights command line interface (CLI), common data models, utility methods and classes."
 authors = ["MetaboLights Team <metabolights-dev@ebi.ac.uk>"]
 readme = "README.md"
 packages = [{include = "metabolights_utils"}]
@@ -15,9 +15,11 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: File Formats",
     "Topic :: Scientific/Engineering :: Bio-Informatics"
+    "Topic :: Metabolomics :: MetaboLights"
 ]
 
 [tool.poetry.dependencies]
