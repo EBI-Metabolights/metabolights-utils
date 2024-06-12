@@ -1,17 +1,16 @@
 import os
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Dict, Union
 
 import click
 from pydantic.alias_generators import to_camel, to_snake
 
 from metabolights_utils.commands.utils import split_to_lines
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
-from metabolights_utils.provider import definitions
 
 
 @click.command(name="explain")
 @click.argument("model_pattern", required=False)
-def study_explain(
+def model_explain(
     model_pattern: Union[None, str] = None,
 ):
     """Expain properties and sub-properties of MetaboLights study model. It lists root properties of the model, If it is not specified
@@ -268,4 +267,4 @@ def find_property(schema: Dict[str, Any], search_str: str):
 
 
 if __name__ == "__main__":
-    study_explain()
+    model_explain()

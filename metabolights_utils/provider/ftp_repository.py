@@ -31,6 +31,7 @@ from metabolights_utils.provider.study_provider import (
     AbstractDbMetadataCollector,
     MetabolightsStudyProvider,
 )
+from metabolights_utils.provider.utils import is_metadata_file, is_metadata_filename_pattern
 
 
 class MetabolightsFtpRepository(DefaultFtpClient):
@@ -63,22 +64,6 @@ class MetabolightsFtpRepository(DefaultFtpClient):
             ftp_server_url=self.ftp_server_url,
             remote_repository_root_directory=self.remote_repository_root_directory,
         )
-
-    def is_metadata_file(self, file_path: str):
-        if os.path.exists(file_path) and os.path.isfile(file_path):
-            filename = os.path.basename(file_path)
-            return self.is_metadata_filename_pattern(filename)
-        return False
-
-    def is_metadata_filename_pattern(self, filename: str):
-        if not filename:
-            return False
-        if len(filename) > 6:
-            if filename[:2] in ("a_", "s_", "i_") and filename.endswith(".txt"):
-                return True
-            elif filename.startswith("m_") and filename.endswith(".tsv"):
-                return True
-        return False
 
     def load_study_model(
         self,
@@ -250,7 +235,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                 )
         if requested_files != metadata_files:
             filtered_files = [
-                x for x in requested_files if self.is_metadata_filename_pattern(x)
+                x for x in requested_files if is_metadata_filename_pattern(x)
             ]
             requested_files = filtered_files
         if requested_files and not os.path.exists(local_path):
@@ -277,7 +262,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                 for filename in os.listdir(local_path):
                     if filename not in listed_files:
                         file_path = os.path.join(local_path, filename)
-                        if self.is_metadata_file(file_path):
+                        if is_metadata_file(file_path):
                             response.actions[filename] = "DELETED"
                             os.remove(file_path)
             response.success = True
@@ -344,7 +329,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         if response and response.success:
             isa_files.files = []
             for file in response.files:
-                if self.is_metadata_filename_pattern(file):
+                if is_metadata_filename_pattern(file):
                     isa_files.files.append(file)
         return isa_files
 

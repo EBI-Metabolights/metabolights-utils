@@ -14,6 +14,7 @@ from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
 from metabolights_utils.provider.local_folder_metadata_collector import (
     LocalFolderMetadataCollector,
 )
+from metabolights_utils.provider.utils import is_metadata_file, is_metadata_filename_pattern
 
 valid_metadata_files = [
     "tests/test-data/MTBLS60/a_MTBLS60_dippA_UPLC_MS.txt",
@@ -37,7 +38,7 @@ def test_is_metadata_file_01(file_path: str):
         filepath (str): valid study file paths
     """
     client = MetabolightsFtpRepository()
-    actual = client.is_metadata_file(file_path)
+    actual = is_metadata_file(file_path)
     assert actual
 
 
@@ -47,7 +48,7 @@ def test_is_metadata_file_02(mocker: MockerFixture, file_path: str):
     mocker.patch("os.path.isfile", return_value=False)
 
     client = MetabolightsFtpRepository()
-    actual = client.is_metadata_file(file_path)
+    actual = is_metadata_file(file_path)
     assert not actual
 
 
@@ -57,7 +58,7 @@ def test_is_metadata_file_03(mocker: MockerFixture, file_path: str):
     mocker.patch("os.path.isfile", return_value=False)
 
     client = MetabolightsFtpRepository()
-    actual = client.is_metadata_file(file_path)
+    actual = is_metadata_file(file_path)
     assert not actual
 
 
@@ -67,7 +68,7 @@ valid_filenames = [os.path.basename(x) for x in valid_metadata_files]
 @pytest.mark.parametrize("file_path", valid_filenames)
 def test_is_metadata_filename_pattern_01(file_path: str):
     client = MetabolightsFtpRepository()
-    actual = client.is_metadata_filename_pattern(file_path)
+    actual = is_metadata_filename_pattern(file_path)
     assert actual
 
 
@@ -84,7 +85,7 @@ invalid_filename_inputs = [
 @pytest.mark.parametrize("file_path", invalid_filename_inputs)
 def test_is_metadata_filename_pattern_02(file_path: str):
     client = MetabolightsFtpRepository()
-    actual = client.is_metadata_filename_pattern(file_path)
+    actual = is_metadata_filename_pattern(file_path)
     assert not actual
 
 

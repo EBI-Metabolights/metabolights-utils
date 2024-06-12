@@ -1,11 +1,95 @@
+import io
 import json
 import os
 import re
-from typing import Dict, List, Set
+import zipfile
+from typing import Any, Dict, List, Set, Tuple, Union
+
+import httpx
 
 from metabolights_utils.models.isa.assay_file import AssayFile
 from metabolights_utils.models.isa.common import AssayTechnique
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
+
+
+def is_metadata_file(file_path: str):
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        filename = os.path.basename(file_path)
+        return is_metadata_filename_pattern(filename)
+    return False
+
+
+def is_metadata_filename_pattern(filename: str):
+    if not filename:
+        return False
+    if len(filename) > 6:
+        if filename[:2] in ("a_", "s_", "i_") and filename.endswith(".txt"):
+            return True
+        elif filename.startswith("m_") and filename.endswith(".tsv"):
+            return True
+    return False
+
+
+def download_file_from_rest_api(
+    url: str,
+    local_file_path: str,
+    timeout: Union[None, int] = None,
+    headers: Union[None, Dict[str, Any]] = None,
+    parameters: Union[None, Dict[str, Any]] = None,
+    modification_time: Union[None, int, float] = None,
+    is_zip_response: bool = False,
+) -> Tuple[bool, str]:
+    try:
+        directory = os.path.dirname(local_file_path)
+        os.makedirs(directory, exist_ok=True)
+        data_bytes = io.BytesIO()
+
+        with httpx.stream(
+            "GET",
+            url,
+            timeout=timeout,
+            headers=headers,
+            params=parameters,
+        ) as response:
+            response.raise_for_status()
+
+            for data in response.iter_bytes():
+                data_bytes.write(data)
+
+            if is_zip_response:
+                with zipfile.ZipFile(data_bytes) as zip_file:
+                    zip_file.extractall(directory)
+            else:
+                with open(local_file_path, "wb") as f:
+                    f.write(data_bytes)
+
+            if modification_time:
+                os.utime(local_file_path, (modification_time, modification_time))
+
+            return True, None
+    except Exception as ex:
+        return False, str(ex)
+
+
+def rest_api_get(
+    url: str,
+    timeout: Union[None, int] = None,
+    headers: Union[None, Dict[str, Any]] = None,
+    parameters: Union[None, Dict[str, Any]] = None,
+):
+    try:
+        response = httpx.get(
+            url=url,
+            timeout=timeout,
+            headers=headers,
+            params=parameters,
+        )
+        if response and response.status_code in (200, 201):
+            data = json.loads(response.text)
+            return data, None
+        return None, response.text
+    except Exception as ex:
+        return None, str(ex)
 
 
 def get_unique_file_extensions(files: Set[str]) -> Set[str]:

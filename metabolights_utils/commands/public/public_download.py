@@ -1,13 +1,12 @@
 import os
-from typing import Dict, List, Union
+from typing import Union
 
 import click
 
-from metabolights_utils.commands.utils import print_study_model_summary, split_to_lines
-from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.model import LocalDirectory
 from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
+from metabolights_utils.provider.utils import is_metadata_filename_pattern
 
 
 @click.command(name="download")
@@ -44,7 +43,7 @@ from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
 )
 @click.argument("study_id")
 @click.argument("file", required=False)
-def study_download(
+def public_download(
     study_id: Union[None, str] = None,
     file: Union[None, str] = None,
     local_path: Union[None, str] = None,
@@ -55,9 +54,9 @@ def study_download(
 ):
     """
     Download study data and metadata files from MetaboLights FTP server.
-    
+
     study_id: MetaboLights study accession number (MTBLSxxxx).
-    
+
     file (optional): Relative file path in study folder. All ISA metadata files will be donloaded if not specified.
     """
     study_id = study_id.upper()
@@ -67,7 +66,7 @@ def study_download(
         local_storage_root_path=local_path,
         local_storage_cache_path=local_cache_path,
     )
-    is_metadata_file = client.is_metadata_filename_pattern(file)
+    is_metadata_file = is_metadata_filename_pattern(file)
     if not file or is_metadata_file:
         metadata_files = [file] if is_metadata_file else None
         result = client.download_study_metadata_files(
@@ -87,13 +86,15 @@ def study_download(
             delete_unlisted_local_files=False,
             keep_local_files=None,
         )
-            
+
     if result.success:
         if result.actions:
             local_study_path = os.path.join(local_path, study_id)
-            click.echo(click.style(f"Downloaded files on {local_study_path}", fg="green"))
+            click.echo(
+                click.style(f"Downloaded files on {local_study_path}", fg="green")
+            )
             for item, action in result.actions.items():
-                click.echo(f"{action}\t{item.removeprefix(f"{study_id}/")}")
+                click.echo(f"{action}\t{item.removeprefix(f'{study_id}/')}")
         else:
             click.echo(f"There is no ISA metadata file to download.")
     else:

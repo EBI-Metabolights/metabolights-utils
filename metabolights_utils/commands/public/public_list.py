@@ -1,9 +1,9 @@
 import os
-from typing import Callable, Dict, List, Union
+from typing import Callable, List, Union
 
 import click
 
-from metabolights_utils.commands.utils import print_study_model_summary, split_to_lines
+from metabolights_utils.commands.utils import split_to_lines
 from metabolights_utils.common import sort_by_study_id
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.provider import definitions
@@ -44,7 +44,7 @@ from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
 )
 @click.argument("study_id", required=False)
 @click.argument("subdirectory", required=False)
-def study_list(
+def public_list(
     study_id: Union[None, str] = None,
     subdirectory: Union[None, str] = None,
     local_path: Union[None, str] = None,
@@ -135,4 +135,4 @@ def print_list(label: str, items: List[str], log: Callable):
 
 
 if __name__ == "__main__":
-    study_list()
+    public_list()

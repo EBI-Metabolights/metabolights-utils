@@ -1,3 +1,4 @@
+import io
 import re
 from typing import Callable, List
 
@@ -64,7 +65,8 @@ def get_unique_values(values: List[str]) -> List[str]:
 
 
 def non_html(text: str):
-    soup = BeautifulSoup(text, "html.parser")
+    f = io.BytesIO(bytes(text, encoding="utf-8"))
+    soup = BeautifulSoup(f, "html.parser")
     return soup.text
 
 

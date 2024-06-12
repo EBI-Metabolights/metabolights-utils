@@ -1,13 +1,10 @@
 import os
 import shutil
-from typing import Dict, List, Union
+from typing import Union
 
 import click
 
-from metabolights_utils.commands.utils import print_study_model_summary, split_to_lines
-from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
 
 
 @click.command(name="remove", no_args_is_help=True)
@@ -24,7 +21,7 @@ from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
     help=f"Path to store cache files of FTP file indices, study models, etc.",
 )
 @click.argument("study_id")
-def study_remove(
+def public_remove(
     study_id: Union[None, str] = None,
     local_path: Union[None, str] = None,
     local_cache_path: Union[None, str] = None,
@@ -54,4 +51,4 @@ def study_remove(
 
 
 if __name__ == "__main__":
-    study_remove()
+    public_remove()

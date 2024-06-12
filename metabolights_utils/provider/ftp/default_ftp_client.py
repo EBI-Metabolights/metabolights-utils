@@ -15,10 +15,14 @@ class DefaultFtpClient:
         local_storage_root_path: str,
         ftp_server_url: str,
         remote_repository_root_directory: str,
+        username: Union[str, None] = None,
+        password: Union[str, None] = None,
     ) -> None:
         self.ftp_server_url = ftp_server_url
         self.remote_repository_root_directory = remote_repository_root_directory
         self.local_storage_root_path = local_storage_root_path
+        self.username = username if username else ""
+        self.password = password if password else ""
         os.makedirs(self.local_storage_root_path, exist_ok=True)
 
         self.ftp: Union[None, FTP] = None
@@ -34,8 +38,13 @@ class DefaultFtpClient:
 
     def connect(self):
         if not self.ftp:
-            self.ftp = self.ftp = FTP(self.ftp_server_url, timeout=10.0)
-        self.ftp.login()
+            self.ftp = FTP(
+                self.ftp_server_url,
+                timeout=10.0,
+                user=self.username,
+                passwd=self.password,
+            )
+        self.ftp.login(user=self.username, passwd=self.password)
 
     def quit(self):
         if self.ftp:
@@ -73,6 +82,24 @@ class DefaultFtpClient:
                 response.code = int(result.groups()[0])
                 response.message = result.groups()[1]
             return response
+        finally:
+            self.quit()
+
+    def upload_files(
+        self,
+        remote_directory: Union[str, None] = None,
+        file_paths: Union[List[str], None] = None,
+    ) -> None:
+        remote_directory = remote_directory.strip("/") if remote_directory else ""
+        self.connect()
+
+        try:
+            self.ftp.cwd(remote_directory)
+            for file_path in file_paths:
+                filename = os.path.basename(file_path)
+
+                with open(file_path, "rb") as file:
+                    self.ftp.storbinary(f"STOR {filename}", file)
         finally:
             self.quit()
 

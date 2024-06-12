@@ -1,0 +1,545 @@
+import datetime
+import json
+import os
+import time
+from typing import List, Set, Tuple, Union
+
+import httpx
+from dateutil import parser
+
+from metabolights_utils.commands.submission.model import (
+    FtpLoginCredentials,
+    LoginCredentials,
+    RestApiCredentials,
+    StudyResponse,
+    SubmittedStudiesResponse,
+)
+from metabolights_utils.commands.submission.utils import (
+    get_submission_private_ftp_credentials,
+    get_submission_rest_api_credentials,
+)
+from metabolights_utils.common import sort_by_study_id
+from metabolights_utils.models.common import ErrorMessage, GenericMessage, InfoMessage
+from metabolights_utils.models.enums import GenericMessageType
+from metabolights_utils.models.metabolights.model import (
+    MetabolightsStudyModel,
+    StudyFolderMetadata,
+)
+from metabolights_utils.provider import definitions
+from metabolights_utils.provider.ftp.default_ftp_client import (
+    DefaultFtpClient,
+    LocalDirectory,
+)
+from metabolights_utils.provider.ftp.folder_metadata_collector import (
+    FtpFolderMetadataCollector,
+)
+from metabolights_utils.provider.local_folder_metadata_collector import (
+    LocalFolderMetadataCollector,
+)
+from metabolights_utils.provider.study_provider import (
+    AbstractDbMetadataCollector,
+    AbstractFolderMetadataCollector,
+    MetabolightsStudyProvider,
+)
+from metabolights_utils.provider.utils import (
+    download_file_from_rest_api,
+    is_metadata_file,
+    is_metadata_filename_pattern,
+    rest_api_get,
+)
+
+
+class MetabolightsSubmissionRepository:
+    def __init__(
+        self,
+        local_storage_root_path: Union[None, str] = None,
+        credentials_file_path: Union[None, str] = None,
+        ftp_server_url: Union[None, str] = None,
+        rest_api_base_url: Union[None, str] = None,
+        local_storage_cache_path: Union[None, str] = None,
+    ) -> None:
+        self.ftp_server_url = ftp_server_url
+        if not self.ftp_server_url:
+            self.ftp_server_url = definitions.default_private_ftp_server_url
+
+        self.local_storage_cache_path = local_storage_cache_path
+        if not local_storage_cache_path:
+            self.local_storage_cache_path = (
+                definitions.default_local_submission_cache_path
+            )
+        self.local_storage_root_path = local_storage_root_path
+        if not self.local_storage_root_path:
+            self.local_storage_root_path = (
+                definitions.default_local_submission_root_path
+            )
+
+        self.credentials_file_path = credentials_file_path
+        if not self.credentials_file_path:
+            self.credentials_file_path = (
+                definitions.default_local_submission_credentials_file_path
+            )
+        self.rest_api_base_url = rest_api_base_url
+        if not self.rest_api_base_url:
+            self.rest_api_base_url = definitions.default_rest_api_url
+
+    def load_study_model(
+        self,
+        study_id: str,
+        local_path: Union[str, None] = None,
+        use_only_local_path: bool = False,
+        override_local_files: bool = False,
+        load_folder_metadata: bool = True,
+        rebuild_folder_index_file: bool = False,
+        folder_index_file_path: Union[str, None] = None,
+        db_metadata_collector: Union[None, AbstractDbMetadataCollector] = None,
+        folder_metadata_collector: Union[None, AbstractFolderMetadataCollector] = None,
+    ) -> Tuple[Union[None, MetabolightsStudyModel], List[GenericMessage]]:
+        if not study_id or not study_id.strip():
+            return None, [ErrorMessage(short="Invalid study_id")]
+        study_id = study_id.upper().strip("/")
+        if not local_path:
+            local_path = self.local_storage_root_path
+        target_path = os.path.join(local_path, study_id)
+        if not folder_index_file_path:
+            folder_index_file_path = os.path.join(
+                self.local_storage_cache_path,
+                study_id,
+                "mtbls_index.json",
+            )
+
+        model: Union[None, MetabolightsStudyModel] = None
+        messages = []
+        if use_only_local_path:
+            provider = MetabolightsStudyProvider(
+                db_metadata_collector=db_metadata_collector,
+                folder_metadata_collector=folder_metadata_collector,
+            )
+            model: MetabolightsStudyModel = provider.load_study(
+                study_id,
+                study_path=target_path,
+                connection=None,
+                load_assay_files=True,
+                load_sample_file=True,
+                load_maf_files=True,
+                load_folder_metadata=load_folder_metadata,
+                calculate_data_folder_size=True,
+                calculate_metadata_size=True,
+            )
+
+            return model, [InfoMessage(short="Loaded from local isa metadata files.")]
+
+        messages: List[GenericMessage] = []
+        try:
+            result = self.download_submission_metadata_files(
+                study_id=study_id,
+                local_path=local_path,
+                metadata_files=None,
+                override_local_files=override_local_files,
+                delete_unlisted_metadata_files=True,
+            )
+            if result.success:
+
+                messages.append(
+                    InfoMessage(
+                        short=f"Downloaded metadata file with response",
+                        detail=f"Response message: {result.code} {result.message}",
+                    )
+                )
+
+                provider = MetabolightsStudyProvider(
+                    db_metadata_collector=db_metadata_collector,
+                    folder_metadata_collector=LocalFolderMetadataCollector(),
+                )
+                model: MetabolightsStudyModel = provider.load_study(
+                    study_id,
+                    study_path=target_path,
+                    connection=None,
+                    load_assay_files=True,
+                    load_sample_file=True,
+                    load_maf_files=True,
+                    load_folder_metadata=load_folder_metadata,
+                    calculate_data_folder_size=False,
+                    calculate_metadata_size=False,
+                )
+            else:
+                messages.append(
+                    ErrorMessage(
+                        short=f"Download metadata file failure.",
+                        detail=f"Error message: {result.code} {result.message}",
+                    )
+                )
+
+        except Exception as ex:
+            messages.append(
+                ErrorMessage(
+                    short="Download metadata file failure. Try -l option if there is a local copy.",
+                    detail=str(ex),
+                )
+            )
+        return model, messages
+
+    def upload_metadata_files(
+        self,
+        study_id,
+        remote_folder_directory: Union[str, None] = None,
+        local_path: Union[str, None] = None,
+        credentials_file_path: Union[str, None] = None,
+        ftp_server_url: Union[str, None] = None,
+        metadata_files: Union[List[str], None] = None,
+        override_remote_files: bool = False,
+    ):
+        if not local_path:
+            local_path = self.local_storage_root_path
+        if not credentials_file_path:
+            credentials_file_path = self.credentials_file_path
+        if not ftp_server_url:
+            ftp_server_url = self.ftp_server_url
+
+        response, errors = self.list_isa_metadata_files(study_id=study_id)
+        if not response:
+            return False, "Errors while listing metadata files."
+        if not remote_folder_directory and response.upload_path:
+            remote_folder_directory = response.upload_path
+        modified_time_dict = {}
+        new_requested_files = []
+        for descriptor in response.study:
+            _time = descriptor.created_at
+            modified = parser.parse(_time).timestamp()
+            remote_modified_time = int(modified)
+            modified_time_dict[descriptor.file] = remote_modified_time
+        study_path = os.path.join(self.local_storage_root_path, study_id)
+        if not metadata_files or override_remote_files:
+            files = os.listdir(study_path)
+            metadata_files = [x for x in files if is_metadata_filename_pattern(x)]
+        if override_remote_files:
+            new_requested_files = metadata_files
+        else:
+            for file_name in metadata_files:
+                relative_path = file_name.removeprefix(f"{local_path}/")
+                remote_modified_time = None
+                if relative_path in modified_time_dict:
+                    remote_modified_time = modified_time_dict[relative_path]
+                file_path = os.path.join(study_path, file_name)
+                if remote_modified_time:
+                    local_modified_time = int(os.path.getmtime(file_path))
+                    if remote_modified_time > local_modified_time:
+                        new_requested_files.append(relative_path)
+                else:
+                    new_requested_files.append(relative_path)
+        if not new_requested_files and override_remote_files:
+            return False, "No files to upload"
+        username, password, error = self.get_ftp_credentials()
+        if not error:
+            ftp_client = DefaultFtpClient(
+                local_storage_root_path=local_path,
+                ftp_server_url=ftp_server_url,
+                remote_repository_root_directory="",
+                username=username,
+                password=password,
+            )
+            input_files = [os.path.join(study_path, x) for x in new_requested_files]
+            try:
+                ftp_client.upload_files(remote_folder_directory, input_files)
+
+                return True, None
+            except Exception as ex:
+                return False, str(ex)
+        else:
+            return False, error
+
+    def sync_private_ftp_metadata_files(self, study_id: str, timeout: int = 20):
+        sub_path = f"/studies/{study_id}/study-folders/rsync-task"
+        api_header, error = self.get_api_token()
+        headers = {}
+        if api_header:
+            headers["User-Token"] = api_header
+        else:
+            return None, error
+        headers["Dry-Run"] = False
+        headers["Sync-Type"] = "metadata"
+        headers["Source-Staging-Area"] = "private-ftp"
+        headers["Target-Staging-Area"] = "rw-study"
+
+        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+        parameters = {}
+        response = httpx.post(
+            url=url,
+            timeout=timeout,
+            headers=headers,
+            params=parameters,
+        )
+        task_id = None
+        if response and response.status_code in (200, 201):
+            data = json.loads(response.text)
+            if "task_id" in data:
+                task_id = data["task_id"]
+
+            if task_id:
+                for i in range(10):
+                    time.sleep(10)
+                response = httpx.get(
+                    url=url,
+                    timeout=timeout,
+                    headers=headers,
+                    params=parameters,
+                )
+
+        else:
+            return False, response.status_code if response else None
+
+    def download_submission_metadata_files(
+        self,
+        study_id: str,
+        local_path: Union[str, None] = None,
+        metadata_files: Union[List[str], None] = None,
+        override_local_files: bool = False,
+        delete_unlisted_metadata_files: bool = True,
+    ) -> LocalDirectory:
+
+        api_header, error = self.get_api_token()
+        headers = {}
+        if api_header:
+            headers["User-Token"] = api_header
+        else:
+            return LocalDirectory(code=400, message=f"user token error: {error}")
+
+        if not study_id:
+            return LocalDirectory(code=400, message=f"Invalid study_id")
+        if not local_path:
+            local_path = self.local_storage_root_path
+        response = LocalDirectory(root_path=local_path)
+
+        study_id = study_id.upper().strip("/")
+
+        listed_files = []
+        requested_files = metadata_files
+        if not metadata_files:
+            result, error = self.list_isa_metadata_files(study_id)
+            if result:
+                file_names = [x.file for x in result.study]
+                descriptors = {x.file: x for x in result.study}
+                listed_files = set(file_names)
+                requested_files = file_names
+            else:
+                return None, error
+
+        if requested_files != metadata_files:
+            filtered_files = [
+                x for x in requested_files if is_metadata_filename_pattern(x)
+            ]
+            requested_files = filtered_files
+        response.actions = {f"{study_id}/{x}": "SKIPPED" for x in requested_files}
+
+        new_requested_files = []
+        for filename in requested_files:
+            file_path = os.path.join(local_path, filename)
+            key = f"{study_id}/{filename}"
+            if os.path.exists(file_path):
+                if override_local_files:
+                    response.actions[key] = "OVERRIDED"
+                else:
+                    local_modified_time = int(os.path.getmtime(file_path))
+                    _time = descriptors[filename].created_at
+                    modified = parser.parse(_time).timestamp()
+                    remote_modified_time = int(modified)
+                    if remote_modified_time > local_modified_time:
+                        new_requested_files.append(filename)
+                    else:
+                        response.actions[key] = "SKIPPED"
+            else:
+                new_requested_files.append(filename)
+                response.actions[key] = "DOWNLOADED"
+        requested_files = new_requested_files
+
+        if requested_files and not os.path.exists(local_path):
+            os.makedirs(local_path, exist_ok=True)
+
+        messages: List[GenericMessage] = []
+        current_file = None
+        try:
+            sub_path = f"/studies/{study_id}/download"
+
+            if not metadata_files:
+                parameters = {"file": "metadata"}
+            else:
+                parameters["file"] = [",".join(metadata_files)]
+
+            for filename in requested_files:
+                new_file_path = os.path.join(local_path, study_id, filename)
+                current_file = filename
+                url = self.rest_api_base_url.strip("/") + "/" + sub_path.strip("/")
+                _time = descriptors[filename].created_at
+                modified = parser.parse(_time).timestamp()
+                remote_modified_time = int(modified)
+                download_file_from_rest_api(
+                    url,
+                    new_file_path,
+                    timeout=60,
+                    headers=headers,
+                    parameters=parameters,
+                    modification_time=remote_modified_time,
+                    is_zip_response=True,
+                )
+
+            if delete_unlisted_metadata_files:
+                for filename in os.listdir(local_path):
+                    if filename not in listed_files:
+                        file_path = os.path.join(local_path, filename)
+                        if is_metadata_file(file_path):
+                            response.actions[filename] = "DELETED"
+                            os.remove(file_path)
+            response.success = True
+            response.code = 200
+            response.message = "Ok"
+
+        except Exception as ex:
+            messages.append(
+                ErrorMessage(
+                    short=f"Download data file {current_file if current_file else ''} failure",
+                    detail=f"Error message: {str(ex)}",
+                )
+            )
+
+        return response
+
+    def list_isa_metadata_files(
+        self, study_id: str
+    ) -> Tuple[Union[StudyResponse, None], Union[None, str]]:
+
+        response, error = self.list_study_directory(study_id=study_id)
+        if response:
+            response.study = [
+                x for x in response.study if is_metadata_filename_pattern(x.file)
+            ]
+            return response, None
+        else:
+            response, error
+
+    def list_studies(
+        self, timeout=None, headers=None, parameters=None
+    ) -> Tuple[Union[None, SubmittedStudiesResponse], Union[str, None]]:
+        api_header, error = self.get_api_token()
+        headers = {}
+        if api_header:
+            headers["User-Token"] = api_header
+        else:
+            return None, error
+
+        sub_path = "/studies/user"
+        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+        response = httpx.get(
+            url=url,
+            timeout=timeout,
+            headers=headers,
+            params=parameters,
+        )
+        if response and response.status_code in (200, 201):
+            data = json.loads(response.text)
+            studies_data = SubmittedStudiesResponse.model_validate(data)
+            studies = studies_data.data.copy()
+            studies.sort(key=lambda x: x.updated)
+
+            return studies_data, None
+        else:
+            return studies_data, response.status_code if response else None
+
+    def get_api_token(self):
+        result = None
+        if self.credentials_file_path:
+            credentials: RestApiCredentials = get_submission_rest_api_credentials(
+                credentials_file_path=self.credentials_file_path,
+                rest_api_base_url=self.rest_api_base_url,
+            )
+            result = credentials.api_token if credentials else None
+
+        if not result:
+            return (
+                None,
+                f"There is not user api token for {self.rest_api_base_url} "
+                "Rest API. Login before to use the command.",
+            )
+        return (result, None)
+
+    def get_ftp_credentials(self):
+        result = None
+        if self.credentials_file_path:
+            credentials: FtpLoginCredentials = get_submission_private_ftp_credentials(
+                credentials_file_path=self.credentials_file_path,
+                private_ftp_url=self.ftp_server_url,
+            )
+            result = credentials if credentials else None
+
+        if not result:
+            return (
+                None,
+                None,
+                f"There is not user api token for {self.rest_api_base_url} "
+                "Rest API. Login before to use the command.",
+            )
+        return (result.user_name, result.password, None)
+
+    def list_study_directory(
+        self, study_id: str, subdirectory: Union[str, None] = None, timeout=None
+    ) -> Tuple[Union[None, StudyResponse], Union[None, str]]:
+        study_id = study_id.upper().strip("/") if study_id else ""
+        api_header, error = self.get_api_token()
+        headers = {}
+        if api_header:
+            headers["User-Token"] = api_header
+        else:
+            return None, error
+
+        sub_path = f"/studies/{study_id}/files/tree"
+        parameters = {
+            "location": "study",
+            "include_sub_dir": False,
+            "include_internal_files": False,
+        }
+        paths = [study_id.strip("/")]
+        if subdirectory:
+            parameters["directory"] = subdirectory.lstrip("/")
+            paths.append(subdirectory.strip("/"))
+        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+        data, error = rest_api_get(
+            url, timeout=timeout, parameters=parameters, headers=headers
+        )
+        if data:
+            studies_response = StudyResponse.model_validate(data)
+            studies_response.study.sort(key=lambda x: x.file)
+            return studies_response, None
+        else:
+            return None, error
+
+    def rebuild_study_folder_content(
+        self, study_id: str, folder_index_file_path: Union[str, None] = None
+    ) -> Tuple[Union[None, StudyFolderMetadata], List[GenericMessage]]:
+        return self.get_study_folder_content(
+            study_id=study_id,
+            folder_index_file_path=folder_index_file_path,
+            rebuild_folder_index_file=True,
+        )
+
+    def get_study_folder_content(
+        self,
+        study_id: str,
+        folder_index_file_path: Union[str, None] = None,
+        rebuild_folder_index_file: bool = False,
+    ) -> Tuple[Union[None, StudyFolderMetadata], List[GenericMessage]]:
+
+        if not study_id:
+            return None, [
+                GenericMessage(type=GenericMessageType.ERROR, short="Invalid study_id")
+            ]
+
+        study_id = study_id.upper().strip("/")
+
+        collector = FtpFolderMetadataCollector(
+            client=self.ftp_client,
+            study_id=study_id,
+            folder_index_file_path=folder_index_file_path,
+            rebuild_folder_index_file=rebuild_folder_index_file,
+        )
+
+        metadata, messages = collector.get_folder_metadata(study_path=None)
+
+        return metadata, messages

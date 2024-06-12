@@ -8,26 +8,23 @@ from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
+from metabolights_utils.provider.submission_repository import (
+    MetabolightsSubmissionRepository,
+)
 
 
 @click.command(no_args_is_help=True, name="describe")
 @click.option(
     "--local_path",
     "-p",
-    default=definitions.default_local_repority_root_path,
+    default=definitions.default_local_submission_root_path,
     help="Local storage root path. Folder will be created if it does not exist.",
 )
 @click.option(
-    "--ftp_server_url",
-    "-f",
-    default=definitions.default_ftp_server_url,
-    help=f"FTP server URL where MetaboLights repository is hosted. ",
-)
-@click.option(
-    "--ftp_root_directory",
-    "-d",
-    default=definitions.default_remote_repository_root_directory,
-    help=f"MetaboLights study directory on FTP server URL. ",
+    "--rest_api_base_url",
+    "-u",
+    default=definitions.default_rest_api_url,
+    help=f"MetaboLights study submission API base URL.",
 )
 @click.option(
     "--use_only_local",
@@ -52,33 +49,32 @@ from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
     "It is valid if there is no use_only_local option.",
 )
 @click.option(
-    "--use_study_model_cache",
-    is_flag=True,
-    default=True,
-    help=f"Use only current local directory without connecting FTP server.",
-)
-@click.option(
     "--local_cache_path",
     "-c",
-    default=definitions.default_local_repority_cache_path,
-    help=f"Path to store cache files of FTP file indices, study models, etc.",
+    default=definitions.default_local_submission_cache_path,
+    help=f"Path to store cache files of study submission file indices, study models, etc.",
+)
+@click.option(
+    "--credentials_file_path",
+    "-c",
+    default=definitions.default_local_submission_credentials_file_path,
+    help=f"Path to store cache files of study submission file indices, study models, etc.",
 )
 @click.argument("study_id")
 @click.argument("jsonpath", required=False)
-def study_describe(
+def submission_describe(
     study_id: str = "",
     jsonpath: str = "",
     use_only_local: bool = False,
     local_path: Union[None, str] = None,
     local_cache_path: Union[None, str] = None,
-    ftp_server_url: Union[None, str] = None,
-    ftp_root_directory: Union[None, str] = None,
+    rest_api_base_url: Union[None, str] = None,
     override_local_files: bool = False,
+    credentials_file_path: str = "",
     load_folder_index: bool = False,
-    use_study_model_cache: bool = True,
 ):
     """
-    View summary of any public study content. Run jsonpath expression to filter MetaboLights study model.
+    View summary of any user submitted study content. Run jsonpath expression to filter MetaboLights study model.
 
     study_id: MetaboLights study accession number (MTBLSxxxx).
 
@@ -89,30 +85,25 @@ def study_describe(
         Note: jsonpath expressions should be quoted with double quotes.
     """
     study_id = study_id.upper().strip()
-    client = MetabolightsFtpRepository(
-        ftp_server_url=ftp_server_url,
-        remote_repository_root_directory=ftp_root_directory,
+    client = MetabolightsSubmissionRepository(
         local_storage_root_path=local_path,
         local_storage_cache_path=local_cache_path,
+        rest_api_base_url=rest_api_base_url,
+        credentials_file_path=credentials_file_path,
     )
 
-    local_path = client.local_storage_root_path
-
-    model, messages = client.load_study_model(
-        study_id=study_id,
-        local_path=local_path,
-        use_only_local_path=use_only_local,
-        override_local_files=override_local_files,
-        load_folder_metadata=load_folder_index,
-        use_study_model_cache=use_study_model_cache,
+    model, errors = client.load_study_model(
+        study_id=study_id, use_only_local_path=use_only_local
     )
 
-    error = False if model else True
-    if error:
-        click.echo(f"{study_id} failure: {', '.join([x.short for x in messages])}")
+    if not model:
+        if not errors:
+
+            click.echo(f"{study_id}: {[x for x in errors]}")
+        else:
+            click.echo(f"{study_id}: load error.")
         exit(1)
-    if not model.parser_messages:
-        error = False
+    error = False
     for file, messages in model.parser_messages.items():
         for message in messages:
             if message.type in (ParserMessageType.CRITICAL, ParserMessageType.ERROR):
@@ -148,7 +139,11 @@ def study_describe(
                 except Exception as ex:
                     click.echo(f"jsonpath '{jsonpath}' expression error: {str(ex)}")
             else:
-                click.echo(click.style("MetaboLights study model summary.", fg="green"))
+                click.echo(
+                    click.style(
+                        "MetaboLights submission study model summary.", fg="green"
+                    )
+                )
                 print_study_model_summary(model, log=click.echo)
         else:
             click.echo(f"{study_id} is not a valid or public study.")
@@ -157,4 +152,4 @@ def study_describe(
 
 
 if __name__ == "__main__":
-    study_describe()
+    submission_describe(["MTBLS1", "-o"])

@@ -5,7 +5,15 @@ home = str(Path.home())
 default_ftp_server_url = "ftp.ebi.ac.uk"
 default_remote_repository_root_directory = "/pub/databases/metabolights/studies/public"
 default_local_repority_root_path = f"{home}/metabolights_data/studies/data"
+default_local_submission_root_path = f"{home}/metabolights_data/submission/data"
+default_local_submission_cache_path = f"{home}/metabolights_data/submission/cache"
+default_local_submission_credentials_file_path = (
+    f"{home}/metabolights_data/submission/credentials/.login"
+)
 default_local_repority_cache_path = f"{home}/metabolights_data/studies/cache"
+default_rest_api_url = "https://www.ebi.ac.uk/metabolights/ws"
+default_private_ftp_server_url = "ftp-private.ebi.ac.uk"
+
 
 IGNORED_FILE_PATTERNS = {r"^AUDIT_FILES(/|$)(.*)", r"^INTERNAL_FILES(/|$)(.*)"}
 
