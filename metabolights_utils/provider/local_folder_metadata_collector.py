@@ -4,7 +4,7 @@ import re
 import subprocess
 from typing import Dict, List, Tuple, Union
 
-from metabolights_utils.models.common import GenericMessage
+from metabolights_utils.models.common import GenericMessage, InfoMessage, WarningMessage
 from metabolights_utils.models.metabolights.model import (
     StudyFileDescriptor,
     StudyFolderMetadata,
@@ -22,7 +22,7 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
         directory: str,
         study_path: str,
         metadata: Dict[str, StudyFileDescriptor],
-        messages: List[str],
+        messages: List[GenericMessage],
     ):
         try:
             dir_relative_path = str(directory).replace(
@@ -36,7 +36,9 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                     break
             if skip_content:
                 messages.append(
-                    f"{dir_relative_path} directory is in content ignore list. SKIPPED"
+                    InfoMessage(
+                        short=f"{dir_relative_path} directory is in content ignore list. SKIPPED"
+                    )
                 )
                 return
             entries = os.listdir(directory)
@@ -51,7 +53,11 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                         in_ignore_list = True
                         break
                 if in_ignore_list:
-                    messages.append(f"{relative_path} is in ignore list. SKIPPED.")
+                    messages.append(
+                        InfoMessage(
+                            short=f"{relative_path} is in ignore list. SKIPPED."
+                        )
+                    )
                     continue
 
                 descriptor = StudyFileDescriptor()
@@ -84,11 +90,15 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                     )
 
         except PermissionError as ex:
-            print(f"Permission denied: {directory}")
-            messages.append(f"{directory} directory permission error {str(ex)}")
+            messages.append(
+                WarningMessage(
+                    short=f"{directory} directory permission error {str(ex)}"
+                )
+            )
         except Exception as exc:
-            print(f"Directory error: {directory} {str(exc)}")
-            messages.append(f"{directory} directory error {str(exc)}")
+            messages.append(
+                WarningMessage(short=f"{directory} directory error {str(exc)}")
+            )
 
     def get_folder_metadata(
         self,
@@ -96,8 +106,7 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
         calculate_data_folder_size: bool = False,
         calculate_metadata_size: bool = False,
     ) -> Tuple[Union[None, StudyFolderMetadata], List[GenericMessage]]:
-        # study_path = pathlib.Path(study_path)
-        messages: List[str] = []
+        messages: List[GenericMessage] = []
         study_folder_metadata = StudyFolderMetadata()
         metadata: Dict[str, StudyFileDescriptor] = {}
         self.visit_folder(study_path, study_path, metadata=metadata, messages=messages)

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "0.9.48"
+version = "0.9.49"
 description = "MetaboLights command line interface (CLI), common data models, utility methods and classes."
 authors = ["MetaboLights Team <metabolights-dev@ebi.ac.uk>"]
 readme = "README.md"
@@ -19,6 +19,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: File Formats",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Utilities"
 ]
 
 [tool.poetry.dependencies]
