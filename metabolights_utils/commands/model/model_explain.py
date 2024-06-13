@@ -26,7 +26,7 @@ def model_explain(
     """
     search_pattern = model_pattern
     schema = MetabolightsStudyModel.model_json_schema(
-        by_alias=True,
+        by_alias=True, mode="serialization"
     )
     model_name = None
     title = None
