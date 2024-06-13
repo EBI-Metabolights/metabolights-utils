@@ -28,7 +28,7 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
             dir_relative_path = str(directory).replace(
                 f"{str(study_path).rstrip(os.sep)}", ""
             )
-            dir_relative_path.lstrip("/")
+            dir_relative_path = dir_relative_path.lstrip("/")
             skip_content = False
             for pattern in definitions.skip_folder_content_patterns:
                 if pattern.match(dir_relative_path):
