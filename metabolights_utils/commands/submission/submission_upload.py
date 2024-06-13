@@ -53,7 +53,7 @@ def submission_upload(
     credentials_file_path: str = "",
 ):
     """
-    Download submission study metadata files.
+    Uploads local metadata files to private FTP and start sync task to update study folder.
 
     study_id: MetaboLights study accession number (MTBLSxxxx).
 
@@ -66,14 +66,23 @@ def submission_upload(
         rest_api_base_url=rest_api_base_url,
         credentials_file_path=credentials_file_path,
     )
-    result, error = client.upload_metadata_files(
+    success, error = client.upload_metadata_files(
         study_id=study_id,
         override_remote_files=override_remote_files,
         metadata_files=None,
     )
-    click.echo(f"Upload submission study {study_id} :")
-    # for item in result:
-    #     click.echo(f"  {result.actions[item]}\t{item}")
+    if success:
+        click.echo(f"Upload private study {study_id}: Success")
+        success, error = client.sync_private_ftp_metadata_files(
+            study_id=study_id, pool_period=10, retry=10
+        )
+        if success:
+            click.echo(f"Sync private study {study_id} folder: Success")
+        else:
+            click.echo(f"Failure: Sync private study {study_id} folder: {error}")
+
+    else:
+        click.echo(f"Failure: Upload private study {study_id}: {error}")
 
 
 if __name__ == "__main__":

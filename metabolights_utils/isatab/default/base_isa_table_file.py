@@ -174,7 +174,9 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
             if os.path.exists(path):
                 isa_table_file.sha256_hash = HashUtils.sha256sum(path)
             elif os.path.exists(str(file_buffer_or_path)):
-                isa_table_file.sha256_hash = HashUtils.sha256sum(str(file_buffer_or_path))
+                isa_table_file.sha256_hash = HashUtils.sha256sum(
+                    str(file_buffer_or_path)
+                )
         else:
             isa_table_file = IsaTableFile()
 

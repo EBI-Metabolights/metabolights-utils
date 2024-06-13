@@ -6,14 +6,8 @@ import click
 import httpx
 
 from metabolights_utils.commands.submission.model import (
-    RestApiCredentials,
     StudyResponse,
-    SubmittedStudiesResponse,
     SubmittedStudySummary,
-)
-from metabolights_utils.commands.submission.utils import (
-    get_submission_credentials,
-    get_submission_rest_api_credentials,
 )
 from metabolights_utils.commands.utils import non_html, split_to_lines
 from metabolights_utils.provider import definitions
@@ -72,11 +66,9 @@ def print_submitted_study(study: SubmittedStudySummary, log):
     default=definitions.default_local_submission_credentials_file_path,
     help="Credentials file path.",
 )
-@click.option("--api_token", "-a", help="User MetaboLights API token.")
 @click.argument("study_id", required=False)
 @click.argument("subdirectory", required=False)
 def submission_list(
-    api_token: str = "",
     study_id: Union[None, str] = None,
     subdirectory: Union[None, str] = None,
     local_path: Union[None, str] = None,
@@ -88,8 +80,6 @@ def submission_list(
 ):
     """
     List submitted studies and study folder content. It works for both local and Rest API.
-
-    api_token: MetaboLights user token.
 
     study_id (optional): MetaboLights study accession number (MTBLSxxxx). List all studies submitted by user, if not specified.
 

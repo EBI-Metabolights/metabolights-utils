@@ -4,6 +4,7 @@ import click
 from jsonpath_ng import parse
 
 from metabolights_utils.commands.utils import print_study_model_summary
+from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.provider import definitions
@@ -98,57 +99,46 @@ def submission_describe(
 
     if not model:
         if not errors:
-
             click.echo(f"{study_id}: {[x for x in errors]}")
         else:
             click.echo(f"{study_id}: load error.")
         exit(1)
-    error = False
-    for file, messages in model.parser_messages.items():
-        for message in messages:
-            if message.type in (ParserMessageType.CRITICAL, ParserMessageType.ERROR):
-                click.echo(f"{study_id} {file}: {message.short}")
-                error = True
 
-    if not error:
+        # error = True
 
-        if model and model.investigation and model.investigation.studies:
-            if jsonpath:
-                try:
-                    json_data = model.model_dump()
+    # if not error:
 
-                    jsonpath_expr = parse(jsonpath)
-                    match_values = [
-                        match.value for match in jsonpath_expr.find(json_data)
-                    ]
-                    if match_values:
-                        click.echo(
-                            click.style(
-                                f"{study_id}: '{jsonpath}' search result:", fg="green"
-                            )
+    if model and model.investigation and model.investigation.studies:
+        if jsonpath:
+            try:
+                json_data = model.model_dump()
+
+                jsonpath_expr = parse(jsonpath)
+                match_values = [match.value for match in jsonpath_expr.find(json_data)]
+                if match_values:
+                    click.echo(
+                        click.style(
+                            f"{study_id}: '{jsonpath}' search result:", fg="green"
                         )
-                        if len(match_values) == 1:
-                            click.echo(match_values[0])
-                        else:
-                            for match_item in match_values:
-                                click.echo(f"{match_item}")
-                    else:
-                        click.echo(
-                            click.style(f"{study_id}: '{jsonpath}' no match", fg="red")
-                        )
-                except Exception as ex:
-                    click.echo(f"jsonpath '{jsonpath}' expression error: {str(ex)}")
-            else:
-                click.echo(
-                    click.style(
-                        "MetaboLights submission study model summary.", fg="green"
                     )
-                )
-                print_study_model_summary(model, log=click.echo)
+                    if len(match_values) == 1:
+                        click.echo(match_values[0])
+                    else:
+                        for match_item in match_values:
+                            click.echo(f"{match_item}")
+                else:
+                    click.echo(
+                        click.style(f"{study_id}: '{jsonpath}' no match", fg="red")
+                    )
+            except Exception as ex:
+                click.echo(f"jsonpath '{jsonpath}' expression error: {str(ex)}")
         else:
-            click.echo(f"{study_id} is not a valid or public study.")
+            click.echo(
+                click.style("MetaboLights submission study model summary.", fg="green")
+            )
+            print_study_model_summary(model, log=click.echo)
     else:
-        exit(1)
+        click.echo(f"{study_id} is not a valid or public study.")
 
 
 if __name__ == "__main__":

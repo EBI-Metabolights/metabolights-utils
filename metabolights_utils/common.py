@@ -18,5 +18,6 @@ def sort_by_study_id(key: str):
     if key:
         val = os.path.basename(key).upper().replace("MTBLS", "")
         if val.isnumeric():
-            return int(val)
+            value = int(val)
+            return value if value > 0 else -1
     return -1

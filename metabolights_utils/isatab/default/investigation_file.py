@@ -32,6 +32,9 @@ class InvestigationFileException(Exception):
 
 
 class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
+    def __init__(self) -> None:
+        super(BaseIsaFile, self).__init__()
+
     def read(
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
@@ -97,6 +100,7 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
 
 
 class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
+
     def write(
         self,
         investigation: Investigation,

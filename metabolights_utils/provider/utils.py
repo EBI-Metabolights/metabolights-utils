@@ -99,7 +99,7 @@ def get_unique_file_extensions(files: Set[str]) -> Set[str]:
         name1, ext1 = os.path.splitext(item)
         _, ext2 = os.path.splitext(name1)
         if ext1:
-            if ext2 and len(ext2) < 5:
+            if ext2 and len(ext2) < 6:
                 extensions.add(f"{ext2.lower()}{ext1.lower()}")
             else:
                 extensions.add(f"{ext1.lower()}")

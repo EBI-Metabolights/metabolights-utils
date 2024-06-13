@@ -33,7 +33,7 @@ class DefaultFtpClient:
             self.ftp.cwd(name)
             self.ftp.cwd(current)
             return True
-        except error_perm:
+        except Exception:
             return False
 
     def connect(self):
@@ -219,10 +219,6 @@ class DefaultFtpClient:
             response.success = True
             response.code = 200
             response.message = "Ok"
-        except error_perm as ex:
-            print(str(ex))
-            response.message = str(ex)
-            response.code = 400
         except Exception as ex:
             print(ex)
             response.message = str(ex)

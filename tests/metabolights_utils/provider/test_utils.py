@@ -18,7 +18,10 @@ from metabolights_utils.provider.study_provider import (
     AbstractDbMetadataCollector,
     MetabolightsStudyProvider,
 )
-from metabolights_utils.provider.utils import find_assay_technique
+from metabolights_utils.provider.utils import (
+    find_assay_technique,
+    get_unique_file_extensions,
+)
 
 assay_names = {
     (
@@ -126,3 +129,16 @@ def test_find_assay_technique_01(study_id, study_path, assay_name, technique_nam
         )
         assert technique
         assert technique.name == technique_name
+
+
+filenames = [
+    ({"x.mzML", "c.mzML", "d.mzML"}, {".mzml"}),
+    ({"x.mzML", "c.mzXML", "d.mzML"}, {".mzml", ".mzxml"}),
+    ({"x.wiff.scan", "x.wiff", "y.wiff"}, {".wiff", ".wiff.scan"}),
+]
+
+
+@pytest.mark.parametrize("filenames,expected_set", filenames)
+def test_get_unique_file_extension_01(filenames, expected_set):
+    actual = get_unique_file_extensions(filenames)
+    assert len(actual - expected_set) == 0

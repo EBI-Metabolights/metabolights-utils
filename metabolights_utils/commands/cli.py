@@ -13,7 +13,7 @@ def cli():
 
 
 cli.add_command(public_cli)
-# cli.add_command(submission_cli)
+cli.add_command(submission_cli)
 cli.add_command(model_cli)
 
 if __name__ == "__main__":

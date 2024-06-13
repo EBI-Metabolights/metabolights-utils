@@ -247,7 +247,9 @@ class MetabolightsSubmissionRepository:
         else:
             return False, error
 
-    def sync_private_ftp_metadata_files(self, study_id: str, timeout: int = 20):
+    def sync_private_ftp_metadata_files(
+        self, study_id: str, pool_period: int = 10, retry: int = 10, timeout: int = 10
+    ):
         sub_path = f"/studies/{study_id}/study-folders/rsync-task"
         api_header, error = self.get_api_token()
         headers = {}
@@ -255,7 +257,7 @@ class MetabolightsSubmissionRepository:
             headers["User-Token"] = api_header
         else:
             return None, error
-        headers["Dry-Run"] = False
+        headers["Dry-Run"] = "false"
         headers["Sync-Type"] = "metadata"
         headers["Source-Staging-Area"] = "private-ftp"
         headers["Target-Staging-Area"] = "rw-study"
@@ -275,15 +277,22 @@ class MetabolightsSubmissionRepository:
                 task_id = data["task_id"]
 
             if task_id:
-                for i in range(10):
-                    time.sleep(10)
-                response = httpx.get(
-                    url=url,
-                    timeout=timeout,
-                    headers=headers,
-                    params=parameters,
-                )
-
+                for i in range(retry + 1):
+                    time.sleep(pool_period)
+                    response = httpx.get(
+                        url=url,
+                        timeout=timeout,
+                        headers=headers,
+                        params=parameters,
+                    )
+                    if response:
+                        data = json.loads(response.text)
+                        if "status" in data:
+                            status = data["status"]
+                            if "SUCCESS" in status:
+                                return True, status
+                            elif "FAIL" in status:
+                                return False, status
         else:
             return False, response.status_code if response else None
 

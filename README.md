@@ -46,13 +46,26 @@ pip3 install -U metabolights-utils
 ### Usage **mtbls** command line interface
 After installation of metabolights-utils, you can use the mtbls command line interface to download and list MetaboLights studies.
 
+#### Commands for Public Studies 
 ```shell
 
+# prints mtbls public command usage
+mtbls --help
 
-# prints mtbls study command usage
-mtbls study --help
+    # Usage: mtbls [OPTIONS] COMMAND [ARGS]...
 
-        # Usage: mtbls study [OPTIONS] COMMAND [ARGS]...
+    # Options:
+    #   --help  Show this message and exit.
+
+    # Commands:
+    #   model       Commands to explain MetaboLights study data model.
+    #   public      Commands to use MetaboLights public study data and ISA...
+    #   submission  Commands to use MetaboLights study submission REST API.
+
+# prints mtbls public command usage
+mtbls public --help
+
+        # Usage: mtbls public [OPTIONS] COMMAND [ARGS]...
 
         # Options:
         # --help  Show this message and exit.
@@ -63,24 +76,24 @@ mtbls study --help
         # list      List studies and study folder content.
         # remove    Delete local study data and metadata files.
 
-# prints mtbls study list command
-mtbls study list --help
+# prints mtbls public list command
+mtbls public list --help
 
 # lists all public studies listed on FTP server
-mtbls study list
+mtbls public list
 
 # lists all public studies on local storage
-mtbls study list -l
+mtbls public list -l
 
 # list root directory content of study
-mtbls study list MTBLS3
+mtbls public list MTBLS3
 
 # lists the content of FILES folder
-mtbls study list MTBLS3 FILES
+mtbls public list MTBLS3 FILES
 
 
 # downloads study metadata files from MetaboLights FTP server.
-mtbls study download MTBLS3
+mtbls public download MTBLS3
 
     # DOWNLOADED      a_MTBLS3_live_metabolite_profiling_mass_spectrometry.txt
     # DOWNLOADED      s_MTBLS3.txt
@@ -88,48 +101,104 @@ mtbls study download MTBLS3
     # DOWNLOADED      i_Investigation.txt
 
 # uses local copies of study metadata files
-mtbls study download MTBLS3
+mtbls public download MTBLS3
     # SKIPPED m_MTBLS3_live_metabolite_profiling_mass_spectrometry_v2_maf.tsv
     # SKIPPED a_MTBLS3_live_metabolite_profiling_mass_spectrometry.txt
     # SKIPPED i_Investigation.txt
     # SKIPPED s_MTBLS3.txt
 
 # force to download study metadata files
-mtbls study download MTBLS3 -o
+mtbls public download MTBLS3 -o
 
 
 # downloads study FILES folder (data files) from MetaboLights FTP server.
-mtbls study download MTBLS3 FILES
+mtbls public download MTBLS3 FILES
 
 # downloads a study data file from MetaboLights FTP server.
-mtbls study download MTBLS3 FILES/Cecilia_AA_rerun45.raw
+mtbls public download MTBLS3 FILES/Cecilia_AA_rerun45.raw
 
 
 
 # help for mtbls study describe command
-mtbls study describe --help
+mtbls public describe --help
 
 # prints summary of MTBLS3 study.
-mtbls study describe MTBLS3
+mtbls public describe MTBLS3
 
 # prints MTBLS3 study title.
-mtbls study describe MTBLS3 "$.investigation.studies[0].title"
-
+mtbls public describe MTBLS3 "$.investigation.studies[0].title"
 
 # prints MTBLS3 study title.
-mtbls study describe MTBLS3 "$.investigation.studies[0].study_assays.assays[*].assay_technique.name"
+mtbls public describe MTBLS3 "$.investigation.studies[0].study_assays.assays[*].assay_technique.name"
 
 # prints MTBLS3 study protocol names.
-mtbls study describe MTBLS3 "$.investigation.studies[0].study_protocols[*].protocols[*].name"
+mtbls public describe MTBLS3 "$.investigation.studies[0].study_protocols[*].protocols[*].name"
+
+# prints study model descriptions.
+mtbls model explain
+
+# prints descriptions of property: model -> investigation.
+mtbls model explain investigation
+
+# prints descriptions of property: model -> assays.
+mtbls model explain assays
+
+# prints descriptions of property: model -> investigation -> studies.
+mtbls model explain investigation.studies
 
 # deletes local data and metadata files of MTBLS1 study.
-mtbls study remove MTBLS1
+mtbls public remove MTBLS1
 
 
 ```
 
+#### Commands for Submitted Studies 
+```shell
 
-### Load MetaboLights study folder
+# prints help for submitted studies.
+mtbls submission
+
+    # Usage: mtbls submission [OPTIONS] COMMAND [ARGS]...
+
+    #   Commands to use MetaboLights study submission REST API.
+
+    # Options:
+    #   --help  Show this message and exit.
+
+    # Commands:
+    #   describe  View summary of any user submitted study content.
+    #   download  Download submission study metadata files.
+    #   list      List submitted studies and study folder content.
+    #   login     Creates a file path to use connect private FTP server and...
+    #   upload    Uploads local metadata files to private FTP and start sync...
+
+
+# saves credentials to connect private FTP and use MetaboLights API
+mtbls submission login
+
+# lists studies submitted by user
+mtbls submission list
+
+# lists root folder content of submitted/public study
+mtbls submission list <MTBLSXXX>
+
+# lists subfoler content of submitted/public study
+mtbls submission list <MTBLSXXX> FILES
+
+# summarizes the submitted/public study
+mtbls submission describe <MTBLSXXX>
+
+
+# downloads the submitted/public study
+mtbls submission download <MTBLSXXX>
+
+
+# uploads all metadata files, starts private FTP folder-Study Folder sync task for the submitted study
+mtbls submission upload <MTBLSXXX> -o
+
+```
+
+### Load MetaboLights study model from a directory
 ---
 Read i_Investigation.txt, s_*,txt, a_*.txt and m_*.tsv files in a study folder.
 
@@ -138,12 +207,9 @@ Read i_Investigation.txt, s_*,txt, a_*.txt and m_*.tsv files in a study folder.
     model, messages = provider.load_study(
         study_id,
         study_path,
-        connection=connection,
         load_assay_files=True,
         load_sample_file=True,
-        load_maf_files=True,
-        calculate_data_folder_size=True,
-        calculate_metadata_size=True,
+        load_maf_files=True
     )
 ```
 

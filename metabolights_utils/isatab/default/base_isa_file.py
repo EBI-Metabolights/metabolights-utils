@@ -5,6 +5,7 @@ from typing import Tuple, Union
 
 
 class BaseIsaFile(ABC):
+
     def _get_file_path(
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
@@ -37,12 +38,5 @@ class BaseIsaFile(ABC):
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
     ):
         # If we opened file, close it
-        if (
-            not file_buffer_or_path
-            and not file_buffer_or_path
-            and (
-                isinstance(file_buffer_or_path, str)
-                or isinstance(file_buffer_or_path, pathlib.Path)
-            )
-        ):
+        if file_buffer_or_path and isinstance(file_buffer_or_path, IOBase):
             file_buffer_or_path.close()

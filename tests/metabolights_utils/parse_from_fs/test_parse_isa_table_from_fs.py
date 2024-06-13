@@ -29,7 +29,9 @@ def test_parse_isa_table_sheet_from_fs_valid_assay_01():
 
 def test_parse_isa_table_sheet_from_fs_valid_sample_01():
     file_path = pathlib.Path("tests/test-data/MTBLS1/s_MTBLS1.txt")
-    patterns = DefaultSampleFileReader.patterns
+    reader = DefaultSampleFileReader(results_per_page=50)
+    patterns = reader.get_expected_patterns()
+    assert patterns
     table, messages = parse_isa_table_sheet_from_fs(
         file_path, expected_patterns=patterns
     )

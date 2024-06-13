@@ -12,7 +12,7 @@ from metabolights_utils.commands.submission.model import (
 from metabolights_utils.provider import definitions
 
 
-@click.command(name="list")
+@click.command(name="login")
 @click.option(
     "--credentials_file_path",
     "-c",

@@ -4,8 +4,10 @@ from typing import Callable, List
 
 from bs4 import BeautifulSoup
 
+from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.models.isa.common import IsaTable
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
+from metabolights_utils.models.parser.enums import ParserMessageType
 
 
 def sub_arrays(arr: List[str], k: int):
@@ -99,6 +101,7 @@ assay_column_search_patterns = [
 
 def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = print):
     study = model.investigation.studies[0]
+    study_id = study.identifier
     log(f"{study.identifier}: {study.title}")
     public_date = study.public_release_date
     submission_date = study.submission_date
@@ -133,7 +136,9 @@ def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = pri
     for assay_filename, assay in model.assays.items():
         report: List[str] = []
         report.append(f"- {assay.file_path}")
-        report.append(f"Row count: {assay.table.total_column_count}")
+        report.append(
+            f"Row count: {assay.table.total_row_count} Column Count: {assay.table.total_column_count}"
+        )
         report.append(f"Technique: {assay.assay_technique}")
         report.append(f"Raw Files: {len(assay.referenced_raw_files)}")
         raw_extensions = assay.referenced_raw_file_extensions
@@ -178,6 +183,24 @@ def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = pri
     stats = "\n\t- ".join(report)
     log(f"\t- {stats}")
     log("")
+
+    errors = []
+    for file, messages in model.parser_messages.items():
+        for message in messages:
+            if message.type in (ParserMessageType.CRITICAL, ParserMessageType.ERROR):
+                errors.append(f"{study_id} {file}: {message.short}")
+    for message in model.db_reader_messages:
+        if message.type in (GenericMessageType.CRITICAL, GenericMessageType.ERROR):
+            errors.append(f"{study_id} DB: {message.short}\t{message.detail}")
+    for message in model.folder_reader_messages:
+        if message.type in (GenericMessageType.CRITICAL, GenericMessageType.ERROR):
+            errors.append(f"{study_id} Folder: {message.short}\t{message.detail}")
+    if errors:
+        log("Model Errors:")
+        for error in errors:
+            lines = split_to_lines(error)
+            for line in lines:
+                log(f"\t- {line}")
 
 
 def print_columns(
