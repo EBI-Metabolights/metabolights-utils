@@ -128,6 +128,8 @@ class MetabolightsStudyProvider(object):
                 OntologyItem, OntologyItem, OntologyItem, OntologyItem
             ] = (OntologyItem(), OntologyItem(), OntologyItem(), OntologyItem())
             for idx, column_name in enumerate(characteristics_columns):
+                if column_name not in characteristics_column_indices:
+                    continue
                 if column_name in columns:
                     characteristics[idx].term = data[column_name][i]
                 index = characteristics_column_indices[column_name]
