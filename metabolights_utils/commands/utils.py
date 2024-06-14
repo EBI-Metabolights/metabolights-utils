@@ -66,7 +66,7 @@ def get_unique_values(values: List[str]) -> List[str]:
     return unique_values
 
 
-def non_html(text: str):
+def convert_html_to_plain_text(text: str):
     f = io.BytesIO(bytes(text, encoding="utf-8"))
     soup = BeautifulSoup(f, "html.parser")
     return soup.text
@@ -106,7 +106,7 @@ def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = pri
     public_date = study.public_release_date
     submission_date = study.submission_date
     contacts = study.study_contacts.people
-    lines = split_to_lines(non_html(study.description))
+    lines = split_to_lines(convert_html_to_plain_text(study.description))
     for line in lines:
         log(f"\t{line}")
     log(f"\nRelease Date\t: {public_date}\nSubmission Date\t: {submission_date}")
@@ -122,12 +122,12 @@ def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = pri
     protocols = study.study_protocols.protocols
     log(f"Protocols:")
     for protocol in protocols:
-        lines = split_to_lines(non_html(protocol.description))
+        lines = split_to_lines(convert_html_to_plain_text(protocol.description))
         log(f"\t- {protocol.name}")
         for line in lines:
             log(f"\t\t{line}")
     # protocol_format = "\n".join(
-    #     [f"\t- {x.name}\n\t\t{non_html(x.description)}" for x in protocols]
+    #     [f"\t- {x.name}\n\t\t{convert_html_to_plain_text(x.description)}" for x in protocols]
     # )
     # log(f"Protocols:\n{protocol_format}")
 
@@ -168,7 +168,9 @@ def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = pri
                 f"{maf.metabolite_assignments[x]}:{x}"
                 for x in maf.metabolite_assignments
             ]
-            lines = split_to_lines(non_html(", ".join(assignments)), sep=", ")
+            lines = split_to_lines(
+                convert_html_to_plain_text(", ".join(assignments)), sep=", "
+            )
             for line in lines:
                 log(f"\t\t\t{line}")
         else:

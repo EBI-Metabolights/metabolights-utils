@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "0.9.51"
+version = "0.9.52"
 description = "MetaboLights command line interface (CLI), common data models, utility methods and classes."
 authors = ["MetaboLights Team <metabolights-dev@ebi.ac.uk>"]
 readme = "README.md"
@@ -8,7 +8,7 @@ packages = [{include = "metabolights_utils"}]
 license = "Apache-2.0"
 homepage = "https://github.com/EBI-Metabolights/metabolights-utils"
 repository = "https://github.com/EBI-Metabolights/metabolights-utils"
-keywords = ["metabolights", "metabolomics", "ISA data model"]
+keywords = ["metabolights", "metabolomics", "ISA data model", "mtbls"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Programming Language :: Python :: 3.8",

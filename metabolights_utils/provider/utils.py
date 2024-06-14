@@ -92,6 +92,25 @@ def rest_api_get(
         return None, str(ex)
 
 
+def rest_api_post(
+    url: str,
+    timeout: Union[None, int] = None,
+    headers: Union[None, Dict[str, Any]] = None,
+    parameters: Union[None, Dict[str, Any]] = None,
+    json_body: Union[None, Dict[str, Any]] = None,
+):
+    try:
+        response = httpx.post(
+            url=url, timeout=timeout, headers=headers, params=parameters, json=json_body
+        )
+        if response and response.status_code in (200, 201):
+            data = json.loads(response.text)
+            return data, None
+        return None, response.text
+    except Exception as ex:
+        return None, str(ex)
+
+
 def get_unique_file_extensions(files: Set[str]) -> Set[str]:
     extensions = set()
 

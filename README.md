@@ -149,6 +149,94 @@ mtbls model explain investigation.studies
 # deletes local data and metadata files of MTBLS1 study.
 mtbls public remove MTBLS1
 
+```
+
+#### Search public studies 
+```shell
+
+# prints help for public study search command.
+mtbls public search
+
+    # Usage: mtbls public search [OPTIONS] [QUERY]
+
+    #   Search public studies with query keywords. If there are multiple search
+    #   keywords and no join operator (+, |) defined, results are merged with the
+    #   selected query join operator (and, or)
+
+    #   query: query terms that will be in search. e.g. cancer, (mus musculus)
+
+    # Options:
+    #   -u, --search_rest_api_url TEXT  MetaboLights search API URL.
+    #   -s, --skip INTEGER              Skip n items from the matched items.
+    #   -l, --limit INTEGER             Maximum number items in response. Maximum
+    #                                   return size is 100 items.
+    #   -j, --query_join_operator TEXT  If multiple keywords are defined and there
+    #                                   is no join operator (+, |) in query, One of
+    #                                   the 'and' (default) or 'or' operator will be
+    #                                   used.
+    #   -b, --body TEXT                 Advanced filter options in json format.
+    #                                   Please read the API documentation.
+    #   --id, --study_ids               Shows only MetaboLights accession numbers.
+    #   --raw                           Shows raw result in json format.
+    #   --help                          Show this message and exit.
+
+# prints summary of indexed public study on MetaboLights
+mtbls public search MTBLS1
+
+# prints indexed data of a public study on MetaboLights in json format
+mtbls public search MTBLS1 --raw
+
+
+# prints only number of search hits for query (targeted and lipid)
+mtbls public search "targeted + lipid" --limit=0
+
+
+# prints summary of first 10 studies in search results 
+mtbls public search "targeted + lipid" --skip=0 --limit=10
+
+
+# prints summary of 10 studies in search results 
+mtbls public search "targeted + lipid" --skip=10 --limit=10
+
+# prints summary of the first public study in search results  
+mtbls public search "(mus musculus) + cancer + (lipidomics | lipidomic)" --skip=0 --limit=1
+
+
+# prints number of the public studies in search results (search cancer term if there are organism samples from mus musculus **and** homo sapiens)
+mtbls public search "cancer" --body '{"ontologyFilters": {"organism":{ "joinOperator": "and", "values": ["mus musculus", "homo sapiens"]}}}' --limit=0
+
+# prints public study ids of the search result
+mtbls public search "cancer" --body '{"ontologyFilters": {"organism":{ "joinOperator": "and", "values": ["mus musculus", "homo sapiens"]}}}' --limit=100 --id
+
+# prints number of the public studies in search results (search cancer term if there is an organism sample from mus musculus **or** homo sapiens)
+mtbls public search "cancer" --body '{"ontologyFilters": {"organism":{ "joinOperator": "and", "values": ["mus musculus", "homo sapiens"]}}}' --limit=0
+
+# prints only study ids of search result (list studies that contain goose or chicken term and have LC-MS or GC-MS assays) 
+mtbls public search "(goose | chicken)" --body '{"assayTechniqueNameFilter": { "joinOperator": "or", "values": ["LC-MS", "GC-MS"] }}' --limit=100 --id
+
+# prints studies both NMR and LC-MS assays (no query)
+mtbls public search --body '{"assayTechniqueNameFilter": { "joinOperator": "and", "values": ["NMR", "LC-MS"] }}' --limit=100 --id
+
+# select term
+mtbls public search "(cow + -sheep + -(blood serum | milk))" --body '{"assayTechniqueNameFilter": { "joinOperator": "or", "values": ["LC-MS", "GC-MS"] }}'
+
+# prints only study ids 
+mtbls public search "(cow | -sheep)" --body '{"assayTechniqueNameFilter": { "joinOperator": "or", "values": ["LC-MS", "GC-MS"] }}' --limit=100 --id
+
+# prints study ids which have both targeted and untargeted design descriptor terms
+mtbls public search --body '{"ontologyFilters": {"design_descriptor":{ "joinOperator": "and", "values": ["targeted", "untargeted"]}}}' --limit=100 --id
+
+# prints study ids which have cancer or covid design descriptor terms
+mtbls public search --body '{"ontologyFilters": {"design_descriptor":{ "joinOperator": "or", "values": ["cancer", "disease"]}}}' --limit=100 --id
+
+# prints study ids which have multiomics design descriptor term
+mtbls public search --body '{"ontologyFilters": {"design_descriptor":{ "joinOperator": "or", "values": ["multiomics", "multi-omics"]}}}' --limit=100 --id
+
+# prints number of studies aggregated by organism  (filters aggregations less than 5 item and shows only top 50 organisms)
+mtbls public search --body '{"aggregations": [{ "aggregationName": "organisms", "fieldName": "organisms.term", "maxItemCount": 50, "minItemCount": 5}]}' --limit=0 --raw
+
+# prints number of studies by assay techniques
+mtbls public search --body '{"aggregations": [{ "aggregationName": "assay_techniques", "fieldName": "assayTechniques.name", "maxItemCount": 50, "minItemCount": 1}]}' --limit=0 --raw
 
 ```
 

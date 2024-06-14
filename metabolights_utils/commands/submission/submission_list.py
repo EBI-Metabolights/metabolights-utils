@@ -9,7 +9,7 @@ from metabolights_utils.commands.submission.model import (
     StudyResponse,
     SubmittedStudySummary,
 )
-from metabolights_utils.commands.utils import non_html, split_to_lines
+from metabolights_utils.commands.utils import convert_html_to_plain_text, split_to_lines
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.submission_repository import (
     MetabolightsSubmissionRepository,
@@ -21,7 +21,7 @@ def print_submitted_study(study: SubmittedStudySummary, log):
     log(f"{study.accession}: {study.title}")
     public_date = study.release_date
     submission_date = study.created_date
-    lines = split_to_lines(non_html(study.description))
+    lines = split_to_lines(convert_html_to_plain_text(study.description))
     for line in lines:
         log(f"\t{line}")
     log(f"\nRelease Date\t: {public_date}\nSubmission Date\t: {submission_date}")

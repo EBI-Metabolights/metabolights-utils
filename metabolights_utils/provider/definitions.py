@@ -12,6 +12,9 @@ default_local_submission_credentials_file_path = (
 )
 default_local_repority_cache_path = f"{home}/metabolights_data/studies/cache"
 default_rest_api_url = "https://www.ebi.ac.uk/metabolights/ws"
+default_study_search_rest_api_url = (
+    "https://www-test.ebi.ac.uk/metabolights/staging/ws3"
+)
 default_private_ftp_server_url = "ftp-private.ebi.ac.uk"
 
 
