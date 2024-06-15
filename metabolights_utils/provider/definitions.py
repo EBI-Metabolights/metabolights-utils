@@ -17,7 +17,6 @@ default_study_search_rest_api_url = (
 )
 default_private_ftp_server_url = "ftp-private.ebi.ac.uk"
 
-
 IGNORED_FILE_PATTERNS = {r"^AUDIT_FILES(/|$)(.*)", r"^INTERNAL_FILES(/|$)(.*)"}
 
 SKIP_FOLDER_CONTENT_PATTERNS = {

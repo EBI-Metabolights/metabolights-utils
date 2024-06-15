@@ -6,6 +6,7 @@ from typing import List, Set, Tuple, Union
 
 import httpx
 from dateutil import parser
+from pydantic import BaseModel
 
 from metabolights_utils.commands.submission.model import (
     FtpLoginCredentials,
@@ -40,6 +41,11 @@ from metabolights_utils.provider.study_provider import (
     AbstractDbMetadataCollector,
     AbstractFolderMetadataCollector,
     MetabolightsStudyProvider,
+)
+from metabolights_utils.provider.submission_model import (
+    ValidationMessage,
+    ValidationReport,
+    ValidationResponse,
 )
 from metabolights_utils.provider.utils import (
     download_file_from_rest_api,
@@ -247,6 +253,151 @@ class MetabolightsSubmissionRepository:
         else:
             return False, error
 
+    def check_api_response(self, api_name, response):
+        if not response:
+            return False, f"No response for {api_name}"
+        code = response.status_code
+        text = response.text
+        if response.status_code in (200, 201):
+            return True, None
+        else:
+            return (
+                False,
+                f"Failure of {api_name} {code}: {text}",
+            )
+
+    def validate_study(
+        self,
+        study_id,
+        validation_file_path: Union[str, None] = None,
+        pool_period: int = 5,
+        retry: int = 20,
+        timeout: int = 10,
+    ):
+        sub_path = f"/studies/{study_id}/validation-task"
+
+        api_header, error = self.get_api_token()
+        headers = {}
+        if api_header:
+            headers["User-Token"] = api_header
+        else:
+            return None, error
+
+        api_name = "validation task start"
+        try:
+            url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+            parameters = {}
+            response = httpx.post(
+                url=url,
+                timeout=timeout,
+                headers=headers,
+                params=parameters,
+            )
+            success, error = self.check_api_response(api_name, response)
+            if not success:
+                return None, error
+
+            data = json.loads(response.text)
+            task_start_response = ValidationResponse.model_validate(
+                data, from_attributes=True
+            )
+
+            if not task_start_response.task.task_id:
+                return (None, f"Failure of {api_name} for {study_id}.")
+
+        except Exception as ex:
+            return None, f"Validation task start failure: {str(ex)}."
+
+        api_name = "validation task status check"
+        try:
+            task_success = False
+            for i in range(retry + 1):
+                time.sleep(pool_period)
+                try:
+                    response = httpx.get(
+                        url=url,
+                        timeout=timeout,
+                        headers=headers,
+                        params=parameters,
+                    )
+                except TimeoutError:
+                    continue
+                success, error = self.check_api_response(api_name, response)
+                if not success:
+                    continue
+                data = json.loads(response.text)
+                task_status_response = ValidationResponse.model_validate(
+                    data, from_attributes=True
+                )
+
+                task = task_status_response.task
+                status = task.last_status
+                if task.task_id and task.last_status:
+                    if "SUCCESS" in status.upper():
+                        task_success = True
+                        break
+            if not task_success:
+                return (None, f"Failure of {api_name} for {study_id}.")
+        except Exception as ex:
+            return None, f"{api_name} failure: {str(ex)}."
+
+        api_name = "get validation report"
+        try:
+            api_success = False
+            report_sub_path = f"/studies/{study_id}/validation-report"
+            report_url = os.path.join(
+                self.rest_api_base_url.rstrip("/"),
+                report_sub_path.lstrip("/"),
+            )
+            for i in range(retry + 1):
+                try:
+                    response = httpx.get(
+                        url=report_url,
+                        timeout=timeout,
+                        headers=headers,
+                        params=parameters,
+                    )
+                except TimeoutError:
+                    time.sleep(pool_period)
+                    continue
+                success, error = self.check_api_response(api_name, response)
+                if not success:
+                    time.sleep(pool_period)
+                    continue
+                data = json.loads(response.text)
+                report = ValidationReport.model_validate(data, from_attributes=True)
+                if report.validation.status:
+                    api_success = True
+                    break
+            if not api_success:
+                return (None, f"Failure of {api_name} for {study_id}.")
+        except Exception as ex:
+            return None, f"{api_name} failure: {str(ex)}."
+
+        errors: List[ValidationMessage] = []
+        for section in report.validation.validations:
+            for message in section.details:
+                if message.status.upper() == "ERROR":
+                    errors.append(message)
+
+        with open(validation_file_path, "w") as f:
+            f.write(
+                f"section\t"
+                f"status\t"
+                f"message\t"
+                f"description\t"
+                f"metadata_file\n"
+            )
+            for e in errors:
+                f.write(
+                    f"{e.section}\t"
+                    f"{e.status}\t"
+                    f"{e.message}\t"
+                    f"{e.description}\t"
+                    f"{e.metadata_file}\n"
+                )
+        return True, status
+
     def sync_private_ftp_metadata_files(
         self, study_id: str, pool_period: int = 10, retry: int = 10, timeout: int = 10
     ):
@@ -296,6 +447,45 @@ class MetabolightsSubmissionRepository:
         else:
             return False, response.status_code if response else None
 
+    def create_assay(
+        self,
+        study_id: str,
+        assay_technique: str,
+        scan_polarity: str = "",
+        column_type: str = "",
+        timeout: int = 10,
+    ):
+        api_header, error = self.get_api_token()
+        headers = {}
+        if api_header:
+            headers["User-Token"] = api_header
+        else:
+            return None, None, error
+
+        sub_path = f"/studies/{study_id}/assays"
+        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+        body = {"assay": {"type": assay_technique, "columns": []}}
+        if scan_polarity:
+            body["assay"]["columns"].append(
+                {"name": "polarity", "value": scan_polarity.lower()}
+            )
+        if column_type:
+            body["assay"]["columns"].append(
+                {"name": "column type", "value": column_type.lower()}
+            )
+
+        response = httpx.post(
+            url=url, timeout=timeout, headers=headers, params={}, json=body
+        )
+        if response and response.status_code in (200, 201):
+            data = json.loads(response.text)
+            if "filename" in data and "maf" in data:
+                return data["filename"], data["maf"], None
+
+            return None, None, "Invalid response."
+        else:
+            return None, None, response.status_code if response else None
+
     def download_submission_metadata_files(
         self,
         study_id: str,
@@ -341,7 +531,7 @@ class MetabolightsSubmissionRepository:
 
         new_requested_files = []
         for filename in requested_files:
-            file_path = os.path.join(local_path, filename)
+            file_path = os.path.join(local_path, study_id, filename)
             key = f"{study_id}/{filename}"
             if os.path.exists(file_path):
                 if override_local_files:

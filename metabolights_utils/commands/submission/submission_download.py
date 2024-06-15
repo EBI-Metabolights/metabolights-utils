@@ -1,3 +1,4 @@
+import os
 from typing import Union
 
 import click
@@ -78,10 +79,11 @@ def submission_download(
         override_local_files=override_local_files,
         delete_unlisted_metadata_files=False,
     )
-    click.echo(f"Download submission study {study_id} status:")
+    study_path = os.path.join(client.local_storage_root_path, study_id)
+    click.echo(f"Download submission study {study_id} on {study_path} status:")
     for item in result.actions:
         click.echo(f"  {result.actions[item]}\t{item}")
 
 
 if __name__ == "__main__":
-    submission_download(["MTBLS1"])
+    submission_download(["MTBLS5397"])

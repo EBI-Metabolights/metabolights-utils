@@ -19,13 +19,16 @@
 
 ---
 
-#### **MetaboLigts-utils** is a *lightweight library* to read and update ISA metadata files, download MetaboLights studies.
+#### **metaboligts-utils** is a *lightweight API* and *command line interface* (CLI) to update ISA metadata files, download and search MetaboLights public studies. 
 ---
 ### Selected Features
 ---
 
 * **Read and update ISA files** with minimum pyhton package dependency.
-* **mtbls** command line interface (CLI) to download and list MetaboLights studies.
+* **mtbls** command line interface (CLI) to
+    * download and list MetaboLights public study metadata files.
+    * search MetaboLights public studies.
+    * download, upload and validate MetaboLights submitted studies.
 * Read MetaboLights study metadata files
 * Calculate hash value of each ISA metadata file or study ISA metadata folder
 * Read ISA table files (s_*.txt, a_*.txt, m_*.txt) with **Pagination support**.
@@ -283,6 +286,80 @@ mtbls submission download <MTBLSXXX>
 
 # uploads all metadata files, starts private FTP folder-Study Folder sync task for the submitted study
 mtbls submission upload <MTBLSXXX> -o
+
+
+
+# uploads all metadata files, starts private FTP folder-Study Folder sync task for the submitted study
+mtbls submission upload <MTBLSXXX> -o
+
+
+mtbls submission create-assay
+    # Usage: mtbls submission create-assay [OPTIONS] STUDY_ID ASSAY_TECHNIQUE
+
+    #   Creates a study assay and maf file.
+
+    #   study_id: MetaboLights study accession number (MTBLSxxxx). assay_technique:
+    #   Valid assay techniques:  NMR, LC-MS, LC-DAD, GC-MS, GCxGC-MS, GC-FID, DI-MS,
+    #   FIA-MS, CE-MS, MALDI-MS, MSImaging
+
+    #   Acronyms: Diode array detection (LC-DAD), Tandem MS (GCxGC-MS), Flame
+    #   ionisation detector (GC-FID), Direct infusion (DI-MS), Flow injection
+    #   analysis (FIA-MS), Capillary electrophoresis (CE-MS), Matrix-assisted laser
+    #   desorption-ionisation imaging mass spectrometry (MALDI-MS), Nuclear magnetic
+    #   resonance (NMR), Mass spec spectrometry (MSImaging)
+
+    #   scan_polarity (optional): Valid only for LC-MS, LC-DAD, GC-MS, GCxGC-MS, GC-
+    #   FID. Valid values: positive, negative, alternating
+
+    #   column_type (optional): Valid only for LC-MS, LC-DAD. Valid values: hilic,
+    #   reverse phase, direct infusion
+
+    # Options:
+    #   -p, --local_path TEXT           Local storage root path. Folder will be
+    #                                   created if it does not exist.
+    #   -u, --rest_api_base_url TEXT    MetaboLights study submission API base URL.
+    #   -x, --local_cache_path TEXT     Path to store cache files of study
+    #                                   submission file indices, study models, etc.
+    #   -c, --credentials_file_path TEXT
+    #                                   Path to store cache files of study
+    #                                   submission file indices, study models, etc.
+    #   --scan_polarity, --polarity TEXT
+    #                                   Scan polarity of the assay.
+    #   --column_type TEXT              Column type of the assay.
+    #   --help                          Show this message and exit.
+
+# creates and downloads LC-MS assay and linked maf files for a study
+mtbls submission create-assay <MTBLSXXX> LC-MS --polarity positive --column_type hilic
+
+
+# creates and downloads NMR assay and linked maf files for a study
+mtbls submission create-assay <MTBLSXXX> NMR
+
+
+mtbls submission validate
+    # Usage: mtbls submission validate [OPTIONS] STUDY_ID
+
+    #   Validate submitted study and save validation report on local storage.
+
+    #   study_id: MetaboLights study accession number (MTBLSxxxx).
+
+    # Options:
+    #   -u, --rest_api_base_url TEXT    MetaboLights study submission API base URL.
+    #   -x, --local_cache_path TEXT     Path to store cache files of study
+    #                                   submission file indices, study models, etc.
+    #   -c, --credentials_file_path TEXT
+    #                                   Path to store cache files of study
+    #                                   submission file indices, study models, etc.
+    #   -v, --validation_file_path TEXT
+    #                                   Path to store validation file.
+    #   --help                          Show this message and exit.
+
+
+# runs study validation and creates tsv validation report for errors. 
+mtbls submission validate <MTBLSXXX>
+
+# runs study validation and creates tsv validation report with given filename on current working directory. 
+mtbls submission validate <MTBLSXXX> --validation_file_path errors.tsv
 
 ```
 
