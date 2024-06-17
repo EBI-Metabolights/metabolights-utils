@@ -14,8 +14,8 @@
     <img src="https://img.shields.io/badge/Licence-Apache%20v2.0-blue" alt="Licence">
 </a>
 
-![Python](https://img.shields.io/badge/Python-3.8%7C3.9-dark_blue)
-![Coverage](https://img.shields.io/badge/Coverage-85%25-dark_blue)
+![Python](https://img.shields.io/badge/Python-3.8%7C3.9%7C3.10%7C3.11,%7C3.12-dark_blue)
+![Coverage](https://img.shields.io/badge/Coverage-82%25-dark_blue)
 
 ---
 
@@ -257,11 +257,13 @@ mtbls submission
     #   --help  Show this message and exit.
 
     # Commands:
-    #   describe  View summary of any user submitted study content.
-    #   download  Download submission study metadata files.
-    #   list      List submitted studies and study folder content.
-    #   login     Creates a file path to use connect private FTP server and...
-    #   upload    Uploads local metadata files to private FTP and start sync...
+    #   create-assay  Creates a study assay and maf file.
+    #   describe      View summary of any user submitted study content.
+    #   download      Download submission study metadata files.
+    #   list          List submitted studies and study folder content.
+    #   login         Creates a file path to use connect private FTP server and...
+    #   upload        Uploads local metadata files to private FTP and start...
+    #   validate      Validate submitted study and save validation report on...
 
 
 # saves credentials to connect private FTP and use MetaboLights API

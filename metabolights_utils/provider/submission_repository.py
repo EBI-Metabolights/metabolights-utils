@@ -193,7 +193,7 @@ class MetabolightsSubmissionRepository:
         ftp_server_url: Union[str, None] = None,
         metadata_files: Union[List[str], None] = None,
         override_remote_files: bool = False,
-    ):
+    ) -> Tuple[bool, str]:
         if not local_path:
             local_path = self.local_storage_root_path
         if not credentials_file_path:
@@ -204,8 +204,11 @@ class MetabolightsSubmissionRepository:
         response, errors = self.list_isa_metadata_files(study_id=study_id)
         if not response:
             return False, "Errors while listing metadata files."
-        if not remote_folder_directory and response.upload_path:
-            remote_folder_directory = response.upload_path
+        if not remote_folder_directory:
+            if response.upload_path:
+                remote_folder_directory = response.upload_path
+            else:
+                return False, "Remote folder does not defined."
         modified_time_dict = {}
         new_requested_files = []
         for descriptor in response.study:
@@ -213,7 +216,10 @@ class MetabolightsSubmissionRepository:
             modified = parser.parse(_time).timestamp()
             remote_modified_time = int(modified)
             modified_time_dict[descriptor.file] = remote_modified_time
-        study_path = os.path.join(self.local_storage_root_path, study_id)
+        study_path = os.path.join(local_path, study_id)
+        study_path = os.path.realpath(study_path)
+        if not os.path.exists(study_path):
+            return False, f"Study path does not exist: {study_path}"
         if not metadata_files or override_remote_files:
             files = os.listdir(study_path)
             metadata_files = [x for x in files if is_metadata_filename_pattern(x)]
@@ -274,6 +280,12 @@ class MetabolightsSubmissionRepository:
         retry: int = 20,
         timeout: int = 10,
     ):
+        if not validation_file_path:
+            validation_file_path = os.path.join(
+                self.local_storage_cache_path, study_id, f"{study_id}_validation.tsv"
+            )
+        validation_file_path = os.path.realpath(validation_file_path)
+
         sub_path = f"/studies/{study_id}/validation-task"
 
         api_header, error = self.get_api_token()
@@ -379,6 +391,8 @@ class MetabolightsSubmissionRepository:
             for message in section.details:
                 if message.status.upper() == "ERROR":
                     errors.append(message)
+        dir_name = os.path.dirname(validation_file_path)
+        os.makedirs(dir_name, exist_ok=True)
 
         with open(validation_file_path, "w") as f:
             f.write(
@@ -455,6 +469,9 @@ class MetabolightsSubmissionRepository:
         column_type: str = "",
         timeout: int = 10,
     ):
+        if not study_id or not assay_technique:
+            return None, None, "study_id or assay_technique is not defined."
+
         api_header, error = self.get_api_token()
         headers = {}
         if api_header:
@@ -473,18 +490,20 @@ class MetabolightsSubmissionRepository:
             body["assay"]["columns"].append(
                 {"name": "column type", "value": column_type.lower()}
             )
+        try:
+            response = httpx.post(
+                url=url, timeout=timeout, headers=headers, params={}, json=body
+            )
+            if response and response.status_code in (200, 201):
+                data = json.loads(response.text)
+                if "filename" in data and "maf" in data:
+                    return data["filename"], data["maf"], None
 
-        response = httpx.post(
-            url=url, timeout=timeout, headers=headers, params={}, json=body
-        )
-        if response and response.status_code in (200, 201):
-            data = json.loads(response.text)
-            if "filename" in data and "maf" in data:
-                return data["filename"], data["maf"], None
-
-            return None, None, "Invalid response."
-        else:
-            return None, None, response.status_code if response else None
+                return None, None, "Invalid response."
+            else:
+                return None, None, response.status_code if response else None
+        except Exception as ex:
+            return None, None, str(ex)
 
     def download_submission_metadata_files(
         self,

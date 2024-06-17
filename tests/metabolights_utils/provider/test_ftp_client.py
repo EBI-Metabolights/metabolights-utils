@@ -9,12 +9,15 @@ from pytest_mock import MockerFixture
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.folder_metadata_collector import FolderIndex
-from metabolights_utils.provider.ftp.model import FtpFiles
+from metabolights_utils.provider.ftp.model import FtpFiles, LocalDirectory
 from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
 from metabolights_utils.provider.local_folder_metadata_collector import (
     LocalFolderMetadataCollector,
 )
-from metabolights_utils.provider.utils import is_metadata_file, is_metadata_filename_pattern
+from metabolights_utils.provider.utils import (
+    is_metadata_file,
+    is_metadata_filename_pattern,
+)
 
 valid_metadata_files = [
     "tests/test-data/MTBLS60/a_MTBLS60_dippA_UPLC_MS.txt",
@@ -140,6 +143,7 @@ def test_load_study__local_02(mocker: MockerFixture, study_id: str):
         return_value=mock_provider,
     )
 
+    client.download_study_metadata_files = lambda **argv: LocalDirectory(success=True)
     model, messages = client.load_study_model(
         study_id, use_only_local_path=False, use_study_model_cache=False
     )

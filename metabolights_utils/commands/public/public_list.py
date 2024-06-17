@@ -5,7 +5,7 @@ import click
 
 from metabolights_utils.commands.utils import split_to_lines
 from metabolights_utils.common import sort_by_study_id
-from metabolights_utils.models.parser.enums import ParserMessageType
+from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
 
@@ -60,7 +60,6 @@ def public_list(
 
     subdirectory (optional): Subdirectory of study to list its content. List the study root folder if not specified..
     """
-
     client = MetabolightsFtpRepository(
         ftp_server_url=ftp_server_url,
         remote_repository_root_directory=ftp_root_directory,
@@ -72,14 +71,10 @@ def public_list(
         if study_id:
             study_id = study_id.upper()
             search = os.path.join(client.local_storage_root_path, study_id)
-            if not subdirectory:
-                search = os.path.join(search, subdirectory)
+            if subdirectory:
+                search = os.path.join(search, subdirectory.strip("/"))
         if search == client.local_storage_root_path:
-            studies = [
-                x
-                for x in os.listdir(client.local_storage_root_path)
-                if x.startswith("MTBLS")
-            ]
+            studies = [x for x in os.listdir(search) if x.startswith("MTBLS")]
             studies.sort(key=sort_by_study_id)
             if studies:
                 if len(studies) > 500:
@@ -94,7 +89,8 @@ def public_list(
                 click.echo(f"\t{item}")
         return
 
-    if study_id:
+    if study_id and study_id.strip():
+        study_id = study_id.upper().strip()
         content_response = client.list_study_directory(
             study_id=study_id, subdirectory=subdirectory
         )
@@ -112,12 +108,13 @@ def public_list(
         if messages:
             for message in messages:
                 if message.type in (
-                    ParserMessageType.CRITICAL,
-                    ParserMessageType.ERROR,
+                    GenericMessageType.CRITICAL,
+                    GenericMessageType.ERROR,
                 ):
                     click.echo(f"{message.short}")
                     error = True
         if error:
+
             exit(1)
 
         if len(studies) > 500:

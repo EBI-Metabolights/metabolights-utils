@@ -91,7 +91,7 @@ def public_search(
         body = json.loads(body) if body else {}
     except Exception as ex:
         click.echo(str(ex))
-        return
+        exit(1)
     headers = {}
     url = f"{search_rest_api_url.rstrip('/')}/{sub_path.lstrip('/')}"
     response, error = rest_api_post(
@@ -108,6 +108,7 @@ def public_search(
             print_search_response(study_ids, query, response, click.echo)
     else:
         click.echo(error)
+        exit(1)
 
 
 def print_search_response(
@@ -119,77 +120,68 @@ def print_search_response(
         log(f"Failure of MetaboLights public study search for query: {query}")
         exit(1)
 
-    if "content" in response and response["content"]:
+    if (
+        "content" not in response
+        or not response["content"]
+        or "page" not in response["content"]
+        or "total" not in response["content"]
+        or "pageSize" not in response["content"]
+    ):
+        log(f"Invalid response.")
+        exit(1)
 
-        content = response["content"]
-        if "total" in content:
-            total = content["total"]
-        if "pageSize" in content:
-            page_size = content["pageSize"]
-        if total > 0:
-            if show_only_study_ids:
-                id_list = [
-                    x["studyId"] for x in response["content"]["page"] if "studyId" in x
-                ]
-                log(f"[{', '.join(id_list)}]")
-                return
-            else:
-                log(f"{page_size} of total {total} results")
+    content = response["content"]
+    page = content["page"]
+    total = content["total"]
+    page_size = content["pageSize"]
 
+    if total > 0:
+        if show_only_study_ids:
+            id_list = [x["studyId"] for x in page if "studyId" in x]
+            log(f"[{', '.join(id_list)}]")
+            exit(0)
         else:
-            if show_only_study_ids:
-                log(f"[]")
-                return
+            log(f"{page_size} of total {total} results")
+    else:
+        if show_only_study_ids:
+            log(f"[]")
+        else:
             log(f"No results found.")
-        if "page" in response["content"]:
+        exit(0)
 
-            page = response["content"]["page"]
+    for item in page:
+        if "studyId" in item and "title" in item:
+            log(f"  - {item['studyId']}: {item['title']}")
+        if "contacts" in item:
+            names = [f'{x["firstName"]} {x["lastName"]}' for x in item["contacts"]]
+            log(f"\t* Submitters: {', '.join(names)}")
 
-            for item in page:
-                if "studyId" in item and "title" in item:
-                    log(f"  - {item['studyId']}: {item['title']}")
-                if "contacts" in item:
-                    names = [
-                        f'{x["firstName"]} {x["lastName"]}' for x in item["contacts"]
+        if "description" in item:
+            log(f"\t* Description:")
+            lines = split_to_lines(convert_html_to_plain_text(item["description"]))
+            for line in lines:
+                log(f"\t  {line}")
+        if "assayTechniques" in item:
+            names = [
+                x["name"] for x in item["assayTechniques"] if "name" in x and x["name"]
+            ]
+            log(f"\t* Techniques: {', '.join(names).strip(',').strip().strip(',')}")
+        for terms in [
+            ("designDescriptors", "Design descriptors"),
+            ("factors", "Factors"),
+            ("organisms", "Organisms"),
+            ("organismParts", "Organism parts"),
+        ]:
+            if terms[0] in item:
+                log(f"\t* {terms[1]}:")
+                for descriptor in item[terms[0]]:
+                    parts = [
+                        descriptor["termSourceRef"],
+                        descriptor["term"],
+                        descriptor["termAccessionNumber"],
                     ]
-                    log(f"\t* Submitters: {', '.join(names)}")
 
-                if "description" in item:
-                    log(f"\t* Description:")
-                    lines = split_to_lines(
-                        convert_html_to_plain_text(item["description"])
-                    )
-                    for line in lines:
-                        log(f"\t  {line}")
-                if "assayTechniques" in item:
-                    names = [
-                        x["name"]
-                        for x in item["assayTechniques"]
-                        if "name" in x and x["name"]
-                    ]
-                    log(
-                        f"\t* Techniques: {', '.join(names).strip(',').strip().strip(',')}"
-                    )
-                for terms in [
-                    ("designDescriptors", "Design descriptors"),
-                    ("factors", "Factors"),
-                    ("organisms", "Organisms"),
-                    ("organismParts", "Organism parts"),
-                ]:
-                    if terms[0] in item:
-                        log(f"\t* {terms[1]}:")
-                        for descriptor in item[terms[0]]:
-                            parts = [
-                                descriptor["termSourceRef"],
-                                descriptor["term"],
-                                descriptor["termAccessionNumber"],
-                            ]
-
-                            log(
-                                f"\t  - {', '.join(parts).strip(',').strip().strip(',')}"
-                            )
-
-    log("")
+                    log(f"\t  - {', '.join(parts).strip(',').strip().strip(',')}")
 
 
 if __name__ == "__main__":

@@ -44,6 +44,7 @@ def model_explain(
         print_properties(schema, model_name, title, description, model)
     else:
         click.echo(f"Not valid search object '{search_pattern}'")
+        exit(1)
 
 
 def print_properties(
@@ -80,7 +81,7 @@ def print_properties(
         for property in property_names:
             target = properties[property]
             required_properties = set()
-            if "" in target:
+            if "required" in target:
                 required_properties = {x for x in target["required"]}
 
             property_name = to_snake(property)
@@ -160,7 +161,7 @@ def define_type(schema: Dict[str, Any], desc: Dict[str, Any]):
                         items = schema["$defs"][child_name]
                     if "properties" in items:
                         if "type" in items and items["type"] == "object":
-                            return f"array of {child_name}"
+                            return f"{_type} array of {child_name}"
                         else:
                             child = define_type(schema, items)
                     elif "type" in items:
@@ -183,9 +184,6 @@ def define_type(schema: Dict[str, Any], desc: Dict[str, Any]):
                 if "type" in desc["items"]:
                     child = desc["items"]["type"]
             if child:
-                # if child in schema["$defs"]:
-                #     _type = f"dictionary of {child}"
-                # else:
                 _type = f"array of {child}"
 
     return _type
@@ -239,11 +237,6 @@ def find_property(schema: Dict[str, Any], search_str: str):
 
                 if "description" in definition:
                     current_description = definition["description"]
-                # if current_model and "enum" in current_model:
-                #     enum = f", ".join([str(x) for x in current_model["enum"]])
-                #     enums = "Valid values: " + "\n\t ".join(split_to_lines(enum))
-                #     if current_description:
-                #         current_description += f" {enums}"
 
                 model_name = _type if _type else to_snake(property_name)
                 model_title_terms.append(to_snake(property_name))
@@ -267,4 +260,4 @@ def find_property(schema: Dict[str, Any], search_str: str):
 
 
 if __name__ == "__main__":
-    model_explain()
+    model_explain(["parser_messages"])

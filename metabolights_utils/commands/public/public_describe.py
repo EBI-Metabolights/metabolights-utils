@@ -106,53 +106,46 @@ def public_describe(
         use_study_model_cache=use_study_model_cache,
     )
 
-    error = False if model else True
-    if error:
-        click.echo(f"{study_id} failure: {', '.join([x.short for x in messages])}")
+    if (
+        not model
+        or not model.investigation
+        or not model.investigation.studies
+        or not model.investigation.studies[0]
+    ):
+        click.echo(f"Failure: There are parser error or invalid model.")
         exit(1)
-    if not model.parser_messages:
-        error = False
-    for file, messages in model.parser_messages.items():
-        for message in messages:
-            if message.type in (ParserMessageType.CRITICAL, ParserMessageType.ERROR):
-                click.echo(f"{study_id} {file}: {message.short}")
-                error = True
 
-    if not error:
+    if jsonpath:
+        try:
+            json_data = model.model_dump()
 
-        if model and model.investigation and model.investigation.studies:
-            if jsonpath:
-                try:
-                    json_data = model.model_dump()
-
-                    jsonpath_expr = parse(jsonpath)
-                    match_values = [
-                        match.value for match in jsonpath_expr.find(json_data)
-                    ]
-                    if match_values:
-                        click.echo(
-                            click.style(
-                                f"{study_id}: '{jsonpath}' search result:", fg="green"
-                            )
-                        )
-                        if len(match_values) == 1:
-                            click.echo(match_values[0])
-                        else:
-                            for match_item in match_values:
-                                click.echo(f"{match_item}")
-                    else:
-                        click.echo(
-                            click.style(f"{study_id}: '{jsonpath}' no match", fg="red")
-                        )
-                except Exception as ex:
-                    click.echo(f"jsonpath '{jsonpath}' expression error: {str(ex)}")
+            jsonpath_expr = parse(jsonpath)
+            match_values = [match.value for match in jsonpath_expr.find(json_data)]
+            if match_values:
+                click.echo(
+                    click.style(f"{study_id}: '{jsonpath}' search result:", fg="green")
+                )
+                if len(match_values) == 1:
+                    click.echo(match_values[0])
+                else:
+                    for match_item in match_values:
+                        click.echo(f"{match_item}")
             else:
-                click.echo(click.style("MetaboLights study model summary.", fg="green"))
-                print_study_model_summary(model, log=click.echo)
-        else:
-            click.echo(f"{study_id} is not a valid or public study.")
+                click.echo(click.style(f"{study_id}: '{jsonpath}' no match", fg="red"))
+        except Exception as ex:
+            click.echo(f"jsonpath '{jsonpath}' expression error: {str(ex)}")
+            exit(1)
     else:
-        exit(1)
+        if model.parser_messages:
+            for file, messages in model.parser_messages.items():
+                for message in messages:
+                    if message.type in (
+                        ParserMessageType.CRITICAL,
+                        ParserMessageType.ERROR,
+                    ):
+                        click.echo(f"{study_id} {file}: {message.short}")
+        click.echo(click.style("MetaboLights study model summary.", fg="green"))
+        print_study_model_summary(model, log=click.echo)
 
 
 if __name__ == "__main__":

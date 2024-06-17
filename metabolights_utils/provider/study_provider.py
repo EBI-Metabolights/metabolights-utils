@@ -10,7 +10,11 @@ from metabolights_utils.isatab.default.parser.isa_table_parser import (
     parse_isa_table_sheet_from_fs,
     samples_file_expected_patterns,
 )
-from metabolights_utils.models.common import GenericMessage, GenericMessageType
+from metabolights_utils.models.common import (
+    CriticalMessage,
+    GenericMessage,
+    GenericMessageType,
+)
 from metabolights_utils.models.isa.assay_file import AssayFile
 from metabolights_utils.models.isa.assignment_file import AssignmentFile
 from metabolights_utils.models.isa.common import (
@@ -105,6 +109,13 @@ class MetabolightsStudyProvider(object):
         model.parser_messages[fileName].extend(self.filter_messages(messages))
 
     def set_organisms(self, samples_file: SamplesFile, isa_table: SamplesFile):
+        if (
+            not samples_file
+            or not samples_file.table
+            or samples_file.table.total_row_count < 1
+            or samples_file.table.total_column_count < 1
+        ):
+            return
         pairs = set()
         columns = isa_table.table.columns
         data = isa_table.table.data
@@ -690,6 +701,16 @@ class MetabolightsStudyProvider(object):
         calculate_data_folder_size: bool = False,
         calculate_metadata_size: bool = False,
     ) -> MetabolightsStudyModel:
+        if not study_id or not study_path:
+            raise ValueError("invalid study_id or study_path")
+        real_path = os.path.realpath(study_path)
+        if not os.path.exists(real_path):
+            model = MetabolightsStudyModel()
+            message = CriticalMessage(
+                short=f"Study folder does not exist for {study_id}"
+            )
+            model.folder_reader_messages.append(message)
+            return model
 
         model = self.get_phase1_input_data(study_id, study_path, connection)
         if load_sample_file and not load_assay_files and not load_folder_metadata:

@@ -57,7 +57,7 @@ def public_download(
 
     study_id: MetaboLights study accession number (MTBLSxxxx).
 
-    file (optional): Relative file path in study folder. All ISA metadata files will be donloaded if not specified.
+    file (optional): Relative file path in study folder. All ISA metadata files will be downloaded if not specified.
     """
     study_id = study_id.upper()
     client = MetabolightsFtpRepository(
@@ -67,9 +67,10 @@ def public_download(
         local_storage_cache_path=local_cache_path,
     )
     is_metadata_file = is_metadata_filename_pattern(file)
+    local_path = client.local_storage_root_path
     if not file or is_metadata_file:
-        metadata_files = [file] if is_metadata_file else None
-        result = client.download_study_metadata_files(
+        metadata_files = [file] if file else None
+        result: LocalDirectory = client.download_study_metadata_files(
             study_id=study_id,
             local_path=local_path,
             metadata_files=metadata_files,

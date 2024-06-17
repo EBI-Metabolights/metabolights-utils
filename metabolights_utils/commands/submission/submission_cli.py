@@ -32,6 +32,8 @@ submission_cli.add_command(submission_login)
 submission_cli.add_command(submission_upload)
 submission_cli.add_command(submission_validate)
 submission_cli.add_command(submission_create_assay)
+
+
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         submission_cli(["--help"])

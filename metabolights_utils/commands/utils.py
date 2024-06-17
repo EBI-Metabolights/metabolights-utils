@@ -6,14 +6,20 @@ from bs4 import BeautifulSoup
 
 from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.models.isa.common import IsaTable
+from metabolights_utils.models.isa.investigation_file import Study
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 from metabolights_utils.models.parser.enums import ParserMessageType
 
 
 def sub_arrays(arr: List[str], k: int):
+    if k <= 0:
+        raise ValueError("k must be greater than 0")
+
+    array_list = []
+    if not arr:
+        return array_list
     arr.sort()
     count = 0
-    array_list = []
     current_list = None
     for item in arr:
         if count % k == 0:
@@ -22,74 +28,56 @@ def sub_arrays(arr: List[str], k: int):
         current_list.append(item)
         count += 1
     return array_list
-    # return set(chain.from_iterable(combinations(arr, r) for r in range(k + 1)))
-
-
-def start_section(message: str, length: int = 120):
-    print("\n")
-    print("-" * length)
-    if message:
-        print(message)
-
-
-def print_list(files: List[str], remove_prefix: str):
-    files.sort(key=lambda x: sort_filename(x, remove_prefix=remove_prefix))
-    for file in files:
-        print(f"\t{file}")
-
-
-def sort_filename(filename: str, remove_prefix: str = None):
-    name = filename
-    if remove_prefix:
-        name = filename.removeprefix(remove_prefix).strip("/")
-
-    name = filename.removeprefix(remove_prefix).strip("/")
-    if name.startswith("FILES/"):
-        return f"_{name}"
-    return name
 
 
 def find_column_names(isa_table: IsaTable, pattern: str):
     column_names = []
-    for column in isa_table.columns:
-        if re.match(pattern, column):
-            column_names.append(column)
+    if not isa_table or not isa_table.columns:
+        return column_names
+    if not pattern or not pattern.strip():
+        return isa_table.columns
+    column_names = [x for x in isa_table.columns if re.match(pattern, x)]
     return column_names
 
 
 def get_unique_values(values: List[str]) -> List[str]:
     if not values:
         return []
-    value_set = set([x.strip() for x in values if x.strip()])
+    value_set = set([x.strip() for x in values if x and x.strip()])
     unique_values = list(value_set)
     unique_values.sort()
     return unique_values
 
 
 def convert_html_to_plain_text(text: str):
+    if not text:
+        return ""
     f = io.BytesIO(bytes(text, encoding="utf-8"))
     soup = BeautifulSoup(f, "html.parser")
     return soup.text
 
 
-def split_to_lines(text: str, max_line_size=120, sep=None, join_term=" "):
+def split_to_lines(text: str, max_line_size=120, sep=None, join_term=None):
+    if not text or not text.strip():
+        return []
+
+    join_term = join_term if join_term else " "
     join_term_len = len(join_term)
-    if sep:
-        words = text.split(sep)
-    else:
-        words = text.split()
+    words = text.split(sep) if sep else text.split()
+
     count = 0
     array_list = []
     current_list = []
     for word in words:
+        word = " ".join(word.split())
         if count + len(word) + join_term_len > max_line_size:
-            array_list.append(" ".join(current_list))
+            array_list.append(join_term.join(current_list))
             current_list = []
             count = 0
-        current_list.append(word)
+        current_list.append(word.strip())
         count += len(word) + join_term_len if count > 0 else len(word)
     if current_list:
-        array_list.append(join_term.join(current_list))
+        array_list.append(join_term.join(current_list).strip())
     return array_list
 
 
@@ -100,7 +88,17 @@ assay_column_search_patterns = [
 
 
 def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = print):
-    study = model.investigation.studies[0]
+    if (
+        not model
+        or not log
+        or not model.investigation
+        or not model.investigation_file_path
+        or not model.investigation.studies
+        or not model.investigation.studies[0]
+    ):
+        return
+
+    study: Study = model.investigation.studies[0]
     study_id = study.identifier
     log(f"{study.identifier}: {study.title}")
     public_date = study.public_release_date
@@ -126,14 +124,10 @@ def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = pri
         log(f"\t- {protocol.name}")
         for line in lines:
             log(f"\t\t{line}")
-    # protocol_format = "\n".join(
-    #     [f"\t- {x.name}\n\t\t{convert_html_to_plain_text(x.description)}" for x in protocols]
-    # )
-    # log(f"Protocols:\n{protocol_format}")
 
     if model.assays:
         log("\nAssays:")
-    for assay_filename, assay in model.assays.items():
+    for _, assay in model.assays.items():
         report: List[str] = []
         report.append(f"- {assay.file_path}")
         report.append(
@@ -153,7 +147,7 @@ def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = pri
 
     if model.metabolite_assignments:
         log("\nMetabolite Assignment Files (MAF):")
-    for maf_filename, maf in model.metabolite_assignments.items():
+    for _, maf in model.metabolite_assignments.items():
         report: List[str] = []
         report.append(f"- {maf.file_path}")
         report.append(f"Row count: {maf.number_of_rows}")

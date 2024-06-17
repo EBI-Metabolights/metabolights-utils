@@ -1,0 +1,12 @@
+{
+    "new_task": true,
+    "message": "New task is started.",
+    "task": {
+        "task_id": "b6b7b22d-e050-4255-a693-ac3d2cdc82a4",
+        "last_update_time": 1718637823.0,
+        "last_update_timestamp": "",
+        "last_status": "INITIATED",
+        "task_done_time": 0.0,
+        "task_done_time_str": ""
+    }
+}

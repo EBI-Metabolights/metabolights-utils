@@ -93,7 +93,8 @@ def submission_login(
             os.makedirs(parent_directory, exist_ok=True)
             json_data = initial.model_dump_json(indent=4)
             with open(credentials_file_path, "w") as f:
-                json.dump(json_data, f, indent=4)
+                f.write(json_data)
+        exit(1)
 
 
 if __name__ == "__main__":

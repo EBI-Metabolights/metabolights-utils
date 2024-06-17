@@ -42,7 +42,7 @@ def public_remove(
                 shutil.rmtree(folder)
                 deleted = True
         if deleted:
-            click.echo(f"Study  {study_id} folders are deleted.")
+            click.echo(f"Study {study_id} folders are deleted.")
         else:
             click.echo(f"There is no folder for study {study_id}.")
     except Exception as ex:
