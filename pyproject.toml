@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "1.0.0"
+version = "2.0.0"
 description = "MetaboLights command line interface (CLI), common data models, utility methods and classes."
 authors = ["MetaboLights Team <metabolights-dev@ebi.ac.uk>"]
 readme = "README.md"
