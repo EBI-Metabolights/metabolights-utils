@@ -12,7 +12,6 @@ from metabolights_utils.commands.public.public_search import public_search
 @click.group(name="public")
 def public_cli():
     """Commands to use MetaboLights public study data and ISA metadata files."""
-    pass
 
 
 public_cli.add_command(public_list)

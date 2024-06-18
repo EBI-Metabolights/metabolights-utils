@@ -1,4 +1,4 @@
-from typing import Annotated, Callable, Dict, List, Union
+from typing import Dict, List, Union
 
 from metabolights_utils.common import CamelCaseModel
 

@@ -1,7 +1,9 @@
+import datetime
 import json
 import os
 import random
 import shutil
+from typing import Any, Dict, Generator, Tuple
 from unittest.mock import MagicMock
 
 import pytest
@@ -11,8 +13,8 @@ from pytest_mock import MockerFixture
 from metabolights_utils.commands.submission.model import (
     ResponseFileDescriptor,
     StudyResponse,
+    SubmittedStudiesResponse,
 )
-from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 from metabolights_utils.provider.ftp.model import LocalDirectory
 from metabolights_utils.provider.submission_repository import (
     MetabolightsSubmissionRepository,
@@ -133,7 +135,9 @@ def test_create_assay_01(mocker: MockerFixture):
 
 
 @pytest.fixture
-def submission_repository():
+def submission_repository() -> (
+    Generator[Tuple[MetabolightsSubmissionRepository, Dict[str, Any]], None, None]
+):
     credentials_file_path = (
         f"/tmp/mtbls_unit_test_load_study_{random.randint(1000000, 9999999)}_tmp"
     )
@@ -427,7 +431,6 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
     Test validation without error
     """
 
-    # mock_ftp = MagicMock()
     mocker.patch(
         "metabolights_utils.provider.submission_repository.time.sleep",
         return_value=None,
@@ -442,7 +445,7 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
         return_value=HttpxResponse(
             status_code=201,
             text=open(
-                "tests/test-data/rest-api-test-data/validation_started_response.json"
+                "tests/test-data/rest-api-test-data/validation_task_started_response.json"
             ).read(),
         ),
     )
@@ -452,7 +455,7 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
             HttpxResponse(
                 status_code=200,
                 text=open(
-                    "tests/test-data/rest-api-test-data/validation_success_response.json"
+                    "tests/test-data/rest-api-test-data/validation_task_success_response.json"
                 ).read(),
             ),
             HttpxResponse(
@@ -463,11 +466,9 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
             ),
         ],
     )
-    # mock_ftp.upload_files.return_value = "Ok"
 
     repository, credentials = submission_repository
 
-    # repository.list_isa_metadata_files = list_response
     validation_file_path = (
         f"/tmp/mtbls_unit_test_validation_{random.randint(1000000, 9999999)}_tmp.json"
     )
@@ -480,3 +481,207 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
     finally:
         if os.path.exists(validation_file_path):
             os.remove(validation_file_path)
+
+
+@pytest.mark.parametrize("study_id", ["MTBLS1"])
+def test_private_ftp_sync_01(mocker: MockerFixture, submission_repository, study_id):
+    """
+    Test private ftp sync (without error)
+    """
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.time.sleep",
+        return_value=None,
+    )
+
+    class HttpxResponse(BaseModel):
+        text: str = ""
+        status_code: int = -1
+
+    get_response = HttpxResponse(
+        status_code=201,
+        text=open(
+            "tests/test-data/rest-api-test-data/ftp_sync_task_started_response.json"
+        ).read(),
+    )
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.httpx.post",
+        return_value=get_response,
+    )
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.httpx.get",
+        return_value=HttpxResponse(
+            status_code=200,
+            text=open(
+                "tests/test-data/rest-api-test-data/ftp_sync_task_success_response.json"
+            ).read(),
+        ),
+    )
+    repository, credentials = submission_repository
+
+    success, message = repository.sync_private_ftp_metadata_files(study_id=study_id)
+    assert success
+
+    get_response.status_code = 400
+    get_response.text = None
+
+    success, message = repository.sync_private_ftp_metadata_files(study_id=study_id)
+    assert not success
+
+
+@pytest.mark.parametrize("study_id", ["MTBLS1"])
+def test_download_submission_metadata_files_01(
+    mocker: MockerFixture, submission_repository, study_id
+):
+    """
+    Test private ftp sync (without error)
+    """
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.download_file_from_rest_api",
+        return_value=True,
+    )
+
+    repository, credentials = submission_repository
+
+    def list_isa_metadata_files(*arg, **argv):
+        response = StudyResponse()
+        response.study.append(
+            ResponseFileDescriptor(
+                file="i_Investigation.txt", created_at="2024-01-12 14:00:03"
+            )
+        )
+        return response, None
+
+    repository.list_isa_metadata_files = list_isa_metadata_files
+
+    response = repository.download_submission_metadata_files(study_id=study_id)
+    assert response
+    assert response.success
+
+    response = repository.download_submission_metadata_files(study_id="")
+    assert response
+    assert not response.success
+
+
+@pytest.mark.parametrize("study_id", ["MTBLS1"])
+def test_download_submission_metadata_files_02(
+    mocker: MockerFixture, submission_repository, study_id
+):
+    """
+    Test private ftp sync (without error)
+    """
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.download_file_from_rest_api",
+        return_value=True,
+    )
+
+    repository, credentials = submission_repository
+
+    def list_isa_metadata_files(*arg, **argv):
+        response = StudyResponse()
+        response.study.append(
+            ResponseFileDescriptor(
+                file="i_Investigation.txt", created_at="2022-01-12 14:00:03"
+            )
+        )
+        return response, None
+
+    study_path = os.path.join(repository.local_storage_root_path, study_id)
+    os.makedirs(study_path, exist_ok=True)
+    for file in list_isa_metadata_files()[0].study:
+        file_path = os.path.join(study_path, file.file)
+        with open(file_path, "w") as fw:
+            fw.write("test\n")
+        modified = datetime.datetime.strptime(
+            file.created_at,
+            "%Y-%m-%d %H:%M:%S",
+        ).timestamp()
+
+        os.utime(study_path, (modified, modified))
+
+    repository.list_isa_metadata_files = list_isa_metadata_files
+
+    response = repository.download_submission_metadata_files(study_id=study_id)
+    assert response
+    assert response.success
+
+
+def test_list_studies_01(mocker: MockerFixture, submission_repository):
+    """
+    Test list studies
+    """
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.time.sleep",
+        return_value=None,
+    )
+
+    response = SubmittedStudiesResponse()
+
+    class HttpxResponse(BaseModel):
+        text: str = ""
+        status_code: int = -1
+
+    get_response = HttpxResponse(status_code=200, text=response.model_dump_json())
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.httpx.get",
+        return_value=get_response,
+    )
+
+    repository, credentials = submission_repository
+
+    success, message = repository.list_studies()
+    assert success
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.httpx.get",
+        return_value=HttpxResponse(status_code=400, text=response.model_dump_json()),
+    )
+    success, message = repository.list_studies()
+    assert not success
+
+
+@pytest.mark.parametrize("study_id", ["MTBLS1"])
+def test_list_study_directory_01(
+    mocker: MockerFixture, submission_repository, study_id: str
+):
+    """
+    Test list studies
+    """
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.time.sleep",
+        return_value=None,
+    )
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.rest_api_get",
+        return_value=(
+            StudyResponse().model_dump(),
+            "",
+        ),
+    )
+
+    repository, credentials = submission_repository
+
+    success, message = repository.list_study_directory(
+        study_id=study_id, subdirectory="FILES"
+    )
+    assert success
+
+    mocker.patch(
+        "metabolights_utils.provider.submission_repository.rest_api_get",
+        return_value=(
+            None,
+            "Error",
+        ),
+    )
+    success, message = repository.list_study_directory(
+        study_id=study_id, subdirectory="FILES"
+    )
+    assert not success
+    assert message

@@ -14,9 +14,6 @@ from metabolights_utils.models.metabolights.model import (
     UserRole,
     UserStatus,
 )
-from metabolights_utils.provider.local_folder_metadata_collector import (
-    LocalFolderMetadataCollector,
-)
 from metabolights_utils.provider.study_provider import (
     AbstractDbMetadataCollector,
     AbstractFolderMetadataCollector,

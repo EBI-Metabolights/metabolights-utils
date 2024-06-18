@@ -2,12 +2,6 @@ import os
 
 import pytest
 
-from metabolights_utils.provider.ftp.folder_metadata_collector import (
-    FtpFolderMetadataCollector,
-)
-from metabolights_utils.provider.local_folder_metadata_collector import (
-    LocalFolderMetadataCollector,
-)
 
 valid_study_ids = [
     "MTBLS1",

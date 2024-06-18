@@ -1,7 +1,6 @@
 import os
 import pathlib
 import uuid
-from unittest.mock import patch
 
 from pytest_mock import MockFixture
 

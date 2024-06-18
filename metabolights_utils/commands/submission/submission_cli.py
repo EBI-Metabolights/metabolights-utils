@@ -22,7 +22,6 @@ from metabolights_utils.commands.submission.submission_validate import (
 @click.group(name="submission")
 def submission_cli():
     """Commands to use MetaboLights study submission REST API."""
-    pass
 
 
 submission_cli.add_command(submission_list)

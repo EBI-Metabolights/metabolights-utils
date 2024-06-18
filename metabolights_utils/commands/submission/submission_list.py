@@ -1,9 +1,6 @@
-import json
-import os
 from typing import Union
 
 import click
-import httpx
 
 from metabolights_utils.commands.submission.model import (
     StudyResponse,

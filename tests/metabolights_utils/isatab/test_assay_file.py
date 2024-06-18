@@ -19,7 +19,6 @@ from metabolights_utils.tsv.sort import (
     TsvFileSortOption,
     TsvFileSortValueOrder,
 )
-from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 
 def test_assay_metadata_file_success_01():

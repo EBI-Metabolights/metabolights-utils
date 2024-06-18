@@ -1,16 +1,13 @@
-import datetime
 import json
 import os
 import time
-from typing import List, Set, Tuple, Union
+from typing import List, Tuple, Union
 
 import httpx
 from dateutil import parser
-from pydantic import BaseModel
 
 from metabolights_utils.commands.submission.model import (
     FtpLoginCredentials,
-    LoginCredentials,
     RestApiCredentials,
     StudyResponse,
     SubmittedStudiesResponse,
@@ -19,7 +16,6 @@ from metabolights_utils.commands.submission.utils import (
     get_submission_private_ftp_credentials,
     get_submission_rest_api_credentials,
 )
-from metabolights_utils.common import sort_by_study_id
 from metabolights_utils.models.common import ErrorMessage, GenericMessage, InfoMessage
 from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.models.metabolights.model import (
@@ -440,6 +436,8 @@ class MetabolightsSubmissionRepository:
             data = json.loads(response.text)
             if "task_id" in data:
                 task_id = data["task_id"]
+            # elif "task" in data and "task_id" in data["task"]:
+            #     task_id = data["task"]["task_id"]
 
             if task_id:
                 for i in range(retry + 1):
@@ -459,7 +457,7 @@ class MetabolightsSubmissionRepository:
                             elif "FAIL" in status:
                                 return False, status
         else:
-            return False, response.status_code if response else None
+            return False, response.text if response else None
 
     def create_assay(
         self,
@@ -539,7 +537,9 @@ class MetabolightsSubmissionRepository:
                 listed_files = set(file_names)
                 requested_files = file_names
             else:
-                return None, error
+                return LocalDirectory(
+                    code=404, message=f"There is no data to download."
+                )
 
         if requested_files != metadata_files:
             filtered_files = [
@@ -586,10 +586,14 @@ class MetabolightsSubmissionRepository:
                 new_file_path = os.path.join(local_path, study_id, filename)
                 current_file = filename
                 url = self.rest_api_base_url.strip("/") + "/" + sub_path.strip("/")
-                _time = descriptors[filename].created_at
-                modified = parser.parse(_time).timestamp()
-                remote_modified_time = int(modified)
-                download_file_from_rest_api(
+                try:
+                    _time = descriptors[filename].created_at
+                    modified = parser.parse(_time).timestamp()
+                    remote_modified_time = int(modified)
+                except:
+                    remote_modified_time = None
+
+                success = download_file_from_rest_api(
                     url,
                     new_file_path,
                     timeout=60,
@@ -598,7 +602,8 @@ class MetabolightsSubmissionRepository:
                     modification_time=remote_modified_time,
                     is_zip_response=True,
                 )
-
+                if not success:
+                    response.actions[filename] = "FAILED"
             if delete_unlisted_metadata_files:
                 for filename in os.listdir(local_path):
                     if filename not in listed_files:
@@ -659,7 +664,7 @@ class MetabolightsSubmissionRepository:
 
             return studies_data, None
         else:
-            return studies_data, response.status_code if response else None
+            return None, response.status_code if response else None
 
     def get_api_token(self):
         result = None
@@ -715,7 +720,7 @@ class MetabolightsSubmissionRepository:
         }
         paths = [study_id.strip("/")]
         if subdirectory:
-            parameters["directory"] = subdirectory.lstrip("/")
+            parameters["directory"] = subdirectory.strip("/")
             paths.append(subdirectory.strip("/"))
         url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
         data, error = rest_api_get(

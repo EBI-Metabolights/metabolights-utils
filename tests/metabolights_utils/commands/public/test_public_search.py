@@ -1,14 +1,10 @@
 import json
-import os
-from unittest.mock import MagicMock
 
 import pytest
 from click.testing import CliRunner
-from pytest_mock import MockerFixture, mocker
+from pytest_mock import MockerFixture
 
-from metabolights_utils.commands.public.public_describe import public_describe
 from metabolights_utils.commands.public.public_search import public_search
-from metabolights_utils.provider.study_provider import MetabolightsStudyProvider
 
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])

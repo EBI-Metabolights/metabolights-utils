@@ -57,7 +57,6 @@ class AbstractDbMetadataCollector(ABC):
             StudyDBMetadata: study metadata object that contains all the study db metadata fields.
             messages: List[GenericMessage]: list of messages to be populated with any errors or warnings.
         """
-        pass
 
 
 class AbstractFolderMetadataCollector(ABC):
@@ -85,7 +84,6 @@ class AbstractFolderMetadataCollector(ABC):
                 .d, .raw and .m folders are included but not their content. If there is an error, None is returned.
             messages: List[GenericMessage]: list of messages to be populated with any errors or warnings.
         """
-        pass
 
 
 class MetabolightsStudyProvider(object):

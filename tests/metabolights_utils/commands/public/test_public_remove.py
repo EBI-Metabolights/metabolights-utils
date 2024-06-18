@@ -1,16 +1,12 @@
 import os
 import random
 import shutil
-from unittest import mock
-from unittest.mock import MagicMock
 
 import pytest
 from click.testing import CliRunner
-from pytest_mock import MockerFixture, mocker
+from pytest_mock import MockerFixture
 
 from metabolights_utils.commands.public.public_remove import public_remove
-from metabolights_utils.models.common import ErrorMessage
-from metabolights_utils.provider.study_provider import MetabolightsStudyProvider
 
 
 @pytest.mark.parametrize("study_id", ["MTBLS1"])

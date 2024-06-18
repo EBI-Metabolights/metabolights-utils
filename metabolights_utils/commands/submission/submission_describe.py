@@ -1,14 +1,10 @@
-from typing import Dict, List, Union
+from typing import Union
 
 import click
 from jsonpath_ng import parse
 
 from metabolights_utils.commands.utils import print_study_model_summary
-from metabolights_utils.models.enums import GenericMessageType
-from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
-from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
 from metabolights_utils.provider.submission_repository import (
     MetabolightsSubmissionRepository,
 )

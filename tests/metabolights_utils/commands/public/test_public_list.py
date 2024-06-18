@@ -4,13 +4,10 @@ from unittest.mock import MagicMock
 
 import pytest
 from click.testing import CliRunner
-from pytest_mock import MockerFixture, mocker
+from pytest_mock import MockerFixture
 
-from metabolights_utils.commands.public.public_describe import public_describe
-from metabolights_utils.commands.public.public_download import public_download
 from metabolights_utils.commands.public.public_list import public_list
 from metabolights_utils.models.common import ErrorMessage
-from metabolights_utils.provider.study_provider import MetabolightsStudyProvider
 
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])

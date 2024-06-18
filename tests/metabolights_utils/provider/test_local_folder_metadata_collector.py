@@ -1,20 +1,7 @@
 import os
-from typing import List, Tuple, Union
-from unittest import mock
 
 import pytest
 
-from metabolights_utils.models.common import GenericMessage
-from metabolights_utils.models.metabolights.model import (
-    CurationRequest,
-    MetabolightsStudyModel,
-    StudyDBMetadata,
-    StudyFolderMetadata,
-    StudyStatus,
-    Submitter,
-    UserRole,
-    UserStatus,
-)
 from metabolights_utils.provider.local_folder_metadata_collector import (
     LocalFolderMetadataCollector,
 )

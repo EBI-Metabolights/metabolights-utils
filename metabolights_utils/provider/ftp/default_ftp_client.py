@@ -1,7 +1,7 @@
 import os
 import re
 import shutil
-from ftplib import FTP, error_perm
+from ftplib import FTP
 from typing import List, Set, Union
 
 from metabolights_utils.provider.ftp.model import FtpFolderContent, LocalDirectory
