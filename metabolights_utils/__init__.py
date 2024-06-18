@@ -158,6 +158,8 @@ from metabolights_utils.utils.hash_utils import (
 )
 from metabolights_utils.utils.search_utils import MetabolightsSearchUtils
 
+__VERSION__ = "0.0.0"
+
 __all__ = [
     "Assay",
     "BaseSection",
