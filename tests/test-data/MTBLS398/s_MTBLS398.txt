@@ -1,0 +1,6 @@
+Source Name	Characteristics[Organism]	Term Source REF	Term Accession Number	Characteristics[Organism part]	Term Source REF	Term Accession Number	Characteristics[Variant]	Term Source REF	Term Accession Number	Characteristics[Sample type]	Term Source REF	Term Accession Number	Protocol REF	Sample Name
+Standard mix3_1	reference compound	BAO	http://www.bioassayontology.org/bao#BAO_0002092	mixture	CHEBI	http://purl.obolibrary.org/obo/CHEBI_60004							Sample collection	Standard mix3_1
+Standard mix3_2	reference compound	BAO	http://www.bioassayontology.org/bao#BAO_0002092	mixture	CHEBI	http://purl.obolibrary.org/obo/CHEBI_60004							Sample collection	Standard mix3_2
+Standard mix3_3	reference compound	BAO	http://www.bioassayontology.org/bao#BAO_0002092	mixture	CHEBI	http://purl.obolibrary.org/obo/CHEBI_60004							Sample collection	Standard mix3_3
+Standard mix3_4	reference compound	BAO	http://www.bioassayontology.org/bao#BAO_0002092	mixture	CHEBI	http://purl.obolibrary.org/obo/CHEBI_60004							Sample collection	Standard mix3_4
+Standard mix3_5	reference compound	BAO	http://www.bioassayontology.org/bao#BAO_0002092	mixture	CHEBI	http://purl.obolibrary.org/obo/CHEBI_60004							Sample collection	Standard mix3_5

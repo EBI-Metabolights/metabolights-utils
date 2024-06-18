@@ -1,0 +1,93 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	CLO	SNOMEDCT	NCIT	NCBITAXON	CHMO	OBI	MS	GLYCO	BTO
+Term Source File	http://data.bioontology.org/ontologies/CLO	http://data.bioontology.org/ontologies/SNOMEDCT	http://data.bioontology.org/ontologies/NCIT	http://data.bioontology.org/ontologies/NCBITAXON	http://data.bioontology.org/ontologies/CHMO	http://data.bioontology.org/ontologies/OBI	http://data.bioontology.org/ontologies/MS	http://data.bioontology.org/ontologies/GLYCO	http://data.bioontology.org/ontologies/BTO
+Term Source Version	43	10	40	4	16	22	86	1	29
+Term Source Description	Cell Line Ontology	Systematized Nomenclature of Medicine - Clinical Terms	National Cancer Institute Thesaurus	National Center for Biotechnology Information (NCBI) Organismal Classification	Chemical Methods Ontology	Ontology for Biomedical Investigations	Mass Spectrometry Ontology	Glycomics Ontology	BRENDA Tissue and Enzyme Source Ontology
+INVESTIGATION
+Investigation Identifier	MTBLS227
+Investigation Title	Investigation
+Investigation Description	
+Investigation Submission Date	2015-09-15
+Investigation Public Release Date	2017-02-03
+Comment[Created With Configuration]	
+Comment[Last Opened With Configuration]	
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS227
+Study Title	N-glycosylation Profiling of Colorectal Cancer Cell Lines Reveals Association of Fucosylation with Differentiation and Caudal Type Homebox 1 (CDX1)/Villin mRNA Expression
+Study Description	Various cancers such as colorectal cancer (CRC) are associated with alterations in protein glycosylation. CRC cell lines are frequently used to study these (glyco)biological changes and their mechanisms. However, differences between CRC cell lines with regard to their glycosylation have hitherto been largely neglected. Here, we comprehensively characterized the N-glycan profiles of 25 different CRC cell lines, derived from primary tumors and metastatic sites, in order to investigate their potential as glycobiological tumor model systems and to reveal glycans associated with cell line phenotypes. We applied an optimized, high-throughput membrane-based enzymatic glycan release for small sample amounts. Released glycans were derivatized to stabilize and differentiate between a2,3- and a2,6-linked N-acetylneuraminic acids, followed by N-glycosylation analysis by MALDI-TOF(/TOF)-MS. Our results showed pronounced differences between the N-glycosylation patterns of CRC cell lines. CRC cell line profiles differed from tissue-derived N-glycan profiles with regard to their high-mannose N-glycan content but showed a large overlap for complex type N-glycans, supporting their use as a glycobiological cancer model system. Importantly, we could show that the high-mannose N-glycans did not only occur as intracellular precursors but were also present at the cell surface. The obtained CRC cell line N-glycan features were not clearly correlated with mRNA expression levels of glycosyltransferases, demonstrating the usefulness of performing the structural analysis of glycans. Finally, correlation of CRC cell line glycosylation features with cancer cell markers and phenotypes revealed an association between highly fucosylated glycans and CDX1 and/or villin mRNA expression that both correlate with cell differentiation. Together, our findings provide new insights into CRC-associated glycan changes and setting the basis for more in-depth experiments on glycan function and regulation.
+Study Submission Date	2015-09-15
+Study Public Release Date	2017-02-03
+Study File Name	s_MTBLS227.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	glycan	colorectal cancer cell line	nanoflow high-performance liquid chromatography	matrix-assisted laser desorption-ionisation mass spectrometry	untargeted metabolites
+Study Design Type Term Accession Number	http://glycomics.ccrc.uga.edu/ontologies/GlycO#glycan	http://purl.obolibrary.org/obo/BTO_0001616	http://purl.obolibrary.org/obo/CHMO_0001279	http://purl.obolibrary.org/obo/CHMO_0000519	
+Study Design Type Term Source REF	GLYCO	BTO	CHMO	CHMO	
+STUDY PUBLICATIONS
+Study PubMed ID	26537799
+Study Publication DOI	10.1074/mcp.m115.051235
+Study Publication Author List	Holst S, Deuss AJ, van Pelt GW, van Vliet SJ, Garcia-Vallejo JJ, Koeleman CA, Deelder AM, Mesker WE, Tollenaar RA, Rombouts Y, Wuhrer M.
+Study Publication Title	N-glycosylation Profiling of Colorectal Cancer Cell Lines Reveals Association of Fucosylation with Differentiation and Caudal Type Homebox 1 (CDX1)/Villin mRNA Expression.
+Study Publication Status	Published
+Study Publication Status Term Accession Number	
+Study Publication Status Term Source REF	
+STUDY FACTORS
+Study Factor Name	Sample group	Tumour site	Stage	CDX1/Villin	Biol. Replicate	Tech. replicate
+Study Factor Type	Group	Tumor site	disease stage	CDX1/Villin	biological replicate	technical replicate
+Study Factor Type Term Accession Number	http://purl.obolibrary.org/obo/NCIT_C43359	http://purl.bioontology.org/ontology/SNOMEDCT/371480007	http://purl.obolibrary.org/obo/OBI_0000278		http://purl.obolibrary.org/obo/MS_1001809	http://purl.obolibrary.org/obo/MS_1001808
+Study Factor Type Term Source REF	NCIT	SNOMEDCT	OBI		MS	MS
+STUDY ASSAYS
+Study Assay File Name	a_MTBLS227_assay_A_Profiling.txt	a_MTBLS227_assay_B_LIFT.txt	a_MTBLS227_assay_C_LC-MSMS.txt
+Study Assay Measurement Type	metabolite profiling	metabolite profiling	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI	OBI	OBI
+Study Assay Technology Type	mass spectrometry	mass spectrometry	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI	OBI	OBI
+Study Assay Technology Platform	Matrix-assisted laser desorption-ionisation imaging MS - 	Matrix-assisted laser desorption-ionisation imaging MS - 	Liquid Chromatography MS - positive - reverse phase
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type Term Accession Number						
+Study Protocol Type Term Source REF						
+Study Protocol Description	<p>Colorectal cancer cell lines were cultured T75 culture flasks in RPMI medium with L-glutamine (LUMC) or DMEM medium (VUmc), supplemented with antibiotics and 10% FCS. Cells were harvested and aliquoted to 2 x 10^6 cells, washed with PBS and stored at -20 °C until further use.</p>	<p>N-glycans were released with PNGase F from 250 000 cells in quadruplates using a 96-well PVDF-membrane based protocol<strong>[1]</strong>. Released N-glycans were: i) derivatized by ethyl esterification<strong>[2]</strong>, purified using cotton-HILIC micro-SPE<strong>[3]</strong> and measured by MALDI-TOF-MS (assay A) and MS/MS for structural elucidation (LIFT; assay B); ii) labeled with 2-AA<strong>[4]</strong>, purified by cotton-HILIC micro-SPE, and analysed by nano-RP-LC-ESI-ion trap-MS/MS for glycan fragmentation analysis (assay C).</p><p><br></p><p><strong>Refs:</strong></p><p><strong>[1]</strong> Burnina I, Hoyt E, Lynaugh H, Li H, Gong B. A cost-effective plate-based sample preparation for antibody N-glycan analysis. J Chromatogr A. 2013 Sep 13;1307:201-6. doi:10.1016/j.chroma.2013.07.104. Epub 2013 Aug 2. PMID:23932029.</p><p><strong>[2]</strong> Reiding KR, Blank D, Kuijper DM, Deelder AM, Wuhrer M. High-throughput profiling of protein N-glycosylation by MALDI-TOF-MS employing linkage-specific sialic acid esterification. Anal Chem. 2014 Jun 17;86(12):5784-93. doi:10.1021/ac500335t. Epub 2014 May 28. PMID:24831253.</p><p><strong>[3]</strong> Selman MH, Hemayatkar M, Deelder AM, Wuhrer M. Cotton HILIC SPE microtips for microscale purification and enrichment of glycans and glycopeptides. Anal Chem. 2011 Apr 1;83(7):2492-9. doi:10.1021/ac1027116. Epub 2011 Mar 2. PMID:21366235.</p><p><strong>[4]</strong> Ruhaak LR, Steenvoorden E, Koeleman CA, Deelder AM, Wuhrer M. 2-picoline-borane: a non-toxic reducing agent for oligosaccharide labeling by reductive amination. Proteomics. 2010 Jun;10(12):2330-6. doi:10.1002/pmic.200900804. PMID:20391534.</p>	<p>For assay C, AA-labeled glycans (see ii) in Extraction protocol) were injected into a Ultimate 3000 RSLCnano system (Thermo Scientific, Sunnyvale, CA). Samples were first concentrated onto a trap column (Acclaim PepMap100 C18 column, 100 µm x 2 cm, C18 particle size 5 µm, pore size 100 Å, Thermo Scientific) prior to separation on an Acclaim PepMap RSLC nano-column (75 µm x 15 cm, C18 particle size 2 µm, pore size 100 Å, Thermo Scientific) at a flow rate of 700 nL/min and a multistep linear gradient (t=0-5 min, c(B)=3%; t=35 min, c(B)=27%; t=40-45 min, c(B)=70%; t=46-58 min, c(B)=3% with 0.1% formic acid in water as solvent A, and 95% ACN and 5% water as solvent B).</p>	<p>For assays A and B, derivatized N-glycans (see i) in Extraction protocol) were spotted onto an anchor chip MALDI target plate (Bruker Daltonics) and co-crystallized with superDHB in ACN/mQ (1/1, v/v) containing 1 mM NaOH. MALDI-TOF-MS spectra were acquired using an UltrafleXtreme mass spectrometer in the positive-ion reflector mode, controlled by FlexControl 3.4 software Build 119 (Bruker Daltonics) over a mass window of m/z 1000-5000 with complete random walk settings. The instrument was calibrated using a Bruker peptide calibration kit.  For assay B, tandem mass spectrometry (MALDI-TOF-MS/MS) was performed for structural elucidation via fragmentation in gas-off TOF/TOF mode (LIFT).  For assay C, AA-labeled glycans (see ii) in Extraction protocol) were analysed on a AmazonSpeed ion trap (Bruker Daltonics) with a CaptiveSpray nanoBooster (Bruker Daltonics) for mass spectrometric MS/MS analysis using a captive spray for ionization of samples in the positive ion mode. For the electrospray (1300 V), fused silica capillaries with an internal diameter of 20 µm were used. Solvent evaporation was achieved at 220 °C with an ACN enriched nitrogen nebulizer gas at a pressure of 0.2 bar. Tandem MS was performed automated on the seven highest precursors per MS with ion detection from 100 to 3000 m/z).</p>	MALDI-TOF-MS spectra were exported to xy files using FlexAnalysis(Version 3.3; Bruker Daltonics), LC-ESI-MS/MS spectra were converted to mzXL using ProteoWizard3.0.5622. LIFT spectra are kept as FlexAnalysis files.	Peaklists were analyzed in GlycoWorkbench 2.1 stable build 146 (http://www.eurocarbdb.org/) and glycan compositions annotated using the Glyco-Peakfinder tool (http://www.eurocarbdb.org/ms-tools/). MS/MS data was manually annotated using FlexAnalysis(Version 3.3; Bruker Daltonics) and DataAnalysis 4.2 Build 387 (Bruker Daltonics).
+Study Protocol URI						
+Study Protocol Version						
+Study Protocol Parameters Name		Post Extraction;Derivatization	Chromatography Instrument;Column type 1;Column model 1;Column type 2;Column model 2	Scan polarity;Scan m/z range;Instrument;Mass analyzer;Ion source		
+Study Protocol Parameters Name Term Accession Number		;	;;;;	;;;;		
+Study Protocol Parameters Name Term Source REF		;	;;;;	;;;;		
+Study Protocol Components Name						
+Study Protocol Components Type						
+Study Protocol Components Type Term Accession Number						
+Study Protocol Components Type Term Source REF						
+STUDY CONTACTS
+Study Person Last Name	Holst	Wuhrer
+Study Person First Name	Stephanie	Manfred
+Study Person Mid Initials		
+Study Person Email	s.holst@lumc.nl	m.wuhrer@lumc.nl
+Study Person Phone	-5268741	-5268784
+Study Person Fax		
+Study Person Address	Leiden University Medical Center │ Postbus 9600 │ 2300RC Leiden │ The Netherlands	Leiden University Medical Center │ Postbus 9600 │ 2300RC Leiden │ The Netherlands
+Study Person Affiliation	Center for Proteomics and Metabolomics, Leiden University Medical Center, Leiden, The Netherlands	Center for Proteomics and Metabolomics, Leiden University Medical Center, Leiden, The Netherlands
+Study Person Roles		
+Study Person Roles Term Accession Number		
+Study Person Roles Term Source REF		

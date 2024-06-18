@@ -1,0 +1,93 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	MTBLS	OMIT	CHEBI	MESH	OBI	EFO	NCIT	
+Term Source File	https://www.ebi.ac.uk/metabolights/				http://data.bioontology.org/ontologies/OBI	http://data.bioontology.org/ontologies/EFO		http://purl.obolibrary.org/obo/ncit.owl
+Term Source Version	1.0				29	132		18.10e
+Term Source Description	User defined terms				Ontology for Biomedical Investigations	Experimental Factor Ontology		NCI Thesaurus OBO Edition
+INVESTIGATION
+Investigation Identifier	MTBLS2075
+Investigation Title	Investigation
+Investigation Description	Created using the MetaboLights Online Editor (MOE)
+Investigation Submission Date	2020-09-15
+Investigation Public Release Date	2020-10-30
+Comment[Created With Configuration]	MetaboLightsConfig20150707
+Comment[Last Opened With Configuration]	MetaboLightsConfig20150707
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS2075
+Study Title	Mass spectrometry imaging of phosphatidylcholine metabolism in lungs administered with therapeutic surfactants and isotopic tracers
+Study Description	<p>Mass spectrometry imaging (MSI) visualises molecular distributions throughout tissues but is blind to dynamic metabolic processes. Here, MSI with high mass resolution together with multiple stable isotope labelling provided spatial analyses of phosphatidylcholine (PC) metabolism in mouse lungs. Dysregulated surfactant metabolism is central to many respiratory diseases. Metabolism and turnover of therapeutic pulmonary surfactants were imaged from distributions of intact and metabolic products of an added tracer, universally 13C-labelled dipalmitoyl PC (U[13C]DPPC). The parenchymal distributions of newly synthesised PC species were also imaged from incorporations of methyl-D9-choline. This dual labelling strategy demonstrated both lack of inhibition of endogenous PC synthesis by exogenous surfactant and location of acyl chain remodelling processes acting on the U[13C]DPPC-labelled surfactant, leading to formation of polyunsaturated PC lipids. This ability to visualise discrete metabolic events will greatly enhance our understanding of lipid metabolism in diverse tissues, and has potential application to both clinical and experimental studies.&nbsp;</p>
+Study Submission Date	2020-09-15
+Study Public Release Date	2020-10-30
+Study File Name	s_MTBLS2075.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	isotope labelling	Lipids	imaging mass spectrometry	lung	surfactant	phosphatidylcholine
+Study Design Type Term Accession Number	http://www.ebi.ac.uk/metabolights/ontology/placeholder	http://purl.obolibrary.org/obo/OMIT_0009140	http://www.ebi.ac.uk/metabolights/ontology/MTBLS_000063	http://www.ebi.ac.uk/metabolights/ontology/placeholder	http://purl.obolibrary.org/obo/CHEBI_35195	http://www.ebi.ac.uk/metabolights/ontology/placeholder
+Study Design Type Term Source REF	MTBLS	OMIT	MTBLS	MTBLS	CHEBI	MTBLS
+STUDY PUBLICATIONS
+Study PubMed ID	
+Study Publication DOI	10.1101/2020.10.07.330530
+Study Publication Author List	Shane R. Ellis, Emily Hall, Madhuriben Panchal, Bryn Flinders, Jens Madsen, Grielof Koster, Ron. M. A. Heeren, Howard W. Clark, Anthony D. Postle3
+Study Publication Title	Mass spectrometry imaging of phosphatidylcholine metabolism in lungs administered with therapeutic surfactants and isotopic tracers
+Study Publication Status	Preprint
+Study Publication Status Term Accession Number	http://www.ebi.ac.uk/metabolights/ontology/MTBLS_000004
+Study Publication Status Term Source REF	MTBLS
+STUDY FACTORS
+Study Factor Name	therapeutic surfactant
+Study Factor Type	CHF5633
+Study Factor Type Term Accession Number	http://purl.bioontology.org/ontology/MESH/C000592408
+Study Factor Type Term Source REF	MESH
+STUDY ASSAYS
+Study Assay File Name	a_MTBLS2075_MSImaging___metabolite_profiling.txt
+Study Assay Measurement Type	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI
+Study Assay Technology Type	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI
+Study Assay Technology Platform	MS Imaging -
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Mass spectrometry	Haematoxylin and eosin (H&E) staining 	Data transformation	Metabolite identification	Preparation
+Study Protocol Type	Sample collection	Mass spectrometry	Haematoxylin and eosin (H&E) staining 	Data transformation	Metabolite identification	Preparation
+Study Protocol Type Term Accession Number						
+Study Protocol Type Term Source REF						
+Study Protocol Description	<p>Preparation of labelled surfactants:</p><p>U13C-DPPC was mixed with the porcine-derived poractant alfa and the synthetic CHF5633 surfactants as described previously12. Isotopic enrichments of U13C-DPPC in poractant alfa and in CHF5633 were, respectively, 7.55% and 2.87% of total DPPC.</p><p>Animal labelling and sample preparation procedure:</p><p>Mouse lungs used in this study were provided from a previous study of exogenous surfactant turnover in mice12. Tissues were stored at -80 °C, shipped on dry ice for MALDI-MSI, then stored at -80 °C until sectioning and analysis. Briefly, animal procedures were approved internally by the University of Southampton Animal Welfare and Ethical Review Body and externally by the Home Office, Animals in Science Regulation Unit. Wild-type (C57BL/6) male mice aged between 8 to 12 weeks were used for this study. Each mouse was instilled intranasally with 50 µl (4 mg, equivalent to 200 mg/kg body weight) of either poractant alfa or the synthetic surfactant CHF5633, both containing U13C-DPPC. At the same time, each mouse also received a 100 µl intraperitoneal injection of methyl-D9-choline chloride (10 mg/ml in water). After labelling, the mice were sacrificed by carbon dioxide asphyxia at 6, 12, 18 or 24 hours. Bronchoalveolar lavage was performed in situ with 4 × 0.9 ml PBS, and the recovered bronchoalveolar lavage fluid (BALF) aliquots were combined. BALF was centrifuged at 300 × g for 10 min at 4 °C to pellet cells, and the supernatants were then transferred to new vials and stored at -80 °C until extraction. Lung parenchyma was quickly dissected from the main bronchi, placed in cryotubes and snap-frozen in liquid nitrogen. Further details are provided in reference 12.</p><p>Alveolar macrophage labelling in vivo:</p><p>For in vivo labelling studies, 8 male wild-type C57BL6 mice were instilled with CHF5633 surfactant containing U13C-DPPC, then injected with methyl-D9-choline chloride 18 hours later. After 3 hours, mice were sacrificed and BALF obtained, from which alveolar macrophages were isolated by centrifugation at 400 × g for 10 min BALF Macrophages were purified by adherence to plastic tissue-culture dishes and were subsequently washed three times with 0.9% saline to remove adherent surfactant.</p><p>&nbsp;</p><p>Macrophage phospholipid analysis:</p><p>Total lipids were extracted by scraping adherent alveolar macrophages into 800 µl of 0.9% saline after adding dimyristoyl PC (10 nmoles) as internal standard, followed by extraction with dichloromethane (2 ml), methanol (2 ml) and water (1 ml)38. After mixing and centrifugation at 1500 × g, 20 °C for 10 min, the dichloromethane-rich lower phase was recovered, dried under a stream of nitrogen gas and stored at -20 °C until analysis by mass spectrometry. Mass spectrometry analysis was performed on a Waters XEVO TQ-MS instrument using electrospray ionisation as described previously9. Unlabelled PC and newly synthesised PC labelled with D9-choline were detected using precursor ion scans of the PC headgroup fragment ions at m/z +184 and m/z +193, respectively. Precursor ion scans of m/z +189 detected the PC species containing five labelled 13C atoms in their phosphocholine head group.&nbsp;</p><p><br></p><p><br></p>	<p>MALDI-MSI</p><p>MALDI-MSI was performed using a hybrid Orbitrap Elite mass spectrometer (Thermo Fisher Scientific GmbH, Bremen, Germany) coupled to a reduced pressure ESI/MALDI ion source (Spectroglyph LLC, Kennewick, WA, USA). Further details on the experimental setup can be found in reference 39. All MSI data were collected using a nominal mass resolution setting of 240,000 @ m/z 400, an m/z range of 350–1000 and a pixel size of 40 × 40 µm2. Tandem mass spectrometry (MS/MS) was performed on MALDI ions generated directly from lung tissue sections to confirm the identification of the ions of interest. MS/MS spectra were acquired using resonant collision-induced dissociation, a ± 0.5 Da isolation window and Orbitrap detection of fragments.</p>	<p>Haematoxylin and eosin (H&amp;E) staining was performed on tissue sections post-imaging. The matrix was removed by immersion in 100% methanol for 30 s, after which the following protocol was used. The tissues were first washed with series of solutions (2 × 95% EtOH, 2 × 70% EtOH and deionised water for 2 min each), stained with haematoxylin for 3 min and subsequently washed with running tap water for 3 min. Tissues were then stained with eosin for 30 s and washed with running tap water for 3 min. After staining, the samples were placed into 100% ethanol for 1 min, then in xylene for 30 s. Finally, glass coverslips were placed onto the samples using Entellen mounting medium. High-resolution optical scans of the stained tissue sections were acquired using a Leica Aperio CS2 (Leica Biosystems Imaging, Vista, CA, USA).</p>	<p>Data analysis</p><p>MSI data analysis and visualisation were performed using LipostarMSI (Molecular&nbsp;Horizon Srl, Perugia, Italy)40. During data import, mass spectra were recalibrated using the [PC32:0+Na]+ ion as a lock mass (theoretical m/z 756.551374). Peak picking was performed using a relative intensity threshold of 0.05%, a minimum peak frequency of 0.5% and an m/z alignment tolerance of 3 ppm. All MSI data visualisations were generated using total ion current normalisation with hotspot removal (quantile thresholding, high quantile = 99%). An exception was the ratio images that were produced by normalisation to the denominator ion signal ([PC32:0+Na]+ or ([PC32:1+Na]+. </p><p><br></p><p>Xcalibur QualBrowser (version 4.1.50, Thermo Fisher Scientific GmbH, Bremen, Germany) and Python 3.7.6 together with the pymsfilereader 1.0.1 module (https://pypi.org/project/pymsfilereader/) were used for analysis and visualisation of .raw MS and MS/MS data spectral data.</p>	<p>Lipids were identified using both accurate mass measurements and in some cases further supported with MS/MS measurements. For further details refer to publication</p>	<p>Tissue preparation for MALDI-MSI</p><p>Frozen lung tissue was sectioned for MALDI-MSI analysis using a Leica CM 1860 UV cryomicrotome (Leica Microsystems, Wetzlar, Germany) at a temperature of -20 °C to produce 12 µm–thick tissue sections, which were thaw mounted onto clean indium tin oxide (ITO)-coated glass slides (Delta Technologies, Loveland, CO, USA). Tissue sections were stored at -80 °C until matrix application and analysis. 2,5-dihydroxybenzoic acid was prepared as a 20 mg/mL solution is 2:1 CHCl3:MeOH (v/v) and applied to the sample using a SunCollect automatic pneumatic sprayer (Sunchrom GmbH, Friedrichsdorf, Germany). In total 15 layers of matrix were deposited onto the tissue. The first three layers were deposited using a flow rate of 10, 20 and 30 µL/min, respectively, and all subsequent layers at 40 µL/min. </p><p><br></p>
+Study Protocol URI						
+Study Protocol Version						
+Study Protocol Parameters Name		Scan polarity;Scan m/z range;Instrument;Instrument manufacurer;Ion source;Mass analyzer;Solvent;Target material;Spatial resolution;Pixel size x;Pixel size y;Max count of pixel x;Max count of pixel y;Max dimension x;Max dimension y;Inlet type;Detector;Detector mode;Resolving power;Resolving power m/z;Native spectrum identifier format;Data file content;Spectrum representation;Raw data file format;Instrument software;Instrument software version;Line scan direction;Linescan sequence;Scan pattern;Scan type;Number of scans	Stain;High-res image;Low-res image	Data Transformation software;Data Transformation software version		Sample mounting;Sample preservation;Sectioning instrument;Section thickness;Matrix;Matrix application
+Study Protocol Parameters Name Term Accession Number		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	;;	;		;;;;;
+Study Protocol Parameters Name Term Source REF		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	;;	;		;;;;;
+Study Protocol Components Name						
+Study Protocol Components Type						
+Study Protocol Components Type Term Accession Number						
+Study Protocol Components Type Term Source REF						
+STUDY CONTACTS
+Study Person Last Name	Ellis	Hall	Panchal	Flinders	Madsen	Koster	Heeren	Clark	Postle
+Study Person First Name	Shane	Emily	Madhuriben	Bryn	Jens	Grielof	Ron.	Howard	Anthony
+Study Person Mid Initials	R								
+Study Person Email	sellis@uow.edu.au								
+Study Person Phone	+61242215748								
+Study Person Fax									
+Study Person Address	University of Wollongong								
+Study Person Affiliation	University of Wollongong								
+Study Person Roles	Investigator	Author	Author	Author	Author	Author	Author	Author	Author
+Study Person Roles Term Accession Number	http://purl.obolibrary.org/obo/NCIT_C25936	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781
+Study Person Roles Term Source REF	NCIT								

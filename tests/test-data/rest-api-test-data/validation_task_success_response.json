@@ -1,0 +1,12 @@
+{
+    "new_task": false,
+    "message": "Validation task was completed.",
+    "task": {
+        "task_id": "b6b7b22d-e050-4255-a693-ac3d2cdc82a4",
+        "last_update_time": 1718637949.803708,
+        "last_update_timestamp": "",
+        "last_status": "SUCCESS",
+        "task_done_time": 1718634226.735613,
+        "task_done_time_str": "2024-06-17 15:23:46"
+    }
+}

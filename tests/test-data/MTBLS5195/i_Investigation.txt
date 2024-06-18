@@ -1,0 +1,93 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	OBI	NCIT	resultAFR	EFO	BTO	MTBLS	CHMO
+Term Source File	http://data.bioontology.org/ontologies/OBI					https://www.ebi.ac.uk/metabolights/	
+Term Source Version	29				2022-08-28	1.0	
+Term Source Description	Ontology for Biomedical Investigations					Metabolights Ontology	
+INVESTIGATION
+Investigation Identifier	MOE
+Investigation Title	Investigation
+Investigation Description	Created using the MetaboLights Online Editor (MOE)
+Investigation Submission Date	
+Investigation Public Release Date	2023-02-13
+Comment[Created With Configuration]	MetaboLightsConfig20150707
+Comment[Last Opened With Configuration]	MetaboLightsConfig20150707
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS5195
+Study Title	Transcriptomic dynamics control rapid transition of core crop functions in 'lactating' pigeon
+Study Description	<p>Pigeons (Columba livia) are widely kept as domesticated pets worldwide, and may have adapted to captivity through the evolutionarily specialized ability to produce ‘milk’ in the crops of both male and female parents via rapid proliferation and shedding of lipid- and protein-enriched epithelial cells. Given the implications for understanding evolution in atricial species, a comprehensive transcriptomic perspective of the pigeon crop spanning the complete breeding cycle is warranted. Here, we generated a de novo pigeon genome assembly to construct a high resolution spatio-temporal transcriptomic landscape of the crop epithelium across the entire breeding cycle. This multi-omics analysis identified a set of ‘lactation’-related genes involved in lipid and protein metabolism that are highly expressed in the crop. Spatial transcriptomics analysis revealed extensive reorganization of long-range promoter-enhancer interactions linked to the dynamic expression of these ‘lactation’-related genes between stages. Moreover, their expression is spatially localized in specific epithelial layers, and can be correlated with phenotypic changes in the crop. This study thus illustrates the preferential de novo synthesis of ‘milk’ lipids and proteins in the crop epithelium prior to shedding from the lumen, and provides candidate enhancer loci for further investigation of the regulatory elements controlling pigeon ‘lactation’. Furthermore, these comprehensive datasets provide a foundational resource for avian and evolutionary biology research, especially relevant to atricial reproductive biology.</p>
+Study Submission Date	
+Study Public Release Date	2023-02-13
+Study File Name	s_MTBLS5195.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	Pigeon	untargeted metabolites	ultra-performance liquid chromatography-mass spectrometry	tandem mass spectrometry	spatial transcriptomics	multi-omic
+Study Design Type Term Accession Number	http://purl.obolibrary.org/obo/NCIT_C91812	http://www.ebi.ac.uk/metabolights/ontology/MTBLS_000279	http://purl.obolibrary.org/obo/CHMO_0000715	http://purl.obolibrary.org/obo/CHMO_0000575	http://www.ebi.ac.uk/efo/EFO_0008994	http://www.ebi.ac.uk/metabolights/ontology/placeholder
+Study Design Type Term Source REF	NCIT	MTBLS	CHMO	CHMO	EFO	MTBLS
+STUDY PUBLICATIONS
+Study PubMed ID	
+Study Publication DOI	
+Study Publication Author List	Yujie wang, Xun wang
+Study Publication Title	Transcriptomic dynamics control rapid transition of core crop functions in 'lactating' pigeon
+Study Publication Status	In preparation
+Study Publication Status Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0001795
+Study Publication Status Term Source REF	EFO
+STUDY FACTORS
+Study Factor Name	gender	Nurturing stage
+Study Factor Type	Gender	timepoint
+Study Factor Type Term Accession Number	http://purl.obolibrary.org/obo/NCIT_C17357	http://www.ebi.ac.uk/efo/EFO_0000724
+Study Factor Type Term Source REF	NCIT	EFO
+STUDY ASSAYS
+Study Assay File Name	a_MTBLS5195_LC-MS_positive_reverse-phase_metabolite_profiling.txt	a_MTBLS5195_LC-MS_negative_reverse-phase_metabolite_profiling.txt
+Study Assay Measurement Type	metabolite profiling	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI	OBI
+Study Assay Technology Type	mass spectrometry	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI	OBI
+Study Assay Technology Platform	Liquid Chromatography MS - positive - reverse phase	Liquid Chromatography MS - negative - reverse phase
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type Term Accession Number						
+Study Protocol Type Term Source REF						
+Study Protocol Description	<p>LC-MS-based metabolomics was performed on male and female pigeon milk at representative nurturing stages (timepoints), including day 1 of 3 female pigeons and 9 male pigeons, and day 19 of 9 male pigeons. After sacrificed, the crop contents (i.e., a mixture of pigeon milk and grain) were sampled, after straining the grain through the gauze, the pigeon milk was stored at -80 °C for further analysis.</p>	<p>Pigeon milk was homogenized in liquid nitrogen using a pestle and mortar and aliquots of 100 +/- 5 mg were weighed into pre-cooled 2 mL round bottom tubes.&nbsp;After addition of 200 μL methanol:water (4:1, v/v), pre-cooled at -40 °C, the samples were immediately vortexed for 15 s, sonicated for 15 min at 20 °C and centrifuged for 10 min at 19,000 x g. The supernatants were transferred to new 2 mL tubes and the remaining pellets subjected to a second extraction using 200 μL methanol:water (4:1, v/v).&nbsp;The combined extracts were evaporated to dryness in a vacuum centrifuge at 30 °C, thoroughly reconstituted in 200 μL methanol:water (3:7, v/v), and filtered using 0.2 μm PTFE syringe filters.</p>	<p>Chromatographic separations were performed on an Acquity UPLC system (Waters) equipped with a HSS T3 column (100 x 1.0 mm, particle size 1.8 μm, Waters) applying the following binary gradient at a flow rate of 150 μL/min: 0.0-1.0 min, isocratic 95% A (water:formic acid, 99.9:0.1, v/v), 5% B (acetonitrile:formic acid, 99.9:0.1, v/v); 1.0-16.0 min, linear from 5 to 45% B; 16.0-18.0 min, isocratic 95% B; 18.0-20.0 min, isocratic 5% B. The injection volume was 3.0 μL (full loop injection).</p>	<p>Eluting compounds were detected between 100-1000 m/z using a high-resolution tandem mass spectrometry (Xevo G2-XS QTOF, Waters, UK) with an Apollo II electrospray ion source in positive and negative ion mode using following instrument settings: nebulizer gas, nitrogen, 1.4 bar; dry gas, nitrogen, 6 L/min, 190 °C; capillary, -5000 V; end plate offset, -500 V; funnel 1 RF, 200 V; funnel 2 RF, 200 V; in-source CID energy, 0 V; hexapole RF, 100 V; quadrupole ion energy, 5 eV; collision gas, nitrogen; collision energy, 7 eV; collision RF 150/350 V (timing 50/50); transfer time, 70 μs; pre pulse storage, 5 μs; pulser frequency, 10 kHz; spectra rate, 3 Hz. Mass spectra were acquired in centroid mode. Mass calibration of individual raw data files was performed on lithium formate cluster ions obtained by automatic infusion of 20 μL 10 mM lithium hydroxide in isopropanol:water:formic acid, 49.9:49.9:0.2 (v/v/v), at a gradient time of 18 min using a diverter valve.</p>	<p>Raw data files were converted to <strong>mzData</strong> format using the vendor-specific <strong>CompassXport</strong> (http://www.bdal.de/) and processed using the <strong>XCMS</strong> package (http://bioconductor.org/packages/release/bioc/html/xcms.html). <strong>XCMS</strong> settings for processing LC-MS data with findPeaks.centWave() were prefilter=(3,200); snthr=5; ppm=25; peak width=(5,12). For alignment group, Density() function with parameters minfrac=0.75 and bw=2 was used.</p>	<p>The individual compound mass spectra were reconstructed and features annotated as cluster ion, quasimolecular ion or in-source fragment ion. Afterwards, targeted CID-MS/MS experiments of quasimolecular ions (MS2) were performed using QTOF-MS. Based on accurate mass measurements, putative elemental compositions were calculated, filtered by isotope abundance and the number of double bond equivalents and electron parity, and checked for consistency in relation to elemental compositions calculated for fragment ions and observed neutral losses. Identification was based on reference</p>
+Study Protocol URI						
+Study Protocol Version						
+Study Protocol Parameters Name		Post Extraction;Derivatization	Chromatography Instrument;Autosampler model;Column model;Column type;Guard column	Scan polarity;Scan m/z range;Instrument;Ion source;Mass analyzer		
+Study Protocol Parameters Name Term Accession Number		;	;;;;	;;;;		
+Study Protocol Parameters Name Term Source REF		;	;;;;	;;;;		
+Study Protocol Components Name						
+Study Protocol Components Type						
+Study Protocol Components Type Term Accession Number						
+Study Protocol Components Type Term Source REF						
+STUDY CONTACTS
+Study Person Last Name	Yujie	Xun
+Study Person First Name	Wang	Wang
+Study Person Mid Initials		
+Study Person Email	wangyujie715@163.com	xunwang@sicau.edu.cn
+Study Person Phone		
+Study Person Fax		
+Study Person Address	Animal science, Sichuan agricultrural university	
+Study Person Affiliation	Animal science	
+Study Person Roles	Investigator	Co-Investigator
+Study Person Roles Term Accession Number	http://purl.obolibrary.org/obo/NCIT_C25936	http://purl.obolibrary.org/obo/NCIT_C51812
+Study Person Roles Term Source REF	NCIT	NCIT

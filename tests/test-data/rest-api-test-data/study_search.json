@@ -1,0 +1,374 @@
+{
+    "status": "success",
+    "successMessage": null,
+    "errorMessage": null,
+    "errors": [],
+    "content": {
+        "page": [
+            {
+                "publicReleaseDate": "2012-02-14T00:00:00",
+                "studyId": "MTBLS1",
+                "title": "A metabolomic study of urinary changes in type 2 diabetes in human compared to the control group",
+                "sizeInBytes": 253190144,
+                "sizeInText": "241.46MB",
+                "publications": [
+                    {
+                        "pubMedId": "17190852",
+                        "doi": "10.1152/physiolgenomics.00194.2006",
+                        "authorList": "Salek RM,Maguire ML,Bentley E,Rubtsov DV,Hough T,Cheeseman M,Nunez D,Sweatman BC,Haselden JN,Cox RD,Connor SC,Griffin JL",
+                        "title": "A metabolomic comparison of urinary changes in type 2 diabetes in mouse, rat, and human.",
+                        "status": {
+                            "term": "Published",
+                            "termSourceRef": "",
+                            "termAccessionNumber": ""
+                        }
+                    }
+                ],
+                "protocols": [
+                    {
+                        "name": "Data transformation",
+                        "protocolType": {
+                            "term": "Data transformation",
+                            "termSourceRef": "",
+                            "termAccessionNumber": ""
+                        },
+                        "description": "Spectra were processed using ACD/1D NMR Manager 8.0 with Intelligent Bucketing Integration (Advanced Chemistry Development, Toronto, ON, Canada). Spectra were integrated 0.20-9.30 ppm excluding water (4.24-5.04 ppm), glucose (3.19-3.99 ppm, 5.21-5.27 ppm), and urea (5.04-6.00 ppm). Intelligent bucketing ensures that bucket edges do not coincide with peak maxima, preventing resonances from being split across separate integral regions; a 0.04 ppm bucket width and a 50% looseness factor were used. All spectra were normalized to total area excluding the water, urea, and glucose regions.",
+                        "uri": "http://www.acdlabs.com/products/adh/nmr/1d_man/",
+                        "version": "ACD nmr manager 8.0",
+                        "parameters": [],
+                        "components": []
+                    },
+                    {
+                        "name": "NMR assay",
+                        "protocolType": {
+                            "term": "NMR assay",
+                            "termSourceRef": "",
+                            "termAccessionNumber": ""
+                        },
+                        "description": "A 1D NOESY presaturation pulse sequence was used to analyze the urine samples. For each sample 128 transients were collected into 64k data points using a spectral width of 14.005 kHz (20 ppm) and an acquisition time of 2.34 s per FID.",
+                        "uri": "",
+                        "version": "",
+                        "parameters": [],
+                        "components": []
+                    },
+                    {
+                        "name": "Extraction",
+                        "protocolType": {
+                            "term": "Extraction",
+                            "termSourceRef": "",
+                            "termAccessionNumber": ""
+                        },
+                        "description": "For the human studies, midstream urine (\u223c15 ml) samples were collected and frozen from each volunteer. In total, 84 samples were collected from 12 healthy volunteers (7 time points, 8 males and 4 females) and 50 samples from 30 T2DM patients (1\u20133 time points, 17 males and 13 females) with well-controlled blood glucose maintained at normal concentrations by diet, following the guidelines issued by the American Diabetes Association, rather than medication. The healthy subjects were aged 18\u201355 yr, had a body mass index (BMI) \u226519 and \u226430 kg/m2 and a body mass \u226550 kg and \u2264113 kg, and were free from any major disease or pregnancy. The T2DM patients were aged 30\u201365 yr (mean 56 \u00b1 9 yr), had a BMI >25 and <40 kg/m2, weighed between 65 and 140 kg (mean 95 \u00b1 19 kg), and were taking at most one oral anti-diabetic drug. T2DM patients agreed to stop treatment with oral anti-diabetic agents during the study. Subjects went through a washout period of 4 wk before sample collection and abstained from alcohol during the study; diet was controlled throughout the study.",
+                        "uri": "",
+                        "version": "",
+                        "parameters": [
+                            {
+                                "term": "Extraction Method",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            }
+                        ],
+                        "components": []
+                    },
+                    {
+                        "name": "Sample collection",
+                        "protocolType": {
+                            "term": "Sample collection",
+                            "termSourceRef": "",
+                            "termAccessionNumber": ""
+                        },
+                        "description": "For the human studies, midstream urine (~15 ml) samples were collected and frozen from each volunteer. In total, 84 samples were collected from 12 healthy volunteers (7 time points, 8 males and 4 females) and 50 samples from 30 T2DM patients (1-3 time points, 17 males and 13 females) with well-controlled blood glucose maintained at normal concentrations by diet, following the guidelines issued by the American Diabetes Association, rather than medication. T2DM patients agreed to stop treatment with oral anti-diabetic agents during the study. Subjects went through a washout period of 4 wk before sample collection and abstained from alcohol during the study; diet was controlled throughout the study.",
+                        "uri": "",
+                        "version": "",
+                        "parameters": [],
+                        "components": []
+                    },
+                    {
+                        "name": "NMR spectroscopy",
+                        "protocolType": {
+                            "term": "NMR spectroscopy",
+                            "termSourceRef": "",
+                            "termAccessionNumber": ""
+                        },
+                        "description": "The spectra of human urine samples were acquired on a Bruker DRX700 NMR spectrometer using a 5 mm TXI ATMA probe at a proton frequency of 700.1 MHz and ambient temperature of 27 \u00b0C.",
+                        "uri": "",
+                        "version": "",
+                        "parameters": [
+                            {
+                                "term": "Magnetic field strength",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            },
+                            {
+                                "term": "Number of transients",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            },
+                            {
+                                "term": "Pulse sequence name",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            },
+                            {
+                                "term": "NMR Probe",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            },
+                            {
+                                "term": "Instrument",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            }
+                        ],
+                        "components": []
+                    },
+                    {
+                        "name": "Metabolite identification",
+                        "protocolType": {
+                            "term": "Metabolite identification",
+                            "termSourceRef": "",
+                            "termAccessionNumber": ""
+                        },
+                        "description": "Assignments were confirmed by two dimensional spectroscopy including homonuclear 1H-1H Correlation Spectroscopy (COSY), 1H-13C Heteronuclear Signal Quantum Coherence (HSQC) and 1H-13C Heteronuclear Multiple Bond Correlation (HMBC) Spectroscopy.",
+                        "uri": "",
+                        "version": "",
+                        "parameters": [],
+                        "components": []
+                    },
+                    {
+                        "name": "NMR sample",
+                        "protocolType": {
+                            "term": "NMR sample",
+                            "termSourceRef": "",
+                            "termAccessionNumber": ""
+                        },
+                        "description": "Aliquots of 400 \u00b5l urine samples were made up to 600 \u00b5l with phosphate buffer (0.2 M, pH 7.4) and any precipitate removed by centrifugation. In total, 500 \u00b5l of supernatant were transferred to 5-mm NMR tubes with 100 \u00b5l of sodium 3-trimethylsilyl-(2,2,3,3-2H4)-1-propionate (TSP)/D2O/sodium azide solution (0.05% wt/vol TSP in D2O and 1% wt/vol sodium azide).",
+                        "uri": "",
+                        "version": "",
+                        "parameters": [
+                            {
+                                "term": "Temperature",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            },
+                            {
+                                "term": "Sample pH",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            },
+                            {
+                                "term": "NMR tube type",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            },
+                            {
+                                "term": "Solvent",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            }
+                        ],
+                        "components": []
+                    }
+                ],
+                "organisms": [
+                    {
+                        "term": "Homo sapiens",
+                        "termSourceRef": "NCBITAXON",
+                        "termAccessionNumber": "http://purl.obolibrary.org/obo/NCBITaxon_9606"
+                    }
+                ],
+                "organismParts": [
+                    {
+                        "term": "urine",
+                        "termSourceRef": "BTO",
+                        "termAccessionNumber": "http://purl.obolibrary.org/obo/BTO_0001419"
+                    }
+                ],
+                "variants": [],
+                "sampleTypes": [],
+                "factors": [
+                    {
+                        "term": "Gender",
+                        "termSourceRef": "NCIT",
+                        "termAccessionNumber": "http://purl.obolibrary.org/obo/NCIT_C17357"
+                    },
+                    {
+                        "term": "metabolic syndrome",
+                        "termSourceRef": "EFO",
+                        "termAccessionNumber": "http://www.ebi.ac.uk/efo/EFO_0000195"
+                    }
+                ],
+                "designDescriptors": [
+                    {
+                        "term": "nuclear magnetic resonance spectroscopy",
+                        "termSourceRef": "CHMO",
+                        "termAccessionNumber": "http://purl.obolibrary.org/obo/CHMO_0000591"
+                    },
+                    {
+                        "term": "diabetes mellitus",
+                        "termSourceRef": "EFO",
+                        "termAccessionNumber": "http://www.ebi.ac.uk/efo/EFO_0000400"
+                    },
+                    {
+                        "term": "Urine global profiling",
+                        "termSourceRef": "",
+                        "termAccessionNumber": ""
+                    },
+                    {
+                        "term": "metabolic syndrome",
+                        "termSourceRef": "EFO",
+                        "termAccessionNumber": "http://www.ebi.ac.uk/efo/EFO_0000195"
+                    },
+                    {
+                        "term": "untargeted metabolites",
+                        "termSourceRef": "",
+                        "termAccessionNumber": ""
+                    },
+                    {
+                        "term": "Human Study Subject",
+                        "termSourceRef": "NCIT",
+                        "termAccessionNumber": "http://purl.obolibrary.org/obo/NCIT_C70665"
+                    }
+                ],
+                "assayTechniques": [
+                    {
+                        "name": "NMR",
+                        "main": "NMR",
+                        "technique": "NMR",
+                        "sub": "Nuclear magnetic resonance"
+                    }
+                ],
+                "technologyTypes": [
+                    {
+                        "term": "NMR spectroscopy",
+                        "termSourceRef": "OBI",
+                        "termAccessionNumber": "http://purl.obolibrary.org/obo/OBI_0000623"
+                    }
+                ],
+                "modifiedTime": "2023-12-07T13:27:43.273387",
+                "annotations": [
+                    "assay.measurementType::metabolite profiling,OBI,http://purl.obolibrary.org/obo/OBI_0000366",
+                    "assay.protocol.nmrSample.nmrTubeType::5 mm standard,,",
+                    "assay.protocol.nmrSample.samplePh::7.4",
+                    "assay.protocol.nmrSample.solvent::0.2 M phosphate buffered D2O,,",
+                    "assay.protocol.nmrSample.temperature::300,kelvin,UO,http://purl.obolibrary.org/obo/UO_0000012",
+                    "assay.protocol.nmrSpectroscopy.instrument::Bruker AVANCE DRX 700 MHz spectrometer,,",
+                    "assay.protocol.nmrSpectroscopy.magneticFieldStrength::16.4,tesla,UO,http://purl.obolibrary.org/obo/UO_0000228",
+                    "assay.protocol.nmrSpectroscopy.nmrProbe::5 mm PATXI 1H-13C/15N XYZ-GRD,,",
+                    "assay.protocol.nmrSpectroscopy.numberOfTransients::128",
+                    "assay.protocol.nmrSpectroscopy.pulseSequenceName::1D NOESY with presaturation (noesypr1d)",
+                    "assay.protocol::Data transformation",
+                    "assay.protocol::Extraction",
+                    "assay.protocol::Metabolite identification",
+                    "assay.protocol::NMR assay",
+                    "assay.protocol::NMR sample",
+                    "assay.protocol::NMR spectroscopy",
+                    "assay.protocol::Sample collection",
+                    "assay.technique.main::NMR",
+                    "assay.technique.name::NMR",
+                    "assay.technique.sub::Nuclear magnetic resonance",
+                    "assay.technique::NMR",
+                    "assay.technologyPlatform::Bruker",
+                    "assay.technologyType::NMR spectroscopy,OBI,http://purl.obolibrary.org/obo/OBI_0000623",
+                    "study.characteristic.organism.class::Mammalia",
+                    "study.characteristic.organism.family::Hominidae",
+                    "study.characteristic.organism.genus::Homo",
+                    "study.characteristic.organism.kingdom::Metazoa",
+                    "study.characteristic.organism.order::Primates",
+                    "study.characteristic.organism.phylum::Chordata",
+                    "study.characteristic.organism.species::Homo sapiens",
+                    "study.characteristic.organism.superkingdom::Eukaryota",
+                    "study.characteristic.organism::Homo sapiens,NCBITAXON,http://purl.obolibrary.org/obo/NCBITaxon_9606",
+                    "study.characteristic.organismPart::urine,BTO,http://purl.obolibrary.org/obo/BTO_0001419",
+                    "study.designDescriptor::Human Study Subject,NCIT,http://purl.obolibrary.org/obo/NCIT_C70665",
+                    "study.designDescriptor::Urine global profiling,,",
+                    "study.designDescriptor::diabetes mellitus,EFO,http://www.ebi.ac.uk/efo/EFO_0000400",
+                    "study.designDescriptor::metabolic syndrome,EFO,http://www.ebi.ac.uk/efo/EFO_0000195",
+                    "study.designDescriptor::nuclear magnetic resonance spectroscopy,CHMO,http://purl.obolibrary.org/obo/CHMO_0000591",
+                    "study.designDescriptor::untargeted metabolites,,",
+                    "study.factor.gender::Female,,",
+                    "study.factor.gender::Male,,",
+                    "study.factor.metabolicSyndrome::Control Group,,",
+                    "study.factor.metabolicSyndrome::diabetes mellitus,,",
+                    "study.factor::Gender,NCIT,http://purl.obolibrary.org/obo/NCIT_C17357",
+                    "study.factor::metabolic syndrome,EFO,http://www.ebi.ac.uk/efo/EFO_0000195"
+                ],
+                "submissionDate": "2012-02-14T00:00:00",
+                "investigationFilePath": "i_Investigation.txt",
+                "sampleFilePath": "s_MTBLS1.txt",
+                "description": "Type 2 diabetes mellitus is the result of a combination of impaired insulin secretion with reduced insulin sensitivity of target tissues. There are an estimated 150 million affected individuals worldwide, of whom a large proportion remains undiagnosed because of a lack of specific symptoms early in this disorder and inadequate diagnostics. In this study, NMR-based metabolomic analysis in conjunction with uni- and multivariate statistics was applied to examine the urinary metabolic changes in Human type 2 diabetes mellitus patients compared to the control group. The human population were un medicated diabetic patients who have good daily dietary control over their blood glucose concentrations by following the guidelines on diet issued by the American Diabetes Association. Note: This is part of a larger study, please refer to the original paper below.",
+                "fundings": [],
+                "contacts": [
+                    {
+                        "lastName": "Salek",
+                        "firstName": "Reza",
+                        "midInitials": "M",
+                        "email": "rms72@cam.ac.uk",
+                        "address": "The Department of Biochemistry, The Sanger Building, 80 Tennis Court Road, Cambridge, CB2 1GA, UK.",
+                        "affiliation": "University of Cambridge",
+                        "roles": [
+                            {
+                                "term": "principal investigator role",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            }
+                        ],
+                        "orcid": ""
+                    },
+                    {
+                        "lastName": "Griffin",
+                        "firstName": "Jules",
+                        "midInitials": "L",
+                        "email": "jlg40@cam.ac.uk",
+                        "address": "The Department of Biochemistry, The Sanger Building, 80 Tennis Court Road, Cambridge, CB2 1GA, UK.",
+                        "affiliation": "University of Cambridge",
+                        "roles": [
+                            {
+                                "term": "principal investigator role",
+                                "termSourceRef": "",
+                                "termAccessionNumber": ""
+                            }
+                        ],
+                        "orcid": ""
+                    }
+                ],
+                "assays": [
+                    {
+                        "filePath": "a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt",
+                        "measurementType": {
+                            "term": "metabolite profiling",
+                            "termSourceRef": "OBI",
+                            "termAccessionNumber": "http://purl.obolibrary.org/obo/OBI_0000366"
+                        },
+                        "technologyType": {
+                            "term": "NMR spectroscopy",
+                            "termSourceRef": "OBI",
+                            "termAccessionNumber": "http://purl.obolibrary.org/obo/OBI_0000623"
+                        },
+                        "technologyPlatform": "Bruker",
+                        "technique": {
+                            "name": "NMR",
+                            "main": "NMR",
+                            "technique": "NMR",
+                            "sub": "Nuclear magnetic resonance"
+                        },
+                        "assignmentFiles": [
+                            "m_MTBLS1_metabolite_profiling_NMR_spectroscopy_v2_maf.tsv"
+                        ]
+                    }
+                ],
+                "submitters": [],
+                "curatorAnnotations": []
+            }
+        ],
+        "pageSize": 1,
+        "total": 1,
+        "params": {
+            "query": "MTBLS1",
+            "skip": 0,
+            "limit": 10,
+            "extraParams": null
+        },
+        "aggregations": []
+    }
+}

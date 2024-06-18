@@ -1,0 +1,93 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	NCBITAXON	BRO	JERM	CHEBI	BTO	EFO	CHMO	UO	DIAGONT	OBI	NCIT	MESH
+Term Source File	http://data.bioontology.org/ontologies/NCBITAXON	http://data.bioontology.org/ontologies/BRO	http://data.bioontology.org/ontologies/JERM	http://data.bioontology.org/ontologies/CHEBI	http://data.bioontology.org/ontologies/BTO	http://data.bioontology.org/ontologies/EFO	http://data.bioontology.org/ontologies/CHMO	http://data.bioontology.org/ontologies/UO	http://data.bioontology.org/ontologies/DIAGONT	http://data.bioontology.org/ontologies/OBI	http://data.bioontology.org/ontologies/NCIT	http://data.bioontology.org/ontologies/MESH
+Term Source Version	2	14	14	80	22	146	5	42	1	23	44	6
+Term Source Description	National Center for Biotechnology Information (NCBI) Organismal Classification	Biomedical Resource Ontology	SysMO JERM Ontology of Systems Biology for Micro-Organisms	Chemical Entities of Biological Interest Ontology	BRENDA Tissue and Enzyme Source Ontology	Experimental Factor Ontology	Chemical Methods Ontology	Units of Measurement Ontology	Diagnostic Ontology	Ontology for Biomedical Investigations	National Cancer Institute Thesaurus	Medical Subject Headings
+INVESTIGATION
+Investigation Identifier	MTBLS453
+Investigation Title	Investigation
+Investigation Description	
+Investigation Submission Date	
+Investigation Public Release Date	2023-02-20
+Comment[Created With Configuration]	C:UsersАннаDesktopMetabolightsConfigurationsMetaboLightsConfig20150707
+Comment[Last Opened With Configuration]	MetaboLightsConfig20150707
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS453
+Study Title	In Vitro 1H NMR Metabolic Profiles of Liver, Brain, and Serum in Rats After Chronic Consumption of Alcohol
+Study Description	<p>The impact of alcohol on the body can be investigated with NMR spectroscopy in vitro<em>,</em> which can detect a wide range of metabolites but preparing samples includes tissue biopsy. Blood sampling is less invasive, but blood metabolic content might not reflect the changes occurring in other tissues. Thus, this study aimed to investigate the liver, brain, and serum metabolism and evaluate the link between tissues and serum metabolic content. Two experimental groups with ten outbred rats each were provided intragastrically with water (control group) and 50% ethanol solution (alcohol group) for 28&nbsp;days. 1H NMR spectroscopy in vitro was performed on the brain cortex, liver, and serum samples. Student’s <em>t</em> test with Holm–Bonferroni correction was used to investigate significant differences between groups. Partial least-squares discriminant analysis (PLS-DA) and two-way ANOVA were performed to compare liver and serum, brain and serum. In all, 38, 37, and 21 metabolites were identified in the liver, brain, and serum samples, respectively. Significant differences for three metabolites were found in the liver (alanine, proline, and glutathione, <em>p</em> &lt; 0.002) and four in serum (lactate, betaine, acetate, and formic acid, <em>p</em> &lt; 0.002) were detected between the control and alcohol groups. The contents of glucose, betaine, and isoleucine were correlated (<em>r</em> &gt; 0.65) between serum and liver samples. PLS-DA determined separation between all tissues (<em>p</em> &lt; 0.001) and between control and alcohol groups only for liver and serum (<em>p</em> &lt; 0.001). Alcohol had a more substantial effect on liver and serum metabolism than on the brain.</p>
+Study Submission Date	2017-05-02
+Study Public Release Date	2023-02-20
+Study File Name	s_Alcohol HD.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	Toxicology	nuclear magnetic resonance spectroscopy	Alcohol Consumption	untargeted metabolites
+Study Design Type Term Accession Number	http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl			
+Study Design Type Term Source REF	NCIT	CHMO	NCIT	
+STUDY PUBLICATIONS
+Study PubMed ID	
+Study Publication DOI	10.1007/s00723-021-01338-x
+Study Publication Author List	Pravdivtseva Mariya S., Shevelev Oleg B., Yanshole Vadim V., Moshkin Mikhail P., Koptyug Igor V., Akulov Andrey E.
+Study Publication Title	In Vitro 1H NMR Metabolic Profiles of Liver, Brain, and Serum in Rats After Chronic Consumption of Alcohol
+Study Publication Status	Published
+Study Publication Status Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0001796
+Study Publication Status Term Source REF	EFO
+STUDY FACTORS
+Study Factor Name	toxic load	experiment duration
+Study Factor Type	Group	timepoint
+Study Factor Type Term Accession Number	http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl	
+Study Factor Type Term Source REF	NCIT	EFO
+STUDY ASSAYS
+Study Assay File Name	a_alcohol_hd_metabolite_profiling_NMR_spectroscopy.txt
+Study Assay Measurement Type	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI
+Study Assay Technology Type	NMR spectroscopy
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000623
+Study Assay Technology Type Term Source REF	OBI
+Study Assay Technology Platform	Bruker
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	NMR sample	NMR spectroscopy	NMR assay	Data transformation	Metabolite identification
+Study Protocol Type	Sample collection	Extraction	NMR sample	NMR spectroscopy	NMR assay	Data transformation	Metabolite identification
+Study Protocol Type Term Accession Number							
+Study Protocol Type Term Source REF							
+Study Protocol Description	20 outbred Sprague-Dawley rats which were 8–9 weeks old at the beginning of the experiment were used in this study. The blood was taken after 2 weeks of experiment using procedure for tail snip blood sample collection. Blood from different animals was not taken at the same time as this was done in combination with other scheduled animal examinations. In this study, serum was used after removing all blood cells by centrifugation (3000 rpm, 15 min). After 4 weeks, in the end of pathology model experiment, rats were sacrificed by decapitation, and liver, brain and serum from each animal were collected, frozen at -80 °C and stored until sample preparation (for 1 month). </p> The alcohol-induced pathology was modeled over the period of 4 weeks. All animals were divided into 2 experimental groups (10 animals in each group):</br> 1) Control group C: Animals received intragastrically 5 ml of water twice a day (9:00 a.m. and 9:00 p.m.).</br> 2) Alcohol group A: Alcohol was gavaged by rat probe twice a day (9:00 a.m. and 9:00 p.m.). The alcohol dosage was specified above in section 2.1. The average alcohol dose was 10-12 g/kg per day.</br>	Tissue preparation included tissues homogenization (70 mg of tissue) with ethanol extraction (700 μl of 80% ethanol solution), separation of hydrophobic and hydrophilic metabolites by adding a chloroform and water in proportion 1:1 by volume and the sample dehydration under vacuum drying. The detailed description of this procedure has been reported elsewhere. In serum preparation, instead of homogenization with ethanol, 150 μl of serum was mixed with 700 μl of 80% ethanol. All the other steps were the same as in tissue preparation.	Before performing NMR spectroscopy, the water-soluble metabolites were dissolved in phosphate-buffered saline based on D2O (99.9 %, Sigma-Аldrich, 600 μl), then the solution was mixed with the help of a vortex (5 min) and sonicated (20 min). Then tha solution was transferred to 5 mm NMR tubes.	All 1H NMR spectra were obtained at 298 K using a high resolution Bruker Avance III NMR spectrometer (700.23 MHz proton resonance frequency).	A single-pulse sequence with a 7.7 μs long 90 pulse was used in NMR experiments. For water suppression, a low-power continuous wave irradiation was applied during the pre-scan delay. The free induction decay was collected using 4 dummy scans and 200 accumulation scans; the delay time between the scans was 17 s. 1 full measurement took 68 min in total.	Spectra were processed using MestReNova v9.0 program. The signals from interpritated metabolites were integrated,  Several multiplets in an NMR spectrum can correspond to the same substance. To improve the quantification accuracy for low-concentrated metabolites, the sum of the integrated intensities of such multiplets was used whenever possible. However, if 1 or more of the multiplets fell in the overcrowded regions of an NMR spectrum and overlapped with signals corresponding to other substances, only a single non-overlapping multiplet was used for quantification. All integrals were normalized to total sum of all integrals.	<p>The interpretation of 1H NMR spectra was based on the literature analysis <strong>[1]-[3]</strong>. The metabolites derived from the literature were cross-checked with the NMR spectra obtained using metabolomic databases. The most intensive 1H NMR peaks were matched to the corresponding metabolites based on the spectra of individual metabolites (<strong>HMDB</strong> <a href='https://www.hmbd.ca' rel='noopener noreferrer' target='_blank'>http://www.hmbd.ca</a>; <strong>BMRDB</strong> <a href='https://www.bmrb.wisc.edu' rel='noopener noreferrer' target='_blank'>https://www.bmrb.wisc.edu</a>).</p><p><br></p><p><strong>Refs:</strong></p><p><strong>[1]</strong> Nicholas PC, Kim D, Crews FT, Macdonald JM. 1H NMR-based metabolomic analysis of liver, serum, and brain following ethanol administration in rats. Chem Res Toxicol. 2008 Feb;21(2):408-20. doi:10.1021/tx700324t. PMID: 18095657.</p><p><strong>[2]</strong> Masuo Y, Imai T, Shibato J, Hirano M, Jones OA, Maguire ML, Satoh K, Kikuchi S, Rakwal R. Omic analyses unravels global molecular changes in the brain and liver of a rat model for chronic Sake (Japanese alcoholic beverage) intake. Electrophoresis. 2009 Apr;30(8):1259-75. doi:10.1002/elps.200900045. PMID:19382137.</p><p><strong>[3]</strong> Psychogios N, Hau DD, Peng J, Guo AC, Mandal R, Bouatra S, Sinelnikov I, Krishnamurthy R, Eisner R  et al. The human serum metabolome. PLoS One. 2011 Feb 16;6(2):e16957. doi:10.1371/journal.pone.0016957. PMID: 21359215.</p>
+Study Protocol URI							
+Study Protocol Version							
+Study Protocol Parameters Name		Extraction Method	NMR tube type;Temperature;Sample pH;Solvent	Magnetic field strength;Number of transients;Pulse sequence name;NMR Probe;Instrument			
+Study Protocol Parameters Name Term Accession Number			;;;	;;;;			
+Study Protocol Parameters Name Term Source REF			;;;	;;;;			
+Study Protocol Components Name							
+Study Protocol Components Type							
+Study Protocol Components Type Term Accession Number							
+Study Protocol Components Type Term Source REF							
+STUDY CONTACTS
+Study Person Last Name	Koptyug	Pravdivtseva	Shevelev	Yanshole	Moshkin	Akulov
+Study Person First Name	Igor	Mariya	Oleg	Vadim	Mikhail	Andrey
+Study Person Mid Initials	V	S	B	V	P	E
+Study Person Email	koptyug@tomo.nsc.ru					
+Study Person Phone	83833307926					
+Study Person Fax						
+Study Person Address	3a Institutskaya, Novosibirsk, Russia					
+Study Person Affiliation	International Tomography Center					
+Study Person Roles	Principal Investigator	Investigator	Investigator	Investigator	Investigator	Investigator
+Study Person Roles Term Accession Number						
+Study Person Roles Term Source REF						
