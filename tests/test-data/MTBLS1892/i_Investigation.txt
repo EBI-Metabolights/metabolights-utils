@@ -1,0 +1,93 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	OBI	NCIT	MTBLS	CHMO	BAO	GO	BTO	CHEBI	EFO	CO_325	TO	MS
+Term Source File	http://data.bioontology.org/ontologies/OBI	http://data.bioontology.org/ontologies/NCIT	https://www.ebi.ac.uk/metabolights/	http://data.bioontology.org/ontologies/CHMO	http://data.bioontology.org/ontologies/BAO	http://data.bioontology.org/ontologies/GO	http://data.bioontology.org/ontologies/BTO	http://data.bioontology.org/ontologies/CHEBI	http://data.bioontology.org/ontologies/EFO			http://data.bioontology.org/ontologies/MS
+Term Source Version	29	28	1.0	5	19	1358	22	80	132			86
+Term Source Description	Ontology for Biomedical Investigations	National Cancer Institute Thesaurus	User defined terms	Chemical Methods Ontology	BioAssay Ontology	Gene Ontology	BRENDA Tissue and Enzyme Source Ontology	Chemical Entities of Biological Interest Ontology	Experimental Factor Ontology			Mass Spectrometry Ontology
+INVESTIGATION
+Investigation Identifier	MTBLS1892
+Investigation Title	Investigation
+Investigation Description	Created using the MetaboLights Online Editor (MOE)
+Investigation Submission Date	2020-07-03
+Investigation Public Release Date	2020-09-11
+Comment[Created With Configuration]	MetaboLightsConfig20150707
+Comment[Last Opened With Configuration]	MetaboLightsConfig20150707
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS1892
+Study Title	Fruit setting rewires central metabolism via gibberellin cascades
+Study Description	Fruit set is the process whereby ovaries develop into fruits after pollination and fertilization. The process is induced by the phytohormone gibberellin (GA) in tomatoes, as determined by the constitutive GA response mutant procera However, the role of GA on the metabolic behavior in fruit-setting ovaries remains largely unknown. This study explored the biochemical mechanisms of fruit set using a network analysis of integrated transcriptome, proteome, metabolome, and enzyme activity data. Our results revealed that fruit set involves the activation of central carbon metabolism, with increased hexoses, hexose phosphates, and downstream metabolites, including intermediates and derivatives of glycolysis, the tricarboxylic acid cycle, and associated organic and amino acids. The network analysis also identified the transcriptional hub gene SlHB15A, that coordinated metabolic activation. Furthermore, a kinetic model of sucrose metabolism predicted that the sucrose cycle had high activity levels in unpollinated ovaries, whereas it was shut down when sugars rapidly accumulated in vacuoles in fruit-setting ovaries, in a time-dependent manner via tonoplastic sugar carriers. Moreover, fruit set at least partly required the activity of fructokinase, which may pull fructose out of the vacuole, and this could feed the downstream pathways. Collectively, our results indicate that GA cascades enhance sink capacities, by up-regulating central metabolic enzyme capacities at both transcriptional and posttranscriptional levels. This leads to increased sucrose uptake and carbon fluxes for the production of the constituents of biomass and energy that are essential for rapid ovary growth during the initiation of fruit set.
+Study Submission Date	2020-07-03
+Study Public Release Date	2020-09-11
+Study File Name	s_MTBLS1892.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	metabolic enzyme	Tomatoes	central metabolism	gibberellin	fruit set trait	untargeted metabolites	Parthenocarpy	gas chromatography-mass spectrometry	high-performance liquid chromatography	diode array detector
+Study Design Type Term Accession Number	http://www.ebi.ac.uk/metabolights/ontology/placeholder	http://www.ebi.ac.uk/metabolights/ontology/placeholder	http://www.ebi.ac.uk/metabolights/ontology/placeholder	http://purl.obolibrary.org/obo/CHEBI_24250	http://purl.obolibrary.org/obo/TO_0000852	http://www.ebi.ac.uk/metabolights/ontology/MTBLS_000279	http://www.cropontology.org/rdf/CO_325:0000393	http://purl.obolibrary.org/obo/CHMO_0000497	http://purl.obolibrary.org/obo/CHMO_0001009	http://purl.obolibrary.org/obo/CHMO_0002503
+Study Design Type Term Source REF	MTBLS	MTBLS	MTBLS	CHEBI	TO	MTBLS	CO_325	CHMO	CHMO	CHMO
+STUDY PUBLICATIONS
+Study PubMed ID	32883877
+Study Publication DOI	10.1073/pnas.2011859117
+Study Publication Author List	Shinozaki Y, Beauvoit BP, Takahara M, Hao S, Ezura K, Andrieu MH, Nishida K, Mori K, Suzuki Y, Kuhara S, Enomoto H, Kusano M, Fukushima A, Mori T, Kojima M, Kobayashi M, Sakakibara H, Saito K, Ohtani Y, Bénard C, Prodhomme D, Gibon Y, Ezura H, Ariizumi T.
+Study Publication Title	Fruit setting rewires central metabolism via gibberellin cascades.
+Study Publication Status	Published
+Study Publication Status Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0001796
+Study Publication Status Term Source REF	EFO
+STUDY FACTORS
+Study Factor Name	Flowering day	Pollination	Genotype
+Study Factor Type	timepoint	pollination	genotype
+Study Factor Type Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0000724	http://purl.obolibrary.org/obo/GO_0009856	http://www.ebi.ac.uk/efo/EFO_0000513
+Study Factor Type Term Source REF	EFO	GO	EFO
+STUDY ASSAYS
+Study Assay File Name	a_MTBLS1892_GC-MS_positive__metabolite_profiling-1.txt	a_MTBLS1892_LC-DAD__reverse-phase_metabolite_profiling.txt
+Study Assay Measurement Type	metabolite profiling	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI	OBI
+Study Assay Technology Type	mass spectrometry	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI	OBI
+Study Assay Technology Platform	Gas Chromatography MS - positive	Diode array detection MS -  - reverse phase
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type Term Accession Number						
+Study Protocol Type Term Source REF						
+Study Protocol Description	<p><strong>Plant ovary analysis:</strong></p><p>In this study, the tomato variety Micro-Tom WT and the procera (pro) mutant of the Micro-Tom were used<strong>[1]</strong>. Both plant types were grown in a photoperiod of 16 h light at 25 °C (light)/ 20 °C (dark), under fluorescent lights at 300 μmol/m^2/s, with a nutrient solution (Ohtsuka house 1 and 2, OAT Agrio Co., Ltd,, Japan) with an electrical conductivity (EC) of 1.6 dS/m. To collect the ovaries, selected flowers were limited to 3 per truss, and for each replicate sample for omics analysis, ovaries at –2B, 0A, 2P, 4P, 2U, and 4U (–2B = –2 DAA [days after anthesis]/bud, 0A = 0 DAA/anthesis, 2P = 2 DAA with pollination, 4P = 4 DAA with pollination, 2U = 2 DAA without pollination, 4U = 4 DAA without pollination) except when otherwise stated, were collected and ground in liquid nitrogen. The resultant fine powders were then used for the multi-omics analysis.</p><p><br></p><p><strong>Carotenoid analysis:</strong></p><p>20 mg of fresh weight (FW) powder were used for carotenoid analysis using high-performance liquid chromatography-photodiode array (HPLC-PDA) as described previously<strong>[2]</strong>.</p><p><br></p><p><strong>Ref:</strong></p><p><strong>[1]</strong> Carvalho RF, Campos ML, Pino LE, Crestana SL, Zsögön A, Lima JE, Benedito VA, Peres LE. Convergence of developmental mutants into a single tomato model system: 'Micro-Tom' as an effective toolkit for plant development research. Plant Methods. 2011 Jun 29;7(1):18. doi:10.1186/1746-4811-7-18. PMID: 21714900.</p><p><strong>[2]</strong> Kimbara J, Yoshida M, Ito H, Kitagawa M, Takada W, Hayashi K, Shibutani Y, Kusano M, Okazaki Y, Nakabayashi R, Mori T, Saito K, Ariizumi T, Ezura H. Inhibition of CUTIN DEFICIENT 2 Causes Defects in Cuticle Function and Structure and Metabolite Changes in Tomato Fruit. Plant Cell Physiol. 2013 Sep;54(9):1535-48. doi:10.1093/pcp/pct100. PMID: 23912028.</p>	<p><strong>Plant ovary analysis:</strong></p><p>For the metabolite profiling, the WT and pro ovaries were collected and ground, as described above, and 20 mg of FW powder was used for the gas chromatography-time-of-flight mass spectrometry (GC-TOF-MS, LECO, USA) and the following procedures and raw data processing were conducted as described previously<strong>[1]</strong>.</p><p><br></p><p><strong>Carotenoid analysis:</strong></p><p>Each sample (7.5 mg DW) was extracted with 1238 μl of chloroform/methanol (1:2, v/v) containing 0.1% dibutylhydroxytoluene (BHT) (SIGMA), 1.25 μM 1,2-dioctanoyl-sn-glycero-3-phosphocholine (SIGMA), and 12.5 μM beta-apo-8′-carotenal (SIGMA). Samples were vigorously mixed using a vortex mixer. After a 5-min incubation at room temperature, 330 μl of water was added to each sample and the samples were centrifuged at 10,000 x g at room temperature for 5 min. The supernatant was transferred to a 2-ml tube containing 526 μl of chloroform/water (1:1, v/v) and incubated on ice for 10 min. The separated layer was formed by centrifugation at 1,000 x g at 4 °C for 10 min. For lipid analysis and HPLC analysis, 85 μl and 340 μl of the lower organic phase were transferred to 1.5-ml tubes, respectively. Each extract was evaporated to dryness using an SPD2010 SpeedVac concentrator (Thermo Fisher Scientific). The residues were dissolved in 162 μl of ethanol and 81 μl of chloroform/ethanol (1:1, v/v) containing 0.1% BHT, for lipid analysis and HPLC analysis, respectively, and centrifuged at 12,000 x g at 4 °C for 5 min. Then, 140 μl and 60 μl of supernatant were transferred to glass tubes for HPLC analysis, respectively.</p><p><br></p><p>Each sample point was analyzed with 6 biological replicates.</p><p><br></p><p><strong>Ref:</strong></p><p><strong>[1]</strong> Kusano M, Redestig H, Hirai T, Oikawa A, Matsuda F, Fukushima A, Arita M, Watanabe S, Yano M, Hiwasa-Tanase K, Ezura H, Saito K. Covering chemical diversity of genetically-modified tomatoes using metabolomics for objective substantial equivalence assessment. PLoS One. 2011 Feb 16;6(2):e16989. doi:10.1371/journal.pone.0016989. PMID: 21359231.</p>	<p><strong>GC-TOF-MS plant ovary analysis:</strong></p><p>1 μl of each sample was injected in the splitless mode by an CTC CombiPAL autosampler (CTC analytics, Zwingen, Switzerland) into an Agilent 6890N gas chromatograph (Agilent Technologies, Wilmingston, USA) equipped with a 30 m x 0.25 mm inner diameter fused-silica capillary column with a chemically bound 0.25-μl film Rtx-5 Sil MS stationary phase (RESTEK, Bellefonte, USA) for metabolome analysis. Helium was used as the carrier gas at a constant flow rate of 1 ml/min. The temperature program for metabolome analysis started with a 2-min isothermal step at 80 °C and this was followed by temperature ramping at 30 °C to a final temperature of 320 °C, which was maintained for 3.5 min. The transfer line and the ion source temperatures were 250 and 200 °C, respectively.</p><p><br></p><p><strong>HPLC-DAD carotenoid analysis:</strong></p><p>Extracts were analyzed using an LC-photodiode array (PDA) (LC, Shimadzu LC-20AD system; PDA, Shimadzu SPD-M20A) operated by Shimadzu LCMS solution software. A 2-solvent system was used to separate carotenoids. The analytical conditions were as follows: Column, Develosil C30-UG (2.0 mm I.D., 250 mm long; Nomura chemical); solvent A, methanol (4.5% water and 0.1% triethylamine); solvent B, hexane/isopropyl alcohol (60:40, v/v. 0.1% triethylamine); gradient program, 1% B at 0 min, 1% B at 9 min, 6% B at 9.5 min, 7% B at 19 min, 18% B at 20 min, 20% B at 18 min, 34% B at 28 min, 48% B at 36 min, 100% B at 48.5 min, 100% B at 53.5 min, 1% B at 54 min (total run time, 60 min); flow rate, 0.37 ml/min; column temperature, 30 °C.</p>	<p>Ions were generated by a 70-eV electron beam at an ionization current of 2.0 mA. The acceleration 5 voltage was turned on after a solvent delay of 273 s. Data acquisition was performed on a Pegasus IV TOF mass spectrometer (LECO, St. Joseph, MI, USA) with an acquisition rate of 30 spectra/s in the mass range of a mass-to-charge ratio of m/z = 60-800.</p>	<p>Data was normalized using the CCMN algorithm.</p>	<p>Alkane standard mixtures (C8-C20 and C21-C40) were purchased from Sigma-Aldrich (Tokyo, Japan) and were used for calculating the retention index (RI) . The normalized response for the calculation of the signal intensity of each metabolite from the mass-detector response was obtained by each selected ion current that was unique in each metabolite MS spectrum to normalize the peak response.</p><p><br></p><p>GC-TOF-MS and HPLC-PDA detected 252 and 6 metabolites, respectively, in ≥ 65 (90%) samples among a total of 72 analyzed samples (2 genotypes [WT or pro] x 6 time-point/condition [–2B, 0A, 2P, 4P, 2U, 4U] x 6 replicates). PCA was performed to profile the 258 metabolites as described above. Among the total of 258 metabolites, we selected 101 identified or provisionally identified metabolites and used for weighted gene co-expression network analysis (WGCNA).</p>
+Study Protocol URI						
+Study Protocol Version						
+Study Protocol Parameters Name		Post Extraction;Derivatization	Chromatography Instrument;Autosampler model;Column model;Column type;Guard column	Scan polarity;Scan m/z range;Instrument;Ion source;Mass analyzer		
+Study Protocol Parameters Name Term Accession Number		;	;;;;	;;;;		
+Study Protocol Parameters Name Term Source REF		;	;;;;	;;;;		
+Study Protocol Components Name						
+Study Protocol Components Type						
+Study Protocol Components Type Term Accession Number						
+Study Protocol Components Type Term Source REF						
+STUDY CONTACTS
+Study Person Last Name	Kusano	Fukushima	Kobayashi	Mori
+Study Person First Name	Miyako	Atsushi	Makoto	Tetsuya
+Study Person Mid Initials				
+Study Person Email	kusano.miyako.fp@u.tsukuba.ac.jp	atsushi.fukushima@riken.jp		
+Study Person Phone				
+Study Person Fax				
+Study Person Address				
+Study Person Affiliation	"Faculty of Life and Environmental Sciences, University of Tsukuba	Tsukuba Plant Innovation Research Center, University of Tsukuba	RIKEN Center for Sustainable Resource Science"	RIKEN Center for Sustainable Resource Science	RIKEN Center for Sustainable Resource Science	RIKEN Center for Sustainable Resource Science
+Study Person Roles	Investigator	Data Manager	Technician	Technician
+Study Person Roles Term Accession Number	http://purl.obolibrary.org/obo/NCIT_C25936	http://purl.obolibrary.org/obo/NCIT_C51820	http://purl.obolibrary.org/obo/NCIT_C63861	http://purl.obolibrary.org/obo/NCIT_C63861
+Study Person Roles Term Source REF	NCIT	NCIT	NCIT	NCIT

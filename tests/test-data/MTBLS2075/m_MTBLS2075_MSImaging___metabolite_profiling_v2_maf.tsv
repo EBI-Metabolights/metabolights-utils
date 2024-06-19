@@ -1,0 +1,2 @@
+database_identifier	chemical_formula	smiles	inchi	metabolite_identification	mass_to_charge	fragmentation	modifications	charge	retention_time	taxid	species	database	database_version	reliability	uri	search_engine	search_engine_score	smallmolecule_abundance_sub	smallmolecule_abundance_stdev_sub	smallmolecule_abundance_std_error_sub	image1	image2	image3	image4	image5	image6
+CHEBI:72999	C40H80NO8P	[H][C@@](COC(=O)CCCCCCCCCCCCCCC)(COP([O-])(=O)OCC[N+](C)(C)C)OC(=O)CCCCCCCCCCCCCCC		PC 16:0/16:0	756.5514		+Na	1													y	y	y	y	y	y

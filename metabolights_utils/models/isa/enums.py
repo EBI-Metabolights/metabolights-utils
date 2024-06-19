@@ -1,0 +1,16 @@
+from enum import Enum
+
+
+class ColumnsStructure(str, Enum):
+    SINGLE_COLUMN = "SINGLE_COLUMN"
+    ONTOLOGY_COLUMN = "ONTOLOGY_COLUMN"
+    SINGLE_COLUMN_AND_UNIT_ONTOLOGY = "SINGLE_COLUMN_AND_UNIT_ONTOLOGY"
+    LINKED_COLUMN = "LINKED_COLUMN"
+    ADDITIONAL_COLUMN = "ADDITIONAL_COLUMN"
+    INVALID_MULTI_COLUMN = "INVALID_MULTI_COLUMN"
+
+
+class IsaTableAdditionalColumn(str, Enum):
+    UNIT = "Unit"
+    TERM_SOURCE_REF = "Term Source REF"
+    TERM_ACCSSION_NUMBER = "Term Accession Number"

@@ -1,0 +1,2759 @@
+{
+    "$defs": {
+        "Assay": {
+            "additionalProperties": false,
+            "properties": {
+                "fileName": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Assay file name. Expected filename pattern is a_*.txt",
+                    "header_name": "File Name",
+                    "title": "Filename",
+                    "type": "string"
+                },
+                "measurementType": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyAnnotation"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "term": "",
+                        "termAccessionNumber": "",
+                        "termSourceRef": ""
+                    },
+                    "description": "A term to qualify what is being measured (e.g. metabolite identification).",
+                    "header_name": "Measurement Type"
+                },
+                "technologyType": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyAnnotation"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "term": "",
+                        "termAccessionNumber": "",
+                        "termSourceRef": ""
+                    },
+                    "description": "Term to identify the technology used to perform the measurement, e.g. NMR spectrometry assay, mass spectrometry assay",
+                    "header_name": "Technology Type"
+                },
+                "technologyPlatform": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Platform information such as assay technique name, polarity, column model, manufacturer, platform name.",
+                    "header_name": "Technology Platform",
+                    "title": "Technologyplatform",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "fileName",
+                "measurementType",
+                "technologyType",
+                "technologyPlatform"
+            ],
+            "title": "Assay",
+            "type": "object"
+        },
+        "AssayFile": {
+            "additionalProperties": false,
+            "properties": {
+                "filePath": {
+                    "default": "",
+                    "description": "Relative file path of ISA table file (s_*.txt, a_*.txt, m_*.tsv).",
+                    "title": "Filepath",
+                    "type": "string"
+                },
+                "sha256Hash": {
+                    "default": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "description": "SHA256 hash value of ISA table file.",
+                    "title": "Sha256Hash",
+                    "type": "string"
+                },
+                "table": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTable"
+                        }
+                    ],
+                    "default": {
+                        "columns": [],
+                        "headers": [],
+                        "data": {},
+                        "rowIndices": [],
+                        "columnIndices": [],
+                        "filteredTotalRowCount": 0,
+                        "rowOffset": 0,
+                        "rowCount": 0,
+                        "totalRowCount": 0,
+                        "selectedColumnCount": 0,
+                        "totalColumnCount": 0,
+                        "filterOptions": [],
+                        "sortOptions": []
+                    },
+                    "description": "All or partial content of ISA table file."
+                },
+                "sampleNames": {
+                    "default": [],
+                    "description": "Unique values in `Sample Name` column in the assay file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Samplenames",
+                    "type": "array"
+                },
+                "assayNames": {
+                    "default": [],
+                    "description": "Unique values in `Assay Name` column in the assay file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Assaynames",
+                    "type": "array"
+                },
+                "referencedAssignmentFiles": {
+                    "default": [],
+                    "description": "Relative paths of Metabolite Assignment File in the assay file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Referencedassignmentfiles",
+                    "type": "array"
+                },
+                "referencedRawFiles": {
+                    "default": [],
+                    "description": "Relative paths of referenced raw files in the assay file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Referencedrawfiles",
+                    "type": "array"
+                },
+                "referencedDerivedFiles": {
+                    "default": [],
+                    "description": "Relative paths of referenced derived files in the assay file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Referencedderivedfiles",
+                    "type": "array"
+                },
+                "referencedRawFileExtensions": {
+                    "default": [],
+                    "description": "Unique file extensions of referenced raw files in the assay file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Referencedrawfileextensions",
+                    "type": "array"
+                },
+                "referencedDerivedFileExtensions": {
+                    "default": [],
+                    "description": "Unique file extensions of referenced derived files in the assay file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Referencedderivedfileextensions",
+                    "type": "array"
+                },
+                "assayTechnique": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/AssayTechnique"
+                        }
+                    ],
+                    "default": {
+                        "name": "",
+                        "mainTechnique": "",
+                        "technique": "",
+                        "subTechnique": ""
+                    },
+                    "description": "Assay technique information."
+                },
+                "numberOfAssayRows": {
+                    "default": 0,
+                    "description": "Number of assay rows.",
+                    "title": "Numberofassayrows",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "filePath",
+                "sha256Hash",
+                "table",
+                "sampleNames",
+                "assayNames",
+                "referencedAssignmentFiles",
+                "referencedRawFiles",
+                "referencedDerivedFiles",
+                "referencedRawFileExtensions",
+                "referencedDerivedFileExtensions",
+                "assayTechnique",
+                "numberOfAssayRows"
+            ],
+            "title": "AssayFile",
+            "type": "object"
+        },
+        "AssayTechnique": {
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "default": "",
+                    "description": "Technique name used to identify metabolites.",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "mainTechnique": {
+                    "default": "",
+                    "description": "Main category of metabolite identification technique.",
+                    "enum": [
+                        "MS",
+                        "NMR"
+                    ],
+                    "title": "Maintechnique",
+                    "type": "string"
+                },
+                "technique": {
+                    "default": "",
+                    "description": "Technique",
+                    "title": "Technique",
+                    "type": "string"
+                },
+                "subTechnique": {
+                    "default": "",
+                    "description": "Sub-techniique",
+                    "title": "Subtechnique",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "mainTechnique",
+                "technique",
+                "subTechnique"
+            ],
+            "title": "AssayTechnique",
+            "type": "object"
+        },
+        "AssignmentFile": {
+            "additionalProperties": false,
+            "properties": {
+                "filePath": {
+                    "default": "",
+                    "description": "Relative file path of ISA table file (s_*.txt, a_*.txt, m_*.tsv).",
+                    "title": "Filepath",
+                    "type": "string"
+                },
+                "sha256Hash": {
+                    "default": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "description": "SHA256 hash value of ISA table file.",
+                    "title": "Sha256Hash",
+                    "type": "string"
+                },
+                "table": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTable"
+                        }
+                    ],
+                    "default": {
+                        "columns": [],
+                        "headers": [],
+                        "data": {},
+                        "rowIndices": [],
+                        "columnIndices": [],
+                        "filteredTotalRowCount": 0,
+                        "rowOffset": 0,
+                        "rowCount": 0,
+                        "totalRowCount": 0,
+                        "selectedColumnCount": 0,
+                        "totalColumnCount": 0,
+                        "filterOptions": [],
+                        "sortOptions": []
+                    },
+                    "description": "All or partial content of ISA table file."
+                },
+                "identifiedMetaboliteNames": {
+                    "default": [],
+                    "description": "Names of metabolites defined in the ISA table.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Identifiedmetabolitenames",
+                    "type": "array"
+                },
+                "metaboliteAssignments": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Metabolite names and assigned CHEBI id values in the ISA table.",
+                    "title": "Metaboliteassignments",
+                    "type": "object"
+                },
+                "assayTechnique": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/AssayTechnique"
+                        }
+                    ],
+                    "default": {
+                        "name": "",
+                        "mainTechnique": "",
+                        "technique": "",
+                        "subTechnique": ""
+                    },
+                    "description": "Assay technique of assays that reference the current m_*.tsv file."
+                },
+                "numberOfRows": {
+                    "default": 0,
+                    "description": "Number of rows in ISA table.",
+                    "title": "Numberofrows",
+                    "type": "integer"
+                },
+                "numberOfAssignedRows": {
+                    "default": 0,
+                    "description": "Number of rows assigned a CHEBI id.",
+                    "title": "Numberofassignedrows",
+                    "type": "integer"
+                },
+                "numberOfUnassignedRows": {
+                    "default": 0,
+                    "description": "Number of rows not assigned a CHEBI id.",
+                    "title": "Numberofunassignedrows",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "filePath",
+                "sha256Hash",
+                "table",
+                "identifiedMetaboliteNames",
+                "metaboliteAssignments",
+                "assayTechnique",
+                "numberOfRows",
+                "numberOfAssignedRows",
+                "numberOfUnassignedRows"
+            ],
+            "title": "AssignmentFile",
+            "type": "object"
+        },
+        "ColumnsStructure": {
+            "enum": [
+                "SINGLE_COLUMN",
+                "ONTOLOGY_COLUMN",
+                "SINGLE_COLUMN_AND_UNIT_ONTOLOGY",
+                "LINKED_COLUMN",
+                "ADDITIONAL_COLUMN",
+                "INVALID_MULTI_COLUMN"
+            ],
+            "title": "ColumnsStructure",
+            "type": "string"
+        },
+        "Comment": {
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "default": "",
+                    "description": "Name of comment",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "value": {
+                    "default": [],
+                    "description": "Values of comment",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Value",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "name",
+                "value"
+            ],
+            "title": "Comment",
+            "type": "object"
+        },
+        "CurationRequest": {
+            "enum": [
+                "MANUAL_CURATION",
+                "NO_CURATION",
+                "SEMI_AUTOMATED_CURATION"
+            ],
+            "title": "CurationRequest",
+            "type": "string"
+        },
+        "Factor": {
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The name of one factor used in the Study files. A factor corresponds to an independent variable manipulated by the experimentalist with the intention to affect biological systems in a way that can be measured by an assay.",
+                    "header_name": "Name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyAnnotation"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "term": "",
+                        "termAccessionNumber": "",
+                        "termSourceRef": ""
+                    },
+                    "description": "A term allowing the classification of the factor into categories. The term is a controlled vocabulary or an ontology",
+                    "header_name": "Type"
+                }
+            },
+            "required": [
+                "name",
+                "type"
+            ],
+            "title": "Factor",
+            "type": "object"
+        },
+        "FilterDataType": {
+            "enum": [
+                "AUTO",
+                "STRING",
+                "INTEGER",
+                "FLOAT",
+                "DATETIME"
+            ],
+            "title": "FilterDataType",
+            "type": "string"
+        },
+        "FilterOperation": {
+            "enum": [
+                "like",
+                "eq",
+                "startswith",
+                "endswith",
+                "gt",
+                "ge",
+                "lt",
+                "le",
+                "regex",
+                "empty",
+                "custom"
+            ],
+            "title": "FilterOperation",
+            "type": "string"
+        },
+        "GenericMessage": {
+            "properties": {
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/GenericMessageType"
+                        }
+                    ],
+                    "default": "ERROR",
+                    "description": "Message type."
+                },
+                "short": {
+                    "default": "",
+                    "description": "",
+                    "title": "Short",
+                    "type": "string"
+                },
+                "detail": {
+                    "default": "",
+                    "description": "",
+                    "title": "Detail",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "short",
+                "detail"
+            ],
+            "title": "GenericMessage",
+            "type": "object"
+        },
+        "GenericMessageType": {
+            "enum": [
+                "CRITICAL",
+                "ERROR",
+                "WARNING",
+                "INFO"
+            ],
+            "title": "GenericMessageType",
+            "type": "string"
+        },
+        "Investigation": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "identifier": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Investigation identifier.",
+                    "header_name": "Identifier",
+                    "title": "Identifier",
+                    "type": "string"
+                },
+                "title": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "A concise name given to the investigation.",
+                    "header_name": "Title",
+                    "title": "Title",
+                    "type": "string"
+                },
+                "description": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "A textual description of the investigation.",
+                    "header_name": "Description",
+                    "title": "Description",
+                    "type": "string"
+                },
+                "submissionDate": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The date on which the investigation was reported to the MetaboLights repository. String formatted as ISO8601 date YYYY-MM-DD",
+                    "header_name": "Submission Date",
+                    "title": "Submissiondate",
+                    "type": "string"
+                },
+                "publicReleaseDate": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The date on which the investigation was released publicly. String formatted as ISO8601 date YYYY-MM-DD",
+                    "header_name": "Public Release Date",
+                    "title": "Publicreleasedate",
+                    "type": "string"
+                },
+                "ontologySourceReferences": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologySourceReferences"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "references": []
+                    },
+                    "description": "Ontology sources used in the i_Investigation.txt file",
+                    "header_name": "",
+                    "inherit_prefix": false
+                },
+                "investigationPublications": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/InvestigationPublications"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "publications": []
+                    },
+                    "description": "All publications prepared to report results of the investigation.",
+                    "header_name": ""
+                },
+                "investigationContacts": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/InvestigationContacts"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "people": []
+                    },
+                    "description": "People details of the investigation.",
+                    "header_name": ""
+                },
+                "studies": {
+                    "default": [],
+                    "description": "Studies carried out in the investigation.",
+                    "items": {
+                        "$ref": "#/$defs/Study"
+                    },
+                    "title": "Studies",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "identifier",
+                "title",
+                "description",
+                "submissionDate",
+                "publicReleaseDate",
+                "ontologySourceReferences",
+                "investigationPublications",
+                "investigationContacts",
+                "studies"
+            ],
+            "title": "Investigation",
+            "type": "object"
+        },
+        "InvestigationContacts": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "people": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Investigation contact list.",
+                    "header_name": "",
+                    "items": {
+                        "$ref": "#/$defs/Person"
+                    },
+                    "search_header": "Last Name",
+                    "title": "People",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "people"
+            ],
+            "title": "InvestigationContacts",
+            "type": "object"
+        },
+        "InvestigationPublications": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "publications": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Investigation publications.",
+                    "header_name": "",
+                    "items": {
+                        "$ref": "#/$defs/Publication"
+                    },
+                    "search_header": "Publication Title",
+                    "title": "Publications",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "publications"
+            ],
+            "title": "InvestigationPublications",
+            "type": "object"
+        },
+        "IsaTable": {
+            "additionalProperties": false,
+            "properties": {
+                "columns": {
+                    "default": [],
+                    "description": "Unique column names of ISA table. If there are dublicate column headers, column names are created with the following pattern: header name + '.X' where X is sequencial number for each duplicate header name.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Columns",
+                    "type": "array"
+                },
+                "headers": {
+                    "default": [],
+                    "description": "Metadata of ISA table columns. e.i., header name, column name, column index",
+                    "items": {
+                        "$ref": "#/$defs/IsaTableColumn"
+                    },
+                    "title": "Headers",
+                    "type": "array"
+                },
+                "data": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "default": {},
+                    "description": "Data columns and their row values.",
+                    "title": "Data",
+                    "type": "object"
+                },
+                "rowIndices": {
+                    "default": [],
+                    "description": "Current rows' positions in ISA table. e.g., [2, 3, 5]: First three rows of 'data' are 2nd, 3th and 5th rows in ISA Table.",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "title": "Rowindices",
+                    "type": "array"
+                },
+                "columnIndices": {
+                    "default": [],
+                    "description": "Current columns' positions in ISA table.",
+                    "items": {
+                        "type": "integer"
+                    },
+                    "title": "Columnindices",
+                    "type": "array"
+                },
+                "filteredTotalRowCount": {
+                    "default": 0,
+                    "description": "Total row count after filter operations.",
+                    "title": "Filteredtotalrowcount",
+                    "type": "integer"
+                },
+                "rowOffset": {
+                    "default": 0,
+                    "description": "Skipped rows after filter operations.",
+                    "title": "Rowoffset",
+                    "type": "integer"
+                },
+                "rowCount": {
+                    "default": 0,
+                    "description": "Row count listed in this table after filter operations.",
+                    "title": "Rowcount",
+                    "type": "integer"
+                },
+                "totalRowCount": {
+                    "default": 0,
+                    "description": "Total row count in ISA table file.",
+                    "title": "Totalrowcount",
+                    "type": "integer"
+                },
+                "selectedColumnCount": {
+                    "default": 0,
+                    "description": "Number of selected columns in this table file.",
+                    "title": "Selectedcolumncount",
+                    "type": "integer"
+                },
+                "totalColumnCount": {
+                    "default": 0,
+                    "description": "Number of all columns in ISA table file.",
+                    "title": "Totalcolumncount",
+                    "type": "integer"
+                },
+                "filterOptions": {
+                    "default": [],
+                    "description": "Applied filters on ISA table file.",
+                    "items": {
+                        "$ref": "#/$defs/TsvFileFilterOption"
+                    },
+                    "title": "Filteroptions",
+                    "type": "array"
+                },
+                "sortOptions": {
+                    "default": [],
+                    "description": "Applied sort operations on ISA table file.",
+                    "items": {
+                        "$ref": "#/$defs/TsvFileSortOption"
+                    },
+                    "title": "Sortoptions",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "columns",
+                "headers",
+                "data",
+                "rowIndices",
+                "columnIndices",
+                "filteredTotalRowCount",
+                "rowOffset",
+                "rowCount",
+                "totalRowCount",
+                "selectedColumnCount",
+                "totalColumnCount",
+                "filterOptions",
+                "sortOptions"
+            ],
+            "title": "IsaTable",
+            "type": "object"
+        },
+        "IsaTableColumn": {
+            "additionalProperties": false,
+            "properties": {
+                "columnIndex": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Index of column in ISA Table. First column index is 0.",
+                    "title": "Columnindex"
+                },
+                "columnName": {
+                    "default": "",
+                    "description": "Unique name of column. It is same if column header is unique in ISA table.",
+                    "title": "Columnname",
+                    "type": "string"
+                },
+                "columnHeader": {
+                    "default": "",
+                    "description": "Header of ISA table column.",
+                    "title": "Columnheader",
+                    "type": "string"
+                },
+                "additionalColumns": {
+                    "default": [],
+                    "description": "Linked column names. If column is ontology or a column with unit ontology column, it lists the following column headers.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Additionalcolumns",
+                    "type": "array"
+                },
+                "columnCategory": {
+                    "default": "",
+                    "description": "Column category. e.g., Parameter Value, Factor Value, protocol",
+                    "title": "Columncategory",
+                    "type": "string"
+                },
+                "columnStructure": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ColumnsStructure"
+                        }
+                    ],
+                    "default": "SINGLE_COLUMN",
+                    "description": "Structure of column in ISA table."
+                },
+                "columnPrefix": {
+                    "default": "",
+                    "description": "Column prefix if header has a value between [].",
+                    "title": "Columnprefix",
+                    "type": "string"
+                },
+                "columnSearchPattern": {
+                    "default": "",
+                    "description": "Search regex expression to fetch value if if header has a value between [].",
+                    "title": "Columnsearchpattern",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "columnIndex",
+                "columnName",
+                "columnHeader",
+                "additionalColumns",
+                "columnCategory",
+                "columnStructure",
+                "columnPrefix",
+                "columnSearchPattern"
+            ],
+            "title": "IsaTableColumn",
+            "type": "object"
+        },
+        "OntologyAnnotation": {
+            "additionalProperties": false,
+            "properties": {
+                "term": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Ontology term",
+                    "header_name": "",
+                    "title": "Term",
+                    "type": "string"
+                },
+                "termAccessionNumber": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The accession number from the Term Source associated with the term.",
+                    "header_name": "Term Accession Number",
+                    "title": "Termaccessionnumber",
+                    "type": "string"
+                },
+                "termSourceRef": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Source reference name of ontology term. e.g., EFO, OBO, NCIT. Ontology source reference names should be defined in ontology source references section in i_Investigation.txt file",
+                    "header_name": "Term Source REF",
+                    "title": "Termsourceref",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "term",
+                "termAccessionNumber",
+                "termSourceRef"
+            ],
+            "title": "OntologyAnnotation",
+            "type": "object"
+        },
+        "OntologyItem": {
+            "additionalProperties": false,
+            "properties": {
+                "term": {
+                    "default": "",
+                    "description": "Ontology term.",
+                    "title": "Term",
+                    "type": "string"
+                },
+                "termSourceRef": {
+                    "default": "",
+                    "description": "Source reference name of ontology term. e.g., EFO, OBO, NCIT.",
+                    "title": "Termsourceref",
+                    "type": "string"
+                },
+                "termAccessionNumber": {
+                    "default": "",
+                    "description": "Accession number of ontology term.",
+                    "title": "Termaccessionnumber",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "term",
+                "termSourceRef",
+                "termAccessionNumber"
+            ],
+            "title": "OntologyItem",
+            "type": "object"
+        },
+        "OntologySourceReference": {
+            "additionalProperties": false,
+            "properties": {
+                "sourceName": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The name of the source of a term; i.e. the source controlled vocabulary or ontology. These names will be used in all corresponding Term Source REF fields that occur elsewhere.",
+                    "header_name": "Source Name",
+                    "source_description": true,
+                    "title": "Sourcename",
+                    "type": "string"
+                },
+                "sourceFile": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "A file name or a URI of an official resource.",
+                    "header_name": "Source File",
+                    "title": "Sourcefile",
+                    "type": "string"
+                },
+                "sourceVersion": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The version number of the Term Source to support terms tracking.",
+                    "header_name": "Source Version",
+                    "title": "Sourceversion"
+                },
+                "sourceDescription": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Description of source. Use for disambiguating resources when homologous prefixes have been used.",
+                    "header_name": "Source Description",
+                    "title": "Sourcedescription",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "sourceName",
+                "sourceFile",
+                "sourceVersion",
+                "sourceDescription"
+            ],
+            "title": "OntologySourceReference",
+            "type": "object"
+        },
+        "OntologySourceReferences": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "references": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "List of ontology sources used in ISA metadata files.",
+                    "header_name": "",
+                    "items": {
+                        "$ref": "#/$defs/OntologySourceReference"
+                    },
+                    "search_header": "Source Name",
+                    "title": "References",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "references"
+            ],
+            "title": "OntologySourceReferences",
+            "type": "object"
+        },
+        "OrganismAndOrganismPartPair": {
+            "additionalProperties": false,
+            "properties": {
+                "organism": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyItem"
+                        }
+                    ],
+                    "default": {
+                        "term": "",
+                        "termSourceRef": "",
+                        "termAccessionNumber": ""
+                    },
+                    "description": "Organism ontology value."
+                },
+                "organismPart": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyItem"
+                        }
+                    ],
+                    "default": {
+                        "term": "",
+                        "termSourceRef": "",
+                        "termAccessionNumber": ""
+                    },
+                    "description": "Organism part ontology value."
+                },
+                "variant": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyItem"
+                        }
+                    ],
+                    "default": {
+                        "term": "",
+                        "termSourceRef": "",
+                        "termAccessionNumber": ""
+                    },
+                    "description": "Variant ontology value."
+                },
+                "sampleType": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyItem"
+                        }
+                    ],
+                    "default": {
+                        "term": "",
+                        "termSourceRef": "",
+                        "termAccessionNumber": ""
+                    },
+                    "description": "Sample type ontology value."
+                }
+            },
+            "required": [
+                "organism",
+                "organismPart",
+                "variant",
+                "sampleType"
+            ],
+            "title": "OrganismAndOrganismPartPair",
+            "type": "object"
+        },
+        "ParserMessage": {
+            "properties": {
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ParserMessageType"
+                        }
+                    ],
+                    "default": "WARNING",
+                    "description": "Message type. Valid values: INFO, WARNING, ERROR, CRITICAL."
+                },
+                "short": {
+                    "default": "",
+                    "description": "Short information about message.",
+                    "title": "Short",
+                    "type": "string"
+                },
+                "detail": {
+                    "default": "",
+                    "description": "Detailed information about message.",
+                    "title": "Detail",
+                    "type": "string"
+                },
+                "section": {
+                    "default": "",
+                    "description": "Section name if it is i_Investigation.txt file",
+                    "title": "Section",
+                    "type": "string"
+                },
+                "line": {
+                    "default": "",
+                    "description": "File line number. It is valid only for i_Investigation.txt file.",
+                    "title": "Line",
+                    "type": "string"
+                },
+                "column": {
+                    "default": "",
+                    "description": "ISA file table column name.",
+                    "title": "Column",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type",
+                "short",
+                "detail",
+                "section",
+                "line",
+                "column"
+            ],
+            "title": "ParserMessage",
+            "type": "object"
+        },
+        "ParserMessageType": {
+            "enum": [
+                "CRITICAL",
+                "ERROR",
+                "WARNING",
+                "INFO"
+            ],
+            "title": "ParserMessageType",
+            "type": "string"
+        },
+        "Person": {
+            "additionalProperties": false,
+            "properties": {
+                "lastName": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Last name of a person associated with the investigation or study.",
+                    "header_name": "Last Name",
+                    "title": "Lastname",
+                    "type": "string"
+                },
+                "firstName": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "First name of person associated with the investigation or study.",
+                    "header_name": "First Name",
+                    "title": "Firstname",
+                    "type": "string"
+                },
+                "midInitials": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Middle name initials (if exists) of person associated with the investigation or study",
+                    "header_name": "Mid Initials",
+                    "title": "Midinitials",
+                    "type": "string"
+                },
+                "email": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Email address of person associated with the investigation or study",
+                    "header_name": "Email",
+                    "title": "Email",
+                    "type": "string"
+                },
+                "phone": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Phone number of person associated with the investigation or study",
+                    "header_name": "Phone",
+                    "title": "Phone",
+                    "type": "string"
+                },
+                "fax": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Fax number of person associated with the investigation or study",
+                    "header_name": "Fax",
+                    "title": "Fax",
+                    "type": "string"
+                },
+                "address": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Address of person associated with the investigation or study",
+                    "header_name": "Address",
+                    "title": "Address",
+                    "type": "string"
+                },
+                "affiliation": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Affiliation of person associated with the investigation or study",
+                    "header_name": "Affiliation",
+                    "title": "Affiliation",
+                    "type": "string"
+                },
+                "roles": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Roles of person associated with the investigation or study. Multiple role can be defined for each person. Role is defined as an ontology term. e.g., NCIT:Investigator, NCIT:Author",
+                    "header_name": "Roles",
+                    "items": {
+                        "$ref": "#/$defs/OntologyAnnotation"
+                    },
+                    "seperator": ";",
+                    "text_multiple_value": true,
+                    "title": "Roles",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "lastName",
+                "firstName",
+                "midInitials",
+                "email",
+                "phone",
+                "fax",
+                "address",
+                "affiliation",
+                "roles"
+            ],
+            "title": "Person",
+            "type": "object"
+        },
+        "Protocol": {
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Protocol name.",
+                    "header_name": "Name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "protocolType": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyAnnotation"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "term": "",
+                        "termAccessionNumber": "",
+                        "termSourceRef": ""
+                    },
+                    "description": "Term to classify the protocol.",
+                    "header_name": "Type"
+                },
+                "description": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Protocol description.",
+                    "header_name": "Description",
+                    "title": "Description",
+                    "type": "string"
+                },
+                "uri": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Pointer to external protocol resources that can be accessed by their Uniform Resource Identifier (URI).",
+                    "header_name": "URI",
+                    "title": "Uri",
+                    "type": "string"
+                },
+                "version": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "An identifier for the version to ensure protocol tracking..",
+                    "header_name": "Version",
+                    "title": "Version",
+                    "type": "string"
+                },
+                "parameters": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Protocol's parameters.",
+                    "header_name": "Parameters Name",
+                    "items": {
+                        "$ref": "#/$defs/OntologyAnnotation"
+                    },
+                    "seperator": ";",
+                    "text_multiple_value": true,
+                    "title": "Parameters",
+                    "type": "array"
+                },
+                "components": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Protocol\u2019s components; e.g. instrument names, software names, and reagents names.",
+                    "header_name": "Components",
+                    "items": {
+                        "$ref": "#/$defs/ValueTypeAnnotation"
+                    },
+                    "seperator": ";",
+                    "text_multiple_value": true,
+                    "title": "Components",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "name",
+                "protocolType",
+                "description",
+                "uri",
+                "version",
+                "parameters",
+                "components"
+            ],
+            "title": "Protocol",
+            "type": "object"
+        },
+        "Publication": {
+            "additionalProperties": false,
+            "properties": {
+                "pubMedId": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The PubMed IDs of the publication.",
+                    "header_name": "PubMed ID",
+                    "title": "Pubmedid",
+                    "type": "string"
+                },
+                "doi": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "A Digital Object Identifier (DOI) for the publication.",
+                    "header_name": "Publication DOI",
+                    "title": "Doi",
+                    "type": "string"
+                },
+                "authorList": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The list of authors associated with the publication. Comma (,) is recommended to define multiple authors.",
+                    "header_name": "Publication Author List",
+                    "title": "Authorlist",
+                    "type": "string"
+                },
+                "title": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The title of publication associated with the investigation.",
+                    "header_name": "Publication Title",
+                    "title": "Title",
+                    "type": "string"
+                },
+                "status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/OntologyAnnotation"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "term": "",
+                        "termAccessionNumber": "",
+                        "termSourceRef": ""
+                    },
+                    "description": "A term describing the status of that publication (i.e. EFO:submitted, EFO:in preparation, EFO:published).",
+                    "header_name": "Publication Status"
+                }
+            },
+            "required": [
+                "pubMedId",
+                "doi",
+                "authorList",
+                "title",
+                "status"
+            ],
+            "title": "Publication",
+            "type": "object"
+        },
+        "SamplesFile": {
+            "additionalProperties": false,
+            "properties": {
+                "filePath": {
+                    "default": "",
+                    "description": "Relative file path of ISA table file (s_*.txt, a_*.txt, m_*.tsv).",
+                    "title": "Filepath",
+                    "type": "string"
+                },
+                "sha256Hash": {
+                    "default": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "description": "SHA256 hash value of ISA table file.",
+                    "title": "Sha256Hash",
+                    "type": "string"
+                },
+                "table": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/IsaTable"
+                        }
+                    ],
+                    "default": {
+                        "columns": [],
+                        "headers": [],
+                        "data": {},
+                        "rowIndices": [],
+                        "columnIndices": [],
+                        "filteredTotalRowCount": 0,
+                        "rowOffset": 0,
+                        "rowCount": 0,
+                        "totalRowCount": 0,
+                        "selectedColumnCount": 0,
+                        "totalColumnCount": 0,
+                        "filterOptions": [],
+                        "sortOptions": []
+                    },
+                    "description": "All or partial content of ISA table file."
+                },
+                "sampleNames": {
+                    "default": [],
+                    "description": "Unique values in `Sample Name` column in the sample file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Samplenames",
+                    "type": "array"
+                },
+                "organisms": {
+                    "default": [],
+                    "description": "Unique organism values in the sample file.",
+                    "items": {
+                        "$ref": "#/$defs/OntologyItem"
+                    },
+                    "title": "Organisms",
+                    "type": "array"
+                },
+                "organismParts": {
+                    "default": [],
+                    "description": "Unique organism part values in the sample file.",
+                    "items": {
+                        "$ref": "#/$defs/OntologyItem"
+                    },
+                    "title": "Organismparts",
+                    "type": "array"
+                },
+                "organismAndOrganismPartPairs": {
+                    "default": [],
+                    "description": "Unique organism, organism part, variant and sample type values in the sample file.",
+                    "items": {
+                        "$ref": "#/$defs/OrganismAndOrganismPartPair"
+                    },
+                    "title": "Organismandorganismpartpairs",
+                    "type": "array"
+                },
+                "variants": {
+                    "default": [],
+                    "description": "Unique variant values in the sample file.",
+                    "items": {
+                        "$ref": "#/$defs/OntologyItem"
+                    },
+                    "title": "Variants",
+                    "type": "array"
+                },
+                "sampleTypes": {
+                    "default": [],
+                    "description": "Unique sample type values in the sample file.",
+                    "items": {
+                        "$ref": "#/$defs/OntologyItem"
+                    },
+                    "title": "Sampletypes",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "filePath",
+                "sha256Hash",
+                "table",
+                "sampleNames",
+                "organisms",
+                "organismParts",
+                "organismAndOrganismPartPairs",
+                "variants",
+                "sampleTypes"
+            ],
+            "title": "SamplesFile",
+            "type": "object"
+        },
+        "SortType": {
+            "enum": [
+                "string",
+                "integer",
+                "float",
+                "datetime",
+                "custom"
+            ],
+            "title": "SortType",
+            "type": "string"
+        },
+        "Study": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "identifier": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "A unique identifier, either a temporary identifier generated by MetaboLights repository.",
+                    "header_name": "Identifier",
+                    "title": "Identifier",
+                    "type": "string"
+                },
+                "title": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "A concise phrase used to encapsulate the purpose and goal of the study.",
+                    "header_name": "Title",
+                    "title": "Title",
+                    "type": "string"
+                },
+                "description": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "A textual description of the study, with components such as objective or goals.",
+                    "header_name": "Description",
+                    "title": "Description",
+                    "type": "string"
+                },
+                "submissionDate": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The date on which the study is submitted to an archive. String formatted as ISO8601 date YYYY-MM-DD",
+                    "header_name": "Submission Date",
+                    "title": "Submissiondate",
+                    "type": "string"
+                },
+                "publicReleaseDate": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The date on which the study SHOULD be released publicly. String formatted as ISO8601 date YYYY-MM-DD",
+                    "header_name": "Public Release Date",
+                    "title": "Publicreleasedate",
+                    "type": "string"
+                },
+                "fileName": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Name of the Sample Table file corresponding the definition of that Study.",
+                    "header_name": "File Name",
+                    "title": "Filename",
+                    "type": "string"
+                },
+                "studyDesignDescriptors": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StudyDesignDescriptors"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "designTypes": []
+                    },
+                    "description": "Content of study design descriptors section.",
+                    "header_name": ""
+                },
+                "studyPublications": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StudyPublications"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "publications": []
+                    },
+                    "description": "Content of study publications section.",
+                    "header_name": ""
+                },
+                "studyFactors": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StudyFactors"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "factors": []
+                    },
+                    "description": "Content of study factors section.",
+                    "header_name": ""
+                },
+                "studyAssays": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StudyAssays"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "assays": []
+                    },
+                    "description": "Study assay section of i_Investigation.txt file. This section contains study assays and comments.",
+                    "header_name": ""
+                },
+                "studyProtocols": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StudyProtocols"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "protocols": []
+                    },
+                    "description": "Content of study protocols section.",
+                    "header_name": ""
+                },
+                "studyContacts": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StudyContacts"
+                        }
+                    ],
+                    "auto_fill": true,
+                    "default": {
+                        "comments": [],
+                        "people": []
+                    },
+                    "description": "Content of study contacts section.",
+                    "header_name": ""
+                }
+            },
+            "required": [
+                "comments",
+                "identifier",
+                "title",
+                "description",
+                "submissionDate",
+                "publicReleaseDate",
+                "fileName",
+                "studyDesignDescriptors",
+                "studyPublications",
+                "studyFactors",
+                "studyAssays",
+                "studyProtocols",
+                "studyContacts"
+            ],
+            "title": "Study",
+            "type": "object"
+        },
+        "StudyAssays": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "assays": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "List of assays defined in study assay section.",
+                    "header_name": "",
+                    "items": {
+                        "$ref": "#/$defs/Assay"
+                    },
+                    "search_header": "File Name",
+                    "title": "Assays",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "assays"
+            ],
+            "title": "StudyAssays",
+            "type": "object"
+        },
+        "StudyContacts": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "people": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Contacts defined in study contacts section",
+                    "header_name": "",
+                    "items": {
+                        "$ref": "#/$defs/Person"
+                    },
+                    "search_header": "Last Name",
+                    "title": "People",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "people"
+            ],
+            "title": "StudyContacts",
+            "type": "object"
+        },
+        "StudyDBMetadata": {
+            "properties": {
+                "dbId": {
+                    "default": -1,
+                    "description": "Database unique id for study.",
+                    "title": "Dbid",
+                    "type": "integer"
+                },
+                "studyId": {
+                    "default": "",
+                    "description": "Study accession number.",
+                    "title": "Studyid",
+                    "type": "string"
+                },
+                "numericStudyId": {
+                    "default": -1,
+                    "description": "Numarical part of study accession number. e.g., 123 for MTBLS123",
+                    "title": "Numericstudyid",
+                    "type": "integer"
+                },
+                "obfuscationCode": {
+                    "default": "",
+                    "description": "Obfusication code of study.",
+                    "title": "Obfuscationcode",
+                    "type": "string"
+                },
+                "studySize": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": -1,
+                    "description": "Total size (bytes) of study folder.",
+                    "title": "Studysize"
+                },
+                "submissionDate": {
+                    "default": "",
+                    "description": "Study submission date.",
+                    "title": "Submissiondate",
+                    "type": "string"
+                },
+                "releaseDate": {
+                    "default": "",
+                    "description": "Study public release date (actual or anticipated.)",
+                    "title": "Releasedate",
+                    "type": "string"
+                },
+                "updateDate": {
+                    "default": "",
+                    "description": "Last update date of study.",
+                    "title": "Updatedate",
+                    "type": "string"
+                },
+                "statusDate": {
+                    "default": "",
+                    "description": "Last status update date of study.",
+                    "title": "Statusdate",
+                    "type": "string"
+                },
+                "studyTypes": {
+                    "default": [],
+                    "description": "Study types defined by curators.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Studytypes",
+                    "type": "array"
+                },
+                "status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StudyStatus"
+                        }
+                    ],
+                    "default": "DORMANT",
+                    "description": "Status of study."
+                },
+                "curationRequest": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/CurationRequest"
+                        }
+                    ],
+                    "default": "MANUAL_CURATION",
+                    "description": "Curation request. e.g., no curation request, manual curation request."
+                },
+                "overrides": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Overrided validation rules.",
+                    "title": "Overrides",
+                    "type": "object"
+                },
+                "submitters": {
+                    "default": [],
+                    "description": "Submitters of study.",
+                    "items": {
+                        "$ref": "#/$defs/Submitter"
+                    },
+                    "title": "Submitters",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "dbId",
+                "studyId",
+                "numericStudyId",
+                "obfuscationCode",
+                "studySize",
+                "submissionDate",
+                "releaseDate",
+                "updateDate",
+                "statusDate",
+                "studyTypes",
+                "status",
+                "curationRequest",
+                "overrides",
+                "submitters"
+            ],
+            "title": "StudyDBMetadata",
+            "type": "object"
+        },
+        "StudyDesignDescriptors": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "designTypes": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Design descriptors defined in study design descriptors section.",
+                    "header_name": "Type",
+                    "items": {
+                        "$ref": "#/$defs/OntologyAnnotation"
+                    },
+                    "title": "Designtypes",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "designTypes"
+            ],
+            "title": "StudyDesignDescriptors",
+            "type": "object"
+        },
+        "StudyFactors": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "factors": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Factors defined in study factors section.",
+                    "header_name": "",
+                    "items": {
+                        "$ref": "#/$defs/Factor"
+                    },
+                    "search_header": "Name",
+                    "title": "Factors",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "factors"
+            ],
+            "title": "StudyFactors",
+            "type": "object"
+        },
+        "StudyFileDescriptor": {
+            "additionalProperties": false,
+            "properties": {
+                "filePath": {
+                    "default": "",
+                    "description": "File relative path. e.g., FILES/RAW_FILES/raw_data.d",
+                    "title": "Filepath",
+                    "type": "string"
+                },
+                "baseName": {
+                    "default": "",
+                    "description": "File basename. e.g., raw_data.d for FILES/RAW_FILES/raw_data.d",
+                    "title": "Basename",
+                    "type": "string"
+                },
+                "parentDirectory": {
+                    "default": "",
+                    "description": "Relative parent directory. e.g., FILES/RAW_FILES for FILES/RAW_FILES/raw_data.d",
+                    "title": "Parentdirectory",
+                    "type": "string"
+                },
+                "extension": {
+                    "default": "",
+                    "description": "File extension. e.g., .d for raw_data.d for FILES/RAW_FILES/raw_data.d",
+                    "title": "Extension",
+                    "type": "string"
+                },
+                "sizeInBytes": {
+                    "default": 0,
+                    "description": "Size of file in bytes.",
+                    "title": "Sizeinbytes",
+                    "type": "integer"
+                },
+                "isDirectory": {
+                    "default": false,
+                    "description": "True if the file is a folder.",
+                    "title": "Isdirectory",
+                    "type": "boolean"
+                },
+                "isLink": {
+                    "default": false,
+                    "description": "True if the file is a symbolic link.",
+                    "title": "Islink",
+                    "type": "boolean"
+                },
+                "modifiedAt": {
+                    "default": 0,
+                    "description": "Modified time of the file. The value is a timestamp in UTC.",
+                    "title": "Modifiedat",
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "default": 0,
+                    "description": "Creation time of the file. The value is a timestamp in UTC.",
+                    "title": "Createdat",
+                    "type": "integer"
+                },
+                "mode": {
+                    "default": "",
+                    "description": "File permission mode in octal. e.g., 775",
+                    "title": "Mode",
+                    "type": "string"
+                },
+                "tags": {
+                    "default": [],
+                    "description": "Tag values for the file.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Tags",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "filePath",
+                "baseName",
+                "parentDirectory",
+                "extension",
+                "sizeInBytes",
+                "isDirectory",
+                "isLink",
+                "modifiedAt",
+                "createdAt",
+                "mode",
+                "tags"
+            ],
+            "title": "StudyFileDescriptor",
+            "type": "object"
+        },
+        "StudyFolderMetadata": {
+            "additionalProperties": false,
+            "properties": {
+                "dataFolderSizeCalculated": {
+                    "default": false,
+                    "description": "True if data folder size is calculated.",
+                    "title": "Datafoldersizecalculated",
+                    "type": "boolean"
+                },
+                "metadataFolderSizeCalculated": {
+                    "default": false,
+                    "description": "True if metadata folder size is calculated.",
+                    "title": "Metadatafoldersizecalculated",
+                    "type": "boolean"
+                },
+                "folderSizeInBytes": {
+                    "default": -1,
+                    "description": "Study folder size in bytes. Folder size may be size of metadata files, data files or both depends on data_folder_size_calculated or metadata_folder_size_calculated.",
+                    "title": "Foldersizeinbytes",
+                    "type": "integer"
+                },
+                "folderSizeInStr": {
+                    "default": "",
+                    "description": "Human readable study folder size in MB or GB",
+                    "title": "Foldersizeinstr",
+                    "type": "string"
+                },
+                "folders": {
+                    "additionalProperties": {
+                        "$ref": "#/$defs/StudyFileDescriptor"
+                    },
+                    "default": {},
+                    "description": "Folders and summary information about each one within a study folder.",
+                    "title": "Folders",
+                    "type": "object"
+                },
+                "files": {
+                    "additionalProperties": {
+                        "$ref": "#/$defs/StudyFileDescriptor"
+                    },
+                    "default": {},
+                    "description": "Files and summary information about each one within a study folder.",
+                    "title": "Files",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "dataFolderSizeCalculated",
+                "metadataFolderSizeCalculated",
+                "folderSizeInBytes",
+                "folderSizeInStr",
+                "folders",
+                "files"
+            ],
+            "title": "StudyFolderMetadata",
+            "type": "object"
+        },
+        "StudyProtocols": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "protocols": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Protocols defined in study protocol section.",
+                    "header_name": "",
+                    "items": {
+                        "$ref": "#/$defs/Protocol"
+                    },
+                    "search_header": "Name",
+                    "title": "Protocols",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "protocols"
+            ],
+            "title": "StudyProtocols",
+            "type": "object"
+        },
+        "StudyPublications": {
+            "additionalProperties": false,
+            "properties": {
+                "comments": {
+                    "default": [],
+                    "description": "List of comments linked to the related section",
+                    "items": {
+                        "$ref": "#/$defs/Comment"
+                    },
+                    "title": "Comments",
+                    "type": "array"
+                },
+                "publications": {
+                    "auto_fill": true,
+                    "default": [],
+                    "description": "Publications defined in study publications section.",
+                    "header_name": "",
+                    "items": {
+                        "$ref": "#/$defs/Publication"
+                    },
+                    "search_header": "Publication Title",
+                    "title": "Publications",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "comments",
+                "publications"
+            ],
+            "title": "StudyPublications",
+            "type": "object"
+        },
+        "StudyStatus": {
+            "enum": [
+                "SUBMITTED",
+                "INCURATION",
+                "INREVIEW",
+                "PUBLIC",
+                "DORMANT"
+            ],
+            "title": "StudyStatus",
+            "type": "string"
+        },
+        "Submitter": {
+            "properties": {
+                "dbId": {
+                    "default": -1,
+                    "description": "Database unique id for submitter.",
+                    "title": "Dbid",
+                    "type": "integer"
+                },
+                "orcid": {
+                    "default": "",
+                    "description": "ORCID of submitter.",
+                    "title": "Orcid",
+                    "type": "string"
+                },
+                "address": {
+                    "default": "",
+                    "description": "Address of submitter.",
+                    "title": "Address",
+                    "type": "string"
+                },
+                "joinDate": {
+                    "default": "R",
+                    "description": "Registration date of submitter.",
+                    "title": "Joindate",
+                    "type": "string"
+                },
+                "userName": {
+                    "default": "",
+                    "description": "username (email address) of submitter.",
+                    "title": "Username",
+                    "type": "string"
+                },
+                "firstName": {
+                    "default": "",
+                    "description": "First name of submitter.",
+                    "title": "Firstname",
+                    "type": "string"
+                },
+                "lastName": {
+                    "default": "",
+                    "description": "Last name of submitter.",
+                    "title": "Lastname",
+                    "type": "string"
+                },
+                "affiliation": {
+                    "default": "",
+                    "description": "Submitter's affiliation.",
+                    "title": "Affiliation",
+                    "type": "string"
+                },
+                "affiliationUrl": {
+                    "default": "",
+                    "description": "Submitter's affiliation webpage URL.",
+                    "title": "Affiliationurl",
+                    "type": "string"
+                },
+                "status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UserStatus"
+                        }
+                    ],
+                    "default": "FROZEN",
+                    "description": "Status of user."
+                },
+                "role": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/UserRole"
+                        }
+                    ],
+                    "default": "ANONYMOUS",
+                    "description": "Role of submmiter."
+                }
+            },
+            "required": [
+                "dbId",
+                "orcid",
+                "address",
+                "joinDate",
+                "userName",
+                "firstName",
+                "lastName",
+                "affiliation",
+                "affiliationUrl",
+                "status",
+                "role"
+            ],
+            "title": "Submitter",
+            "type": "object"
+        },
+        "TsvFileFilterOption": {
+            "properties": {
+                "searchColumns": {
+                    "default": [],
+                    "description": "Search column names. Search in any column if it is None or empty",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Searchcolumns",
+                    "type": "array"
+                },
+                "searchIgnoreColumns": {
+                    "default": [],
+                    "description": "Ignore selected columns if search column is None or empty",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Searchignorecolumns",
+                    "type": "array"
+                },
+                "operation": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/FilterOperation"
+                        }
+                    ],
+                    "default": "like",
+                    "description": "Filter operation"
+                },
+                "parameter": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "format": "date-time",
+                            "type": "string"
+                        }
+                    ],
+                    "default": "",
+                    "description": "Parameter for the filter operation",
+                    "title": "Parameter"
+                },
+                "dataType": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/FilterDataType"
+                        }
+                    ],
+                    "default": "AUTO",
+                    "description": "Apply filter with the given data type"
+                },
+                "caseSensitive": {
+                    "default": true,
+                    "description": "String operations will be applied in case sensitive mode",
+                    "title": "Casesensitive",
+                    "type": "boolean"
+                },
+                "negateResult": {
+                    "default": false,
+                    "description": "Reverse result after apply operation",
+                    "title": "Negateresult",
+                    "type": "boolean"
+                },
+                "defaultDatetimePattern": {
+                    "default": "%d/%m/%Y",
+                    "description": "Convert string value to datetime using this pattern",
+                    "title": "Defaultdatetimepattern",
+                    "type": "string"
+                },
+                "customFilterArguments": {
+                    "default": {},
+                    "description": "Additional arguments for custom filters",
+                    "title": "Customfilterarguments",
+                    "type": "object"
+                },
+                "customFilterName": {
+                    "default": "",
+                    "description": "Registered custom filter name",
+                    "title": "Customfiltername",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "searchColumns",
+                "searchIgnoreColumns",
+                "operation",
+                "parameter",
+                "dataType",
+                "caseSensitive",
+                "negateResult",
+                "defaultDatetimePattern",
+                "customFilterArguments",
+                "customFilterName"
+            ],
+            "title": "TsvFileFilterOption",
+            "type": "object"
+        },
+        "TsvFileSortOption": {
+            "properties": {
+                "columnName": {
+                    "default": "",
+                    "description": "Column name that sort operation will be applied.Column name may be different if there are multiple columns with same name.If there are multiple column headers, Second column and others are named as <column header>.1 <column header>.2 and so on.",
+                    "title": "Columnname",
+                    "type": "string"
+                },
+                "reverse": {
+                    "default": false,
+                    "description": "Sort descending order",
+                    "title": "Reverse",
+                    "type": "boolean"
+                },
+                "columnSortType": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/SortType"
+                        }
+                    ],
+                    "default": "string",
+                    "description": "Sort value with the given type"
+                },
+                "caseSensitive": {
+                    "default": true,
+                    "description": "Sort string values in case sensitive order",
+                    "title": "Casesensitive",
+                    "type": "boolean"
+                },
+                "defaultDatetimePattern": {
+                    "default": "%d/%m/%Y",
+                    "description": "Convert string value to datetime using this pattern",
+                    "title": "Defaultdatetimepattern",
+                    "type": "string"
+                },
+                "valueOrder": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/TsvFileSortValueOrder"
+                        }
+                    ],
+                    "default": 202,
+                    "description": "Position of valid and empty values if sort type is int, float or datetime"
+                },
+                "customSorterName": {
+                    "default": "",
+                    "description": "Registered custom sorter name",
+                    "title": "Customsortername",
+                    "type": "string"
+                },
+                "customSorterArguments": {
+                    "default": {},
+                    "description": "Additional arguments for custom sorters",
+                    "title": "Customsorterarguments",
+                    "type": "object"
+                },
+                "minKeyLength": {
+                    "default": -1,
+                    "description": "If sort type is not string, values will be converted to string and short strings will be filled with 0.",
+                    "title": "Minkeylength",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "columnName",
+                "reverse",
+                "columnSortType",
+                "caseSensitive",
+                "defaultDatetimePattern",
+                "valueOrder",
+                "customSorterName",
+                "customSorterArguments",
+                "minKeyLength"
+            ],
+            "title": "TsvFileSortOption",
+            "type": "object"
+        },
+        "TsvFileSortValueOrder": {
+            "enum": [
+                83,
+                90,
+                139,
+                153,
+                209,
+                202
+            ],
+            "title": "TsvFileSortValueOrder",
+            "type": "integer"
+        },
+        "UserRole": {
+            "enum": [
+                "SUBMITTER",
+                "CURATOR",
+                "ANONYMOUS"
+            ],
+            "title": "UserRole",
+            "type": "string"
+        },
+        "UserStatus": {
+            "enum": [
+                "NEW",
+                "VERIFIED",
+                "ACTIVE",
+                "FROZEN"
+            ],
+            "title": "UserStatus",
+            "type": "string"
+        },
+        "ValueTypeAnnotation": {
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "type": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "termAccessionNumber": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type Term Accession Number",
+                    "title": "Termaccessionnumber",
+                    "type": "string"
+                },
+                "termSourceRef": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type Term Source REF",
+                    "title": "Termsourceref",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "type",
+                "termAccessionNumber",
+                "termSourceRef"
+            ],
+            "title": "ValueTypeAnnotation",
+            "type": "object"
+        }
+    },
+    "properties": {
+        "version": {
+            "default": "v1.0",
+            "description": "Version of Metabolights Study Model",
+            "title": "Version",
+            "type": "string"
+        },
+        "investigationFilePath": {
+            "default": "",
+            "description": "Relative path of investigation file. e.g., i_Investigation.txt",
+            "title": "Investigationfilepath",
+            "type": "string"
+        },
+        "investigation": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/Investigation"
+                }
+            ],
+            "default": {
+                "comments": [],
+                "identifier": "",
+                "title": "",
+                "description": "",
+                "submissionDate": "",
+                "publicReleaseDate": "",
+                "ontologySourceReferences": {
+                    "comments": [],
+                    "references": []
+                },
+                "investigationPublications": {
+                    "comments": [],
+                    "publications": []
+                },
+                "investigationContacts": {
+                    "comments": [],
+                    "people": []
+                },
+                "studies": []
+            },
+            "description": "Content of i_Investigation.txt file."
+        },
+        "samples": {
+            "additionalProperties": {
+                "$ref": "#/$defs/SamplesFile"
+            },
+            "default": {},
+            "description": "Dictionary of sample files and their content. Only one sample file can be referenced in investigation file.",
+            "title": "Samples",
+            "type": "object"
+        },
+        "assays": {
+            "additionalProperties": {
+                "$ref": "#/$defs/AssayFile"
+            },
+            "default": {},
+            "description": "Study assay files and their contents. Multiple assay files can be defined in investigation file.",
+            "title": "Assays",
+            "type": "object"
+        },
+        "parserMessages": {
+            "additionalProperties": {
+                "items": {
+                    "$ref": "#/$defs/ParserMessage"
+                },
+                "type": "array"
+            },
+            "default": {},
+            "description": "An dictionary to store parser message list for each ISA metadata file contains any type of parser message.",
+            "title": "Parsermessages",
+            "type": "object"
+        },
+        "referencedAssignmentFiles": {
+            "default": [],
+            "description": "Relative paths of all assignment files referenced in assay files.",
+            "items": {
+                "type": "string"
+            },
+            "title": "Referencedassignmentfiles",
+            "type": "array"
+        },
+        "referencedRawFiles": {
+            "default": [],
+            "description": "Relative paths of all raw files referenced in assay files.",
+            "items": {
+                "type": "string"
+            },
+            "title": "Referencedrawfiles",
+            "type": "array"
+        },
+        "referencedDerivedFiles": {
+            "default": [],
+            "description": "Relative paths of all derived files referenced in assay files.",
+            "items": {
+                "type": "string"
+            },
+            "title": "Referencedderivedfiles",
+            "type": "array"
+        },
+        "foldersInHierarchy": {
+            "default": [],
+            "description": "Relative folder paths that contain files referenced in assay files.",
+            "items": {
+                "type": "string"
+            },
+            "title": "Foldersinhierarchy",
+            "type": "array"
+        },
+        "metaboliteAssignments": {
+            "additionalProperties": {
+                "$ref": "#/$defs/AssignmentFile"
+            },
+            "default": {},
+            "description": "Metabolite assignment files and their contents.",
+            "title": "Metaboliteassignments",
+            "type": "object"
+        },
+        "tags": {
+            "default": [],
+            "description": "Tag values for the study.",
+            "items": {
+                "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+        },
+        "studyDbMetadata": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/StudyDBMetadata"
+                }
+            ],
+            "default": {
+                "dbId": -1,
+                "studyId": "",
+                "numericStudyId": -1,
+                "obfuscationCode": "",
+                "studySize": -1,
+                "submissionDate": "",
+                "releaseDate": "",
+                "updateDate": "",
+                "statusDate": "",
+                "studyTypes": [],
+                "status": "DORMANT",
+                "curationRequest": "MANUAL_CURATION",
+                "overrides": {},
+                "submitters": []
+            },
+            "description": "Basic metatada information (status, database id, etc.) stored in database."
+        },
+        "studyFolderMetadata": {
+            "allOf": [
+                {
+                    "$ref": "#/$defs/StudyFolderMetadata"
+                }
+            ],
+            "default": {
+                "dataFolderSizeCalculated": false,
+                "metadataFolderSizeCalculated": false,
+                "folderSizeInBytes": -1,
+                "folderSizeInStr": "",
+                "folders": {},
+                "files": {}
+            },
+            "description": "Descriptors of files and folders within study folder."
+        },
+        "folderReaderMessages": {
+            "default": [],
+            "description": "Folder reader messages.",
+            "items": {
+                "$ref": "#/$defs/GenericMessage"
+            },
+            "title": "Folderreadermessages",
+            "type": "array"
+        },
+        "dbReaderMessages": {
+            "default": [],
+            "description": "DB reader messages.",
+            "items": {
+                "$ref": "#/$defs/GenericMessage"
+            },
+            "title": "Dbreadermessages",
+            "type": "array"
+        },
+        "hasDbMetadata": {
+            "default": false,
+            "description": "True if database metadata is loaded.",
+            "title": "Hasdbmetadata",
+            "type": "boolean"
+        },
+        "hasSampleTableData": {
+            "default": false,
+            "description": "True if sample file is loaded.",
+            "title": "Hassampletabledata",
+            "type": "boolean"
+        },
+        "hasAssayTableData": {
+            "default": false,
+            "description": "True if assay files are loaded.",
+            "title": "Hasassaytabledata",
+            "type": "boolean"
+        },
+        "hasAssignmentTableData": {
+            "default": false,
+            "description": "True if assignment files are loaded",
+            "title": "Hasassignmenttabledata",
+            "type": "boolean"
+        },
+        "hasFolderMetadata": {
+            "default": false,
+            "description": "True if folder metadata is complete.",
+            "title": "Hasfoldermetadata",
+            "type": "boolean"
+        },
+        "hasInvestigationData": {
+            "default": false,
+            "description": "True if investtigation file is loaded.",
+            "title": "Hasinvestigationdata",
+            "type": "boolean"
+        }
+    },
+    "required": [
+        "version",
+        "investigationFilePath",
+        "investigation",
+        "samples",
+        "assays",
+        "parserMessages",
+        "referencedAssignmentFiles",
+        "referencedRawFiles",
+        "referencedDerivedFiles",
+        "foldersInHierarchy",
+        "metaboliteAssignments",
+        "tags",
+        "studyDbMetadata",
+        "studyFolderMetadata",
+        "folderReaderMessages",
+        "dbReaderMessages",
+        "hasDbMetadata",
+        "hasSampleTableData",
+        "hasAssayTableData",
+        "hasAssignmentTableData",
+        "hasFolderMetadata",
+        "hasInvestigationData"
+    ],
+    "title": "MetabolightsStudyModel",
+    "type": "object"
+}

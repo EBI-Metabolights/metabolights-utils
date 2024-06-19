@@ -1,0 +1,101 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	OBI	NCIT	MTBLS	MMO	BTO	ENM	CHMO	UO	EFO	
+Term Source File	http://data.bioontology.org/ontologies/OBI	http://data.bioontology.org/ontologies/NCIT	https://www.ebi.ac.uk/metabolights/	http://data.bioontology.org/ontologies/MMO	http://data.bioontology.org/ontologies/BTO		http://data.bioontology.org/ontologies/CHMO	http://data.bioontology.org/ontologies/UO	http://data.bioontology.org/ontologies/EFO	http://purl.obolibrary.org/obo/ncit.owl
+Term Source Version	29	28	1.0	37	22		5	42	132	18.10e
+Term Source Description	Ontology for Biomedical Investigations	National Cancer Institute Thesaurus	Metabolights Ontology	Measurement Method Ontology	BRENDA Tissue and Enzyme Source Ontology		Chemical Methods Ontology	Units of Measurement Ontology	Experimental Factor Ontology	NCI Thesaurus OBO Edition
+INVESTIGATION
+Investigation Identifier	MTBLS1755
+Investigation Title	Investigation
+Investigation Description	Created using the MetaboLights Online Editor (MOE)
+Investigation Submission Date	2020-05-27
+Investigation Public Release Date	2023-08-22
+Comment[Created With Configuration]	MetaboLightsConfig20150707
+Comment[Last Opened With Configuration]	MetaboLightsConfig20150707
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS1755
+Study Title	Comparative metabolomics analysis of bronchial epithelium during barrier establishment after allergen exposure
+Study Description	<h4><strong>BACKGROUND: </strong>Several studies have shown a correlation between an altered metabolome and respiratory allergies. The epithelial barrier hypothesis proposes that an epithelial barrier dysfunction can result in allergic diseases development. Der p 1 allergen from house dust mite is a renowned epithelial barrier disruptor and allergy initiator due to its cysteine-protease activity. Here, we compared the metabolic profile of the bronchial epithelium exposed or not to Der p 1 during barrier establishment to understand its active role in allergy development.</h4><h4><strong>METHODS: </strong>Calu-3 cells were cultivated in air-liquid interface cultures and exposed to either Der p 1 or Ole e 1 allergens during barrier establishment. The comparative metabolomics analysis of apical and basolateral media were performed using liquid chromatography and capillary electrophoresis both coupled to mass spectrometry.</h4><h4><strong>RESULTS: </strong>We showed that epithelial barrier disruption by Der p 1 was associated with a specific metabolic profile, which was highly dependent on the state of the epithelium at the time of contact. Moreover, an apical-basolateral distribution of the metabolites was also observed, indicating a compartmentalization of the response with differential metabolic patterns. A number of metabolites were changed by Der p 1, mainly related to amino acids metabolism, such as L-arginine, L-kynurenine and L-methionine.</h4><h4><strong>CONCLUSION: </strong>This work is the first report on the metabolic response in human bronchial epithelial cells associated with cysteine-protease Der p 1 activity, which could contribute to allergy development. Moreover, it supports a reformulated epithelial barrier hypothesis that might help to explain allergies and their increasing prevalence.</h4>
+Study Submission Date	2020-05-27
+Study Public Release Date	2023-08-22
+Study File Name	s_MTBLS1755.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	untargeted metabolite profiling	high-performance liquid chromatography-mass spectrometry	capillary electrophoresis-mass spectrometry	Air liquid interface	Der p 1	Airway epithelium
+Study Design Type Term Accession Number	http://www.ebi.ac.uk/metabolights/ontology/MTBLS_000278	http://purl.obolibrary.org/obo/CHMO_0000796	http://purl.obolibrary.org/obo/CHMO_0000702	http://purl.enanomapper.org/onto/ENM_0000069	http://www.ebi.ac.uk/metabolights/ontology/placeholder	http://www.ebi.ac.uk/metabolights/ontology/placeholder
+Study Design Type Term Source REF	MTBLS	CHMO	CHMO	ENM	MTBLS	MTBLS
+STUDY PUBLICATIONS
+Study PubMed ID	34582104
+Study Publication DOI	10.1002/clt2.12051
+Study Publication Author List	López-Rodríguez JC, Rodríguez-Coira J, Benedé S, Barbas C, Barber D, Villalba MT, Escribese MM, Villaseñor A, Batanero E.
+Study Publication Title	Comparative metabolomics analysis of bronchial epithelium during barrier establishment after allergen exposure.
+Study Publication Status	Published
+Study Publication Status Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0001796
+Study Publication Status Term Source REF	EFO
+STUDY FACTORS
+Study Factor Name	Day of Treatment	Treatment	Tissue Location
+Study Factor Type	timepoint	treatment	Location
+Study Factor Type Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0000724	http://www.ebi.ac.uk/efo/EFO_0000727	http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C25341
+Study Factor Type Term Source REF	EFO	EFO	NCIT
+STUDY ASSAYS
+Study Assay File Name	a_MTBLS1755_LC-MS_positive_reverse-phase_metabolite_profiling.txt	a_MTBLS1755_LC-MS_negative_reverse-phase_metabolite_profiling.txt	a_MTBLS1755_CE-MS_positive__metabolite_profiling.txt
+Study Assay Measurement Type	metabolite profiling	metabolite profiling	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI	OBI	OBI
+Study Assay Technology Type	mass spectrometry	mass spectrometry	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI	OBI	OBI
+Study Assay Technology Platform	Liquid Chromatography MS - positive - reverse phase	Liquid Chromatography MS - negative - reverse phase	Capillary electrophoresis MS - positive
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	Chromatography	Capillary Electrophoresis	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type	Sample collection	Extraction	Chromatography	Capillary Electrophoresis	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type Term Accession Number							
+Study Protocol Type Term Source REF							
+Study Protocol Description	"Calu-3 bronchial epithelium cell line (passages 23 to 30) were obtained from American Type Culture Collection (Barcelona, Spain). Cells were cultured in DMEM-F12 media (Thermo Fisher Scientific, MA, USA) supplemented with 2 mM L-glutamine (Sigma-Aldrich), 100 U/ml penicillin, 100 μg/ml streptomycin (Lonza, Basel, Switzerland) and 10% fetal bovine serum (FBS, Hyclone GE Healthcare, Little Chalfont, UK) at 37 ºC in a 95% humidity/5% CO2 atmosphere, being replaced every 2 days. Once reached 80% confluence, cells were harvested with 0.05% (v/v) trypsin (Lonza) and 0.5 mM EDTA (Sigma-Aldrich) in HEPES (Lonza), and seeded (3 x 10^6 cells/cm^2) onto 6.5 mm-transwell insert (0.4 μm pore size, Corning). When confluence reached 80%, the apical medium was removed and cells were grown at air-liquid interface (ALI), and the basolateral medium was replaced every 2 days. For experiments, Calu-3 cells were exposed apically (0.1 ml) to 25 μg/ml Ole e 1 or 10 μg/ml Der p 1 in PBS (containing 0.1 mM GSH) on days 2 and 7 at ALI during 24 h, and 0.5 ml of complete DMEM phenol free-medium (Thermo Fisher Scientific) containing 5% FBS was added to the basolateral side. Cells treated with PBS (+ 0.1 mM GSH) were used as control.
+</br></br>
+The apical and basolateral media derived from Calu-3 cells after each treatment (PBS, Ole e 1 or Der p 1), were collected and kept at -80 ºC until metabolomics analysis."	Extracellular media (basolateral and apical) were thawed on ice and mixed vigorously using vortex. From each sample, protein precipitation and metabolite extraction was performed by adding 1 volume of the extracellular media to 3 volumes of cold methanol (-20 °C). Samples were then vortex-mixed and stored at -20 °C for 5 min. Supernatant containing the metabolites was separated from the pellet by centrifugation (16,000 x g for 20 min at 4 °C) and put into a LC vial for analysis.	LC−MS analysis was performed on an Agilent HPLC system (1200 series, Agilent Technologies, Waldbronn, Germany), equipped with a degasser, 2 binary pumps, and a thermostated autosampler coupled with quadrupole-time of flight analyzer, LC-MS (6520) system (Agilent Technologies, Waldbronn, Germany), as previously described. For the separation, an injection volume of 10 μl was introduced to a reversed-phase column (Zorbax Eclipse XDB-C18, 4.6 x 50 mm, 1.8 µm, Agilent Technologies) kept at 40 °C. The system was operated at 0.5 ml/min flow rate consisted of Solvent A, water with FA at 0.1%, and solvent B, methanol, as mobile phases. Gradient started with 2% B (0–5 min), later a linear gradient from 2 to 50% B (6–15 min), sustained at 50% B for 2 min (15–17 min), then up to 95% B (17–18 min), kept to 95% B for 2 min (18–20 min), and returned to starting conditions in 1 min to finally keep the re-equilibration with 2% B until 25 min in total.	The equipment consisted on a CE (7100 Agilent) coupled to a TOF/MS analyzer (6224 Agilent). Separation was carried out using a fused-silica capillary (total length of 100 cm; i.d. of 50 μm; Agilent Technologies). The capillary was pre-conditioned with 1 M NaOH for 30 min, followed by MilliQ water and background electrolyte-BGE (0.8 M of FA in 10% methanol) for 30 min, at 20 °C, using normal polarity. Before each analysis, the capillary was flushed for 5 min (950 mbar pressure) with BGE.	<p><strong>Liquid Chromatography-Quadrupole Time of Flight-Mass Spectrometry (LC-QTOF-MS):</strong></p><p>The Agilent 6520 quadrupole-time of flight mass spectrometer was operated in full scan mode (m/z 100 to 1100) in positive and negative electrospray ionization (ESI) mode at a scan rate of 1 scan/s. Accurate mass measurement was assured through an automated calibrator delivery system that continuously introduced a reference solution, containing masses of m/z 121.0509 (purine) and m/z 922.0098 (HP-921) in positive ESI mode; whereas m/z 112.9856 (TFA) and m/z 922.009798 (HP-921) in negative ESI mode. The capillary voltage was 3500 V and 4000 V for positive and negative ionization mode, respectively. The nebulizer and gas flow rate were 35 psig and 11 l/min respectively. The fragmentor voltage was set to 75 V and the radiofrequency voltage in the octupole to 750 V. </p><p><br></p><p><strong>Capillary Electrophoresis-Time of Flight-Mass Spectrometry (CE-TOF-MS):</strong></p><p>The Agilent 7100 CE time-of-flight mass spectrometer was operated in positive polarity, with a full scan from 80 to 1000 m/z at a rate of 1.4 scans/s. Drying gas was set to 10 l/min, nebulizer to 10 psi, voltage to 3.5 kV, fragmentor to 125 V, gas temperature to 200 °C and skimmer to 65 V. Sheath liquid composition was methanol/water (1:1, v/v) containing 1.0 mM of FA and 2 reference masses which allowed mass correction and higher mass accuracy m/z 121.0509 (purine) and m/z 922.0098 (HP-921). Samples were injected at 50 mbar for 50 s and stacked by applying background electrolyte at 100 mbar for 10 s. The separation voltage was 30 kV with 25 mbar of internal pressure and a total running time of 30 min.</p>	Acquired data were processed using MassHunter Profinder (B.08.00, Agilent Technologies) software to obtain a structured data matrix in an appropriate format. Raw data were analyzed through 2 algorithms, both applied consecutively. First, molecular feature extraction algorithm, which reduces the data size and complexity by removing associated non-specific information and extracting important variables (features). Secondly, for obtaining better accuracy of the data, find by ion algorithm was used to perform a targeted feature extraction. Finally, abundance of the molecule, mass and retention time for each feature in all samples was obtained in a matrix data form. The quality of the data collected by LC-MS and CE-MS was assured excluding background noises and unrelated ions by keeping molecular features present in the 50% of QC injections with a coefficient of variation (CV) below 30%, and present in 75% of the samples of the study. Missing values were estimated using k-nearest neighbors algorithm.	"A tentative identification of all significant signals was performed through the CEU Mass Mediator 3.0 in-house annotation sotfware.
+</br></br>
+For LC-MS, identification was confirmed by LC-MS/MS experiments using 20V for fragmentation. If available, the MS/MS spectra were compared against the MS/MS spectra from an online library (METLIN) or using the software Lipidmaps (v1.0.54, Agilent Technologies). For CE-MS, the identity of the compound was assessed by spiking the commercial standard to the sample and checking the increment of the signal compared against sample and standard alone."
+Study Protocol URI							
+Study Protocol Version							
+Study Protocol Parameters Name		Post Extraction;Derivatization	Chromatography Instrument;Autosampler model;Column model;Column type;Guard column	CE Instrument;Column model;Column type	Scan polarity;Scan m/z range;Instrument;Ion source;Mass analyzer		
+Study Protocol Parameters Name Term Accession Number		;	;;;;	;;	;;;;		
+Study Protocol Parameters Name Term Source REF		;	;;;;	;;	;;;;		
+Study Protocol Components Name							
+Study Protocol Components Type							
+Study Protocol Components Type Term Accession Number							
+Study Protocol Components Type Term Source REF							
+STUDY CONTACTS
+Study Person Last Name	Rodriguez-Coira	Villaseñor	López-Rodríguez	Benedé	Barbas	Barber	Villalba	Escribese	Batanero
+Study Person First Name	Juan	Alma	Juan Carlos	Sara	Coral	Domingo	María Teresa	María Marta	Eva
+Study Person Mid Initials									
+Study Person Email	juan.rodriguezvillanueva@ceu.es	alma.villasenor@ceu.es							
+Study Person Phone									
+Study Person Fax									
+Study Person Address	"Crta. Boadilla del Monte km 6,8
+
+28668 Boadilla del Monte, Madrid"	"Crta. Boadilla del Monte km 6,8
+
+28668 Boadilla del Monte, Madrid"							
+Study Person Affiliation	Universidad CEU San Pablo	Univaersidad CEU San Pablo							
+Study Person Roles	Investigator	Investigator	Author	Author	Author	Author	Author	Author	Author
+Study Person Roles Term Accession Number	http://purl.obolibrary.org/obo/NCIT_C25936	http://purl.obolibrary.org/obo/NCIT_C25936	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781	http://purl.obolibrary.org/obo/NCIT_C42781
+Study Person Roles Term Source REF	NCIT	NCIT							

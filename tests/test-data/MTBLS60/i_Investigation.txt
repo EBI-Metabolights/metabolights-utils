@@ -1,0 +1,124 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	MS	CSEO	NCBITAXON	BTO	CHMO	NCIT	OBI
+Term Source File	http://data.bioontology.org/ontologies/MS	http://data.bioontology.org/ontologies/CSEO	http://data.bioontology.org/ontologies/NCBITAXON	http://data.bioontology.org/ontologies/BTO	http://data.bioontology.org/ontologies/CHMO	http://data.bioontology.org/ontologies/NCIT	http://data.bioontology.org/ontologies/OBI
+Term Source Version	103	2	4	26	16	40	25
+Term Source Description	Mass Spectrometry Ontology	Cigarette Smoke Exposure Ontology	National Center for Biotechnology Information (NCBI) Organismal Classification	BRENDA Tissue and Enzyme Source Ontology	Chemical Methods Ontology	National Cancer Institute Thesaurus	Ontology for Biomedical Investigations
+INVESTIGATION
+Investigation Identifier	MTBLS60
+Investigation Title	Investigation
+Investigation Description	
+Investigation Submission Date	2013-10-17
+Investigation Public Release Date	2016-11-01
+Comment[Created With Configuration]	
+Comment[Last Opened With Configuration]	MetaboLightsConfig20150707
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS60
+Study Title	Dysregulation of lipid and amino acid metabolism precedes islet autoimmunity in children who later progress to type 1 diabetes
+Study Description	The risk determinants of type 1 diabetes, initiators of autoimmune response, mechanisms regulating progress toward B cell failure, and factors determining time of presentation of clinical diabetes are poorly understood. We investigated changes in the serum metabolome prospectively in children who later progressed to type 1 diabetes. Serum metabolite profi les were compared between sample series drawn from 56 children who progressed to type 1 diabetes and 73 controls who remained nondiabetic and permanently autoantibody negative. Individuals who developed diabetes had reduced serum levels of succinic acid and phosphatidylcholine (PC) at birth, reduced levels of triglycerides and antioxidant ether phospholipids throughout the follow up, and increased levels of proinfl ammatory lysoPCs several months before seroconversion to autoantibody positivity. The lipid changes were not attributable to HLA-associated genetic risk. The appearance of insulin and glutamic acid decarboxylase autoantibodies was preceded by diminished ketoleucine and elevated glutamic acid. The metabolic profi le was partially normalized after the seroconversion. Autoimmunity may thus be a relatively late response to the early metabolic disturbances. Recognition of these preautoimmune alterations may aid in studies of disease pathogenesis and may open a time window for novel type 1 diabetes prevention strategies.
+Study Submission Date	2013-10-17
+Study Public Release Date	2016-11-01
+Study File Name	s_MTBLS60.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	Type 1 Diabetes Mellitus	ultra-performance liquid chromatography-mass spectrometry	two-dimensional gas chromatography	Lipidomics	untargeted metabolites	DIPP
+Study Design Type Term Accession Number	http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C2986	http://purl.obolibrary.org/obo/CHMO_0000715	http://purl.obolibrary.org/obo/CHMO_0002886	http://scai.fraunhofer.de/CSEO#lipidomics		
+Study Design Type Term Source REF	NCIT	CHMO	CHMO	CSEO		
+STUDY PUBLICATIONS
+Study PubMed ID	19075291
+Study Publication DOI	10.1084/jem.20081800
+Study Publication Author List	Oresic M, Simell S, Sysi-Aho M, Näntö-Salonen K, Seppänen-Laakso T, Parikka V, Katajamaa M, Hekkala A, Mattila I, Keskinen P, Yetukuri L, Reinikainen A, Lähde J, Suortti T, Hakalax J, Simell T, Hyöty H, Veijola R, Ilonen J, Lahesmaa R, Knip M, Simell O.
+Study Publication Title	Dysregulation of lipid and amino acid metabolism precedes islet autoimmunity in children who later progress to type 1 diabetes.
+Study Publication Status	Published
+Study Publication Status Term Accession Number	
+Study Publication Status Term Source REF	
+STUDY FACTORS
+Study Factor Name	ID	Male	Age	nICA	nMIAA	nmIAA	nGADA	nIA2A	SampleAge	IsSeroc	Time2Diag	Diagnosis	nIAA	Age122days	MO 
+Study Factor Type	ID	Male	Age	nICA	nMIAA	nmIAA	nGADA	nIA2A	SampleAge	IsSeroc	Time2Diag	Diagnosis	nIAA	Age122days	MO
+Study Factor Type Term Accession Number															
+Study Factor Type Term Source REF															
+STUDY ASSAYS
+Study Assay File Name	a_MTBLS60_dippA_UPLC_MS.txt	a_MTBLS60_dippB_GCxGC_MS.txt
+Study Assay Measurement Type	metabolite profiling	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI	OBI
+Study Assay Technology Type	mass spectrometry	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI	OBI
+Study Assay Technology Platform	Waters Q-Tof Premier	LECO Pegasus 4D
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification
+Study Protocol Type Term Accession Number						
+Study Protocol Type Term Source REF						
+Study Protocol Description	"The DIPP project has been performed in three Finnish cities with a combined annual birth rate of 11,000, representing almost 20% of all births in Finland. The project was launched in the city of Turku in November 1994; Oulu joined the study 1 yr later and Tampere 2 yr after that. HLA-DQ–based genetic typing was used to select children positive for DR3-DQ2 and/or DR4-DQ8 risk haplotypes without protective haplotypes. By June 6, 2006, 104,111 consecutive newborn infants had been screened, and 8,026 children with genetic risk continued in the follow up. The DIPP study was approved by the local Ethical Committees at the University Hospitals in Turku, Oulu, and Tampere.
+</p>
+In Turku the children were monitored at 3 month intervals until 2 yr of age and then were monitored twice a year, and in Oulu and Tampere they were monitored at 3, 6, 12, 18, and 24 months and then annually. At each visit, a venous blood sample was collected from the children without fasting. After 30–60 min at room temperature, serum was separated and transferred to -70 °C in cryovials within 3 h from the draw. ICA were measured in all samples. If a child seroconverted to ICA positivity, IAA, GADA, and protein tyrosine phosphatase-like antigen IA-2 (IA-2A) were measured in all samples obtained from that child. After seroconversion to autoantibody positivity the visits took place at 3 month intervals in all clinical centers. As of January 1, 2003, all four autoantibody types, ICA, GADA, IAA, and IA-2A, were measured from all samples drawn as previously described [1]. Autoantibodies that were present in cord blood and disappeared before 18 mo of age were regarded as maternal in origin and such values were excluded from the analysis.
+</p>
+Between 1997 and 2007, study children with two or more types of autoantibodies detected in at least two consecutive serum samples have been recruited into a randomized double-blind placebo-controlled trial testing the efficacy of nasal insulin for preventing type 1 diabetes (http://clinicaltrials.gov, identifier: NCT00223613). The study showed that daily nasal insulin administration in an ~1 U/kg dose failed to delay diabetes development in children with genetic risk and two or more types of autoantibodies [1]. There were no meaningful differences in serum metabolome components in the enrolled children, who comprised roughly half of those eligible, compared with those who did not participate in the prevention trial.
+</p>
+Ref:</br>
+[1] Näntö-Salonen K, Kupila A, Simell S, Siljander H, Salonsaari T, Hekkala A, Korhonen S, Erkkola R, Sipilä JI, Haavisto L, Siltala M, Tuominen J, Hakalax J, Hyöty H, Ilonen J, Veijola R, Simell T, Knip M, Simell O. Nasal insulin to prevent type 1 diabetes in children with HLA genotypes and autoantibodies conferring increased risk of disease: a double-blind, randomised controlled trial. Lancet. 2008 Nov 15;372(9651):1746-55. doi: 10.1016/S0140-6736(08)61309-4. PMID: 18814906</br>"	"UPLC-MS:</br>
+10 µl serum samples diluted with 10 µl of 0.15 M NaCl and spiked with a standard mixture containing 10 lipid species were extracted with 100 µl of a 2:1 mixture of chloroform and methanol. The extraction time was 0.5 h and the lower organic phase was separated by centrifuging at 10,000 rpm for 3 min. Another standard mixture containing three labeled lipid species was added to the extracts.
+</p>
+GCxGC-TOF-MS:</br>
+10 µl of an internal standard-labeled palmitic acid (16:0-16,16,16d3; 500 mg/l) and 400 µl of methanol solvent were added to 20 µl of the sample. After vortexing for 1 min and incubating for 30 min at room temperature, the supernatant was separated by centrifugation at 10,000 rpm for 5 min at room temperature. The sample was dried under constant flow of nitrogen gas. 25 µl MOX (2% methoxyamine HCl in pyridine) was added to the dried sample. The mixture was then incubated at 45 °C for 1 h and derivatized with 25 µl N-methyl-N-(trimethylsilyl)trifluoroacetamide by incubating at 45 °C for 1 h. 10 µl of retention index standard mixture with five alkanes at 800 ppm was added to the metabolite mixture. Sample order for analysis was established by randomization."	"UPLC-MS:</br>
+The lipids were analyzed on a mass spectrometer (Q-Tof Premier; Waters) combined with an Acquity UPLC (Waters). The column, kept at 50 °C, was an Acquity UPLC BEH C18, 50 mm, with 1.7 µm particles (Waters). The solvent system included water (1% 1 M ammonium acetate and 0.1% HCOOH) and a mixture of acetonitrile and 2-propanol (5:2; 1% 1M NH4Ac and 0.1% HCOOH). The flow rate was 0.2 ml/min and the total run time, including column reequilibration, was 18 min.
+</p>
+GCxGC-TOF-MS:</br>
+The instrument used was a GCxGC-TOF mass spectrometer (Pegasus 4D; Leco) with an autosampler (6890N GC and Combi PAL;Agilent Technologies). The instrument parameters were as follows: 1 µl split injection 1:20; first column, RTX-5, 10 m x 180 µm x 0.20 µm; second column, BPX-50, 1.50 m x 100 µm x 0.10 µm; helium 39.6 psig constant pressure; temperature programs, primary oven, Initial 50 °C, 1 min->295 °C, 7 °C/min, 3 min, and secondary oven, +20 °C above primary oven temperature; second dimension separation time 5 s."	"UPLC-MS:</br>
+The lipids were analyzed on a mass spectrometer (Q-Tof Premier; Waters).
+</p>
+GCxGC-TOF-MS:</br>
+The instrument used was a GCxGC-TOF mass spectrometer (Pegasus 4D; Leco) with an autosampler (6890N GC and Combi PAL;Agilent Technologies). The MS instrument parameters were as follows: MS measurement 45–700 amu, 100 spectra/s."	"UPLC-MS:</br>
+Raw centroid data from the LC/MS instrument was converted to netCDF files, which were processed with MZmine software version 0.60 [1][2]. Calibration was performed as follows: all monoacyl lipids except cholesterol esters, such as monoacylglycerols and monoacyl glycerophospholipids, were calibrated with the lysoPC PC(17:0/0:0) as internal standard. All diacyl lipids except phosphatidylethanolamines were calibrated with the PC PC(17:0/17:0), the phosphatidylethanolamines with PE(17:0/17:0), and the triacylglycerols and cholesterol esters with the triacylglycerol TG(17:0/17:0/17:0). Calibration-based concentrations are expressed in µmol/liter unless otherwise noted.
+</p>
+GCxGC-TOF-MS:</br>
+Raw data were processed using ChromaTOF software (Leco) followed by alignment and normalization using the in house–developed software. Unwanted background peaks were eliminated using the classifications feature of ChromaTOF software. In house–developed software was used to perform additional filtering using compound identifications by ChromaTOF.
+</p>
+Ref:</br>
+[1] Katajamaa M, Oresic M. Processing methods for differential analysis of LC/MS profile data. BMC Bioinformatics. 2005 Jul 18;6:179. PMID:16026613</br>
+[2] Katajamaa M1, Miettinen J, Oresic M. MZmine: toolbox for processing and visualization of mass spectrometry based molecular profile data. Bioinformatics. 2006 Mar 1;22(5):634-6. PMID:16403790</br>"	"UPLC-MS:</br>
+The samples were analyzed in four separate runs within 12 months and the data were processed for each analytical run separately (Table S1, available at http://www.jem.org/cgi/content/full/jem.20081800/DC1). For the final combined dataset consisting of data from all four analytical runs, we matched the lipids across different runs based on the following criteria: lipid identity is the same across all runs; lipid is detected in all four analytical runs (this stringent criterion is the main reason for relatively low number of lipids in the final dataset and, thus, only the most abundant lipids within each class are included); starting from the first analytical run as reference (Turku DIPP series), retention time deviation is <2%; and starting from the first analytical run as reference (Turku DIPP series), deviation of median intensity (calculated within the analytical run) between analytical runs is <50%.
+</p>
+GCxGC-TOF-MS:</br>
+The metabolites were identified using an in house reference compound library as well as by searching the reference mass spectral library. Mass spectra from the GCxGC-TOF/MS analysis were searched against The Palisade Complete Mass Spectral Library, 600K Edition (Palisade Mass Spectrometry), which includes all spectra available from the NIST 2002 and Wiley registry collections as well as 150,000 other spectra. The matches to reference spectra are based on a weighted dot product of the two spectra, with higher m/z peaks having more weight than the lower. A similarity value is assigned between 0 and 999, with 999 being a perfect match and 750 generally considered as a reasonable match. We used the conservative cut-off criterion of 850 for identification. Response curves are shown for selected metabolites of relevance to the study in Figs. S8 and S9 (available at http://www.jem.org/cgi/content/full/jem.20081800/DC1)."
+Study Protocol URI						
+Study Protocol Version						
+Study Protocol Parameters Name		Post Extraction;Derivatization	Chromatography Instrument;Autosampler model;Column type 1;Column model 1;Column type 2;Column model 2	Scan polarity;Scan m/z range;Instrument;Mass analyzer;Ion source		
+Study Protocol Parameters Name Term Accession Number		;	;;;;;	;;;;		
+Study Protocol Parameters Name Term Source REF		;	;;;;;	;;;;		
+Study Protocol Components Name						
+Study Protocol Components Type						
+Study Protocol Components Type Term Accession Number						
+Study Protocol Components Type Term Source REF						
+STUDY CONTACTS
+Study Person Last Name	Han
+Study Person First Name	Zhao
+Study Person Mid Initials	
+Study Person Email	han.zhao@vtt.fi
+Study Person Phone	
+Study Person Fax	
+Study Person Address	
+Study Person Affiliation	
+Study Person Roles	
+Study Person Roles Term Accession Number	
+Study Person Roles Term Source REF	

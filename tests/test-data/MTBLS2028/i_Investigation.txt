@@ -1,0 +1,93 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	OBI	NCIT	CHEBI	BTO	EFO	CHMO	UO	MS	MTBLS
+Term Source File	http://data.bioontology.org/ontologies/OBI	http://data.bioontology.org/ontologies/NCIT	http://data.bioontology.org/ontologies/CHEBI	http://data.bioontology.org/ontologies/BTO	http://data.bioontology.org/ontologies/EFO	http://data.bioontology.org/ontologies/CHMO	http://data.bioontology.org/ontologies/UO	http://data.bioontology.org/ontologies/MS	https://www.ebi.ac.uk/metabolights/
+Term Source Version	29	28	80	22	113	5	42	86	1.0
+Term Source Description	Ontology for Biomedical Investigations	National Cancer Institute Thesaurus	Chemical Entities of Biological Interest Ontology	BRENDA Tissue and Enzyme Source Ontology	Experimental Factor Ontology	Chemical Methods Ontology	Units of Measurement Ontology	Mass Spectrometry Ontology	User defined terms
+INVESTIGATION
+Investigation Identifier	MTBLS2028
+Investigation Title	Investigation
+Investigation Description	Created using the MetaboLights Online Editor (MOE)
+Investigation Submission Date	2020-08-24
+Investigation Public Release Date	2020-11-04
+Comment[Created With Configuration]	MetaboLightsConfig20150707
+Comment[Last Opened With Configuration]	MetaboLightsConfig20150707
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS2028
+Study Title	Distinct lipid signatures are identified in the plasma of rats with chronic inflammation induced by estradiol benzoate and sex hormones
+Study Description	<p><strong>INTRODUCTION:</strong> Prostatitis is likely to occur in younger or middle-aged men, while prostate cancer is likely to occur in older men. Although amino acids and lipids as biomarkers of prostate cancer have been examined using prostate cancer cell lines/tissues, no previous studies have evaluated amino acids or lipids as potential chronic prostatitis biomarkers.</p><p><strong>OBJECTIVES:</strong> The study's aim was to identify amino acids and lipids that could serve as potential biomarkers of chronic prostatitis.</p><p><strong>METHODS:</strong> We profiled the amino acids and lipids found in plasma from rats collected in a previous study. In brief, a total of 148 Sprague-Dawley rats (offspring) were dosed with estradiol benzoate (EB) on postnatal days (PNDs) 1, 3 and 5, and subsequently dosed with testosterone (T)/estradiol (E) tubes via subcutaneous implants from PND 90 to 200. Plasma was collected on PNDs 30, 90, 100, 145 and 200. Analysis was conducted with a Xevo TQ-S triple-quadrupole mass spectrometer using a Biocrates AbsoluteIDQ p180 kit.</p><p><strong>RESULTS:</strong> Plasma acylcarnitines [(C2, C16:1, C18, C18:1, C18:1-OH, and C18:2)], glycerophospholipids (lysophosphatidylcholine-acyl, -di-acyl, and -di-acyl acyl-alkyl) and sphingomyelins [SM (OH) C16:1, SM C18:0, SM C18:1, and SM C20:2] significantly increased on PND 145, when chronic inflammation was observed in the dorsolateral prostate of rats dosed with EB, T, and E. No statistical significances of amino acid levels were observed in the EB + T + E group on PND 145.</p><p><strong>CONCLUSION:</strong> Exposure to EB, T, and E altered lipid levels in rat plasma with chronic prostate inflammation. These findings suggest that the identified lipids may be predictive chronic prostatitis biomarkers. The results require confirmation through additional nonclinical and human studies.</p>
+Study Submission Date	2020-08-24
+Study Public Release Date	2020-11-04
+Study File Name	s_MTBLS2028.txt
+STUDY DESIGN DESCRIPTORS
+Study Design Type	Chronic Inflammation	estradiol	testosterone	Lipidomics	targeted metabolites	flow injection analysis-mass spectrometry	ultra-performance liquid chromatography-mass spectrometry	Biocrates Absolute IDQp180 kit
+Study Design Type Term Accession Number	http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C174450	http://purl.obolibrary.org/obo/CHEBI_23965	http://purl.obolibrary.org/obo/CHEBI_17347	http://purl.obolibrary.org/obo/NCIT_C153193			http://purl.obolibrary.org/obo/CHMO_0000715	http://www.ebi.ac.uk/metabolights/ontology/placeholder
+Study Design Type Term Source REF	NCIT	CHEBI	CHEBI	NCIT			CHMO	MTBLS
+STUDY PUBLICATIONS
+Study PubMed ID	32895772
+Study Publication DOI	10.1007/s11306-020-01715-w
+Study Publication Author List	Nakamura N, Pence LM, Cao Z, Beger RD.
+Study Publication Title	Distinct lipid signatures are identified in the plasma of rats with chronic inflammation induced by estradiol benzoate and sex hormones.
+Study Publication Status	Published
+Study Publication Status Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0001796
+Study Publication Status Term Source REF	EFO
+STUDY FACTORS
+Study Factor Name	Postnatal day	Batch	Treatment
+Study Factor Type	timepoint	sample batch	treatment
+Study Factor Type Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0000724	http://purl.obolibrary.org/obo/MS_1000053	http://www.ebi.ac.uk/efo/EFO_0000727
+Study Factor Type Term Source REF	EFO	MS	EFO
+STUDY ASSAYS
+Study Assay File Name	a_MTBLS2028_AA_LC-MS_metabolite_profiling.txt	a_MTBLS2028_Lipid_FIA-MS_metabolite_profiling.txt
+Study Assay Measurement Type	metabolite profiling	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI	OBI
+Study Assay Technology Type	mass spectrometry	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI	OBI
+Study Assay Technology Platform	Liquid Chromatography MS -	Liquid Chromatography MS - Alternating (LC-MS (Alternating))
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification	Flow Injection Analysis
+Study Protocol Type	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification	Flow Injection Analysis
+Study Protocol Type Term Accession Number							
+Study Protocol Type Term Source REF							
+Study Protocol Description	<p>Dosing of male offspring was carried out as previously described<strong>[1]</strong>. Briefly, 11–13-week-old time-mated female Sprague Dawley rats (Hsd:SD) were purchased from Envigo (Indianapolis, IN, USA) and delivered to the National Center for Toxicological Research (NCTR) on gestation day (GD) 3 (day of birth = PND 0). The animals were housed individually and maintained under a 12:12-h light–dark cycle with controlled room temperature (23 °C ± 3 °C) and humidity (50% ± 20%). Their diet upon arrival consisted of a low-phytoestrogen 5K96 chow (Purina Mills, St. Louis, MO, USA). Water was provided ad libitum.</p><p><br></p><p>The male offspring of the rats were obtained at birth (PND 0) and divided into 2 groups: untreated and EB- treated (see Table 1 in the paper associated with this study). In the EB-treated group, the male pups were injected subcutaneously with 2.5 mg/kg body weight (BW) of EB (Sigma-Aldrich, E8515) on PND 1, 3, and 5. Male pups in the untreated group were injected with a vehicle (tocopherol-stripped corn oil; 0290141584-400; ICN Biomedicals, Inc., Aurora, OH, USA).</p><p><br></p><p>On PND 90, each group [untreated (control) or EB-treated] was divided into 2 additional groups, resulting in 4 groups: control, T+E only, EB only, and EB+T+E (see Table 1 in the paper associated with this study). Animals in the control and EB only groups were implanted with 3 empty silastic tubing inserts (2x 2-cm tubes and 1x 1-cm tube); animals in the T+E and EB+T+E groups were implanted with 2 silastic tubing inserts (Dow Corning, internal diameter [ID]; 1.47 mm; absorbance, 1.95 mm) packed with T powder (2x 2-cm tubes; Sigma-Aldrich) and 1 tube packed with E (1x 1-cm tube; Sigma-Aldrich) for additional T+E treatment until PND 200. 8 weeks after the first surgery on PND 90 (i.e., on PND 146), the 32 animals underwent a second surgery to replace the hormone-containing silastic tubing implants. These animals were sacrificed on PND 200. Blood samples were collected from animals in the morning (8 am–12 pm). Animals were euthanized using carbon dioxide asphyxiation, followed by collection of blood via cardiac puncture into EDTA treated collection tubes for plasma (BD, Franklin Lakes, NJ, USA). Plasma were collected by centrifuging the collection tubes at 3000 x g for 10 min at room temperature. Plasma samples were stored in a -80 °C freezer until further use.</p><p><br></p><p>Mass-spectrometry-based metabolomic profiling was performed using a Biocrates AbsoluteIDQ p180 kit (Biocrates Life Science AG, Innsbruck, Austria), which measures 5 classes of metabolites including 40 acylcarnitines, 21 amino acids, 21 biogenic amines, 90 glycerophospholipids and 15 sphingolipids (<a href='https://biocrates.com/wp-content/uploads/2020/02/Biocrates_p180_metabolites.pdf' rel='noopener noreferrer' target='_blank'>https://biocrates.com/wp-content/uploads/2020/02/Biocrates_p180_metabolites.pdf</a>).</p><p><br></p><p><strong>Ref:</strong></p><p><strong>[1]</strong> Ho SM, Tang WY, Belmonte de Frausto J, Prins GS. Developmental exposure to estradiol and bisphenol A increases susceptibility to prostate carcinogenesis and epigenetically regulates phosphodiesterase type 4 variant 4. Cancer Res. 2006 Jun 1;66(11):5624-32. doi:10.1158/0008-5472.CAN-06-0516. PMID: 16740699.</p>	<p>2 ml of chilled methanol (-20 °C) (Optima grade; Fisher Scientific) was added to 200 μl plasma. Samples were incubated at -20 °C for 1 h to precipitate proteins, then centrifuged at 4° C for 10 min at 13,000 x g. The supernatant was transferred into new tubes and stored at -20 °C while the MetIDQ plate (Biocrates Life Science AG) was prepared. The MetIDQ plate was prepared according to the manufacturer’s instructions (Biocrates Life Science AG). 10-μl aliquots of each sample were used for the analysis. The Absolute IDQ p180 kit provided with 3 quality-control (QC) samples composed of lyophilized human plasma (anticoagulant:EDTA) spiked with low, medium and high concentrations of metabolites. We used them as QC samples.</p>	<p><strong>Amino acid profiling:</strong></p><p>Amino acids were separated chromatographically on an Acquity ultra-performance liquid chromatograph (Waters Corp.) equipped with a C18 ethylene-bridged-hybrid column (2.1 x 100 mm; 1.7-μm particle size) (Waters). In the amino acids and Biogenic amines mobile phases, water (HPLC grade; Fisher Scientific), 0.2% formic acid (Solvent A) and acetonitrile, 0.2% formic acid (Solvent B; Optima grade; Fisher Scientific) were used. UPLC column oven was set to 50 °C and the flow rate was 0.8 ml/min. The injection volume was 5 µl.</p>	<p><strong>Amino acid profiling:</strong></p><p>Metabolites were detected using a Xevo TQ-S triple-quadrupole mass spectrometer (Waters Corp., Milford, MA, USA). Spectra were acquired with a positive scan in multiple-reaction-monitoring mode.</p><p><br></p><p><strong>Lipid profiling:</strong></p><p>Spectra were acquired with a Waters Xevo TQ-S triple-quadrupole mass spectrometer with a positive scan in multiple-reaction-monitoring mode. </p>	<p>Data was analysed and quantified according to the manufacturer’s protocol (AbsoluteIDQ p180 kit).</p>	<p>Metabolites were quantified according to the manufacturer’s protocol (AbsoluteIDQ p180 kit).</p>	<p><strong>Lipid profiling:</strong></p><p>Lipids were profiled by flow-injection analysis using a Waters Xevo TQ-S triple-quadrupole mass spectrometer. Spectra were acquired with a positive scan in multiple-reaction-monitoring mode. Data were processed and concentrations were calculated using MetIDQ Boron software (Biocrates Life Science AG). Analyzing glycerophospholipids and sphingolipids required the use of an isocratic Flow injection Analysis (FIA) method (Biocrates.com). The sample injector was directly connected to the mass spectrometer with a length of PEEK tubing (0.0625 x 0.127 mm). Mobile phase B is composed of the solvent 1 (provided in the Biocrates AbsoluteIDQ p180 kit) diluted in 290 ml of HPLC grade methanol (Fisher Scientific).</p>
+Study Protocol URI							
+Study Protocol Version							
+Study Protocol Parameters Name		Post Extraction;Derivatization	Chromatography Instrument;Autosampler model;Column model;Column type;Guard column	Scan polarity;Scan m/z range;Instrument;Ion source;Mass analyzer			FIA Instrument
+Study Protocol Parameters Name Term Accession Number		;	;;;;	;;;;			
+Study Protocol Parameters Name Term Source REF		;	;;;;	;;;;			
+Study Protocol Components Name							
+Study Protocol Components Type							
+Study Protocol Components Type Term Accession Number							
+Study Protocol Components Type Term Source REF							
+STUDY CONTACTS
+Study Person Last Name	Nakamura	Pence	Cao	Beger
+Study Person First Name	Noriko	Lisa M	Zhijun	Richard D
+Study Person Mid Initials				
+Study Person Email				
+Study Person Phone				
+Study Person Fax				
+Study Person Address				
+Study Person Affiliation				
+Study Person Roles	Author	Author	Author	Author
+Study Person Roles Term Accession Number				
+Study Person Roles Term Source REF				
