@@ -109,8 +109,17 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                     with open(model_cache_path) as f:
                         data = json.load(f)
                         model = MetabolightsStudyModel.model_validate(data)
-                        messages.append(InfoMessage(short="Loaded from cache file."))
-                        return model, messages
+                        if model.investigation_file_path == "i_Investigation.txt":
+                            messages.append(
+                                InfoMessage(short="Loaded from cache file.")
+                            )
+                            return model, messages
+                        else:
+                            messages.append(
+                                WarningMessage(
+                                    short="Cache file is not valid. Skipping..."
+                                )
+                            )
                 else:
                     messages.append(
                         InfoMessage(short="There is no study model cache file.")

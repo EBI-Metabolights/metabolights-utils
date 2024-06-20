@@ -94,7 +94,7 @@ def submission_list(
         if studies_data:
             studies = studies_data.data.copy()
             studies.sort(key=lambda x: x.updated)
-            click.echolog("Submitted studies by user:")
+            click.echo("Submitted studies by user:")
             for item in studies:
                 print_submitted_study(item, log=click.echo)
             click.echo("-" * 120)
