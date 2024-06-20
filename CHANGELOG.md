@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.0.1 (2024-06-20)
+
+### Ci
+
+* ci: semantic versioning github actions are enabled. ([`cd7e027`](https://github.com/EBI-Metabolights/metabolights-utils/commit/cd7e0272c743db5c55f5a7ca7e972525a2f2848a))
+
+### Fix
+
+* fix: public describe and submission describe command fixes. ([`7effb91`](https://github.com/EBI-Metabolights/metabolights-utils/commit/7effb910417575d83d39c30eacd0edc170db7873))
+
 ## v1.0.0 (2024-06-20)
 
 ### Ci
