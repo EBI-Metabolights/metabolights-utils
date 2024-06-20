@@ -71,7 +71,7 @@ def submission_describe(
     load_folder_index: bool = False,
 ):
     """
-    View summary of any user submitted study content. Run jsonpath expression to filter MetaboLights study model.
+    View summary of user's submitted (private) study. Run jsonpath expression to filter MetaboLights study model.
 
     study_id: MetaboLights study accession number (MTBLSxxxx).
 

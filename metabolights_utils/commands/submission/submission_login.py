@@ -43,7 +43,7 @@ def submission_login(
     api_token: str = "",
 ):
     """
-    Creates a file path to use connect private FTP server and MetaboLights Rest API.
+    Creates a file to connect private FTP server and MetaboLights Rest API.
 
     credentials_file_path (optional): File path to store user private FTP and MetaboLights Rest API credentials.
 

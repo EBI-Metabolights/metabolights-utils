@@ -19,38 +19,55 @@
 
 ---
 
-#### **metaboligts-utils** is a *lightweight API* and *command line interface* (CLI) to update ISA metadata files, download and search MetaboLights public studies. 
----
-### Selected Features
+#### **metaboligts-utils** is a *lightweight API* and *command line interface* (CLI) to use or search MetaboLights public studies, update MetaboLights submitted studies, and update [ISA-Tab](https://isa-specs.readthedocs.io/en/latest/isatab.html) metadata files. 
 ---
 
+#### CLI Features
+* Download and list MetaboLights public study metadata files.
+* Search MetaboLights public studies.
+* Download, upload and validate MetaboLights submitted studies
+* Create assay file templates.
+
+#### API Features
 * **Read and update ISA files** with minimum pyhton package dependency.
-* **mtbls** command line interface (CLI) to
-    * download and list MetaboLights public study metadata files.
-    * search MetaboLights public studies.
-    * download, upload and validate MetaboLights submitted studies.
 * Read MetaboLights study metadata files
 * Calculate hash value of each ISA metadata file or study ISA metadata folder
 * Read ISA table files (s_*.txt, a_*.txt, m_*.txt) with **Pagination support**.
 * **Multi-column filters and sort options** on ISA table files.
-* Define **custom filters and sorters**
-* **Apply actions** on ISA table files to manuplate them.
+* **Apply actions** on ISA table files to manipulate them.
 * **Json serializable** models with [pydantic](https://github.com/pydantic/pydantic) library.
 
-
-### Installation
 ---
-The following command installs metabolights-utils from the Python Package Index. You will need an installation of Python 3.8+ and pip3.
 
+
+## Installation
+---
+The following command installs metabolights-utils from the Python Package Index. You will need Python 3.8+ and pip3 on your operating system.
+
+* (If python3 is not installed) Download and install [Python](https://www.python.org/downloads)
+* (If pip3 is not installed) Install [pip3](https://pip.pypa.io/en/stable/installation) 
+* Install metabolights-utils library
 ```shell
+cd <directory to create a virtual environment>
+
+# install metabolights-utils on new a virtual environment named mtbls-venv (you may change it)
+python3 -m venv mtbls-venv
+source mtbls-venv/bin/activate
+pip install --upgrade pip
 pip3 install -U metabolights-utils
+
+# test mtbls command
+mtbls --version
 ```
 
-### Usage **mtbls** command line interface
-After installation of metabolights-utils, you can use the mtbls command line interface to download and list MetaboLights studies.
+## CLI (**mtbls**) Usage
+After installation of metabolights-utils, *mtbls* command will be enabled to use or search MetaboLights studies.
 
-#### Commands for Public Studies 
+### Commands to use MetaboLights Public Studies 
 ```shell
+cd <directory to installed virtual environment.>
+# activate your virtual environment
+source mtbls-venv/bin/activate
 
 # prints mtbls public command usage
 mtbls --help
@@ -93,7 +110,6 @@ mtbls public list MTBLS3
 
 # lists the content of FILES folder
 mtbls public list MTBLS3 FILES
-
 
 # downloads study metadata files from MetaboLights FTP server.
 mtbls public download MTBLS3
@@ -154,7 +170,7 @@ mtbls public remove MTBLS1
 
 ```
 
-#### Search public studies 
+#### Commands to search MetaboLights Public Studies 
 ```shell
 
 # prints help for public study search command.
@@ -226,6 +242,9 @@ mtbls public search "(cow + -sheep + -(blood serum | milk))" --body '{"assayTech
 # prints only study ids 
 mtbls public search "(cow | -sheep)" --body '{"assayTechniqueNameFilter": { "joinOperator": "or", "values": ["LC-MS", "GC-MS"] }}' --limit=100 --id
 
+# prints only study ids if study has 'SCIEX QTRAP' term in mass spectrometry assay files
+mtbls public search "(SCIEX QTRAP)"  --body '{"assayMainTechniqueFilter": { "joinOperator": "or", "values": ["MS"] }}' --limit 100 --id
+
 # prints study ids which have both targeted and untargeted design descriptor terms
 mtbls public search --body '{"ontologyFilters": {"design_descriptor":{ "joinOperator": "and", "values": ["targeted", "untargeted"]}}}' --limit=100 --id
 
@@ -243,7 +262,7 @@ mtbls public search --body '{"aggregations": [{ "aggregationName": "assay_techni
 
 ```
 
-#### Commands for Submitted Studies 
+#### Commands to update MetaboLights Submitted (private) Studies 
 ```shell
 
 # prints help for submitted studies.
@@ -364,6 +383,7 @@ mtbls submission validate <MTBLSXXX>
 mtbls submission validate <MTBLSXXX> --validation_file_path errors.tsv
 
 ```
+## API Usage 
 
 ### Load MetaboLights study model from a directory
 ---
