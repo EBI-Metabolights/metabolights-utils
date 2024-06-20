@@ -5,6 +5,9 @@ import click
 from metabolights_utils.commands.submission.submission_create_assay import (
     submission_create_assay,
 )
+from metabolights_utils.commands.submission.submission_delete_assay import (
+    submission_delete_assay,
+)
 from metabolights_utils.commands.submission.submission_describe import (
     submission_describe,
 )
@@ -31,6 +34,7 @@ submission_cli.add_command(submission_login)
 submission_cli.add_command(submission_upload)
 submission_cli.add_command(submission_validate)
 submission_cli.add_command(submission_create_assay)
+submission_cli.add_command(submission_delete_assay)
 
 
 if __name__ == "__main__":

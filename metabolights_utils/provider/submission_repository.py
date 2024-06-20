@@ -461,7 +461,7 @@ class MetabolightsSubmissionRepository:
         assay_technique: str,
         scan_polarity: str = "",
         column_type: str = "",
-        timeout: int = 10,
+        timeout: int = 30,
     ):
         if not study_id or not assay_technique:
             return None, None, "study_id or assay_technique is not defined."
@@ -499,6 +499,46 @@ class MetabolightsSubmissionRepository:
         except Exception as ex:
             return None, None, str(ex)
 
+    def delete_assay(
+        self,
+        study_id: str,
+        assay_filename: str,
+        save_audit_copy: bool = True,
+        timeout: int = 20,
+    ):
+        if not study_id or not assay_filename:
+            return None, None, "study_id or assay_filename is not defined."
+
+        api_header, error = self.get_api_token()
+        headers = {"save_audit_copy": str(save_audit_copy).lower()}
+        if api_header:
+            headers["User-Token"] = api_header
+        else:
+            return None, None, error
+
+        sub_path = f"/studies/{study_id}/assays/{assay_filename}"
+        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+
+        try:
+            response = httpx.delete(
+                url=url,
+                timeout=timeout,
+                headers=headers,
+                params={},
+            )
+            if response and response.status_code == 404:
+                return False, f"{assay_filename} does not exist."
+            if response and response.status_code in (200, 201):
+                data = json.loads(response.text)
+                if "success" in data:
+                    return True, None
+
+                return False, "Invalid response."
+            else:
+                return False, response.text if response else None
+        except Exception as ex:
+            return False, str(ex)
+
     def download_submission_metadata_files(
         self,
         study_id: str,
@@ -525,15 +565,18 @@ class MetabolightsSubmissionRepository:
 
         listed_files = []
         requested_files = metadata_files
-        if not metadata_files:
+        if not metadata_files or delete_unlisted_metadata_files:
             result, error = self.list_isa_metadata_files(study_id)
             if result:
                 file_names = [x.file for x in result.study]
                 descriptors = {x.file: x for x in result.study}
                 listed_files = set(file_names)
-                requested_files = file_names
+                if not metadata_files:
+                    requested_files = file_names
             else:
-                return LocalDirectory(code=404, message="There is no data to download.")
+                return LocalDirectory(
+                    code=404, message="There is no metadata file to download."
+                )
 
         if requested_files != metadata_files:
             filtered_files = [
@@ -599,12 +642,14 @@ class MetabolightsSubmissionRepository:
                 if not success:
                     response.actions[filename] = "FAILED"
             if delete_unlisted_metadata_files:
-                for filename in os.listdir(local_path):
-                    if filename not in listed_files:
-                        file_path = os.path.join(local_path, filename)
-                        if is_metadata_file(file_path):
-                            response.actions[filename] = "DELETED"
-                            os.remove(file_path)
+                study_path = os.path.join(local_path, study_id)
+                if os.path.exists(study_path):
+                    for filename in os.listdir(study_path):
+                        if filename not in listed_files:
+                            file_path = os.path.join(study_path, filename)
+                            if is_metadata_file(file_path):
+                                response.actions[f"{study_id}/{filename}"] = "DELETED"
+                                os.remove(file_path)
             response.success = True
             response.code = 200
             response.message = "Ok"
