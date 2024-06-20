@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "0.9.56"
+version = "0.0.1"
 description = "MetaboLights command line interface (CLI), common data models, utility methods and classes."
 authors = ["MetaboLights Team <metabolights-dev@ebi.ac.uk>"]
 readme = "README.md"
@@ -115,8 +115,7 @@ env = "GIT_COMMIT_AUTHOR"
 default = "semantic-release <semantic-release>"
 
 [tool.semantic_release.commit_parser_options]
-allowed_tags = ["new-version","build", "chore", "ci", "docs", "feat", "fix", "perf", "style", "refactor", "test"]
-major_tags = ["new-version"]
+allowed_tags = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "style", "refactor", "test"]
 minor_tags = ["feat"]
 patch_tags = ["fix", "perf"]
 default_bump_level = 0
