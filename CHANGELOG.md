@@ -1,14 +1,18 @@
 # CHANGELOG
 
-## v2.0.0 (2024-06-20)
+## v0.0.1 (2024-06-20)
 
 ### Ci
 
-* ci: github actions to run unit tests and semantic versioning updates ([`1c9f5fb`](https://github.com/EBI-Metabolights/metabolights-utils/commit/1c9f5fb66e3c9e9ceed92ff1c13c43f06abbed27))
+* ci: github actions to run unit tests ([`3529cd7`](https://github.com/EBI-Metabolights/metabolights-utils/commit/3529cd710eec408e5b266e3e638b91ce5bab84e3))
 
 ### Fix
 
 * fix: python3.8 compatibility, new unit tests and lint fixes. ci: sematic release versioning. ([`3c6bb6f`](https://github.com/EBI-Metabolights/metabolights-utils/commit/3c6bb6f23698551fcb19527ce4d5578c85414f7e))
+
+### New-version
+
+* new-version: First version of MetaboLights API and CLI. ([`96400b5`](https://github.com/EBI-Metabolights/metabolights-utils/commit/96400b5e9457e869e2e3abc09f4d8f6eae7957df))
 
 ### Unknown
 
