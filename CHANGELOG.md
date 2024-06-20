@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.1.0 (2024-06-20)
+
+### Cli
+
+* CLI: submission delete-assay command is added.  After deleting assay file, command downloads the latest metadata files from  MetaboLights study. ([`f6b1ff5`](https://github.com/EBI-Metabolights/metabolights-utils/commit/f6b1ff580bc29484f392e73128d4985fe8ad3037))
+
+### Documentation
+
+* docs: README document and command message updates. ([`1428f25`](https://github.com/EBI-Metabolights/metabolights-utils/commit/1428f25c652ed0bf9fd70e2b7cb284c2d51f3e31))
+
 ## v1.0.1 (2024-06-20)
 
 ### Ci
