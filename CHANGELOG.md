@@ -1,9 +1,15 @@
 # CHANGELOG
 
-## v1.0.0 (2024-06-18)
+## v2.0.0 (2024-06-20)
+
+### Ci
+
+* ci: github actions to run unit tests and semantic versioning updates ([`1c9f5fb`](https://github.com/EBI-Metabolights/metabolights-utils/commit/1c9f5fb66e3c9e9ceed92ff1c13c43f06abbed27))
+
+### Fix
+
+* fix: python3.8 compatibility, new unit tests and lint fixes. ci: sematic release versioning. ([`3c6bb6f`](https://github.com/EBI-Metabolights/metabolights-utils/commit/3c6bb6f23698551fcb19527ce4d5578c85414f7e))
 
 ### Unknown
 
-* feature: first release of metabolights-utils API and CLI ([`2d47b53`](https://github.com/EBI-Metabolights/metabolights-utils/commit/2d47b53d13d26bd46d8fa976c26f2f47df18f542))
-
-* Initial commit ([`55106cd`](https://github.com/EBI-Metabolights/metabolights-utils/commit/55106cd581fdd8d360b366c216ef85042f4c3906))
+* feature: Initial commit ([`25c8e5b`](https://github.com/EBI-Metabolights/metabolights-utils/commit/25c8e5b98a3291b137fdbb88113c30263e84ab6c))
