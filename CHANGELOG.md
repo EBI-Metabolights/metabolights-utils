@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.1.1 (2024-06-22)
+
+### Fix
+
+* fix: code updates to fix pylint violations. ([`2a7dae0`](https://github.com/EBI-Metabolights/metabolights-utils/commit/2a7dae02d22a22d39a82a45c685207e11529361a))
+
 ## v1.1.0 (2024-06-20)
 
 ### Cli
