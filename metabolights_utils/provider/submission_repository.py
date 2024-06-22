@@ -1,10 +1,10 @@
+import datetime
 import json
 import os
 import time
 from typing import List, Tuple, Union
 
 import httpx
-from dateutil import parser
 
 from metabolights_utils.commands.submission.model import (
     FtpLoginCredentials,
@@ -209,7 +209,12 @@ class MetabolightsSubmissionRepository:
         new_requested_files = []
         for descriptor in response.study:
             _time = descriptor.created_at
-            modified = parser.parse(_time).timestamp()
+            try:
+                modified = datetime.datetime.strptime(
+                    _time, "%Y-%m-%d %H:%M:%S"
+                ).timestamp()
+            except ValueError:
+                modified = 0
             remote_modified_time = int(modified)
             modified_time_dict[descriptor.file] = remote_modified_time
         study_path = os.path.join(local_path, study_id)
@@ -595,7 +600,12 @@ class MetabolightsSubmissionRepository:
                 else:
                     local_modified_time = int(os.path.getmtime(file_path))
                     _time = descriptors[filename].created_at
-                    modified = parser.parse(_time).timestamp()
+                    try:
+                        modified = datetime.datetime.strptime(
+                            _time, "%Y-%m-%d %H:%M:%S"
+                        ).timestamp()
+                    except ValueError:
+                        modified = 0
                     remote_modified_time = int(modified)
                     if remote_modified_time > local_modified_time:
                         new_requested_files.append(filename)

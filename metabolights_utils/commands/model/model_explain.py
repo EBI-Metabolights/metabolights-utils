@@ -54,49 +54,45 @@ def print_properties(
     description: str,
     model: Dict[str, Any],
 ):
-    required_properties = set()
-    if model and "required" in model:
-        required_properties = {x for x in model["required"]}
-    properties = {}
-    _type = None
-    if model and "properties" in model:
-        _type = define_type(schema, model["properties"])
-        properties = model["properties"]
+    if model is None:
+        model = {}
+    required_properties = {x for x in model.get("required", [])}
+
+    properties = model.get("properties", {})
+    _type = define_type(schema, properties) if properties else None
+
     enums = ""
     click.echo(f"\nDefinition: {title} [{model_name}]")
+    enum_value = model.get("enum", [])
 
-    if model and "enum" in model:
-        enum = ", ".join([str(x) for x in model["enum"]])
-        enums = "Valid values: " + "\n\t ".join(split_to_lines(enum))
+    if enum_value:
+        enum_list_str = ", ".join([str(x) for x in enum_value])
+        enums = "Valid values: " + "\n\t ".join(split_to_lines(enum_list_str))
+
     if description:
         dec = split_to_lines(description)
-        click.echo("\t" + "\n\t".join(dec) + (f" {enums}" if enums else ""))
-    elif enums:
+        click.echo("\t" + "\n\t".join(dec) + (f" {enums}" if enum_value else ""))
+    elif enum_value:
         click.echo(f"\t{enums}")
-    property_names = list([x for x in properties.keys()])
+
+    property_names = list(properties.keys())
     if property_names:
         property_names.sort()
 
         click.echo("\nProperties:")
         for property in property_names:
-            target = properties[property]
-            required_properties = set()
-            if "required" in target:
-                required_properties = {x for x in target["required"]}
-
             property_name = to_snake(property)
             if "isatab_config" in property_name:
                 continue
+            target = properties[property]
+            required_properties = set(target.get("required", []))
             required = f"{'***required***' if property in required_properties else ''}"
-
             _type = define_type(schema, target)
 
             click.echo(
                 "  " + property_name + f" [{_type}] {required if required else ''}"
             )
-            if "description" in target:
-                dec = split_to_lines(target["description"])
-
+            dec = split_to_lines(target.get("description", ""))
             click.echo("\t" + "\n\t".join(dec).strip() + "\n")
 
 
