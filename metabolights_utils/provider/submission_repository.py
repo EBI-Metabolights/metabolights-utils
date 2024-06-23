@@ -635,7 +635,12 @@ class MetabolightsSubmissionRepository:
                 url = self.rest_api_base_url.strip("/") + "/" + sub_path.strip("/")
                 try:
                     _time = descriptors[filename].created_at
-                    modified = parser.parse(_time).timestamp()
+                    try:
+                        modified = datetime.datetime.strptime(
+                            _time, "%Y-%m-%d %H:%M:%S"
+                        ).timestamp()
+                    except ValueError:
+                        modified = 0
                     remote_modified_time = int(modified)
                 except Exception:
                     remote_modified_time = None
