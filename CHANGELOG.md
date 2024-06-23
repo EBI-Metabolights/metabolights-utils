@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.1.2 (2024-06-23)
+
+### Documentation
+
+* docs: documentation updates and new log messages ([`50055bc`](https://github.com/EBI-Metabolights/metabolights-utils/commit/50055bca6b030f72a2af54c6a6abb9263a89fca3))
+
+### Fix
+
+* fix: submitted study download error is fixed. ([`ad2cdc8`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ad2cdc883e4bdbed28bc486a16e03a68c6ebb05f))
+
 ## v1.1.1 (2024-06-22)
 
 ### Fix
