@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import os
 import re
 from typing import Dict, List, Tuple, Union
@@ -15,6 +16,8 @@ from metabolights_utils.models.metabolights.model import (
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.default_ftp_client import DefaultFtpClient
 from metabolights_utils.provider.study_provider import AbstractFolderMetadataCollector
+
+logger = logging.getLogger()
 
 
 class FolderIndex(BaseModel):
@@ -34,6 +37,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
         rebuild_folder_index_file: bool = False,
     ):
         if not client or not client.remote_repository_root_directory or not study_id:
+            logger.error("Not valid input.")
             raise Exception("Not valid input.")
         self.client = client
         self.study_id = study_id.upper().strip("/")
@@ -47,7 +51,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                 "mtbls_index.json",
             )
         )
-
+        logger.debug("Folder index path is %s", self.folder_index_file_path)
         self.rebuild_folder_index_file = rebuild_folder_index_file
         self.remote_study_directory = os.path.join(
             self.client.remote_repository_root_directory, self.study_id
@@ -73,6 +77,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                     skip_content = True
                     break
             if skip_content:
+                logger.debug("%s is in ignore list. SKIPPED.", dir_relative_path)
                 messages.append(f"{dir_relative_path} is in ignore list. SKIPPED.")
                 return
             directory_input = (
@@ -107,6 +112,10 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                 and required_raw_data_folder_files
                 and optional_raw_data_folder_files
             ):
+                logger.info(
+                    "%s directory is raw data folder. Only fid*, ser* acqu* files will be added.",
+                    dir_relative_path,
+                )
                 messages.append(
                     f"{dir_relative_path} directory is raw data folder. fid*, ser* acqu* files will be added."
                 )
@@ -126,6 +135,10 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                         in_ignore_list = True
                         break
                 if in_ignore_list:
+                    logger.debug(
+                        "%s directory is in content ignore list. SKIPPED",
+                        relative_path,
+                    )
                     messages.append(
                         f"{relative_path} directory is in content ignore list. SKIPPED"
                     )
@@ -146,12 +159,13 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
 
                 metadata[relative_path] = descriptor
                 if item.is_directory:
+                    logger.debug("%s is directory, search content.", relative_path)
                     self.visit_folder(
                         full_path, study_path, metadata=metadata, messages=messages
                     )
 
         except Exception as exc:
-            print(f"Directory error: {directory} {str(exc)}")
+            logger.exception("Directory error %s: %s", directory, str(exc))
 
     def get_folder_metadata(
         self,
@@ -166,7 +180,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
         if os.path.exists(self.folder_index_file_path) and os.path.isfile(
             self.folder_index_file_path
         ):
-
+            logger.info("%s file exists, loading...", self.folder_index_file_path)
             try:
                 with open(self.folder_index_file_path, "r") as f:
                     data = json.load(f)
@@ -174,8 +188,15 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                         data, from_attributes=True
                     )
                     study_folder_metadata = current_file_index.content
+                    logger.info(
+                        "%s file is loaded successfully.", self.folder_index_file_path
+                    )
             except json.JSONDecodeError as ex:
-                print("Json file Decode error")
+                logger.error(
+                    "%s json file decode error: %s",
+                    self.folder_index_file_path,
+                    str(ex),
+                )
                 msg = f"{self.folder_index_file_path} file decode error. {str(ex)}"
                 messages.append(
                     GenericMessage(
@@ -185,7 +206,11 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                     )
                 )
             except Exception as ex:
-                print("error while loading file index")
+                logger.exception(
+                    "%s json file load error: %s",
+                    self.folder_index_file_path,
+                    str(ex),
+                )
                 msg = f"{self.folder_index_file_path} file load error. {str(ex)}"
                 messages.append(
                     GenericMessage(
@@ -197,6 +222,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
 
         if not study_folder_metadata or self.rebuild_folder_index_file:
             study_folder_metadata = StudyFolderMetadata()
+            logger.info("Build study folder metadata index.")
             self.visit_folder(
                 self.remote_study_directory,
                 self.remote_study_directory,
@@ -215,6 +241,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
             with open(self.folder_index_file_path, "w") as fw:
                 fw.write(file_index.model_dump_json(indent=4))
             msg = f"{self.folder_index_file_path} file is updated."
+            logger.info(msg)
             messages.append(
                 GenericMessage(
                     type=GenericMessageType.INFO,
@@ -224,6 +251,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
             )
         else:
             msg = f"{self.folder_index_file_path} file is used."
+            logger.info(msg)
             messages.append(
                 GenericMessage(
                     type=GenericMessageType.INFO,

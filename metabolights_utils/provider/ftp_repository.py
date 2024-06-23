@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from typing import List, Set, Tuple, Union
 
@@ -36,6 +37,8 @@ from metabolights_utils.provider.utils import (
     is_metadata_filename_pattern,
 )
 
+logger = logging.getLogger()
+
 
 class MetabolightsFtpRepository(DefaultFtpClient):
     def __init__(
@@ -50,18 +53,33 @@ class MetabolightsFtpRepository(DefaultFtpClient):
             self.local_storage_cache_path = (
                 definitions.default_local_repority_cache_path
             )
+        logger.debug(
+            "local_storage_cache_path is set to path: %s",
+            self.local_storage_cache_path,
+        )
         self.local_storage_root_path = local_storage_root_path
         if not self.local_storage_root_path:
             self.local_storage_root_path = definitions.default_local_repority_root_path
+        logger.debug(
+            "local_storage_root_path is set to path: %s",
+            self.local_storage_root_path,
+        )
         self.ftp_server_url = ftp_server_url
         if not self.ftp_server_url:
             self.ftp_server_url = definitions.default_ftp_server_url
+        logger.debug(
+            "ftp_server_url is set to URL: %s",
+            self.ftp_server_url,
+        )
         self.remote_repository_root_directory = remote_repository_root_directory
         if not self.remote_repository_root_directory:
             self.remote_repository_root_directory = (
                 definitions.default_remote_repository_root_directory
             )
-
+        logger.debug(
+            "remote_repository_root_directory is set to directory: %s",
+            self.remote_repository_root_directory,
+        )
         self.ftp_client = DefaultFtpClient(
             local_storage_root_path=self.local_storage_root_path,
             ftp_server_url=self.ftp_server_url,

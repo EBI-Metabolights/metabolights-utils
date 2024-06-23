@@ -4,27 +4,31 @@
 
 # <img src="https://www.ebi.ac.uk/metabolights/img/MetaboLightsLogo.png" width="30" height="30" alt="Metabolights"> MetaboLights Utils Library
 
+
+<a href="https:/www.ebi.ac.uk/metabolights" target="_blank">
+    <img src="https://img.shields.io/badge/Homepage-MetaboLights-blue" alt="MetaboLights">
+</a>
+<a href="https://github.com/EBI-Metabolights" target="_blank">
+    <img src="https://img.shields.io/badge/Github-MetaboLights-blue" alt="MetaboLights Github">
+</a>
 <a href="https://isa-specs.readthedocs.io/en/latest/isatab.html" target="_blank">
     <img src="https://img.shields.io/badge/ISA--Tab-v1.0-blue" alt="ISA-Tab version">
-</a>
-<a href="https://github.com/EBI-Metabolights/MtblsWS-Py" target="_blank">
-    <img src="https://img.shields.io/badge/MetaboLights-v2.0.0-blue" alt="ISA-Tab version">
 </a>
 <a href="https://github.com/EBI-Metabolights/metabolights-utils/blob/master/LICENCE" target="_blank">
     <img src="https://img.shields.io/badge/Licence-Apache%20v2.0-blue" alt="Licence">
 </a>
 
-![Python](https://img.shields.io/badge/Python-3.8%7C3.9%7C3.10%7C3.11,%7C3.12-dark_blue)
+![Python](https://img.shields.io/badge/Python-3.8%7C3.9%7C3.10%7C3.11%7C3.12-dark_blue)
 ![Coverage](https://img.shields.io/badge/Coverage-85%25-dark_blue)
 
 ---
 
-#### **metaboligts-utils** is a *lightweight API* and *command line interface* (CLI) to use or search MetaboLights public studies, update MetaboLights submitted studies, and update [ISA-Tab](https://isa-specs.readthedocs.io/en/latest/isatab.html) metadata files. 
+#### **metaboligts-utils** is a *lightweight API* and *command line interface* (CLI) to use or search MetaboLights public studies, update MetaboLights submitted studies and [ISA-Tab](https://isa-specs.readthedocs.io/en/latest/isatab.html) metadata files. 
 ---
 
 #### CLI Features
 * Download and list MetaboLights public study metadata files.
-* Search MetaboLights public studies.
+* Search MetaboLights public studies [beta release].
 * Download, upload and validate MetaboLights submitted studies
 * Create assay file templates.
 

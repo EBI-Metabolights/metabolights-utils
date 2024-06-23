@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 import sys
@@ -25,6 +26,8 @@ from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
+logger = logging.getLogger()
+
 
 class InvestigationFileException(Exception):
     def __init__(self, message="") -> None:
@@ -51,6 +54,9 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
             messages = read_messages
             parse_success = True
         except UnicodeDecodeError as err:
+            logger.warning(
+                "UnicodeDecodeError error. Trying with ascii encoding: %s", str(err)
+            )
             try:
                 read_messages.append(
                     ParserMessage(
@@ -69,6 +75,7 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
                 messages = read_messages
                 parse_success = True
             except Exception as exc:
+                logger.exception("File parse error: %s", str(exc))
                 read_messages.append(
                     ParserMessage(
                         type=ParserMessageType.CRITICAL,
@@ -77,6 +84,7 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
                     )
                 )
         except Exception as exc:
+            logger.exception("File parse error: %s", str(exc))
             read_messages.append(
                 ParserMessage(
                     type=ParserMessageType.CRITICAL,
@@ -96,13 +104,19 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
         )
 
         if parse_success:
+            logger.debug("File is parsed successfully.")
             if pathlib.Path(path).exists():
                 result.sha256_hash = HashUtils.sha256sum(path)
+                logger.debug("SHA256 of File %s: %s", path, result.sha256_hash)
+
             elif (
                 isinstance(buffer_or_path, str)
                 or isinstance(buffer_or_path, pathlib.Path)
             ) and pathlib.Path(str(buffer_or_path)).exists():
                 result.sha256_hash = HashUtils.sha256sum(str(buffer_or_path))
+                logger.debug(
+                    "SHA256 of File %s: %s", str(buffer_or_path), result.sha256_hash
+                )
         return result
 
 

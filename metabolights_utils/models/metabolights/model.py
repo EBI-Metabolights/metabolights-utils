@@ -139,7 +139,8 @@ class StudyFolderMetadata(IsaAbstractModel):
     folder_size_in_bytes: Annotated[
         int,
         Field(
-            description="Study folder size in bytes. Folder size may be size of metadata files, data files or both depends on data_folder_size_calculated or metadata_folder_size_calculated."
+            description="Study folder size in bytes. Folder size may be size of metadata files,"
+            + " data files or both depends on data_folder_size_calculated or metadata_folder_size_calculated."
         ),
     ] = -1
     folder_size_in_str: Annotated[
@@ -163,7 +164,7 @@ class Submitter(CamelCaseModel):
     db_id: Annotated[int, Field(description="Database unique id for submitter.")] = -1
     orcid: Annotated[str, Field(description="ORCID of submitter.")] = ""
     address: Annotated[str, Field(description="Address of submitter.")] = ""
-    join_date: Annotated[str, Field(description="Registration date of submitter.")] = "R"
+    join_date: Annotated[str, Field(description="Registration date of submitter.")] = ""
     user_name: Annotated[
         str, Field(description="username (email address) of submitter.")
     ] = ""

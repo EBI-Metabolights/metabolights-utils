@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 from abc import ABC, abstractmethod
@@ -17,6 +18,8 @@ from metabolights_utils.tsv.filter import TsvFileFilterOption
 from metabolights_utils.tsv.sort import TsvFileSortOption
 from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
+logger = logging.getLogger()
+
 
 class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
     def __init__(self, results_per_page=100) -> None:
@@ -32,6 +35,7 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         results_per_page: int = 100,
     ) -> int:
         total = self.get_total_row_count(file_buffer_or_path)
+        logger.debug("Total rows: %s, default page size: %s", total, results_per_page)
         return int(total / results_per_page) + (
             1 if total % results_per_page > 0 else 0
         )
@@ -60,7 +64,15 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         results_per_page = (
             results_per_page if results_per_page > 0 else self.results_per_page
         )
+
         offset = (page - 1) * results_per_page
+        logger.debug(
+            "Current page: %s, offset: %s, limit: %s",
+            page,
+            offset,
+            results_per_page,
+        )
+
         return self.get_rows(
             file_buffer_or_path=file_buffer_or_path,
             offset=offset,
@@ -82,7 +94,11 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         offset = offset if offset > 0 else None
         limit = limit if limit is not None and limit >= 0 else None
         selected_columns = selected_columns if selected_columns else None
-
+        logger.debug(
+            "get rows (offset: %s, limit: %s)",
+            offset,
+            limit,
+        )
         return self.read(
             file_buffer_or_path=file_buffer_or_path,
             offset=offset,
@@ -121,6 +137,7 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         read_messages: List[ParserMessage] = []
         buffer_or_path, path = self._get_file_path(file_buffer_or_path)
         basename = os.path.basename(str(path))
+        logger.debug("Basename: %s", basename)
         isa_table_file = None
         try:
             file_buffer = self._get_file_buffer(buffer_or_path)
@@ -137,6 +154,9 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
             )
             messages = read_messages
         except UnicodeDecodeError as err:
+            logger.warning(
+                "UnicodeDecodeError error. Trying with ascii encoding: %s", str(err)
+            )
             try:
                 read_messages.append(
                     ParserMessage(
@@ -159,6 +179,7 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
                 )
                 messages = read_messages
             except Exception as exc:
+                logger.error("File parse error: %s", str(exc))
                 read_messages.append(
                     ParserMessage(
                         type=ParserMessageType.CRITICAL,
@@ -167,6 +188,7 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
                     )
                 )
         except Exception as exc:
+            logger.error("File parse error: %s", str(exc))
             read_messages.append(
                 ParserMessage(
                     type=ParserMessageType.CRITICAL,
@@ -187,6 +209,7 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
             isa_table_file = IsaTableFile()
 
         if skip_parser_info_messages:
+            logger.debug("Delete info messages from parser messages")
             messages = [x for x in read_messages if x.type != ParserMessageType.INFO]
         parser_report = ParserReport(messages=messages)
         return IsaTableFileReaderResult(

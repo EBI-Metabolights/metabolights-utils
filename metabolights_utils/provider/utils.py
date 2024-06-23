@@ -1,5 +1,6 @@
 import io
 import json
+import logging
 import os
 import re
 import zipfile
@@ -10,6 +11,8 @@ import httpx
 from metabolights_utils.models.isa.assay_file import AssayFile
 from metabolights_utils.models.isa.common import AssayTechnique
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
+
+logger = logging.getLogger()
 
 
 def is_metadata_file(file_path: str):
@@ -72,6 +75,7 @@ def download_file_from_rest_api(
                     os.utime(local_file_path, (modification_time, modification_time))
             return True, None
     except Exception as ex:
+        logger.exception(str(ex))
         return False, str(ex)
 
 

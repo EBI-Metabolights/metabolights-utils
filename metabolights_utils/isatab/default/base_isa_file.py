@@ -1,6 +1,9 @@
+import logging
 import pathlib
 from io import IOBase
 from typing import Tuple, Union
+
+logger = logging.getLogger(__name__)
 
 
 class BaseIsaFile(object):
@@ -10,6 +13,7 @@ class BaseIsaFile(object):
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
     ) -> Tuple[Union[str, pathlib.Path, IOBase], str]:
         if not file_buffer_or_path:
+            logger.warning("file_buffer_or_path input is not defined.")
             return None
         if isinstance(file_buffer_or_path, IOBase):
             return file_buffer_or_path, file_buffer_or_path.name
@@ -28,6 +32,7 @@ class BaseIsaFile(object):
         elif isinstance(file, str):
             file_buffer = open(file=file, mode="r", encoding=encoding)
         else:
+            logger.error("Input type is not valid: %s.", type(file))
             raise ValueError("file type is not defined")
 
         return file_buffer
