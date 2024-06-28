@@ -36,6 +36,7 @@ from metabolights_utils.provider.utils import (
     is_metadata_file,
     is_metadata_filename_pattern,
 )
+from metabolights_utils.utils.filename_utils import join_path
 
 logger = logging.getLogger()
 
@@ -50,9 +51,8 @@ class MetabolightsFtpRepository(DefaultFtpClient):
     ) -> None:
         self.local_storage_cache_path = local_storage_cache_path
         if not local_storage_cache_path:
-            self.local_storage_cache_path = (
-                definitions.default_local_repority_cache_path
-            )
+            self.local_storage_cache_path = definitions.default_local_repority_cache_path
+        self.local_storage_cache_path = join_path(self.local_storage_cache_path)
         logger.debug(
             "local_storage_cache_path is set to path: %s",
             self.local_storage_cache_path,
@@ -60,6 +60,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         self.local_storage_root_path = local_storage_root_path
         if not self.local_storage_root_path:
             self.local_storage_root_path = definitions.default_local_repority_root_path
+        self.local_storage_root_path = join_path(self.local_storage_root_path)
         logger.debug(
             "local_storage_root_path is set to path: %s",
             self.local_storage_root_path,
@@ -76,6 +77,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
             self.remote_repository_root_directory = (
                 definitions.default_remote_repository_root_directory
             )
+        self.remote_repository_root_directory = self.remote_repository_root_directory.replace("\\", "/")
         logger.debug(
             "remote_repository_root_directory is set to directory: %s",
             self.remote_repository_root_directory,
@@ -104,16 +106,17 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         study_id = study_id.upper().strip("/")
         if not local_path:
             local_path = self.local_storage_root_path
-        target_path = os.path.join(local_path, study_id)
+        
+        target_path = join_path(local_path, study_id)
         if not folder_index_file_path:
-            folder_index_file_path = os.path.join(
+            folder_index_file_path = join_path(
                 self.local_storage_cache_path,
                 study_id,
                 "mtbls_index.json",
             )
         model_cache_path = study_model_file_path
         if not study_model_file_path:
-            model_cache_path = os.path.join(
+            model_cache_path = join_path(
                 self.local_storage_cache_path,
                 study_id,
                 "study_model.json",
@@ -124,7 +127,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         if use_study_model_cache:
             try:
                 if os.path.exists(model_cache_path):
-                    with open(model_cache_path) as f:
+                    with open(model_cache_path, encoding="utf-8") as f:
                         data = json.load(f)
                         model = MetabolightsStudyModel.model_validate(data)
                         if model.investigation_file_path == "i_Investigation.txt":
@@ -167,7 +170,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
             if model:
                 parent = os.path.dirname(model_cache_path)
                 os.makedirs(parent, exist_ok=True)
-                with open(model_cache_path, "w") as fw:
+                with open(model_cache_path, "w", encoding="utf-8") as fw:
                     fw.write(model.model_dump_json(indent=4))
 
             return model, [InfoMessage(short="Loaded from local isa metadata files.")]
@@ -228,7 +231,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         if model:
             parent = os.path.dirname(model_cache_path)
             os.makedirs(parent, exist_ok=True)
-            with open(model_cache_path, "w") as fw:
+            with open(model_cache_path, "w", encoding="utf-8") as fw:
                 fw.write(model.model_dump_json(indent=4))
         return model, messages
 
@@ -244,6 +247,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
             return LocalDirectory(root_path="", code=400, message="invalid study_id")
         if not local_path:
             local_path = f"{self.local_storage_root_path}/{study_id}"
+        local_path = join_path(local_path)
         response = LocalDirectory(root_path=local_path)
 
         study_id = study_id.upper().strip("/")
@@ -277,7 +281,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         try:
             for filename in requested_files:
                 # new_local_path = os.path.join(local_path, study_id)
-                new_relative_file_path = os.path.join(study_id, filename)
+                new_relative_file_path = f"{study_id}/{filename}".replace("\\", "/").rstrip("/")
                 current_file = filename
                 self.ftp_client.download_file(
                     relative_file_path=new_relative_file_path,
@@ -291,7 +295,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
             if delete_unlisted_metadata_files:
                 for filename in os.listdir(local_path):
                     if filename not in listed_files:
-                        file_path = os.path.join(local_path, filename)
+                        file_path = join_path(local_path, filename)
                         if is_metadata_file(file_path):
                             response.actions[filename] = "DELETED"
                             os.remove(file_path)
@@ -334,7 +338,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         study_id = study_id.upper().strip("/")
         try:
             for file in selected_data_files:
-                new_relative_file_path = os.path.join(study_id, file)
+                new_relative_file_path = f"{study_id}/{file}".replace("\\", "/").rstrip("/")
                 self.ftp_client.download_file(
                     relative_file_path=new_relative_file_path,
                     local_path=local_path,
@@ -387,7 +391,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
     ) -> FtpFolderContent:
         study_id = study_id.upper().strip("/") if study_id else ""
 
-        directory = os.path.join(study_id, subdirectory) if subdirectory else study_id
+        directory = f"{study_id}/{subdirectory}" if subdirectory else study_id
         return self.ftp_client.list_directory(directory)
 
     def rebuild_study_folder_content(

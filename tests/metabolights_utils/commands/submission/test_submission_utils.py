@@ -17,11 +17,11 @@ def test_get_submission_credentials_01():
 def test_get_submission_credentials_02():
     test_data = "invalid"
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
         result = get_submission_credentials(credentials_file_path)
         assert result is None
@@ -40,11 +40,11 @@ def test_get_submission_credentials_03():
         },
     }
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
         result = get_submission_credentials(credentials_file_path)
         assert result
@@ -72,11 +72,11 @@ def test_get_submission_private_ftp_credentials_01():
         },
     }
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
         result = get_submission_private_ftp_credentials(
             credentials_file_path, "ftp-private.ebi.ac.uk"
@@ -105,11 +105,11 @@ def test_get_submission_rest_api_credentials_01():
         },
     }
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
         result = get_submission_rest_api_credentials(
             credentials_file_path, "https://www.ebi.ac.uk/metabolights/ws"

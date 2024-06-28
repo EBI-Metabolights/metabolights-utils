@@ -33,7 +33,7 @@ def get_submission_credentials(credentials_file_path: str):
     credentials: Union[None, LoginCredentials] = None
     try:
         if os.path.exists(credentials_file_path):
-            with open(credentials_file_path, "r") as f:
+            with open(credentials_file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 credentials = LoginCredentials.model_validate(data)
     except Exception as ex:

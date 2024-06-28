@@ -20,7 +20,7 @@ def test_public_download_01(mocker: MockerFixture, study_id: str):
     mock_local_directory.success = True
     mock_local_directory.actions = {f"s_{study_id}.txt": "DOWNLOAD"}
     mock_repository.download_study_metadata_files.return_value = mock_local_directory
-    mock_repository.local_storage_root_path = "/tmp/test"
+    mock_repository.local_storage_root_path = "test-temp/test"
 
     runner = CliRunner()
     result = runner.invoke(public_download, [study_id])
@@ -46,7 +46,7 @@ def test_public_download_02(mocker: MockerFixture, study_id: str):
 
     mock_local_directory = MagicMock()
     mock_repository.download_study_metadata_files.return_value = mock_local_directory
-    mock_repository.local_storage_root_path = "/tmp/test"
+    mock_repository.local_storage_root_path = "test-temp/test"
 
     mock_local_directory.actions = {}
     runner = CliRunner()

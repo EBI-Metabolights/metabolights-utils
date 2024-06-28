@@ -80,8 +80,8 @@ def test_public_remove_04(study_id: str):
 def test_public_remove_05(study_id: str):
 
     runner = CliRunner()
-    local_path = f"/tmp/{random.randint(1000000, 9999999)}"
-    local_cache_path = f"/tmp/{random.randint(1000000, 9999999)}_tmp"
+    local_path = f"test-temp/{random.randint(1000000, 9999999)}"
+    local_cache_path = f"test-temp/{random.randint(1000000, 9999999)}_tmp"
     try:
         study_path = os.path.join(local_path, study_id)
         study_cache_path = os.path.join(local_cache_path, study_id)

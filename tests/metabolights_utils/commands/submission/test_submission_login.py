@@ -15,7 +15,7 @@ def test_submission_login_01():
     """
     runner = CliRunner()
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
@@ -41,11 +41,11 @@ def test_submission_login_02():
     """
     runner = CliRunner()
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump("invalid", f)
 
         assert os.path.exists(credentials_file_path)
@@ -70,7 +70,7 @@ def test_submission_login_03():
     """
     runner = CliRunner()
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
@@ -80,7 +80,7 @@ def test_submission_login_03():
                 "https://www.ebi.ac.uk/metabolights/ws": {"api_token": "c"}
             },
         }
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
         assert os.path.exists(credentials_file_path)
         result = runner.invoke(
@@ -91,7 +91,7 @@ def test_submission_login_03():
         assert result.exit_code == 0
         assert "User credentials are updated succesfully" in result.output
         assert os.path.exists(credentials_file_path)
-        with open(credentials_file_path, "r") as f:
+        with open(credentials_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             credentials = LoginCredentials.model_validate(data)
             assert credentials.ftp_login["ftp-private.ebi.ac.uk"].user_name == "x"
@@ -115,7 +115,7 @@ def test_submission_login_04():
     """
     runner = CliRunner()
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
@@ -125,7 +125,7 @@ def test_submission_login_04():
                 "https://www.ebi.ac.uk/metabolights/ws": {"api_token": "z"}
             },
         }
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
         assert os.path.exists(credentials_file_path)
         result = runner.invoke(
@@ -136,7 +136,7 @@ def test_submission_login_04():
         assert result.exit_code == 0
         assert "User credentials are not updated." in result.output
         assert os.path.exists(credentials_file_path)
-        with open(credentials_file_path, "r") as f:
+        with open(credentials_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             credentials = LoginCredentials.model_validate(data)
             assert credentials.ftp_login["ftp-private.ebi.ac.uk"].user_name == "x"
@@ -160,7 +160,7 @@ def test_submission_login_05(mocker: MockerFixture):
     """
     runner = CliRunner()
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
@@ -170,7 +170,7 @@ def test_submission_login_05(mocker: MockerFixture):
                 "https://www.ebi.ac.uk/metabolights/ws": {"api_token": "z"}
             },
         }
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
         assert os.path.exists(credentials_file_path)
         mocker.patch(
@@ -185,7 +185,7 @@ def test_submission_login_05(mocker: MockerFixture):
         assert result.exit_code == 1
         assert "Error while login" in result.output
         assert os.path.exists(credentials_file_path)
-        with open(credentials_file_path, "r") as f:
+        with open(credentials_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             credentials = LoginCredentials.model_validate(data)
             assert credentials.ftp_login["ftp-private.ebi.ac.uk"].user_name == "x"
@@ -209,7 +209,7 @@ def test_submission_login_06():
     """
     runner = CliRunner()
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
     )
 
     try:
@@ -219,7 +219,7 @@ def test_submission_login_06():
                 "https://www.ebi.ac.uk/metabolights/ws": {"api_token": "z"}
             },
         }
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
         assert os.path.exists(credentials_file_path)
         rest_api_base_url = "test-url"
@@ -239,7 +239,7 @@ def test_submission_login_06():
         assert result.exit_code == 0
         assert "User credentials are updated succesfully" in result.output
         assert os.path.exists(credentials_file_path)
-        with open(credentials_file_path, "r") as f:
+        with open(credentials_file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             credentials = LoginCredentials.model_validate(data)
             assert credentials.ftp_login["ftp-private.ebi.ac.uk"].user_name == "x"

@@ -47,7 +47,7 @@ def test_public_search_02(mocker: MockerFixture, study_id: str):
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])
 def test_public_search_03(mocker: MockerFixture, study_id: str):
-    with open("tests/test-data/rest-api-test-data/study_search.json", "r") as f:
+    with open("tests/test-data/rest-api-test-data/study_search.json", "r", encoding="utf-8") as f:
         data = f.read()
         response = json.loads(data)
     mocker.patch(
@@ -64,7 +64,7 @@ def test_public_search_03(mocker: MockerFixture, study_id: str):
 
 
 def test_public_search_04(mocker: MockerFixture):
-    with open("tests/test-data/rest-api-test-data/diet_search.json", "r") as f:
+    with open("tests/test-data/rest-api-test-data/diet_search.json", "r", encoding="utf-8") as f:
         data = f.read()
         response = json.loads(data)
     mocker.patch(
@@ -180,7 +180,7 @@ def test_public_search_08(mocker: MockerFixture):
 def test_public_search_09(mocker: MockerFixture):
 
     with open(
-        "tests/test-data/rest-api-test-data/diet_aggregation_search.json", "r"
+        "tests/test-data/rest-api-test-data/diet_aggregation_search.json", "r", encoding="utf-8"
     ) as f:
         data = f.read()
         response = json.loads(data)

@@ -55,7 +55,7 @@ def test_investigation_file_read_write_success_1():
     sha25_hash = result.sha256_hash
 
     tmp_file_name = uuid.uuid4().hex
-    tmp_path = pathlib.Path(f"/tmp/test_{tmp_file_name}.txt")
+    tmp_path = pathlib.Path(f"test-temp/test_{tmp_file_name}.txt")
     try:
         writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
         writer.write(result.investigation, file_buffer_or_path=tmp_path)

@@ -74,7 +74,7 @@ class TsvFileUpdater:
                 f"File '{str(file)}' does not exist or it is not a regular file."
             )
             return report
-        sha256 = HashUtils.sha256sum(file)
+        sha256 = HashUtils.sha256sum(file, convert_to_linux_line_ending=True)
 
         if sha256 != file_sha256_hash:
             report.message = f"SH256 of '{str(file)}' does not match the input value."
@@ -82,7 +82,7 @@ class TsvFileUpdater:
 
         task_id = str(uuid.uuid4().hex)
         timestamp = str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
-        temp_folder = pathlib.Path(f"/tmp/isa_table_actions/{timestamp}/{task_id}")
+        temp_folder = pathlib.Path(f"test-temp/isa_table_actions/{timestamp}/{task_id}")
         os.makedirs(str(temp_folder))
 
         file_copy_path = temp_folder / pathlib.Path(f"{file.name}_{task_id}")

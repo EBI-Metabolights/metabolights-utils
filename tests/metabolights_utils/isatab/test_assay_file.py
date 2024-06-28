@@ -184,7 +184,7 @@ def test_assay_metadata_file_read_write():
         "tests/test-data/MTBLS1/a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt"
     )
     file_path = (
-        ".test-temp/test-data/MTBLS1/a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt"
+        "test-temp/test-data/MTBLS1/a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt"
     )
     try:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)

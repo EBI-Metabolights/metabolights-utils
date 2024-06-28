@@ -1,5 +1,6 @@
+import os
 import re
-from typing import Union
+from typing import List, Tuple, Union
 
 import unidecode
 
@@ -25,3 +26,11 @@ class MetabolightsFileNameUtils(object):
 
         filename = re.sub(replacement_chars_pattern, "_", filename)
         return filename
+
+
+def join_path(*args: Tuple[str]):
+    target_sep = "/" if os.sep == "/" else "\\"
+    source_sep = "/" if os.sep == "\\" else "/"
+    inputs = list([x for x in args if x and x.strip()])
+    _path = target_sep.join(inputs).replace(source_sep, target_sep)
+    return _path

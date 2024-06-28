@@ -6,6 +6,7 @@ from ftplib import FTP
 from typing import List, Set, Union
 
 from metabolights_utils.provider.ftp.model import FtpFolderContent, LocalDirectory
+from metabolights_utils.utils.filename_utils import join_path
 
 logger = logging.getLogger()
 
@@ -22,7 +23,7 @@ class DefaultFtpClient:
         password: Union[str, None] = None,
     ) -> None:
         self.ftp_server_url = ftp_server_url
-        self.remote_repository_root_directory = remote_repository_root_directory
+        self.remote_repository_root_directory = remote_repository_root_directory.replace("\\","").rstrip("/")
         self.local_storage_root_path = local_storage_root_path
         self.username = username if username else ""
         self.password = password if password else ""
@@ -74,9 +75,9 @@ class DefaultFtpClient:
         directory: Union[str, None] = None,
         search_pattern: Union[str, None] = None,
     ) -> FtpFolderContent:
-        directory = directory.strip("/") if directory else ""
+        directory = directory.replace("\\", '/').strip("/") if directory else ""
         root_dir = self.remote_repository_root_directory
-        remote_directory = os.path.join(root_dir, directory)
+        remote_directory = f"{root_dir}/{directory}"
 
         self.connect()
 
@@ -133,6 +134,7 @@ class DefaultFtpClient:
         keep_local_files: Union[Set[str], None] = None,
     ) -> LocalDirectory:
         local_path = local_path if local_path else self.local_storage_root_path
+        local_path = join_path(local_path)
         if local_files is None:
             response = LocalDirectory(root_path=local_path)
         else:
@@ -156,10 +158,11 @@ class DefaultFtpClient:
         parent_path = os.path.dirname(target_path)
         filename = os.path.basename(target_path)
 
-        remote_directory = os.path.join(remote_root_dir, relative_file_path)
+        remote_directory = f"{remote_root_dir}/{relative_file_path}".replace("\\", "/")
         relative_parent_path = os.path.dirname(relative_file_path)
 
-        remote_parent_directory = os.path.dirname(remote_directory)
+        remote_parent_directory = os.path.dirname(os.path.join(remote_root_dir, relative_file_path))
+        remote_parent_directory = remote_parent_directory.replace("\\", "/")
         logger.debug("List files within %s on FTP server ", relative_parent_path)
         result = self.list_directory(relative_parent_path, search_pattern=filename)
         is_directory = True
@@ -218,7 +221,7 @@ class DefaultFtpClient:
                                 item_path: str = os.path.join(target_path, item)
                                 relative_item_path = item_path.replace(
                                     f"{local_path}", ""
-                                ).strip("/")
+                                ).strip("/").strip("\\")
                                 if keep_local_files and item in keep_local_files:
                                     actions[relative_item_path] = "SKIPPED"
                                     logger.debug(
@@ -240,7 +243,7 @@ class DefaultFtpClient:
                 response.local_folders.append(relative_file_path)
                 for collection in (result.folders, result.files):
                     for entry in collection:
-                        new_relative_file_path = os.path.join(relative_file_path, entry)
+                        new_relative_file_path = join_path(relative_file_path, entry).replace("\\", "/")
                         self.download_file(
                             relative_file_path=new_relative_file_path,
                             local_path=local_path,

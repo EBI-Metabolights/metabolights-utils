@@ -99,5 +99,5 @@ def submission_delete_assay(
 
 if __name__ == "__main__":
     submission_delete_assay(
-        ["MTBLS5397", "a_MTBLS5397_LC-MS_positive_hilic_metabolite_profiling-1.txt"]
+        ["MTBLS9776", "a_MTBLS5397_LC-MS_positive_hilic_metabolite_profiling-1.txt"]
     )

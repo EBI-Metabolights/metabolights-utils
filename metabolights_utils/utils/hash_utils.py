@@ -16,13 +16,15 @@ class IsaMetadataFolderHash(BaseModel):
 
 class MetabolightsHashUtils(object):
     @staticmethod
-    def sha256sum(filepath: str):
+    def sha256sum(filepath: str, convert_to_linux_line_ending: bool = True):
         if not filepath or not os.path.exists(filepath):
             return EMPTY_FILE_HASH
 
         sha256_hash = hashlib.sha256()
         with open(filepath, "rb") as f:
             for byte_block in iter(lambda: f.read(4096), b""):
+                if convert_to_linux_line_ending:
+                    byte_block = byte_block.replace(b"\r\n", b"\n")
                 sha256_hash.update(byte_block)
         return sha256_hash.hexdigest()
 

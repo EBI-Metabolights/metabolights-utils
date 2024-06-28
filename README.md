@@ -435,7 +435,7 @@ def test_investigation_file_write_01():
     )
 
     tmp_file_name = uuid.uuid4().hex
-    tmp_path = pathlib.Path(f"/tmp/test_{tmp_file_name}.txt")
+    tmp_path = pathlib.Path(f"test-temp/test_{tmp_file_name}.txt")
     writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
     writer.write(result.investigation, file_buffer_or_path=tmp_path)
 
@@ -564,7 +564,7 @@ def test_assay_file_read_write():
         "tests/test-data/MTBLS1/a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt"
     )
     file_path = (
-        ".test-temp/test-data/MTBLS1/a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt"
+        "test-temp/test-data/MTBLS1/a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt"
     )
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     shutil.copy(path_original, file_path)

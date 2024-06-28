@@ -3,6 +3,7 @@ import os
 import shutil
 from typing import Union
 
+from metabolights_utils.utils.filename_utils import join_path
 from metabolights_utils.utils.search_utils import MetabolightsSearchUtils as SearchUtils
 
 
@@ -30,13 +31,13 @@ class MetabolightsAuditUtils(object):
                 f"{folder_prefix}_{folder_name}" if folder_prefix else folder_name
             )
 
-            target_folder_path = os.path.join(target_root_path, folder_name)
+            target_folder_path = join_path(target_root_path, folder_name)
 
             os.makedirs(target_folder_path, exist_ok=True)
 
             for file in metadata_files_list:
                 basename = os.path.basename(file)
-                target_file = os.path.join(target_folder_path, basename)
+                target_file = join_path(target_folder_path, basename)
                 shutil.copy2(file, target_file, follow_symlinks=False)
             return target_folder_path
         return None
@@ -54,7 +55,7 @@ class MetabolightsAuditUtils(object):
             os.makedirs(target_folder_path, exist_ok=True)
             for file in metadata_files_list:
                 basename = os.path.basename(file)
-                target_file = os.path.join(target_folder_path, basename)
+                target_file = join_path(target_folder_path, basename)
                 shutil.copy2(file, target_file, follow_symlinks=False)
             return target_folder_path
         return None

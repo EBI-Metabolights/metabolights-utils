@@ -2,6 +2,8 @@ import glob
 import os
 from typing import List
 
+from metabolights_utils.utils.filename_utils import join_path
+
 
 class MetabolightsSearchUtils(object):
     @staticmethod
@@ -12,6 +14,6 @@ class MetabolightsSearchUtils(object):
             return metadata_files
 
         for pattern in patterns:
-            search_pattern = os.path.join(folder_path, pattern)
+            search_pattern = join_path(folder_path, pattern)
             metadata_files.extend(glob.glob(search_pattern, recursive=recursive))
         return metadata_files

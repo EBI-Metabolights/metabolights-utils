@@ -22,7 +22,7 @@ def test_get_sha256sum_01():
 def test_get_sha256sum_02():
     expected = "fa2f11ad5b556c57d8b8c03a6e8efe3e3b0ee62a7c0a0b725e640d1ce090d47f"
     hash_val = MetabolightsHashUtils.sha256sum(
-        "tests/test-data/MTBLS1/i_Investigation.txt"
+        "tests/test-data/MTBLS1/i_Investigation.txt", convert_to_linux_line_ending=True
     )
     assert hash_val == expected
 
@@ -53,7 +53,7 @@ def test_get_isa_metadata_folder_hash_03():
     """
     additional isa medata files cause different hash
     """
-    tmp_path = f"/tmp/test_{uuid.uuid4().hex}"
+    tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         source_path = "tests/test-data/MTBLS1"
         target_path = MetabolightsAuditUtils.copy_isa_metadata_files(
@@ -81,7 +81,7 @@ def test_get_isa_metadata_folder_hash_04():
     """
     renamed files cause different hash
     """
-    tmp_path = f"/tmp/test_{uuid.uuid4().hex}"
+    tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         source_path = "tests/test-data/MTBLS1"
         target_path = MetabolightsAuditUtils.copy_isa_metadata_files(

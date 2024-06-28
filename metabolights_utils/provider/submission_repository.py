@@ -49,6 +49,7 @@ from metabolights_utils.provider.utils import (
     is_metadata_filename_pattern,
     rest_api_get,
 )
+from metabolights_utils.utils.filename_utils import join_path
 
 
 class MetabolightsSubmissionRepository:
@@ -192,8 +193,10 @@ class MetabolightsSubmissionRepository:
     ) -> Tuple[bool, str]:
         if not local_path:
             local_path = self.local_storage_root_path
+        local_path = join_path(local_path)
         if not credentials_file_path:
             credentials_file_path = self.credentials_file_path
+        credentials_file_path = join_path(credentials_file_path)
         if not ftp_server_url:
             ftp_server_url = self.ftp_server_url
 
@@ -235,12 +238,12 @@ class MetabolightsSubmissionRepository:
                 file_path = os.path.join(study_path, file_name)
                 if remote_modified_time:
                     local_modified_time = int(os.path.getmtime(file_path))
-                    if remote_modified_time > local_modified_time:
+                    if remote_modified_time < local_modified_time:
                         new_requested_files.append(relative_path)
                 else:
                     new_requested_files.append(relative_path)
-        if not new_requested_files and override_remote_files:
-            return False, "No files to upload"
+        if not new_requested_files:
+            return False, "There is no metadata file to upload or local metadata files are up-to-date."
         username, password, error = self.get_ftp_credentials()
         if not error:
             ftp_client = DefaultFtpClient(
@@ -254,7 +257,7 @@ class MetabolightsSubmissionRepository:
             try:
                 ftp_client.upload_files(remote_folder_directory, input_files)
 
-                return True, None
+                return True, "Uploaded Files: " + ", ".join(new_requested_files)
             except Exception as ex:
                 return False, str(ex)
         else:
@@ -298,7 +301,7 @@ class MetabolightsSubmissionRepository:
 
         api_name = "validation task start"
         try:
-            url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+            url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
             parameters = {}
             response = httpx.post(
                 url=url,
@@ -358,10 +361,7 @@ class MetabolightsSubmissionRepository:
         try:
             api_success = False
             report_sub_path = f"/studies/{study_id}/validation-report"
-            report_url = os.path.join(
-                self.rest_api_base_url.rstrip("/"),
-                report_sub_path.lstrip("/"),
-            )
+            report_url = f"{self.rest_api_base_url.rstrip('/')}/{report_sub_path.lstrip('/')}"
             for _ in range(retry + 1):
                 try:
                     response = httpx.get(
@@ -395,7 +395,7 @@ class MetabolightsSubmissionRepository:
         dir_name = os.path.dirname(validation_file_path)
         os.makedirs(dir_name, exist_ok=True)
 
-        with open(validation_file_path, "w") as f:
+        with open(validation_file_path, "w", encoding="utf-8") as f:
             f.write(
                 "section\t" "status\t" "message\t" "description\t" "metadata_file\n"
             )
@@ -424,7 +424,7 @@ class MetabolightsSubmissionRepository:
         headers["Source-Staging-Area"] = "private-ftp"
         headers["Target-Staging-Area"] = "rw-study"
 
-        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         parameters = {}
         response = httpx.post(
             url=url,
@@ -479,7 +479,7 @@ class MetabolightsSubmissionRepository:
             return None, None, error
 
         sub_path = f"/studies/{study_id}/assays"
-        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         body = {"assay": {"type": assay_technique, "columns": []}}
         if scan_polarity:
             body["assay"]["columns"].append(
@@ -522,8 +522,7 @@ class MetabolightsSubmissionRepository:
             return None, None, error
 
         sub_path = f"/studies/{study_id}/assays/{assay_filename}"
-        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
-
+        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         try:
             response = httpx.delete(
                 url=url,
@@ -564,6 +563,7 @@ class MetabolightsSubmissionRepository:
             return LocalDirectory(code=400, message="Invalid study_id")
         if not local_path:
             local_path = self.local_storage_root_path
+        local_path = join_path(local_path)
         response = LocalDirectory(root_path=local_path)
 
         study_id = study_id.upper().strip("/")
@@ -609,6 +609,7 @@ class MetabolightsSubmissionRepository:
                     remote_modified_time = int(modified)
                     if remote_modified_time > local_modified_time:
                         new_requested_files.append(filename)
+                        response.actions[key] = "DOWNLOADED"
                     else:
                         response.actions[key] = "SKIPPED"
             else:
@@ -703,7 +704,7 @@ class MetabolightsSubmissionRepository:
             return None, error
 
         sub_path = "/studies/user"
-        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         response = httpx.get(
             url=url,
             timeout=timeout,
@@ -776,7 +777,7 @@ class MetabolightsSubmissionRepository:
         if subdirectory:
             parameters["directory"] = subdirectory.strip("/")
             paths.append(subdirectory.strip("/"))
-        url = os.path.join(self.rest_api_base_url.rstrip("/"), sub_path.lstrip("/"))
+        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         data, error = rest_api_get(
             url, timeout=timeout, parameters=parameters, headers=headers
         )

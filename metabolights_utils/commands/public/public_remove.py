@@ -51,4 +51,4 @@ def public_remove(
 
 
 if __name__ == "__main__":
-    public_remove()
+    public_remove(["MTBLS1"])

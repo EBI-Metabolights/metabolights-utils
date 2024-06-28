@@ -66,13 +66,15 @@ def submission_upload(
         rest_api_base_url=rest_api_base_url,
         credentials_file_path=credentials_file_path,
     )
-    success, error = client.upload_metadata_files(
+    success, message = client.upload_metadata_files(
         study_id=study_id,
         override_remote_files=override_remote_files,
         metadata_files=None,
     )
     if success:
-        click.echo(f"Upload private study {study_id}: Success")
+        click.echo(f"Upload private study {study_id} metadata files: Success")
+        click.echo(message)
+        
         success, error = client.sync_private_ftp_metadata_files(
             study_id=study_id, pool_period=10, retry=10
         )
@@ -82,8 +84,8 @@ def submission_upload(
             click.echo(f"Failure: Sync private study {study_id} folder: {error}")
 
     else:
-        click.echo(f"Failure: Upload private study {study_id}: {error}")
+        click.echo(f"Upload private study {study_id}: {message}")
 
 
 if __name__ == "__main__":
-    submission_upload(["MTBLS5397", "-o"])
+    submission_upload(["MTBLS5397"])

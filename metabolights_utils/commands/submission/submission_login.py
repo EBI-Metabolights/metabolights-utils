@@ -53,7 +53,7 @@ def submission_login(
     initial: Union[None, LoginCredentials] = None
     try:
         if os.path.exists(credentials_file_path):
-            with open(credentials_file_path, "r") as f:
+            with open(credentials_file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 credentials = LoginCredentials.model_validate(data)
                 initial = LoginCredentials.model_validate(data)
@@ -84,7 +84,7 @@ def submission_login(
 
         if api_token or ftp_user or ftp_user_password:
             json_data = credentials.model_dump()
-            with open(credentials_file_path, "w") as f:
+            with open(credentials_file_path, "w", encoding="utf-8") as f:
                 json.dump(json_data, f, indent=4)
             click.echo("User credentials are updated succesfully.")
         else:
@@ -94,7 +94,7 @@ def submission_login(
         if initial:
             os.makedirs(parent_directory, exist_ok=True)
             json_data = initial.model_dump_json(indent=4)
-            with open(credentials_file_path, "w") as f:
+            with open(credentials_file_path, "w", encoding="utf-8") as f:
                 f.write(json_data)
         exit(1)
 

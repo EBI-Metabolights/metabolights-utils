@@ -138,4 +138,4 @@ def submission_describe(
 
 
 if __name__ == "__main__":
-    submission_describe(["MTBLS1", "-o"])
+    submission_describe(["MTBLS397", "-o"])

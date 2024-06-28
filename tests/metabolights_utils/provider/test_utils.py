@@ -251,8 +251,8 @@ class DownloadResponse:
 
 def test_download_file_from_rest_api_01(mocker: MockerFixture):
     file_path = "tests/test-data/rest-api-test-data/s_MTBLS1.txt.zip"
-    shutil.rmtree("/tmp/donwload_test", ignore_errors=True)
-    dir_path = "/tmp/donwload_test"
+    shutil.rmtree("test-temp/donwload_test", ignore_errors=True)
+    dir_path = "test-temp/donwload_test"
     local_file_path = (
         f"{dir_path}/download_test_{random.randint(1000000, 9999999)}_tmp.zip"
     )

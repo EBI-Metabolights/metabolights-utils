@@ -67,7 +67,7 @@ def submission_validate(
     )
 
     if success:
-        with open(validation_file_path, "r") as f:
+        with open(validation_file_path, "r", encoding="utf-8") as f:
             validation_report = f.readlines()
             for line in validation_report:
                 click.echo(line.strip())

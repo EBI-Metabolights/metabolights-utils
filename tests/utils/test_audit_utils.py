@@ -7,7 +7,7 @@ from metabolights_utils.utils.audit_utils import MetabolightsAuditUtils
 
 def test_create_audit_folder_01():
 
-    tmp_path = f"/tmp/test_{uuid.uuid4().hex}"
+    tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         audit_path = MetabolightsAuditUtils.create_audit_folder(
             src_root_path="tests/test-data/MTBLS1", target_root_path=tmp_path
@@ -25,7 +25,7 @@ def test_create_audit_folder_01():
 
 def test_create_audit_folder_non_exist_target_01():
 
-    tmp_path = f"/tmp/test_{uuid.uuid4().hex}"
+    tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         audit_path = MetabolightsAuditUtils.create_audit_folder(
             src_root_path="tests/test-data/MTBLS1x", target_root_path=tmp_path
@@ -38,7 +38,7 @@ def test_create_audit_folder_non_exist_target_01():
 
 def test_copy_isa_metadata_files_01():
 
-    tmp_path = f"/tmp/test_{uuid.uuid4().hex}"
+    tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         target_path = MetabolightsAuditUtils.copy_isa_metadata_files(
             src_folder_path="tests/test-data/MTBLS1", target_folder_path=tmp_path
@@ -52,7 +52,7 @@ def test_copy_isa_metadata_files_01():
 
 def test_copy_isa_metadata_files_02():
 
-    tmp_path = f"/tmp/test_{uuid.uuid4().hex}"
+    tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         target_path = MetabolightsAuditUtils.copy_isa_metadata_files(
             src_folder_path="tests/test-data/MTBLS1x", target_folder_path=tmp_path

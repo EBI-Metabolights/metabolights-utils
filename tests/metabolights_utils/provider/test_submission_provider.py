@@ -34,13 +34,13 @@ class MockHttpResponse(BaseModel):
 
 def test_create_assay_01(mocker: MockerFixture):
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_login{random.randint(1000000, 9999999)}_tmp"
     )
     local_storage_root_path = (
-        f"/tmp/mtbls_unit_test_local{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_local{random.randint(1000000, 9999999)}_tmp"
     )
     local_storage_cache_path = (
-        f"/tmp/mtbls_unit_test_local_cache_{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_local_cache_{random.randint(1000000, 9999999)}_tmp"
     )
     try:
         test_data = {
@@ -49,7 +49,7 @@ def test_create_assay_01(mocker: MockerFixture):
                 "https://www.ebi.ac.uk/metabolights/ws": {"api_token": "z"}
             },
         }
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(test_data, f)
 
         provider = MetabolightsSubmissionRepository(
@@ -139,12 +139,12 @@ def submission_repository() -> (
     Generator[Tuple[MetabolightsSubmissionRepository, Dict[str, Any]], None, None]
 ):
     credentials_file_path = (
-        f"/tmp/mtbls_unit_test_load_study_{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_load_study_{random.randint(1000000, 9999999)}_tmp"
     )
     local_storage_root_path = (
-        f"/tmp/mtbls_unit_test_load_study_{random.randint(1000000, 9999999)}_tmp"
+        f"test-temp/mtbls_unit_test_load_study_{random.randint(1000000, 9999999)}_tmp"
     )
-    local_storage_cache_path = f"/tmp/mtbls_unit_test_local_cache_load_study_{random.randint(1000000, 9999999)}_tmp"
+    local_storage_cache_path = f"test-temp/mtbls_unit_test_local_cache_load_study_{random.randint(1000000, 9999999)}_tmp"
     try:
         credentials = {
             "ftp_login": {"ftp-private.ebi.ac.uk": {"user_name": "x", "password": "y"}},
@@ -152,7 +152,7 @@ def submission_repository() -> (
                 "https://www.ebi.ac.uk/metabolights/ws": {"api_token": "z"}
             },
         }
-        with open(credentials_file_path, "w") as f:
+        with open(credentials_file_path, "w", encoding="utf-8") as f:
             json.dump(credentials, f)
 
         repository = MetabolightsSubmissionRepository(
@@ -422,7 +422,7 @@ def test_upload_metadata_05(mocker: MockerFixture, submission_repository, study_
         override_remote_files=False,
     )
     assert success
-    assert not message
+    assert "Uploaded Files:" in message
 
 
 @pytest.mark.parametrize("study_id", ["MTBLS1"])
@@ -445,7 +445,7 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
         return_value=HttpxResponse(
             status_code=201,
             text=open(
-                "tests/test-data/rest-api-test-data/validation_task_started_response.json"
+                "tests/test-data/rest-api-test-data/validation_task_started_response.json", encoding="utf-8"
             ).read(),
         ),
     )
@@ -455,13 +455,13 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
             HttpxResponse(
                 status_code=200,
                 text=open(
-                    "tests/test-data/rest-api-test-data/validation_task_success_response.json"
+                    "tests/test-data/rest-api-test-data/validation_task_success_response.json", encoding="utf-8"
                 ).read(),
             ),
             HttpxResponse(
                 status_code=200,
                 text=open(
-                    "tests/test-data/rest-api-test-data/validation_report.json"
+                    "tests/test-data/rest-api-test-data/validation_report.json", encoding="utf-8"
                 ).read(),
             ),
         ],
@@ -470,7 +470,7 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
     repository, credentials = submission_repository
 
     validation_file_path = (
-        f"/tmp/mtbls_unit_test_validation_{random.randint(1000000, 9999999)}_tmp.json"
+        f"test-temp/mtbls_unit_test_validation_{random.randint(1000000, 9999999)}_tmp.json"
     )
     try:
         success, message = repository.validate_study(
@@ -501,7 +501,7 @@ def test_private_ftp_sync_01(mocker: MockerFixture, submission_repository, study
     get_response = HttpxResponse(
         status_code=201,
         text=open(
-            "tests/test-data/rest-api-test-data/ftp_sync_task_started_response.json"
+            "tests/test-data/rest-api-test-data/ftp_sync_task_started_response.json", encoding="utf-8"
         ).read(),
     )
     mocker.patch(
@@ -514,7 +514,7 @@ def test_private_ftp_sync_01(mocker: MockerFixture, submission_repository, study
         return_value=HttpxResponse(
             status_code=200,
             text=open(
-                "tests/test-data/rest-api-test-data/ftp_sync_task_success_response.json"
+                "tests/test-data/rest-api-test-data/ftp_sync_task_success_response.json", encoding="utf-8"
             ).read(),
         ),
     )
@@ -593,7 +593,7 @@ def test_download_submission_metadata_files_02(
     os.makedirs(study_path, exist_ok=True)
     for file in list_isa_metadata_files()[0].study:
         file_path = os.path.join(study_path, file.file)
-        with open(file_path, "w") as fw:
+        with open(file_path, "w", encoding="utf-8") as fw:
             fw.write("test\n")
         modified = datetime.datetime.strptime(
             file.created_at,

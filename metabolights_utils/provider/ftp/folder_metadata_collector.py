@@ -16,6 +16,7 @@ from metabolights_utils.models.metabolights.model import (
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.default_ftp_client import DefaultFtpClient
 from metabolights_utils.provider.study_provider import AbstractFolderMetadataCollector
+from metabolights_utils.utils.filename_utils import join_path
 
 logger = logging.getLogger()
 
@@ -43,9 +44,9 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
         self.study_id = study_id.upper().strip("/")
 
         self.folder_index_file_path = (
-            folder_index_file_path
+            join_path(folder_index_file_path)
             if folder_index_file_path
-            else os.path.join(
+            else join_path(
                 definitions.default_local_repority_cache_path,
                 study_id,
                 "mtbls_index.json",
@@ -53,9 +54,10 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
         )
         logger.debug("Folder index path is %s", self.folder_index_file_path)
         self.rebuild_folder_index_file = rebuild_folder_index_file
-        self.remote_study_directory = os.path.join(
+        self.remote_study_directory = join_path(
             self.client.remote_repository_root_directory, self.study_id
         )
+        self.remote_study_directory = self.remote_study_directory.replace("\\", "/").rstrip("/")
 
     def visit_folder(
         self,
@@ -67,6 +69,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
         try:
 
             prefix = f"{str(study_path).rstrip('/')}/"
+            directory = directory.replace("\\", "/")
             dir_relative_path = (
                 str(directory).replace(prefix, "") if study_path != directory else ""
             )
@@ -81,7 +84,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                 messages.append(f"{dir_relative_path} is in ignore list. SKIPPED.")
                 return
             directory_input = (
-                os.path.join(self.study_id, dir_relative_path)
+                join_path(self.study_id, dir_relative_path)
                 if dir_relative_path
                 else self.study_id
             )
@@ -125,10 +128,10 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                 )
             for item in selected_descriptors:
                 entry = item.base_name
-                full_path: str = os.path.join(directory, entry)
-                relative_path = os.path.join(dir_relative_path, entry)
+                full_path: str = join_path(directory, entry).replace("\\", "/")
+                relative_path = join_path(dir_relative_path, entry).replace("\\", "/")
                 base_name = os.path.basename(relative_path)
-                parent_directory = os.path.dirname(relative_path)
+                parent_directory = os.path.dirname(relative_path).replace("\\", "/")
                 in_ignore_list = False
                 for pattern in definitions.ignore_file_patterns:
                     if pattern.match(relative_path):
@@ -182,7 +185,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
         ):
             logger.info("%s file exists, loading...", self.folder_index_file_path)
             try:
-                with open(self.folder_index_file_path, "r") as f:
+                with open(self.folder_index_file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     current_file_index = FolderIndex.model_validate(
                         data, from_attributes=True
@@ -238,7 +241,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
 
             now = datetime.datetime.now(datetime.timezone.utc)
             file_index = FolderIndex(update_time=now, content=study_folder_metadata)
-            with open(self.folder_index_file_path, "w") as fw:
+            with open(self.folder_index_file_path, "w", encoding="utf-8") as fw:
                 fw.write(file_index.model_dump_json(indent=4))
             msg = f"{self.folder_index_file_path} file is updated."
             logger.info(msg)

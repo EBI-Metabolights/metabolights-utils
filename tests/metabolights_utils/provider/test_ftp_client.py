@@ -171,7 +171,7 @@ def test_load_study_02(mocker: MockerFixture, study_id: str):
     mock_ftp = MagicMock()
 
     mocker.patch("ftplib.FTP", return_value=mock_ftp)
-    local_path = ".test-temp/ftp_client/test02"
+    local_path = "test-temp/ftp_client/test02"
     model = None
     try:
         os.makedirs(local_path, exist_ok=True)
@@ -227,7 +227,7 @@ class MockFtpWriter:
             file_path = os.path.join(self.current_path, file_name)
 
         if file_path and os.path.exists(file_path):
-            with open(file_path) as f:
+            with open(file_path, encoding="utf-8") as f:
                 lines = f.readlines()
                 for line in lines:
                     file_writer(bytes(line, encoding="utf-8"))
@@ -288,7 +288,7 @@ def test_download_study_data_files_01(mocker: MockerFixture):
     mock_ftp.cwd = mock_writer.cwd
 
     mocker.patch("ftplib.FTP", return_value=mock_ftp)
-    local_path = ".test-temp/ftp_client/download_data_files_01"
+    local_path = "test-temp/ftp_client/download_data_files_01"
     try:
         shutil.rmtree(local_path, ignore_errors=True)
         os.makedirs(local_path, exist_ok=True)
@@ -324,7 +324,7 @@ def test_download_study_metadata_files_01(mocker: MockerFixture):
     mock_ftp.cwd = mock_writer.cwd
 
     mocker.patch("ftplib.FTP", return_value=mock_ftp)
-    local_path = ".test-temp/ftp_client/download_metadata_files_01"
+    local_path = "test-temp/ftp_client/download_metadata_files_01"
     try:
         shutil.rmtree(local_path, ignore_errors=True)
         os.makedirs(local_path, exist_ok=True)
@@ -360,7 +360,7 @@ def test_download_study_metadata_files_02(mocker: MockerFixture):
     mock_ftp.cwd = mock_writer.cwd
 
     mocker.patch("ftplib.FTP", return_value=mock_ftp)
-    local_path = ".test-temp/ftp_client/download_metadata_files_01"
+    local_path = "test-temp/ftp_client/download_metadata_files_01"
     try:
         shutil.rmtree(local_path, ignore_errors=True)
         os.makedirs(local_path, exist_ok=True)
@@ -468,7 +468,7 @@ def test_get_study_folder_content_01(mocker: MockerFixture):
     mock_ftp.cwd = mock_writer.cwd
 
     mocker.patch("ftplib.FTP", return_value=mock_ftp)
-    local_path = ".test-temp/ftp_client/test_get_study_folder_content_01"
+    local_path = "test-temp/ftp_client/test_get_study_folder_content_01"
     try:
         shutil.rmtree(local_path, ignore_errors=True)
         os.makedirs(local_path, exist_ok=True)
@@ -494,7 +494,7 @@ def test_get_study_folder_content_01(mocker: MockerFixture):
         assert result.files
         assert os.path.exists(folder_index_file_path)
         assert "FILES/test.raw" in result.files
-        with open(folder_index_file_path) as f:
+        with open(folder_index_file_path, encoding="utf-8") as f:
             data = json.load(f)
             index = FolderIndex.model_validate(data)
             assert "FILES/test.raw" in index.content.files
