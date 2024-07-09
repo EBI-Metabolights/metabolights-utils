@@ -1,3 +1,4 @@
+import logging
 import pathlib
 import re
 import sys
@@ -8,7 +9,7 @@ from pydantic import BaseModel
 from pydantic.alias_generators import to_snake
 
 from metabolights_utils.isatab.default.parser.common import read_investigation_file
-from metabolights_utils.models.isa import investigation_file as model
+from metabolights_utils.models.isa import investigation_file
 from metabolights_utils.models.isa.common import (
     INVESTIGATION_FILE_INITIAL_ROWS,
     INVESTIGATION_FILE_INITIAL_ROWS_SET,
@@ -18,10 +19,17 @@ from metabolights_utils.models.isa.common import (
     Comment,
     IsaAbstractModel,
 )
+from metabolights_utils.models.isa.investigation_file import (
+    BaseSection,
+    Investigation,
+    Study,
+)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 
-model_module_name = model.__name__
+logger = logging.getLogger(__name__)
+
+model_module_name = investigation_file.__name__
 
 
 def parse_investigation_file_content(
@@ -29,12 +37,14 @@ def parse_investigation_file_content(
     file_path: str,
     messages: List[ParserMessage],
     fix_unicode_exceptions: bool = False,
-) -> Tuple[model.Investigation, List[ParserMessage]]:
+) -> Tuple[Investigation, List[ParserMessage]]:
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             model = parser(f, file_path, messages=messages)
+            logger.debug("%s is loaded.", file_path)
             return model, messages
     except UnicodeDecodeError as ex:
+        logger.warning("Unicode decode error for file %s: %s", file_path, str(ex))
         if fix_unicode_exceptions:
             try:
                 with open(file_path, "r", encoding="latin-1") as f:
@@ -47,6 +57,7 @@ def parse_investigation_file_content(
                     messages.append(message)
                     return model, messages
             except Exception as ex:
+                logger.exception("File read error for %s: %s", file_path, str(ex))
                 message = ParserMessage(
                     short="File read exception", type=ParserMessageType.CRITICAL
                 )
@@ -54,6 +65,7 @@ def parse_investigation_file_content(
                 messages.append(message)
                 return None, messages
         else:
+            logger.exception("File read error for %s: %s", file_path, str(ex))
             message = ParserMessage(
                 short="File read exception", type=ParserMessageType.CRITICAL
             )
@@ -62,6 +74,7 @@ def parse_investigation_file_content(
             return None, messages
 
     except Exception as ex:
+        logger.exception("File read error for %s: %s", file_path, str(ex))
         message = ParserMessage(
             short="File read exception", type=ParserMessageType.CRITICAL
         )
@@ -72,12 +85,12 @@ def parse_investigation_file_content(
 
 def parse_investigation_from_fs(
     file_path: str, fix_unicode_exceptions: bool = False
-) -> Tuple[Union[model.Investigation, None], List[ParserMessage]]:
+) -> Tuple[Union[Investigation, None], List[ParserMessage]]:
     messages: List[ParserMessage] = []
     file = pathlib.Path(file_path)
     basename = pathlib.Path(file).name
     if not file.exists():
-        print(f"File does not exist: {basename}")
+        logger.error("File does not exist %s", basename)
         message = ParserMessage(
             short="File does not exist", type=ParserMessageType.CRITICAL
         )
@@ -86,7 +99,7 @@ def parse_investigation_from_fs(
         return None, messages
     file_size = file.stat().st_size
     if file_size == 0:
-        print(f"File is empty: {basename}")
+        logger.error("File is empty: %s", basename)
         message = ParserMessage(short="File is empty", type=ParserMessageType.CRITICAL)
         message.detail = f"File is empty: {basename}"
         messages.append(message)
@@ -128,16 +141,18 @@ def get_investigation(
                 result: Dict[int, Dict[int, str]] = read_investigation_file(f, messages)
 
     if result is None:
-        return model.Investigation()
+        logger.warning("File %s is not valid", file_path)
+        return Investigation()
 
     tab: Dict[int, Dict[int, str]] = result
     for line in tab.keys():
         if len(tab[line]) == 0:
+            logger.warning("Empty line in file %s, line number: %s", str(line))
             messages.append(
                 ParserMessage(
                     short="Empty line",
                     type=ParserMessageType.WARNING,
-                    detail=f"Empty line in {str(line  + 1)}",
+                    detail=f"Empty line in {str(line)}",
                     line=str(line),
                 )
             )
@@ -151,12 +166,18 @@ def get_investigation(
             and index_string not in INVESTIGATION_FILE_STUDY_ROWS_SET
         ):
             if index_string.startswith("#"):
+                logger.debug(
+                    "File comment in %s will be ignored. Line number %s, starts with %s  ",
+                    file_path,
+                    str(line),
+                    index_string,
+                )
                 ignore_comments.append(line)
                 messages.append(
                     ParserMessage(
                         type=ParserMessageType.INFO,
                         short="File comment line",
-                        detail=f"Comment at line {str(line + 1)}:{index_string}",
+                        detail=f"Comment at line {str(line)}:{index_string}",
                     )
                 )
                 continue
@@ -170,6 +191,7 @@ def get_investigation(
                         line, index_string, current_section, study_part_comment, tab
                     )
                 if not is_valid:
+                    logger.error("Invalid ISA comment line at %s", str(line))
                     message = ParserMessage(
                         short="Invalid ISA comment line", type=ParserMessageType.WARNING
                     )
@@ -308,7 +330,7 @@ def build_study(
     comments_map: dict,
     messages: Union[None, List[ParserMessage]] = None,
 ):
-    study: model.Study = model.Study()
+    study: Study = Study()
 
     missing_rows = [
         x
@@ -355,12 +377,12 @@ def build_investigation(
     file_path,
     index_map: dict,
     content: dict,
-    studies: List[model.Study],
+    studies: List[Study],
     comments_map: dict,
     messages: Union[None, List[ParserMessage]] = None,
 ):
     messages = messages if messages is not None else []
-    investigation: model.Investigation = model.Investigation()
+    investigation: Investigation = Investigation()
 
     missing_rows = [
         x
@@ -434,8 +456,8 @@ def assign_by_field_name(
 
     initial_name_prefix = prefix or ""
     section_prefix = ""
-    if isinstance(data, model.BaseSection):
-        section: model.BaseSection = data
+    if isinstance(data, BaseSection):
+        section: BaseSection = data
         prefix_value = section.isatab_config.section_prefix
         section_prefix = prefix_value.strip() if prefix_value else ""
         initial_name_prefix = (
@@ -443,8 +465,8 @@ def assign_by_field_name(
             if not initial_name_prefix
             else f"{initial_name_prefix.strip()} {section_prefix}".strip()
         )
-    if isinstance(data, model.BaseSection) and comments_map:
-        section: model.BaseSection = data
+    if isinstance(data, BaseSection) and comments_map:
+        section: BaseSection = data
         section_header = section.isatab_config.section_header or ""
         if section_header in comments_map and comments_map[section_header]:
             section.comments = []
@@ -702,3 +724,18 @@ def assign_by_field_name(
                     )
                     message.detail = "Data type is not valid"
                     messages.append(message)
+
+
+if __name__ == "__main__":
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+    )
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    model, messages = parse_investigation_from_fs(
+        "tests/test-data/MTBLS60/i_Investigation.txt"
+    )

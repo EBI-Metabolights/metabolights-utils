@@ -1,3 +1,4 @@
+import logging
 import os
 from abc import ABC, abstractmethod
 from typing import List, Set, Tuple, Union
@@ -35,6 +36,8 @@ from metabolights_utils.provider.utils import (
     find_assay_technique,
     get_unique_file_extensions,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class AbstractDbMetadataCollector(ABC):
@@ -107,7 +110,13 @@ class MetabolightsStudyProvider(object):
             or not samples_file.table
             or samples_file.table.total_row_count < 1
             or samples_file.table.total_column_count < 1
+            or not samples_file.table.data
+            or not samples_file.table.columns
         ):
+            logger.warning(
+                "Invalid sample file or there is no row or column in sample file. "
+                + "Skip to set organisms."
+            )
             return
         pairs = set()
         columns = isa_table.table.columns
@@ -124,8 +133,6 @@ class MetabolightsStudyProvider(object):
         characteristics_column_indices = {
             x: columns.index(x) for x in characteristics_columns if x in columns
         }
-        if not samples_file.table.data or not samples_file.table.columns:
-            return
 
         for i in range(len(data[columns[0]])):
             characteristics: Tuple[
@@ -175,9 +182,10 @@ class MetabolightsStudyProvider(object):
         connection=None,
     ) -> MetabolightsStudyModel:
         model: MetabolightsStudyModel = MetabolightsStudyModel()
-
+        logger.debug("Load i_Investigation.txt file on %s for %s", folder, study_id)
         self.update_investigation_file(model, folder)
         if self.db_metadata_collector and connection:
+            logger.debug("Load %s study database metadata.", study_id)
             self.update_study_db_metadata(
                 model,
                 self.db_metadata_collector,
@@ -185,6 +193,7 @@ class MetabolightsStudyProvider(object):
                 connection=connection,
             )
         else:
+            logger.debug("Skipped %s study database metadata.", study_id)
             message = GenericMessage(
                 type=GenericMessageType.WARNING,
                 short=f"Database metadata collection is skipped for {study_id}",
@@ -193,6 +202,9 @@ class MetabolightsStudyProvider(object):
             model.db_reader_messages.append(message)
 
         if not model.investigation.studies:
+            logger.warning(
+                "There is no study definition in %s i_Investigation file.", study_id
+            )
             return model
 
         raw_files = set()
@@ -202,6 +214,7 @@ class MetabolightsStudyProvider(object):
         investigation = model.investigation
         for study_item in investigation.studies:
             file_path = os.path.join(folder, study_item.file_name)
+            logger.debug("Load sample file headers %s", study_item.file_name)
             samples_isa_table, messages = parse_isa_table_sheet_from_fs(
                 file_path,
                 samples_file_expected_patterns,
@@ -216,6 +229,7 @@ class MetabolightsStudyProvider(object):
             selected_column_names = set()
 
             selected_column_names = samples_isa_table.table.columns
+            logger.debug("Load sample file rows %s", study_item.file_name)
 
             sample_names, message_list = parse_isa_table_sheet_from_fs(
                 file_path,
@@ -226,6 +240,8 @@ class MetabolightsStudyProvider(object):
             self._add_parse_messages(model, samples_file.file_path, message_list)
 
             samples_file.table.total_row_count = 0
+            logger.debug("Find unique sample names in sample file for %s.", study_id)
+
             unique_sample_names = set()
             if sample_names.table.data and "Sample Name" in sample_names.table.data:
                 samples_row = len(sample_names.table.data["Sample Name"])
@@ -238,9 +254,14 @@ class MetabolightsStudyProvider(object):
             unique_sample_names.discard(None)
             samples_file.sample_names = list(unique_sample_names)
             self.set_organisms(samples_file, sample_names)
+
             model.samples[study_item.file_name] = samples_file
             for assay_item in study_item.study_assays.assays:
                 file_path = os.path.join(folder, assay_item.file_name)
+                logger.debug(
+                    "Load %s assay file headers for %s.", assay_item.file_name, study_id
+                )
+
                 assay_isa_table_sheet, messages = parse_isa_table_sheet_from_fs(
                     file_path,
                     assay_file_expected_patterns,
@@ -273,7 +294,11 @@ class MetabolightsStudyProvider(object):
                         selected_column_names.add(column)
                     elif column == "Parameter Value[Column type]":
                         selected_column_names.add(column)
-
+                logger.debug(
+                    "Load %s selected assay file columns for %s.",
+                    assay_item.file_name,
+                    study_id,
+                )
                 selected_column_names_list = list(selected_column_names)
                 assay_file_subset_sheet, messages_list = parse_isa_table_sheet_from_fs(
                     file_path,
@@ -371,6 +396,9 @@ class MetabolightsStudyProvider(object):
 
         for assignment_file in assignment_files:
             absolute_path = os.path.join(folder, assignment_file)
+            logger.debug(
+                "Load %s assignment file  headers for %s.", assignment_file, study_id
+            )
             isa_table_sheet, messages = parse_isa_table_sheet_from_fs(
                 absolute_path, limit=0, fix_unicode_exceptions=True
             )
@@ -790,6 +818,7 @@ class MetabolightsStudyProvider(object):
                 model.study_db_metadata = study_db_metadata
                 model.has_db_metadata = True
         except Exception as ex:
+            logger.exception("Error while reading datadata for %s", study_id)
             message = GenericMessage(
                 type=GenericMessageType.ERROR,
                 short=f"Error while reading database for {study_id} metadata",
@@ -806,15 +835,3 @@ class MetabolightsStudyProvider(object):
             or f.type == ParserMessageType.ERROR
             or f.type == ParserMessageType.WARNING
         ]
-
-
-if __name__ == "__main__":
-
-    provider = MetabolightsStudyProvider()
-    data = provider.load_study(
-        "MTBLS1",
-        study_path="tests/test-data/MTBLS1",
-        load_assay_files=True,
-        assay_sheet_limit=1,
-    )
-    print(data.parser_messages)

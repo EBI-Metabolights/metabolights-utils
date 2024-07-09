@@ -12,7 +12,7 @@ from metabolights_utils.models.isa.assay_file import AssayFile
 from metabolights_utils.models.isa.common import AssayTechnique
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 def is_metadata_file(file_path: str):

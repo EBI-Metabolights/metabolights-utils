@@ -38,7 +38,7 @@ from metabolights_utils.provider.utils import (
 )
 from metabolights_utils.utils.filename_utils import join_path
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class MetabolightsFtpRepository(DefaultFtpClient):

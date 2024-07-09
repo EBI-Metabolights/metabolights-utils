@@ -1,4 +1,5 @@
 import csv
+import logging
 import re
 import sys
 from functools import reduce
@@ -14,6 +15,8 @@ from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.tsv.filter import Filter, FilterRegistry, TsvFileFilterOption
 from metabolights_utils.tsv.sort import Sorter, SorterRegistry, TsvFileSortOption
+
+logger = logging.getLogger()
 
 
 def read_investigation_file(file_buffer: IOBase, messages: List[ParserMessage]):

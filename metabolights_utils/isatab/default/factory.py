@@ -21,7 +21,7 @@ from metabolights_utils.isatab.writer import (
     IsaTabWriterFactory,
 )
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class DefaultIsaTabReaderFactory(IsaTabReaderFactory):

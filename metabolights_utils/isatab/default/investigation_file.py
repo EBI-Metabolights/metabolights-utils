@@ -26,7 +26,7 @@ from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class InvestigationFileException(Exception):
@@ -137,10 +137,14 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
         file_path = None
         try:
             if isinstance(file_buffer_or_path, IOBase):
+                parent_dir = os.path.dirname(os.path.realpath(file_buffer_or_path.name))
+                os.makedirs(parent_dir, exist_ok=True)
                 file_buffer_or_path.write(content)
-                file_path = file_buffer_or_path.name
+                file_path = os.path.realpath(file_buffer_or_path.name)
             else:
-                file_path = str(file_buffer_or_path)
+                file_path = os.path.realpath(str(file_buffer_or_path))
+                parent_dir = os.path.dirname(file_path)
+                os.makedirs(parent_dir, exist_ok=True)
                 with open(file_buffer_or_path, "w", encoding="utf-8") as f:
                     f.write(content)
             report = ParserReport()

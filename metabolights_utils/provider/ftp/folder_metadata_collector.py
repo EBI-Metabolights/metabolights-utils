@@ -18,7 +18,7 @@ from metabolights_utils.provider.ftp.default_ftp_client import DefaultFtpClient
 from metabolights_utils.provider.study_provider import AbstractFolderMetadataCollector
 from metabolights_utils.utils.filename_utils import join_path
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class FolderIndex(BaseModel):

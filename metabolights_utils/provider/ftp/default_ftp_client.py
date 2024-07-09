@@ -8,7 +8,7 @@ from typing import List, Set, Union
 from metabolights_utils.provider.ftp.model import FtpFolderContent, LocalDirectory
 from metabolights_utils.utils.filename_utils import join_path
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 code_pattern = re.compile(r"\s*(\d+)\s+(.*)\s*")
 

@@ -18,7 +18,7 @@ from metabolights_utils.tsv.filter import TsvFileFilterOption
 from metabolights_utils.tsv.sort import TsvFileSortOption
 from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):

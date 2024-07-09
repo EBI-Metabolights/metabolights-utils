@@ -2,8 +2,13 @@ import pathlib
 import uuid
 from typing import Dict, List
 
-from metabolights_utils.tsv import model
 from metabolights_utils.tsv.actions.base import BaseTsvAction
+from metabolights_utils.tsv.model import (
+    TsvActionResult,
+    TsvActionType,
+    TsvAddRowsAction,
+    TsvRowData,
+)
 
 
 class AddRowsTsvAction(BaseTsvAction):
@@ -11,25 +16,23 @@ class AddRowsTsvAction(BaseTsvAction):
         self,
         source_file_path: pathlib.Path,
         target_file_path: pathlib.Path,
-        action: model.TsvAddRowsAction,
+        action: TsvAddRowsAction,
         read_encoding: str = "utf-8",
         write_encoding: str = "utf-8",
-    ) -> model.TsvActionResult:
-        result: model.TsvActionResult = model.TsvActionResult(action=action)
-        if action.action_type != model.TsvActionType.ADD_ROW:
+    ) -> TsvActionResult:
+        result: TsvActionResult = TsvActionResult(action=action)
+        if action.action_type != TsvActionType.ADD_ROW:
             result.message = "Action name is not valid"
             return result
 
-        action: model.TsvAddRowsAction = action
+        action: TsvAddRowsAction = action
         target_row_indices: List[int] = action.new_row_indices
 
         if not target_row_indices:
             result.message = "There is not row index"
             return result
 
-        row_data: Dict[int, model.TsvRowData] = (
-            action.row_data if action.row_data else {}
-        )
+        row_data: Dict[int, TsvRowData] = action.row_data if action.row_data else {}
 
         row_indices = target_row_indices.copy()
         row_indices.sort()

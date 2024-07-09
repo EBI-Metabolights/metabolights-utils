@@ -1,4 +1,5 @@
 import logging
+import os
 import pathlib
 from io import IOBase
 from typing import Tuple, Union
@@ -16,11 +17,11 @@ class BaseIsaFile(object):
             logger.warning("file_buffer_or_path input is not defined.")
             return None
         if isinstance(file_buffer_or_path, IOBase):
-            return file_buffer_or_path, file_buffer_or_path.name
+            return file_buffer_or_path, os.path.realpath(file_buffer_or_path.name)
         if isinstance(file_buffer_or_path, pathlib.Path):
-            return file_buffer_or_path, str(file_buffer_or_path)
+            return file_buffer_or_path, os.path.realpath(str(file_buffer_or_path))
         elif isinstance(file_buffer_or_path, str):
-            return file_buffer_or_path, file_buffer_or_path
+            return file_buffer_or_path, os.path.realpath(file_buffer_or_path)
 
     def _get_file_buffer(
         self, file: Union[str, pathlib.Path, IOBase], encoding="utf-8"
