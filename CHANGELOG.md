@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.1.3 (2024-07-09)
+
+### Fix
+
+* fix: windows path and new line issues ([`e8cf137`](https://github.com/EBI-Metabolights/metabolights-utils/commit/e8cf1371558ee9d0e29cd142a054359b590b18ee))
+
+### Unknown
+
+* logs in isatab, provider and utils module files, unit test improvements. ([`2d9850a`](https://github.com/EBI-Metabolights/metabolights-utils/commit/2d9850a1031928c01f0c75b590dbd766ba7e4857))
+
 ## v1.1.2 (2024-06-23)
 
 ### Documentation
