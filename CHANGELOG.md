@@ -1,10 +1,16 @@
 # CHANGELOG
 
+## v1.1.5 (2024-07-22)
+
+### Fix
+
+* fix: dependency updates ([`d0217c1`](https://github.com/EBI-Metabolights/metabolights-utils/commit/d0217c12c3a52991f912f1e156e962540a6d633e))
+
 ## v1.1.4 (2024-07-22)
 
 ### Fix
 
-* fix: If there is an undefined characteristics column in sample sheet, set_organism method fails ([`46ff5f6`](https://github.com/EBI-Metabolights/metabolights-utils/commit/46ff5f682c0e9319904bc73781533d77ee1be457))
+* fix: If there is an undefined characteristics column in sample sheet, set_organism method fails ([`367f919`](https://github.com/EBI-Metabolights/metabolights-utils/commit/367f919ee1731e50283a1e4bedbc26e36488276b))
 
 ## v1.1.3 (2024-07-09)
 
