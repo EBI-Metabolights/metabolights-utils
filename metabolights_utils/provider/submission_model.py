@@ -27,7 +27,7 @@ class Validation(BaseModel):
     status: str = ""
     timig: float = 0.0
     last_update_time: str = ""
-    last_update_timestamp: int = 0
+    last_update_timestamp: float = 0.0
     validations: List[Section] = []
 
 
