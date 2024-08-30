@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from pydantic import BaseModel
 
@@ -25,9 +25,9 @@ class Section(BaseModel):
 class Validation(BaseModel):
     version: str = ""
     status: str = ""
-    timig: float = 0.0
+    timig: Union[float, int] = 0.0
     last_update_time: str = ""
-    last_update_timestamp: float = 0.0
+    last_update_timestamp: Union[float, int] = 0
     validations: List[Section] = []
 
 
