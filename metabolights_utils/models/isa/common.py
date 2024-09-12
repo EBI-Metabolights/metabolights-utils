@@ -1,6 +1,6 @@
 from typing import Dict, List, Literal, Union
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.alias_generators import to_snake
 from typing_extensions import Annotated
 
@@ -328,7 +328,17 @@ class ProtocolFields(MetabolightsBaseModel):
 
 class Comment(IsaAbstractModel):
     name: Annotated[str, Field(description="Name of comment")] = ""
-    value: Annotated[List[str], Field(description="Values of comment")] = []
+    value: Annotated[Union[str, List[str]], Field(description="Values of comment")] = []
+
+    @field_validator("value", mode="before")
+    @classmethod
+    def validate_value(cls, value) -> List[str]:
+        if value is None:
+            return []
+        if isinstance(value, list):
+            return value
+        else:
+            return [str(value)]
 
 
 class IsaTableColumn(IsaAbstractModel):
