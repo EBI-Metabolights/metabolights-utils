@@ -1,8 +1,16 @@
 # CHANGELOG
 
+## v1.1.7 (2024-09-12)
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/EBI-Metabolights/metabolights-utils ([`600553d`](https://github.com/EBI-Metabolights/metabolights-utils/commit/600553d5c18be24c882b4b0794d05d7fe3302542))
+
 ## v1.1.6 (2024-08-30)
 
 ### Fix
+
+* fix: Comment object accepts str ([`88cecca`](https://github.com/EBI-Metabolights/metabolights-utils/commit/88ceccaa56a77cae773f7c74c6b6956ba062abbd))
 
 * fix: validation last update timestamp type is int or float. ([`64c65fa`](https://github.com/EBI-Metabolights/metabolights-utils/commit/64c65faee24fa6b72d0870707d1bce893fb5ac45))
 
