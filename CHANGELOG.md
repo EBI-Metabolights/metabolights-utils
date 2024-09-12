@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## v1.1.6 (2024-08-30)
+
+### Fix
+
+* fix: validation last update timestamp type is int or float. ([`64c65fa`](https://github.com/EBI-Metabolights/metabolights-utils/commit/64c65faee24fa6b72d0870707d1bce893fb5ac45))
+
+### Unknown
+
+* Merge pull request #2 from nilshoffmann/master
+
+Fixed type of last_update_timestamp in validation to float. ([`fe2aba1`](https://github.com/EBI-Metabolights/metabolights-utils/commit/fe2aba188f7401566bffc72f7f9c2261f8eb93b5))
+
+* Fixed type of last_update_timestamp in validation to float. ([`d1fe8f5`](https://github.com/EBI-Metabolights/metabolights-utils/commit/d1fe8f5f09999f39b85a0cd515f3c717fec6f07f))
+
 ## v1.1.5 (2024-07-22)
 
 ### Fix
