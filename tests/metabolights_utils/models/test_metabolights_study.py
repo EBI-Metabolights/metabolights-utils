@@ -1,3 +1,5 @@
+# import json
+
 from jsonschema import validate
 
 from metabolights_utils.models.isa.assay_file import AssayFile
@@ -41,6 +43,11 @@ def test_get_schema():
         calculate_metadata_size=True,
     )
     try:
+        # schema = MetabolightsStudyModel.model_json_schema(
+        #     by_alias=True, mode="serialization"
+        # )
+        # with open("schema.json", "w") as f:
+        #     json.dump(schema, f, indent=4)
         validate(model.model_dump(by_alias=True), result)
     except Exception as x:
         raise AssertionError(f"schema validation failed. {str(x)}")

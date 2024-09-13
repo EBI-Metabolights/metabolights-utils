@@ -137,7 +137,7 @@ class IsaAbstractModel(MetabolightsBaseModel):
         IsaTabConfig,
         Field(exclude=True),
     ] = IsaTabConfig()
-    id: Annotated[Union[None, str], Field(alias="@id", default=None)] = None
+    # id: Annotated[Union[None, str], Field(alias="@id", default=None)] = None
     model_config = ConfigDict(extra="forbid")
 
     @classmethod
