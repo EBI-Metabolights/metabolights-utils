@@ -332,9 +332,15 @@ class InvestigationFileSerializer(object):
             field_key = to_camel(field)
             header_name = properties[field_key]["header_name"]
             header_name = f"{prefix} {header_name}".strip() if prefix else header_name
-            if "allOf" in properties[field_key] or "items" in properties[field_key]:
-                if "allOf" in "allOf" in properties[field_key]:
+            if (
+                "allOf" in properties[field_key]
+                or "items" in properties[field_key]
+                or "$ref" in properties[field_key]
+            ):
+                if "allOf" in properties[field_key]:
                     item_ref: str = properties[field_key]["allOf"][0]["$ref"]
+                elif "$ref" in properties[field_key]:
+                    item_ref: str = properties[field_key]["$ref"]
                 else:
                     item_ref: str = properties[field_key]["items"]["$ref"]
                 class_name = item_ref.replace("#/definitions/", "").replace(
@@ -347,7 +353,6 @@ class InvestigationFileSerializer(object):
                     if items
                     else [obj()]
                 )
-
                 item_values = cls.add_model_content(header_name, input_items, props)
                 rows.extend(item_values)
             elif "type" in properties[field_key]:
@@ -355,9 +360,11 @@ class InvestigationFileSerializer(object):
                     items, properties, rows, row_map, fields, i, header_name
                 )
             elif "anyOf" in properties[field_key]:
-
                 cls.assign_string_type(items, rows, row_map, fields, i, header_name)
-
+            else:
+                logger.error(
+                    f"Unsopported type {properties[field_key]} for prefix {prefix}"
+                )
         return rows
 
     @classmethod
