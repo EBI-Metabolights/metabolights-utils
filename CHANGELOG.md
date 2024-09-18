@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## v1.1.8 (2024-09-13)
+
+### Fix
+
+* fix: rollback @id field and update investigation tsv file write method ([`ebf17b4`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ebf17b47b70a53d35cc997451ff2ff3b574b9eb8))
+
+* fix: investigation file rows fixed ([`b664483`](https://github.com/EBI-Metabolights/metabolights-utils/commit/b664483025d9d1f938984f916d2c9771e41625d4))
+
+* fix: id field is added to base class ([`ef682f4`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ef682f45b9ec8e5a4c26790c339a1d78c87bace3))
+
 ## v1.1.7 (2024-09-12)
 
 ### Unknown
