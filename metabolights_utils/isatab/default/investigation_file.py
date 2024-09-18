@@ -129,10 +129,12 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
         values_in_quotation_mark: bool = True,
         verify_file_after_update: bool = True,
         skip_parser_info_messages: bool = True,
+        investigation_module_name: Union[None, str] = None,
     ) -> InvestigationFileReaderResult:
         content = InvestigationFileSerializer.to_isa_file_string(
             investigation=investigation,
             values_in_quotation_mark=values_in_quotation_mark,
+            investigation_module_name=investigation_module_name,
         )
         file_path = None
         try:
@@ -183,10 +185,19 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
 class InvestigationFileSerializer(object):
     @classmethod
     def to_isa_file_lines(
-        cls, investigation: Investigation, values_in_quotation_mark: bool = False
+        cls,
+        investigation: Investigation,
+        values_in_quotation_mark: bool = False,
+        investigation_module_name: Union[None, str] = None,
     ):
+        module_name = (
+            investigation_module_name if investigation_module_name else inv_module_name
+        )
         file_lines = []
-        for row in cls.to_isa_file_line_list(investigation):
+        for row in cls.to_isa_file_line_list(
+            investigation,
+            investigation_module_name=module_name,
+        ):
             for i in range(len(row)):
                 item = row[i].strip('"')
                 row[i] = f'"{item}"' if i > 0 and values_in_quotation_mark else item
@@ -196,59 +207,102 @@ class InvestigationFileSerializer(object):
 
     @classmethod
     def to_isa_file_string(
-        cls, investigation: Investigation, values_in_quotation_mark: bool = False
+        cls,
+        investigation: Investigation,
+        values_in_quotation_mark: bool = False,
+        investigation_module_name: Union[None, str] = None,
     ):
-        file_lines = cls.to_isa_file_lines(investigation, values_in_quotation_mark)
+        file_lines = cls.to_isa_file_lines(
+            investigation,
+            values_in_quotation_mark,
+            investigation_module_name=investigation_module_name,
+        )
 
         return "\n".join(file_lines) + "\n"
 
     @classmethod
-    def to_isa_file_line_list(cls, investigation: Investigation):
+    def to_isa_file_line_list(
+        cls,
+        investigation: Investigation,
+        investigation_module_name: Union[None, str] = None,
+    ):
         rows: List[List[str]] = []
-        rows.extend(cls.add_sub_section("", investigation.ontology_source_references))
-        rows.extend(cls.add_sub_section("", investigation))
+        rows.extend(
+            cls.add_sub_section(
+                "",
+                investigation.ontology_source_references,
+                investigation_module_name=investigation_module_name,
+            )
+        )
+        rows.extend(
+            cls.add_sub_section(
+                "",
+                investigation,
+                investigation_module_name=investigation_module_name,
+            )
+        )
         rows.extend(
             cls.add_sub_section(
                 investigation.isatab_config.section_prefix,
                 investigation.investigation_publications,
+                investigation_module_name=investigation_module_name,
             )
         )
         rows.extend(
             cls.add_sub_section(
                 investigation.isatab_config.section_prefix,
                 investigation.investigation_contacts,
+                investigation_module_name=investigation_module_name,
             )
         )
         for study in investigation.studies:
-            rows.extend(cls.add_sub_section("", study))
             rows.extend(
                 cls.add_sub_section(
-                    study.isatab_config.section_prefix, study.study_design_descriptors
+                    "",
+                    study,
+                    investigation_module_name=investigation_module_name,
                 )
             )
             rows.extend(
                 cls.add_sub_section(
-                    study.isatab_config.section_prefix, study.study_publications
+                    study.isatab_config.section_prefix,
+                    study.study_design_descriptors,
+                    investigation_module_name=investigation_module_name,
                 )
             )
             rows.extend(
                 cls.add_sub_section(
-                    study.isatab_config.section_prefix, study.study_factors
+                    study.isatab_config.section_prefix,
+                    study.study_publications,
+                    investigation_module_name=investigation_module_name,
                 )
             )
             rows.extend(
                 cls.add_sub_section(
-                    study.isatab_config.section_prefix, study.study_assays
+                    study.isatab_config.section_prefix,
+                    study.study_factors,
+                    investigation_module_name=investigation_module_name,
                 )
             )
             rows.extend(
                 cls.add_sub_section(
-                    study.isatab_config.section_prefix, study.study_protocols
+                    study.isatab_config.section_prefix,
+                    study.study_assays,
+                    investigation_module_name=investigation_module_name,
                 )
             )
             rows.extend(
                 cls.add_sub_section(
-                    study.isatab_config.section_prefix, study.study_contacts
+                    study.isatab_config.section_prefix,
+                    study.study_protocols,
+                    investigation_module_name=investigation_module_name,
+                )
+            )
+            rows.extend(
+                cls.add_sub_section(
+                    study.isatab_config.section_prefix,
+                    study.study_contacts,
+                    investigation_module_name=investigation_module_name,
                 )
             )
         return rows
@@ -259,7 +313,15 @@ class InvestigationFileSerializer(object):
         return getattr(model, model_field_name)
 
     @classmethod
-    def add_sub_section(cls, prefix, model: BaseSection):
+    def add_sub_section(
+        cls,
+        prefix,
+        model: BaseSection,
+        investigation_module_name: Union[None, str] = None,
+    ):
+        module_name = (
+            investigation_module_name if investigation_module_name else inv_module_name
+        )
         rows: List[List[str]] = [[model.isatab_config.section_header]]
         header = []
         if prefix:
@@ -285,13 +347,29 @@ class InvestigationFileSerializer(object):
                     default_object_name = item_ref.replace(
                         "#/definitions/", ""
                     ).replace("#/$defs/", "")
-                    obj: BaseModel = getattr(
-                        sys.modules[inv_module_name], default_object_name
-                    )
-                    props = obj.model_json_schema()["properties"]
+                    obj = None
+                    if module_name != inv_module_name:
+                        try:
+                            obj: BaseModel = getattr(
+                                sys.modules[module_name],
+                                default_object_name,
+                            )
+                        except:
+                            pass
+                    # not set a value try to find on default module
+                    if not obj:
+                        obj: BaseModel = getattr(
+                            sys.modules[inv_module_name],
+                            default_object_name,
+                        )
+                    props_base = obj.model_json_schema(by_alias=False)["properties"]
+                    props = {to_camel(x): props_base[x] for x in props_base}
                     header.append(data_schema["properties"][field_key]["header_name"])
                     sub_model_rows = cls.add_model_content(
-                        " ".join(header).strip(), value, props
+                        " ".join(header).strip(),
+                        value,
+                        props,
+                        investigation_module_name=module_name,
                     )
                     if sub_model_rows:
                         rows.extend(sub_model_rows)
@@ -323,7 +401,16 @@ class InvestigationFileSerializer(object):
                 comment_line.append(value)
 
     @classmethod
-    def add_model_content(cls, prefix, items: List[IsaAbstractModel], properties):
+    def add_model_content(
+        cls,
+        prefix,
+        items: List[IsaAbstractModel],
+        properties,
+        investigation_module_name: Union[None, str] = None,
+    ):
+        module_name = (
+            investigation_module_name if investigation_module_name else inv_module_name
+        )
         rows = []
         row_map = {}
         fields = properties["isatabConfig"]["default"]["fieldOrder"]
@@ -346,14 +433,34 @@ class InvestigationFileSerializer(object):
                 class_name = item_ref.replace("#/definitions/", "").replace(
                     "#/$defs/", ""
                 )
-                obj: BaseModel = getattr(sys.modules[inv_module_name], class_name)
-                props = obj.model_json_schema()["properties"]
+                obj = None
+                if module_name != inv_module_name:
+                    try:
+                        obj: BaseModel = getattr(
+                            sys.modules[module_name],
+                            class_name,
+                        )
+                    except:
+                        pass
+                # not set a value try to find on default module
+                if not obj:
+                    obj: BaseModel = getattr(
+                        sys.modules[inv_module_name],
+                        class_name,
+                    )
+                props_base = obj.model_json_schema(by_alias=False)["properties"]
+                props = {to_camel(x): props_base[x] for x in props_base}
                 input_items = (
                     [cls.get_attribute(item, field_key) for item in items]
                     if items
                     else [obj()]
                 )
-                item_values = cls.add_model_content(header_name, input_items, props)
+                item_values = cls.add_model_content(
+                    header_name,
+                    input_items,
+                    props,
+                    investigation_module_name=module_name,
+                )
                 rows.extend(item_values)
             elif "type" in properties[field_key]:
                 cls.assign_type(

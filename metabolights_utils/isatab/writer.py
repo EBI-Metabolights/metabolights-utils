@@ -20,6 +20,7 @@ class InvestigationFileWriter(ABC):
         values_in_quotation_mark: bool = True,
         verify_file_after_update: bool = True,
         skip_parser_info_messages: bool = True,
+        investigation_module_name: Union[None, str] = None,
     ) -> InvestigationFileReaderResult:
         """Converts investigation file model to isatab inverstigation format and writes to file buffer.
            If file buffer is not defined, it creates/updates a file on file_path.
@@ -31,6 +32,8 @@ class InvestigationFileWriter(ABC):
             values_in_quotation_mark (bool, optional): add values in quatation_mark. Defaults to True.
             verify_file_after_update (bool, optional): Reads investigation file if it is True. Defaults to True.
             skip_parser_info_messages (bool, optional): clear INFO messages from parser messages. Defaults to True.
+            investigation_module_name: Union[None, str] = investigation file module name to find domain classes referenced in json schema.
+                e.g. 'metabolights_utils.models.isa.investigation_file'
         Returns:
             InvestigationFileReaderResult: Returns updated investigation model and parser messages if verify_file_after_update is True.
                 If verify_file_after_update is False, return input investigation and empty parser message report

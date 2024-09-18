@@ -378,6 +378,11 @@ class IsaTableColumn(IsaAbstractModel):
         str, Field(description="Column prefix if header has a value between [].")
     ] = ""
 
+    default_value: Annotated[
+        str,
+        Field(description="Default value", exclude=True),
+    ] = ""
+
     column_search_pattern: Annotated[
         str,
         Field(
