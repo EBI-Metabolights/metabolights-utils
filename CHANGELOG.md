@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.1.9 (2024-09-18)
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/EBI-Metabolights/metabolights-utils ([`2c16d3c`](https://github.com/EBI-Metabolights/metabolights-utils/commit/2c16d3c425c53808d2558eadbdee9acb110b739c))
+
 ## v1.1.8 (2024-09-13)
 
 ### Fix
@@ -9,6 +15,10 @@
 * fix: investigation file rows fixed ([`b664483`](https://github.com/EBI-Metabolights/metabolights-utils/commit/b664483025d9d1f938984f916d2c9771e41625d4))
 
 * fix: id field is added to base class ([`ef682f4`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ef682f45b9ec8e5a4c26790c339a1d78c87bace3))
+
+### Refactor
+
+* refactor: InvestigationFileWriter write method is now aware of inherited classes of Investigation model ([`1928d04`](https://github.com/EBI-Metabolights/metabolights-utils/commit/1928d04ca64cff1a982174b8f61a8d7c96c46658))
 
 ## v1.1.7 (2024-09-12)
 
