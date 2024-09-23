@@ -1,6 +1,20 @@
 # CHANGELOG
 
+## v1.1.10 (2024-09-23)
+
+### Test
+
+* test: test data for new parameter to filter empty isa table rows. ([`9c0cab6`](https://github.com/EBI-Metabolights/metabolights-utils/commit/9c0cab60a6d23acd6b13ee142c63ee95fb22e871))
+
+### Unknown
+
+* Merge branch &#39;master&#39; of https://github.com/EBI-Metabolights/metabolights-utils ([`78b1e1e`](https://github.com/EBI-Metabolights/metabolights-utils/commit/78b1e1e7b116180bd7abbe131a0dcc245c64417d))
+
 ## v1.1.9 (2024-09-18)
+
+### Refactor
+
+* refactor: new parameter to filter empty isa table rows. ([`d6aa664`](https://github.com/EBI-Metabolights/metabolights-utils/commit/d6aa6644afc4c9bc805df08a633515f135cd4602))
 
 ### Unknown
 
