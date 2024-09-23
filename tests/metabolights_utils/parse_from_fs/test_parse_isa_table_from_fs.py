@@ -1,7 +1,9 @@
 import os
 import pathlib
+import shutil
 from typing import List
 
+from metabolights_utils.isatab import Writer
 from metabolights_utils.isatab.default.assay_file import DefaultAssayFileReader
 from metabolights_utils.isatab.default.assignment_file import (
     DefaultAssignmentFileReader,
@@ -37,6 +39,31 @@ def test_parse_isa_table_sheet_from_fs_valid_sample_01():
     )
     assert table
     assert not messages
+
+
+def test_parse_isa_table_sheet_from_fs_valid_sample_02():
+    file_path = pathlib.Path("tests/test-data/MTBLS9999998/s_MTBLS9999998.txt")
+    file_path_output = pathlib.Path("test-temp/MTBLS9999998")
+    output_sample_file_path = file_path_output / pathlib.Path("s_MTBLS9999998.txt")
+    os.makedirs(str(file_path_output), exist_ok=True)
+    shutil.copy(file_path, output_sample_file_path)
+    reader = DefaultSampleFileReader(results_per_page=50)
+    patterns = reader.get_expected_patterns()
+    assert patterns
+    table, messages = parse_isa_table_sheet_from_fs(
+        output_sample_file_path,
+        expected_patterns=patterns,
+        remove_empty_rows=True,
+    )
+    assert table
+    assert messages
+    writer = Writer.get_sample_file_writer()
+    result = writer.save_isa_table(
+        file_path=str(output_sample_file_path),
+        file_sha256_hash=table.sha256_hash,
+        isa_table=table.table,
+    )
+    assert result.success
 
 
 def test_parse_isa_table_sheet_from_fs_invalid_columns_01():

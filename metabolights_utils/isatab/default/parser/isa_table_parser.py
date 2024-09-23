@@ -1,4 +1,5 @@
 import os
+import pathlib
 import re
 from functools import partial
 from io import IOBase
@@ -20,19 +21,49 @@ from metabolights_utils.tsv.sort import TsvFileSortOption
 from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 
+def fix_empty_rows(
+    file_path: str,
+    messages: List[ParserMessage],
+    read_encoding: str,
+    write_encoding: str,
+):
+    with open(file_path, "r", encoding=read_encoding) as f:
+        lines = f.readlines()
+        updated_lines = [
+            line.strip("\n").strip("\r") for line in lines if line and line.strip()
+        ]
+        updated_lines = [f"{line}\n" for line in updated_lines]
+        if len(updated_lines) != len(lines):
+            basename = os.path.basename(file_path)
+            messages.append(
+                ParserMessage(
+                    type=ParserMessageType.WARNING,
+                    short=f"Empty rows are in file: {basename}",
+                    detail=f"Empty rows are removed from {basename}",
+                )
+            )
+            with open(file_path, "w", encoding=write_encoding) as f:
+                f.writelines(updated_lines)
+
+
 def parse_isa_file_content(
     parser: Callable,
     file_path: str,
     messages: List[ParserMessage],
     fix_unicode_exceptions: bool = False,
+    remove_empty_rows: bool = False,
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
     try:
+        if remove_empty_rows:
+            fix_empty_rows(file_path, messages, "utf-8", "utf-8")
         with open(file_path, "r", encoding="utf-8") as f:
             model = parser(f, messages=messages)
             return model, messages
     except UnicodeDecodeError as ex:
         if fix_unicode_exceptions:
             try:
+                if remove_empty_rows:
+                    fix_empty_rows(file_path, messages, "latin-1", "latin-1")
                 with open(file_path, "r", encoding="latin-1") as f:
                     model = parser(f, messages=messages)
                     message = ParserMessage(
@@ -74,6 +105,7 @@ def parse_isa_table_sheet_from_fs(
     filter_options: List[TsvFileFilterOption] = None,
     sort_options: List[TsvFileSortOption] = None,
     fix_unicode_exceptions: bool = False,
+    remove_empty_rows: bool = False,
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
     basename = os.path.basename(file_path)
     dirname = os.path.basename(os.path.dirname(file_path))
@@ -121,12 +153,13 @@ def parse_isa_table_sheet_from_fs(
         file_path=file_path,
         messages=read_messages,
         fix_unicode_exceptions=fix_unicode_exceptions,
+        remove_empty_rows=remove_empty_rows,
     )
     isa_table_file: IsaTableFile = table
     if isa_table_file:
         if os.path.exists(file_path):
             isa_table_file.sha256_hash = HashUtils.sha256sum(file_path)
-        if isa_table_file.table.columns:
+        if isa_table_file.table:
             messages.extend(read_messages)
             messages = [x for x in messages if x.type != ParserMessageType.INFO]
             return isa_table_file, messages
