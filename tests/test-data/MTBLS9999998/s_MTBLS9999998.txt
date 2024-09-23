@@ -1,0 +1,39 @@
+Source Name	Characteristics[Organism]	Term Source REF	Term Accession Number	Characteristics[Organism part]	Term Source REF	Term Accession Number	Characteristics[Variant]	Term Source REF	Term Accession Number	Characteristics[Sample type]	Term Source REF	Term Accession Number	Characteristics[plasma]	Term Source REF	Term Accession Number	Protocol REF	Sample Name
+
+1	sus surofa			plasma									plasma			Sample collection	CA1
+
+2	sus surofa			plasma									plasma			Sample collection	CA2
+
+3	sus surofa			plasma									plasma			Sample collection	CA3
+
+4	sus surofa			plasma									plasma			Sample collection	CA4
+
+5	sus surofa			plasma									plasma			Sample collection	CA5
+
+6	sus surofa			plasma									plasma			Sample collection	CA6
+
+s1	sus surofa			plasma									plasma			Sample collection	Sham1
+
+s2	sus surofa			plasma									plasma			Sample collection	Sham2
+
+s3	sus surofa			plasma									plasma			Sample collection	Sham3
+
+s4	sus surofa			plasma									plasma			Sample collection	Sham4
+
+s5	sus surofa			plasma									plasma			Sample collection	Sham5
+
+s6	sus surofa			plasma									plasma			Sample collection	Sham6
+
+QC1	sus surofa			plasma									pooled sample			Sample collection	QC1
+
+QC2	sus surofa			plasma									pooled sample			Sample collection	QC2
+
+QC3	sus surofa			plasma									pooled sample			Sample collection	QC3
+
+QC4	sus surofa			plasma									pooled sample			Sample collection	QC4
+
+QC5	sus surofa			plasma									pooled sample			Sample collection	QC5
+
+QC6	sus surofa			plasma									pooled sample			Sample collection	QC6
+
+QC7	sus surofa			plasma									pooled sample			Sample collection	QC7
