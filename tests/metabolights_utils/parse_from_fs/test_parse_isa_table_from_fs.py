@@ -91,6 +91,18 @@ def test_parse_isa_table_sheet_from_fs_invalid_columns_01():
     assert invalid_ontology_columns
 
 
+def test_parse_isa_table_sheet_from_fs_invalid_columns_02():
+    file_path = pathlib.Path(
+        "tests/test-data/isa-table-files/m_invalid_cell_context.txt"
+    )
+    patterns = DefaultAssignmentFileReader.patterns
+    isa_table, messages = parse_isa_table_sheet_from_fs(
+        file_path, expected_patterns=patterns
+    )
+    assert isa_table
+    assert messages
+
+
 def test_parse_isa_table_sheet_from_fs_valid_assignment_01():
     file_path = pathlib.Path(
         "tests/test-data/MTBLS1/m_MTBLS1_metabolite_profiling_NMR_spectroscopy_v2_maf.tsv"

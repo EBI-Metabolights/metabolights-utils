@@ -3,7 +3,7 @@ import logging
 import re
 import sys
 from functools import reduce
-from io import IOBase
+from io import IOBase, TextIOWrapper
 from typing import Dict, List, Union
 
 from metabolights_utils.models.common import MetabolightsBaseModel
@@ -148,7 +148,7 @@ class SelectedTsvFileContent(MetabolightsBaseModel):
 
 
 def read_table_file(
-    file_buffer,
+    file_buffer: TextIOWrapper,
     messages: List[ParserMessage],
     selected_columns: Union[None, List[str]] = None,
     offset: Union[int, None] = None,
@@ -157,10 +157,49 @@ def read_table_file(
     sort_options: List[TsvFileSortOption] = None,
 ) -> SelectedTsvFileContent:
     file_buffer.seek(0)
-    total_line = sum(1 for _ in file_buffer)
+    file_content = file_buffer.read()
+    find_empty_lines = re.findall(r"[\r\n][\r\n]+", file_content)
+    if find_empty_lines:
+        messages.append(
+            ParserMessage(
+                type=ParserMessageType.WARNING,
+                short=f"Removed empty lines.",
+                detail="Removed empty lines.",
+            )
+        )
+        file_content = re.sub(r"[\r\n][\r\n]+", r"\n", file_content)
+
+    find_matches = re.findall(r'\t"([^\t]*)([\r\n]+)([^\t]*)"\t', file_content)
+
+    if find_matches:
+        max_iteration = 10
+        iteration = 0
+        while True:
+            new_file_content = re.sub(
+                r'\t"([^\t]*)([\r\n]+)([^\t]*)"\t', r'\t"\1\3"\t', file_content
+            )
+            if new_file_content == file_content:
+                break
+            if iteration < 1:
+                messages.append(
+                    ParserMessage(
+                        type=ParserMessageType.WARNING,
+                        short=f"Removed new line characters in cells.",
+                        detail="Removed new line characters in cells.",
+                    )
+                )
+            iteration += 1
+            if iteration > max_iteration:
+                break
+            file_content = new_file_content
+
+    file_lines = file_content.split("\n")
+    if file_lines and file_lines[-1] == "":
+        file_lines = file_lines[:-1]
+    total_line = len(file_lines)
     total_data_rows = total_line - 1
     file_buffer.seek(0)
-    reader = csv.reader(file_buffer, delimiter="\t")
+    rows = [x.split("\t") for x in file_lines]
     if total_line == 0:
         raise ValueError("There is no row in file")
     content: SelectedTsvFileContent = SelectedTsvFileContent()
@@ -169,7 +208,7 @@ def read_table_file(
     content.sort_options = sort_options if sort_options else []
     if filter_options or sort_options:
         return read_table_file_with_filter_and_sort_option(
-            reader,
+            rows,
             content,
             messages,
             selected_columns,
@@ -211,7 +250,7 @@ def read_table_file(
         next_row_index = 0
         skipped_rows = 0
         read_rows = 0
-        for row in reader:
+        for row in rows:
             next_row_index += 1
             row_index = next_row_index - 1
             if row_index == 0:
@@ -252,7 +291,7 @@ def read_table_file(
 
 
 def read_table_file_with_filter_and_sort_option(
-    reader,
+    rows: List[List[str]],
     content: SelectedTsvFileContent,
     messages: List[ParserMessage],
     selected_columns: Union[None, List[str]] = None,
@@ -270,7 +309,7 @@ def read_table_file_with_filter_and_sort_option(
     try:
         next_row_index = 0
         filtered_rows = []
-        for row in reader:
+        for row in rows:
             next_row_index += 1
             row_index = next_row_index - 1
             if row_index == 0:
@@ -313,7 +352,7 @@ def read_table_file_with_filter_and_sort_option(
                             break
                     if select:
                         filtered_rows.append((row_index - 1, row))
-        reader = None
+        rows = None
 
         sorters: List[Sorter] = []
         if sort_options:

@@ -125,14 +125,26 @@ def define_type(schema: Dict[str, Any], desc: Dict[str, Any]):
             _type = ", ".join(types)
             if len(types) > 1:
                 _type = f"Any of {_type}"
-
+        elif "$ref" in desc:
+            child = desc["$ref"].split("/")[-1]
+            if child in schema["$defs"]:
+                _type = f"{_type} {child}".strip()
+            else:
+                sub_type = define_type(schema, schema["$defs"][child])
+                _type = f"{_type} {sub_type}".strip()
     else:
 
         if _type == "object" and "properties" not in desc:
             _type = "dictionary of"
         elif _type == "array":
             _type = "array of"
-
+        elif "$ref" in desc:
+            child = desc["$ref"].split("/")[-1]
+            if child in schema["$defs"]:
+                _type = f"{_type} {child}".strip()
+            else:
+                sub_type = define_type(schema, schema["$defs"][child])
+                _type = f"{_type} {sub_type}".strip()
         if "additionalProperties" in desc and isinstance(
             desc["additionalProperties"], dict
         ):
