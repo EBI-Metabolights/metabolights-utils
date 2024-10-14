@@ -1,6 +1,7 @@
 import os
 import pathlib
 import shutil
+import uuid
 from typing import List
 
 from metabolights_utils.isatab import Writer
@@ -101,6 +102,36 @@ def test_parse_isa_table_sheet_from_fs_invalid_columns_02():
     )
     assert isa_table
     assert messages
+
+
+def test_parse_isa_table_sheet_from_fs_invalid_columns_03():
+    file_path = pathlib.Path(
+        "tests/test-data/isa-table-files/m_invalid_cell_context_2.txt"
+    )
+
+    temp_root_path = ".test-temp"
+    temp_path = f"{temp_root_path}/parse-file-{uuid.uuid4()}"
+    os.makedirs(temp_path, exist_ok=True)
+    try:
+        temp_file_path = os.path.join(temp_path, os.path.basename(file_path))
+        shutil.copy2(file_path, temp_file_path)
+        patterns = DefaultAssignmentFileReader.patterns
+        isa_table, messages = parse_isa_table_sheet_from_fs(
+            temp_file_path,
+            expected_patterns=patterns,
+            remove_empty_rows=True,
+            remove_new_lines_in_cells=True,
+        )
+        assert isa_table
+        assert len(messages) >= 2
+        for item in messages:
+            assert "Removed" in item.detail
+    except Exception as e:
+        print(e)
+        raise e
+    finally:
+        if os.path.exists(temp_path):
+            shutil.rmtree(temp_path, ignore_errors=True)
 
 
 def test_parse_isa_table_sheet_from_fs_valid_assignment_01():

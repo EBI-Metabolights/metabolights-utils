@@ -1,3 +1,4 @@
+import os
 from typing import List, Tuple, Union
 from unittest import mock
 
@@ -17,6 +18,7 @@ from metabolights_utils.models.metabolights.model import (
 from metabolights_utils.provider.study_provider import (
     AbstractDbMetadataCollector,
     AbstractFolderMetadataCollector,
+    DefaultStudyMetadataFileProvider,
     MetabolightsStudyProvider,
 )
 
@@ -172,6 +174,42 @@ def test_load_study_data_05(study_id, study_path):
     model: MetabolightsStudyModel = provider.load_study(
         study_id,
         study_path,
+        load_assay_files=False,
+        load_sample_file=True,
+        load_maf_files=False,
+        load_folder_metadata=False,
+    )
+    assert model
+    assert model.has_investigation_data
+    assert model.has_sample_table_data
+    assert not model.has_assay_table_data
+    assert not model.has_assignment_table_data
+    assert not model.has_db_metadata
+    assert not model.has_folder_metadata
+    assert model.investigation.studies
+    assert model.investigation.studies[0].identifier == study_id
+
+
+test_studies_with_provider = [
+    ("MTBLS1", "tests/test-data"),
+    ("MTBLS227", "tests/test-data"),
+    ("MTBLS2028", "tests/test-data"),
+]
+
+
+@pytest.mark.parametrize(
+    "study_id,study_metadata_root_path", test_studies_with_provider
+)
+def test_load_study_data_with_provider_01(study_id, study_metadata_root_path):
+    study_metadata_root_path = os.path.realpath(study_metadata_root_path)
+    provider = MetabolightsStudyProvider(
+        metadata_file_provider=DefaultStudyMetadataFileProvider(
+            study_metadata_root_path
+        )
+    )
+    model: MetabolightsStudyModel = provider.load_study(
+        study_id,
+        study_path=None,
         load_assay_files=False,
         load_sample_file=True,
         load_maf_files=False,

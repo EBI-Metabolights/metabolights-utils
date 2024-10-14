@@ -1,6 +1,8 @@
 import logging
 import os
+
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import List, Set, Tuple, Union
 
 from metabolights_utils.isatab.default.parser.investigation_parser import (
@@ -38,6 +40,42 @@ from metabolights_utils.provider.utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class AbstractMetadataFileProvider(ABC):
+
+    @abstractmethod
+    def get_study_metadata_path(
+        self, study_id: str, file_relative_path: Union[None, str] = None
+    ) -> str:
+        pass
+
+    @abstractmethod
+    def exists(
+        self, study_id: str, file_relative_path: Union[None, str] = None
+    ) -> bool:
+        pass
+
+
+class DefaultStudyMetadataFileProvider(AbstractMetadataFileProvider):
+    def __init__(self, study_metadata_root_path: str):
+        self.study_metadata_root_path = study_metadata_root_path
+
+    def get_study_metadata_path(
+        self, study_id: str, file_relative_path: Union[None, str] = None
+    ) -> str:
+        if file_relative_path:
+            return os.path.join(
+                self.study_metadata_root_path, study_id, file_relative_path
+            )
+        else:
+            return os.path.join(self.study_metadata_root_path, study_id)
+
+    def exists(
+        self, study_id: str, file_relative_path: Union[None, str] = None
+    ) -> bool:
+        file_path = Path(self.get_study_metadata_path(study_id, file_relative_path))
+        return file_path.resolve().exists()
 
 
 class AbstractDbMetadataCollector(ABC):
@@ -90,9 +128,11 @@ class MetabolightsStudyProvider(object):
         self,
         db_metadata_collector: Union[None, AbstractDbMetadataCollector] = None,
         folder_metadata_collector: Union[None, AbstractFolderMetadataCollector] = None,
+        metadata_file_provider: Union[None, AbstractMetadataFileProvider] = None,
     ) -> None:
         self.db_metadata_collector = db_metadata_collector
         self.folder_metadata_collector = folder_metadata_collector
+        self.metadata_file_provider = metadata_file_provider
 
     def _add_parse_messages(
         self,
@@ -175,6 +215,36 @@ class MetabolightsStudyProvider(object):
         )
         samples_file.organism_and_organism_part_pairs = list(pairs)
 
+    def get_file_path(
+        self,
+        relative_file_path: str,
+        folder: Union[None, str],
+        study_id: Union[None, str],
+    ):
+        if not folder:
+            if not self.metadata_file_provider:
+                raise ValueError("Define metadata file povider if folder is None.")
+            file_path = self.metadata_file_provider.get_study_metadata_path(
+                study_id, relative_file_path
+            )
+        else:
+            file_path = os.path.join(folder, relative_file_path)
+        return file_path
+
+    def get_study_metadata_path(
+        self,
+        folder: Union[None, str],
+        study_id: Union[None, str],
+    ) -> Tuple[str, bool]:
+        if not folder:
+            study_path = self.metadata_file_provider.get_study_metadata_path(study_id)
+            exist = self.metadata_file_provider.exists(study_path)
+        else:
+            study_path = folder
+            real_path = os.path.realpath(folder)
+            exist = os.path.exists(real_path)
+        return study_path, exist
+
     def get_phase1_input_data(
         self,
         study_id: str,
@@ -183,7 +253,7 @@ class MetabolightsStudyProvider(object):
     ) -> MetabolightsStudyModel:
         model: MetabolightsStudyModel = MetabolightsStudyModel()
         logger.debug("Load i_Investigation.txt file on %s for %s", folder, study_id)
-        self.update_investigation_file(model, folder)
+        self.update_investigation_file(model, folder, study_id=study_id)
         if self.db_metadata_collector and connection:
             logger.debug("Load %s study database metadata.", study_id)
             self.update_study_db_metadata(
@@ -213,7 +283,9 @@ class MetabolightsStudyProvider(object):
         folders_in_hierarchy = set()
         investigation = model.investigation
         for study_item in investigation.studies:
-            file_path = os.path.join(folder, study_item.file_name)
+
+            file_path = self.get_file_path(study_item.file_name, folder, study_id)
+
             logger.debug("Load sample file headers %s", study_item.file_name)
             samples_isa_table, messages = parse_isa_table_sheet_from_fs(
                 file_path,
@@ -257,7 +329,8 @@ class MetabolightsStudyProvider(object):
 
             model.samples[study_item.file_name] = samples_file
             for assay_item in study_item.study_assays.assays:
-                file_path = os.path.join(folder, assay_item.file_name)
+                file_path = self.get_file_path(assay_item.file_name, folder, study_id)
+
                 logger.debug(
                     "Load %s assay file headers for %s.", assay_item.file_name, study_id
                 )
@@ -395,7 +468,7 @@ class MetabolightsStudyProvider(object):
         model.folders_in_hierarchy.extend(list(folders_in_hierarchy))
 
         for assignment_file in assignment_files:
-            absolute_path = os.path.join(folder, assignment_file)
+            absolute_path = self.get_file_path(assignment_file, folder, study_id)
             logger.debug(
                 "Load %s assignment file  headers for %s.", assignment_file, study_id
             )
@@ -487,7 +560,7 @@ class MetabolightsStudyProvider(object):
             model = self.get_phase1_input_data(study_id, folder, connection)
 
         for study_item in model.investigation.studies:
-            file_path = os.path.join(folder, study_item.file_name)
+            file_path = self.get_file_path(study_item.file_name, folder, study_id)
             samples_isa_table_sheet, messages = parse_isa_table_sheet_from_fs(
                 file_path,
                 samples_file_expected_patterns,
@@ -526,7 +599,8 @@ class MetabolightsStudyProvider(object):
             model = self.get_phase1_input_data(study_id, folder, connection)
 
         for study_item in model.investigation.studies:
-            file_path = os.path.join(folder, study_item.file_name)
+            file_path = self.get_file_path(study_item.file_name, folder, study_id)
+
             samples_isa_table_sheet, messages = parse_isa_table_sheet_from_fs(
                 file_path,
                 samples_file_expected_patterns,
@@ -551,7 +625,8 @@ class MetabolightsStudyProvider(object):
                 self.filter_messages(messages)
             )
             for assay_item in study_item.study_assays.assays:
-                file_path = os.path.join(folder, assay_item.file_name)
+                file_path = self.get_file_path(assay_item.file_name, folder, study_id)
+
                 assay_isa_table_sheet, messages = parse_isa_table_sheet_from_fs(
                     file_path,
                     assay_file_expected_patterns,
@@ -596,9 +671,9 @@ class MetabolightsStudyProvider(object):
             model = self.get_phase1_input_data(study_id, folder, connection)
 
         for assignment_file in model.metabolite_assignments:
-            absolute_path = os.path.join(folder, assignment_file)
+            absolute_path = self.get_file_path(assignment_file, folder, study_id)
             (
-                metabolite_assignment_isa_table_sheet,
+                maf_isa_table_sheet,
                 messages,
             ) = parse_isa_table_sheet_from_fs(
                 absolute_path,
@@ -606,9 +681,7 @@ class MetabolightsStudyProvider(object):
                 limit=assignment_sheet_limit,
                 fix_unicode_exceptions=True,
             )
-            metabolite_assignment_isa_table: IsaTableFile = (
-                metabolite_assignment_isa_table_sheet
-            )
+            metabolite_assignment_isa_table: IsaTableFile = maf_isa_table_sheet
             model.parser_messages[assignment_file].extend(
                 self.filter_messages(messages)
             )
@@ -722,13 +795,17 @@ class MetabolightsStudyProvider(object):
         calculate_data_folder_size: bool = False,
         calculate_metadata_size: bool = False,
     ) -> MetabolightsStudyModel:
-        if not study_id or not study_path:
-            raise ValueError("invalid study_id or study_path")
-        real_path = os.path.realpath(study_path)
-        if not os.path.exists(real_path):
+        if not study_id:
+            raise ValueError("invalid study_id")
+        exist = False
+        study_path, exist = self.get_study_metadata_path(study_path, study_id)
+
+        if not study_path:
+            raise ValueError("invalid study_path")
+        if not exist:
             model = MetabolightsStudyModel()
             message = CriticalMessage(
-                short=f"Study folder does not exist for {study_id}"
+                short=f"Study folder does not exist for {study_id} {study_path}"
             )
             model.folder_reader_messages.append(message)
             return model
@@ -786,9 +863,13 @@ class MetabolightsStudyProvider(object):
         return model
 
     def update_investigation_file(
-        self, model: MetabolightsStudyModel, folder, file_name="i_Investigation.txt"
+        self,
+        model: MetabolightsStudyModel,
+        folder,
+        file_name="i_Investigation.txt",
+        study_id: Union[None, str] = None,
     ):
-        file = os.path.join(folder, file_name)
+        file = self.get_file_path(file_name, folder, study_id)
         investigation, messages = parse_investigation_from_fs(
             file, fix_unicode_exceptions=True
         )

@@ -21,29 +21,64 @@ from metabolights_utils.tsv.sort import TsvFileSortOption
 from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 
-def fix_empty_rows(
+def fix_isa_table_file(
     file_path: str,
     messages: List[ParserMessage],
     read_encoding: str,
     write_encoding: str,
+    fix_empty_rows: bool = True,
+    fix_new_lines_in_cells: bool = True,
+    max_iteration_to_fix_new_lines_in_cells: int = 5,
 ):
+    if not fix_new_lines_in_cells and not fix_empty_rows:
+        return
+    basename = os.path.basename(file_path)
     with open(file_path, "r", encoding=read_encoding) as f:
-        lines = f.readlines()
-        updated_lines = [
-            line.strip("\n").strip("\r") for line in lines if line and line.strip()
-        ]
-        updated_lines = [f"{line}\n" for line in updated_lines]
-        if len(updated_lines) != len(lines):
-            basename = os.path.basename(file_path)
-            messages.append(
-                ParserMessage(
-                    type=ParserMessageType.WARNING,
-                    short=f"Empty rows are in file: {basename}",
-                    detail=f"Empty rows are removed from {basename}",
+        file_content = f.read()
+        find_empty_lines = None
+        find_new_lines_in_cells = None
+        if fix_empty_rows:
+            find_empty_lines = re.findall(r"[\r\n][\r\n]+", file_content)
+            if find_empty_lines:
+                messages.append(
+                    ParserMessage(
+                        type=ParserMessageType.WARNING,
+                        short=f"Removed empty lines in {basename}.",
+                        detail=f"Removed empty lines in {basename}",
+                    )
                 )
+                file_content = re.sub(r"[\r\n][\r\n]+", r"\n", file_content)
+        if fix_new_lines_in_cells:
+            new_line_in_cells_pattern = r'\t"([^\t]*)([\r\n]+)([^\t]*)"\t'
+            find_new_lines_in_cells = re.findall(
+                new_line_in_cells_pattern, file_content
             )
+
+            if find_new_lines_in_cells:
+                max_iteration = max_iteration_to_fix_new_lines_in_cells
+                iteration = 0
+                while True:
+                    new_file_content = re.sub(
+                        new_line_in_cells_pattern, r'\t"\1\3"\t', file_content
+                    )
+                    if new_file_content == file_content:
+                        break
+                    if iteration < 1:
+                        messages.append(
+                            ParserMessage(
+                                type=ParserMessageType.WARNING,
+                                short=f"Removed new line characters in {basename} file table cells.",
+                                detail=f"Removed new line characters in {basename} file table cells.",
+                            )
+                        )
+                    iteration += 1
+                    if iteration > max_iteration:
+                        break
+                    file_content = new_file_content
+
+        if find_empty_lines or find_new_lines_in_cells:
             with open(file_path, "w", encoding=write_encoding) as f:
-                f.writelines(updated_lines)
+                f.write(file_content)
 
 
 def parse_isa_file_content(
@@ -52,10 +87,11 @@ def parse_isa_file_content(
     messages: List[ParserMessage],
     fix_unicode_exceptions: bool = False,
     remove_empty_rows: bool = False,
+    remove_new_lines_in_cells: bool = False,
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
     try:
         if remove_empty_rows:
-            fix_empty_rows(file_path, messages, "utf-8", "utf-8")
+            fix_isa_table_file(file_path, messages, "utf-8", "utf-8")
         with open(file_path, "r", encoding="utf-8") as f:
             model = parser(f, messages=messages)
             return model, messages
@@ -63,7 +99,15 @@ def parse_isa_file_content(
         if fix_unicode_exceptions:
             try:
                 if remove_empty_rows:
-                    fix_empty_rows(file_path, messages, "latin-1", "latin-1")
+                    fix_isa_table_file(
+                        file_path,
+                        messages,
+                        "latin-1",
+                        "latin-1",
+                        remove_empty_rows,
+                        remove_new_lines_in_cells,
+                        max_iteration_to_fix_new_lines_in_cells=5,
+                    )
                 with open(file_path, "r", encoding="latin-1") as f:
                     model = parser(f, messages=messages)
                     message = ParserMessage(
@@ -106,6 +150,7 @@ def parse_isa_table_sheet_from_fs(
     sort_options: List[TsvFileSortOption] = None,
     fix_unicode_exceptions: bool = False,
     remove_empty_rows: bool = False,
+    remove_new_lines_in_cells: bool = False
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
     basename = os.path.basename(file_path)
     dirname = os.path.basename(os.path.dirname(file_path))
@@ -154,6 +199,7 @@ def parse_isa_table_sheet_from_fs(
         messages=read_messages,
         fix_unicode_exceptions=fix_unicode_exceptions,
         remove_empty_rows=remove_empty_rows,
+        remove_new_lines_in_cells=remove_new_lines_in_cells
     )
     isa_table_file: IsaTableFile = table
     if isa_table_file:
