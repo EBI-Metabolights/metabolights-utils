@@ -1,11 +1,22 @@
 # CHANGELOG
 
 
+## v1.1.12 (2024-10-14)
+
+### Unknown
+
+* Merge branch 'master' of https://github.com/EBI-Metabolights/metabolights-utils ([`fe54fd8`](https://github.com/EBI-Metabolights/metabolights-utils/commit/fe54fd86a195bc30129b8291cd92560e420bfc9a))
+
+
 ## v1.1.11 (2024-10-12)
 
 ### Fixes
 
 * fix: tsv file read improvement ([`46f81a0`](https://github.com/EBI-Metabolights/metabolights-utils/commit/46f81a0c18da2c8f6f79367658a5025852104fe4))
+
+### Refactoring
+
+* refactor: study metadata data model provider is refactored. added a default fix_new_lines_in_cells parameter to  parse isa table file ([`723e757`](https://github.com/EBI-Metabolights/metabolights-utils/commit/723e757f8382c1e3b338776eefb4a575a8502a77))
 
 
 ## v1.1.10 (2024-09-23)
