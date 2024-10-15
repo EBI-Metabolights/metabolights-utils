@@ -58,6 +58,7 @@ pylint = ">=3.0.2"
 autoflake = ">=2.3.1"
 python-semantic-release = ">=9.8.3"
 ipykernel = "^6.29.4"
+pytest-asyncio = "^0.24.0"
 
 [tool.poetry.scripts]
 mtbls = "metabolights_utils.commands.cli:cli"
