@@ -19,6 +19,7 @@ class DefaultIsaTableFileWriter(TsvFileUpdater, IsaTableFileWriter):
         isa_table: IsaTable,
         read_encoding: str = "utf-8",
         write_encoding: str = "utf-8",
+        temp_path: str = "/tmp/mtb-utils-temp",
     ) -> TsvActionReport:
         column_indices = dict(zip(isa_table.columns, isa_table.column_indices))
         headers = {
@@ -43,5 +44,6 @@ class DefaultIsaTableFileWriter(TsvFileUpdater, IsaTableFileWriter):
             actions=[column_update_action],
             read_encoding=read_encoding,
             write_encoding=write_encoding,
+            temp_path=temp_path,
         )
         return report

@@ -51,6 +51,7 @@ class TsvFileUpdater:
         actions: List[TsvAction],
         read_encoding: str = "utf-8",
         write_encoding: str = "utf-8",
+        temp_path: str = "/tmp/mtb-utils-temp",
     ) -> TsvActionReport:
         report: TsvActionReport = TsvActionReport()
         if not file_path:
@@ -81,9 +82,16 @@ class TsvFileUpdater:
             return report
 
         task_id = str(uuid.uuid4().hex)
+        temp_root_path = (
+            pathlib.Path(temp_path.rstrip("/"))
+            if temp_path
+            else pathlib.Path("/tmp/mtb-utils-temp")
+        )
         timestamp = str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
-        temp_folder = pathlib.Path(f"test-temp/isa_table_actions/{timestamp}/{task_id}")
-        os.makedirs(str(temp_folder))
+        temp_folder = temp_root_path / pathlib.Path(
+            f"isa_table_actions/{timestamp}/{task_id}"
+        )
+        os.makedirs(str(temp_folder), exist_ok=True)
 
         file_copy_path = temp_folder / pathlib.Path(f"{file.name}_{task_id}")
         temp_source_file_path = temp_folder / pathlib.Path(
