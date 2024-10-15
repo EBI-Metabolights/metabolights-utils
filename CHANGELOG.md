@@ -1,6 +1,17 @@
 # CHANGELOG
 
 
+## v1.2.0 (2024-10-15)
+
+### Features
+
+* feat: async metabolights study provider implementation ([`5d670b7`](https://github.com/EBI-Metabolights/metabolights-utils/commit/5d670b7a1e8dafe4e0db16199b84e244737236f1))
+
+### Unknown
+
+* async pytest dependency is added ([`ceac7a5`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ceac7a5cc6ead3c6fa1fb49deb193d14aceabb33))
+
+
 ## v1.1.12 (2024-10-14)
 
 ### Unknown

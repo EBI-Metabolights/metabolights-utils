@@ -158,7 +158,7 @@ from metabolights_utils.utils.hash_utils import (
 )
 from metabolights_utils.utils.search_utils import MetabolightsSearchUtils
 
-__VERSION__ = "1.1.12"
+__VERSION__ = "1.2.0"
 
 __all__ = [
     "Assay",
