@@ -150,7 +150,7 @@ def parse_isa_table_sheet_from_fs(
     sort_options: List[TsvFileSortOption] = None,
     fix_unicode_exceptions: bool = False,
     remove_empty_rows: bool = False,
-    remove_new_lines_in_cells: bool = False
+    remove_new_lines_in_cells: bool = False,
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
     basename = os.path.basename(file_path)
     dirname = os.path.basename(os.path.dirname(file_path))
@@ -199,7 +199,7 @@ def parse_isa_table_sheet_from_fs(
         messages=read_messages,
         fix_unicode_exceptions=fix_unicode_exceptions,
         remove_empty_rows=remove_empty_rows,
-        remove_new_lines_in_cells=remove_new_lines_in_cells
+        remove_new_lines_in_cells=remove_new_lines_in_cells,
     )
     isa_table_file: IsaTableFile = table
     if isa_table_file:
