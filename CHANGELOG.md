@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## v1.2.1 (2024-10-15)
+
+### Fixes
+
+* fix: isa table writer fix ([`e9977ad`](https://github.com/EBI-Metabolights/metabolights-utils/commit/e9977addbe85e27ddc5f521bebf6f002b687f152))
+
+
 ## v1.2.0 (2024-10-15)
 
 ### Features
