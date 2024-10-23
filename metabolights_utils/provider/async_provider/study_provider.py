@@ -295,6 +295,8 @@ class AsyncMetabolightsStudyProvider(object):
                 samples_file_expected_patterns,
                 limit=0,
                 fix_unicode_exceptions=True,
+                remove_empty_rows=True,
+                remove_new_lines_in_cells=True,
             )
             self._add_parse_messages(model, study_item.file_name, messages)
             samples_file = SamplesFile()
@@ -311,6 +313,8 @@ class AsyncMetabolightsStudyProvider(object):
                 samples_file_expected_patterns,
                 selected_columns=list(selected_column_names),
                 fix_unicode_exceptions=True,
+                remove_empty_rows=True,
+                remove_new_lines_in_cells=True,
             )
             self._add_parse_messages(model, samples_file.file_path, message_list)
 
@@ -345,6 +349,8 @@ class AsyncMetabolightsStudyProvider(object):
                     assay_file_expected_patterns,
                     limit=0,
                     fix_unicode_exceptions=True,
+                    remove_empty_rows=True,
+                    remove_new_lines_in_cells=True,
                 )
                 assay_isa_table: IsaTableFile = assay_isa_table_sheet
                 assay_file: AssayFile = AssayFile()
@@ -383,6 +389,8 @@ class AsyncMetabolightsStudyProvider(object):
                     assay_file_expected_patterns,
                     selected_columns=selected_column_names_list,
                     fix_unicode_exceptions=True,
+                    remove_empty_rows=True,
+                    remove_new_lines_in_cells=True,
                 )
                 assay_file_subset: IsaTableFile = assay_file_subset_sheet
                 self._add_parse_messages(model, assay_item.file_name, messages_list)
@@ -403,6 +411,8 @@ class AsyncMetabolightsStudyProvider(object):
                             assay_file_expected_patterns,
                             selected_columns=[column_names[0]],
                             fix_unicode_exceptions=True,
+                            remove_empty_rows=True,
+                            remove_new_lines_in_cells=True,
                         )
                         first_column: IsaTableFile = first_column_of_table
                         self._add_parse_messages(
@@ -478,7 +488,11 @@ class AsyncMetabolightsStudyProvider(object):
                 "Load %s assignment file  headers for %s.", assignment_file, study_id
             )
             isa_table_sheet, messages = parse_isa_table_sheet_from_fs(
-                absolute_path, limit=0, fix_unicode_exceptions=True
+                absolute_path,
+                limit=0,
+                fix_unicode_exceptions=True,
+                remove_empty_rows=True,
+                remove_new_lines_in_cells=True,
             )
             metabolite_assignment_isa_table: IsaTableFile = isa_table_sheet
             self._add_parse_messages(model, assignment_file, messages)
@@ -502,6 +516,8 @@ class AsyncMetabolightsStudyProvider(object):
                     absolute_path,
                     selected_columns=list(selected_column_names),
                     fix_unicode_exceptions=True,
+                    remove_empty_rows=True,
+                    remove_new_lines_in_cells=True,
                 )
                 selected_column_values: IsaTableFile = selected_isa_table_data
                 self._add_parse_messages(model, assignment_file, messages_list)
@@ -572,6 +588,8 @@ class AsyncMetabolightsStudyProvider(object):
                 offset=samples_sheet_offset,
                 limit=samples_sheet_limit,
                 fix_unicode_exceptions=True,
+                remove_empty_rows=True,
+                remove_new_lines_in_cells=True,
             )
             samples_isa_table: IsaTableFile = samples_isa_table_sheet
             model.samples[study_item.file_name].table = samples_isa_table.table
@@ -612,6 +630,8 @@ class AsyncMetabolightsStudyProvider(object):
                 offset=samples_sheet_offset,
                 limit=samples_sheet_limit,
                 fix_unicode_exceptions=True,
+                remove_empty_rows=True,
+                remove_new_lines_in_cells=True,
             )
             samples_isa_table: IsaTableFile = samples_isa_table_sheet
             model.samples[study_item.file_name].table = samples_isa_table.table
@@ -640,6 +660,8 @@ class AsyncMetabolightsStudyProvider(object):
                     offset=assay_sheet_offset,
                     limit=assay_sheet_limit,
                     fix_unicode_exceptions=True,
+                    remove_empty_rows=True,
+                    remove_new_lines_in_cells=True,
                 )
                 assay_isa_table: IsaTableFile = assay_isa_table_sheet
                 model.parser_messages[assay_item.file_name].extend(
@@ -687,6 +709,8 @@ class AsyncMetabolightsStudyProvider(object):
                 offset=assignment_sheet_offset,
                 limit=assignment_sheet_limit,
                 fix_unicode_exceptions=True,
+                remove_empty_rows=True,
+                remove_new_lines_in_cells=True,
             )
             metabolite_assignment_isa_table: IsaTableFile = maf_isa_table_sheet
             model.parser_messages[assignment_file].extend(
