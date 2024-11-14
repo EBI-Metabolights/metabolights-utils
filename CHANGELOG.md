@@ -1,7 +1,18 @@
 # CHANGELOG
 
 
+## v1.3.0 (2024-11-14)
+
+### Unknown
+
+* Merge branch 'master' of https://github.com/EBI-Metabolights/metabolights-utils ([`94814cf`](https://github.com/EBI-Metabolights/metabolights-utils/commit/94814cf275c6a75d891f146b5235029cc13e9628))
+
+
 ## v1.2.2 (2024-10-23)
+
+### Features
+
+* feat: a new utility method to validate local study with new validation endpoint ([`3db9718`](https://github.com/EBI-Metabolights/metabolights-utils/commit/3db9718af2d90fec6f37476756dbd83a9f4a32d4))
 
 ### Fixes
 
