@@ -1,4 +1,5 @@
 import datetime
+import io
 import json
 import os
 import time
@@ -39,9 +40,14 @@ from metabolights_utils.provider.study_provider import (
     MetabolightsStudyProvider,
 )
 from metabolights_utils.provider.submission_model import (
+    APIResponse,
+    PolicyMessage,
+    PolicyResultResponse,
+    PolicySummaryResult,
     ValidationMessage,
     ValidationReport,
     ValidationResponse,
+    WorkerTaskStatus,
 )
 from metabolights_utils.provider.utils import (
     download_file_from_rest_api,
@@ -59,6 +65,7 @@ class MetabolightsSubmissionRepository:
         credentials_file_path: Union[None, str] = None,
         ftp_server_url: Union[None, str] = None,
         rest_api_base_url: Union[None, str] = None,
+        validation_api_base_url: Union[None, str] = None,
         local_storage_cache_path: Union[None, str] = None,
     ) -> None:
         self.ftp_server_url = ftp_server_url
@@ -84,6 +91,9 @@ class MetabolightsSubmissionRepository:
         self.rest_api_base_url = rest_api_base_url
         if not self.rest_api_base_url:
             self.rest_api_base_url = definitions.default_rest_api_url
+        self.validation_api_base_url = validation_api_base_url
+        if not self.validation_api_base_url:
+            self.validation_api_base_url = definitions.default_validation_api_url
 
     def load_study_model(
         self,
@@ -243,7 +253,10 @@ class MetabolightsSubmissionRepository:
                 else:
                     new_requested_files.append(relative_path)
         if not new_requested_files:
-            return False, "There is no metadata file to upload or local metadata files are up-to-date."
+            return (
+                False,
+                "There is no metadata file to upload or local metadata files are up-to-date.",
+            )
         username, password, error = self.get_ftp_credentials()
         if not error:
             ftp_client = DefaultFtpClient(
@@ -361,7 +374,9 @@ class MetabolightsSubmissionRepository:
         try:
             api_success = False
             report_sub_path = f"/studies/{study_id}/validation-report"
-            report_url = f"{self.rest_api_base_url.rstrip('/')}/{report_sub_path.lstrip('/')}"
+            report_url = (
+                f"{self.rest_api_base_url.rstrip('/')}/{report_sub_path.lstrip('/')}"
+            )
             for _ in range(retry + 1):
                 try:
                     response = httpx.get(
@@ -408,6 +423,133 @@ class MetabolightsSubmissionRepository:
                     f"{e.metadata_file}\n"
                 )
         return True, status
+
+    def validate_study_v2(
+        self,
+        study_path: str,
+        validation_result_file_path: str,
+        pool_period: int = 5,
+        retry: int = 20,
+        timeout: int = 30,
+    ):
+
+        sub_path = f"/study-model/validation"
+        auth_sub_path = "/auth/login-with-token"
+        provider = MetabolightsStudyProvider(
+            db_metadata_collector=None,
+            folder_metadata_collector=LocalFolderMetadataCollector(),
+        )
+        basename = os.path.basename(study_path)
+        model: MetabolightsStudyModel = provider.load_study(
+            basename,
+            study_path=study_path,
+            connection=None,
+            load_assay_files=True,
+            load_sample_file=True,
+            load_maf_files=True,
+            load_folder_metadata=True,
+            calculate_data_folder_size=False,
+            calculate_metadata_size=False,
+        )
+
+        api_header, error = self.get_api_token()
+        api_name = "validation v2 get jwt token"
+        jwt_token = None
+        try:
+            url = f"{self.rest_api_base_url.rstrip('/')}/{auth_sub_path.lstrip('/')}"
+            parameters = {}
+            response = httpx.post(
+                url=url,
+                timeout=timeout,
+                json={"token": api_header},
+                headers={},
+                params=parameters,
+            )
+            success, error = self.check_api_response(api_name, response)
+            if not success:
+                return None, error
+            if "jwt" in response.headers:
+                jwt_token = response.headers["jwt"]
+
+            if not jwt_token:
+                return (None, "Failure of authentication.")
+
+        except Exception as ex:
+            return None, f"Validation task v2 authentication failure: {str(ex)}."
+
+        study_model_str = model.model_dump_json(by_alias=True)
+        json_file = io.BytesIO(study_model_str.encode("utf-8"))
+
+        files = {"study_model_json": ("study_model.json", json_file)}
+
+        headers = {"accept": "application/json"}
+        headers["Authorization"] = f"Bearer {jwt_token}"
+        task_id = None
+        api_name = "validation v2 task start"
+        try:
+            url = f"{self.validation_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+            parameters = {}
+            response = httpx.post(
+                url=url,
+                timeout=timeout,
+                headers=headers,
+                files=files,
+                params=parameters,
+            )
+            success, error = self.check_api_response(api_name, response)
+            if not success:
+                return None, error
+
+            data = json.loads(response.text)
+            task_start_response = APIResponse[WorkerTaskStatus].model_validate(
+                data, from_attributes=True
+            )
+
+            if not task_start_response.content.task_id:
+                return (None, f"Failure of {api_name}.")
+            task_id = task_start_response.content.task_id
+        except Exception as ex:
+            return None, f"Validation task v2 start failure: {str(ex)}."
+
+        headers["task_id"] = task_id
+        api_name = "validation task v2 status check"
+        try:
+            task_success = False
+            for _ in range(retry + 1):
+                time.sleep(pool_period)
+                try:
+                    response = httpx.get(
+                        url=url,
+                        timeout=timeout,
+                        headers=headers,
+                        params=parameters,
+                    )
+                except TimeoutError:
+                    continue
+                success, error = self.check_api_response(api_name, response)
+                if not success:
+                    continue
+                data = json.loads(response.text)
+                task_status_response = APIResponse[PolicyResultResponse].model_validate(
+                    data, from_attributes=True
+                )
+
+                task = task_status_response.content
+                status = task.task_status
+                if task.task_id and status:
+                    if "SUCCESS" in status.upper():
+                        task_success = True
+                        break
+            if not task_success:
+                return None, f"Failure of {api_name}."
+        except Exception as ex:
+            return None, f"{api_name} failure: {str(ex)}."
+
+        result = task_status_response.content.task_result
+        with open(validation_result_file_path, "w", encoding="utf-8") as f:
+            json.dump(result.model_dump(by_alias=True), f, indent=4)
+
+        return True, task_status_response.content.task_id
 
     def sync_private_ftp_metadata_files(
         self, study_id: str, pool_period: int = 10, retry: int = 10, timeout: int = 10
