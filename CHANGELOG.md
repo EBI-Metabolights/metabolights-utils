@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## v1.3.1 (2024-11-14)
+
+### Refactoring
+
+* refactor: new local validation endpoint accepts user's api-token ([`4a1c0b8`](https://github.com/EBI-Metabolights/metabolights-utils/commit/4a1c0b8ad25cceae9c48b204648b1f8c5bd24dd0))
+
+
 ## v1.3.0 (2024-11-14)
 
 ### Unknown
