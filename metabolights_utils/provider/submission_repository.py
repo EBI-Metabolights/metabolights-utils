@@ -431,6 +431,7 @@ class MetabolightsSubmissionRepository:
         pool_period: int = 5,
         retry: int = 20,
         timeout: int = 30,
+        api_token: str = None,
     ):
 
         sub_path = f"/study-model/validation"
@@ -451,8 +452,9 @@ class MetabolightsSubmissionRepository:
             calculate_data_folder_size=False,
             calculate_metadata_size=False,
         )
-
-        api_header, error = self.get_api_token()
+        api_header = api_token
+        if not api_token:
+            api_header, error = self.get_api_token()
         api_name = "validation v2 get jwt token"
         jwt_token = None
         try:
