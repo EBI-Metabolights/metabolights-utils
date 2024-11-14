@@ -1,11 +1,26 @@
 # CHANGELOG
 
 
+## v1.2.2 (2024-10-23)
+
+### Fixes
+
+* fix: empty line fix ([`abd88aa`](https://github.com/EBI-Metabolights/metabolights-utils/commit/abd88aa3d3d3562aae3d680e04b9ff3a9ee98a1d))
+
+### Unknown
+
+* Merge branch 'master' of https://github.com/EBI-Metabolights/metabolights-utils ([`ae7fcd4`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ae7fcd4d8e4b18e47f0e25848fcf966e406d9f79))
+
+
 ## v1.2.1 (2024-10-15)
 
 ### Fixes
 
 * fix: isa table writer fix ([`e9977ad`](https://github.com/EBI-Metabolights/metabolights-utils/commit/e9977addbe85e27ddc5f521bebf6f002b687f152))
+
+### Unknown
+
+* enable remove_empty_rows and remove_new_lines_in_cells parameters ([`2511db3`](https://github.com/EBI-Metabolights/metabolights-utils/commit/2511db3ddfa402aaaf520e9b946063b44e2fc82a))
 
 
 ## v1.2.0 (2024-10-15)
