@@ -61,7 +61,7 @@ def fix_isa_table_file(
                 iteration = 0
                 while True:
                     new_file_content = re.sub(
-                        new_line_in_cells_pattern, r'\t"\2\4"\t', file_content
+                        new_line_in_cells_pattern, r'\1"\2\4"\5', file_content
                     )
                     if new_file_content == file_content:
                         break

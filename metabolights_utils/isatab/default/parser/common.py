@@ -168,16 +168,14 @@ def read_table_file(
             )
         )
         file_content = re.sub(r"[\r\n][\r\n]+", r"\n", file_content)
-
-    find_matches = re.findall(r'\t"([^\t]*)([\r\n]+)([^\t]*)"\t', file_content)
+    pattern = r'(^|\t)"([^"\t]*)([\r\n]+)([^"\t]*)"(\t|\n\|\r|$)'
+    find_matches = re.findall(pattern, file_content)
 
     if find_matches:
         max_iteration = 10
         iteration = 0
         while True:
-            new_file_content = re.sub(
-                r'\t"([^\t]*)([\r\n]+)([^\t]*)"\t', r'\t"\1\3"\t', file_content
-            )
+            new_file_content = re.sub(pattern, r'\1"\2\4"\5', file_content)
             if new_file_content == file_content:
                 break
             if iteration < 1:
