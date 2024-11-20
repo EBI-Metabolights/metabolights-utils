@@ -49,7 +49,9 @@ def fix_isa_table_file(
                 )
                 file_content = re.sub(r"[\r\n][\r\n]+", r"\n", file_content)
         if fix_new_lines_in_cells:
-            new_line_in_cells_pattern = r'\t"([^\t]*)([\r\n]+)([^\t]*)"\t'
+            new_line_in_cells_pattern = (
+                r'(^|\t)"([^"\t]*)([\r\n]+)([^"\t]*)"(\t|\n\|\r|$)'
+            )
             find_new_lines_in_cells = re.findall(
                 new_line_in_cells_pattern, file_content
             )
