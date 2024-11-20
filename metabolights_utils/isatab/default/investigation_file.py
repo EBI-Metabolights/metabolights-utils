@@ -199,7 +199,7 @@ class InvestigationFileSerializer(object):
             investigation_module_name=module_name,
         ):
             for i in range(len(row)):
-                item = row[i].strip('"')
+                item = str(row[i]).strip('"')
                 row[i] = f'"{item}"' if i > 0 and values_in_quotation_mark else item
             file_lines.append("\t".join(row))
 
