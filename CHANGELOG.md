@@ -1,7 +1,22 @@
 # CHANGELOG
 
 
+## v1.3.2 (2024-11-20)
+
+### Fixes
+
+* fix: fix isatable read errors ([`dc61316`](https://github.com/EBI-Metabolights/metabolights-utils/commit/dc6131643c48fb21c1ae97994cbef26d58e34e62))
+
+### Unknown
+
+* Merge branch 'master' of https://github.com/EBI-Metabolights/metabolights-utils ([`554f731`](https://github.com/EBI-Metabolights/metabolights-utils/commit/554f731244117c8814171505a5cfb3931dac9be3))
+
+
 ## v1.3.1 (2024-11-14)
+
+### Fixes
+
+* fix: isa table parser fix. ([`af9906c`](https://github.com/EBI-Metabolights/metabolights-utils/commit/af9906c5fc7b22cfa5fd00381c7a98f4fe296ca7))
 
 ### Refactoring
 
