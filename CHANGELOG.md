@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## v1.3.3 (2024-11-20)
+
+### Fixes
+
+* fix: ontology source parse errors ([`1d68f25`](https://github.com/EBI-Metabolights/metabolights-utils/commit/1d68f25aa5efc70fda6fa982c3f887b64069b275))
+
+
 ## v1.3.2 (2024-11-20)
 
 ### Fixes
