@@ -1,9 +1,18 @@
 # CHANGELOG
 
 
+## v1.3.4 (2024-11-20)
+
+### Unknown
+
+* Merge branch 'master' of https://github.com/EBI-Metabolights/metabolights-utils ([`a473347`](https://github.com/EBI-Metabolights/metabolights-utils/commit/a47334735281040c351d47eda681e82ce17b9979))
+
+
 ## v1.3.3 (2024-11-20)
 
 ### Fixes
+
+* fix: update search pattern to find new lines in cells ([`bcf703a`](https://github.com/EBI-Metabolights/metabolights-utils/commit/bcf703acad1cbc173e56754aa94dad8742535468))
 
 * fix: ontology source parse errors ([`1d68f25`](https://github.com/EBI-Metabolights/metabolights-utils/commit/1d68f25aa5efc70fda6fa982c3f887b64069b275))
 
