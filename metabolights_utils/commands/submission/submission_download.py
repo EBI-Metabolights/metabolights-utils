@@ -65,7 +65,7 @@ def submission_download(
 
     study_id: MetaboLights study accession number (MTBLSxxxx).
 
-    files (optional): files will be donwloaded. If not specified, downloads all ISA metadata files.
+    files (optional): files will be downloaded. If not specified, downloads all ISA metadata files.
     """
     study_id = study_id.upper().strip()
     client = MetabolightsSubmissionRepository(
@@ -83,7 +83,3 @@ def submission_download(
     click.echo(f"Download submission study {study_id} on {study_path} status:")
     for item in result.actions:
         click.echo(f"  {result.actions[item]}\t{item}")
-
-
-if __name__ == "__main__":
-    submission_download(["MTBLS5397"])

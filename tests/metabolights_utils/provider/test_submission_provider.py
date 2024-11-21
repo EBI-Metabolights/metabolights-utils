@@ -445,7 +445,8 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
         return_value=HttpxResponse(
             status_code=201,
             text=open(
-                "tests/test-data/rest-api-test-data/validation_task_started_response.json", encoding="utf-8"
+                "tests/test-data/rest-api-test-data/validation_task_started_response.json",
+                encoding="utf-8",
             ).read(),
         ),
     )
@@ -455,13 +456,15 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
             HttpxResponse(
                 status_code=200,
                 text=open(
-                    "tests/test-data/rest-api-test-data/validation_task_success_response.json", encoding="utf-8"
+                    "tests/test-data/rest-api-test-data/validation_task_success_response.json",
+                    encoding="utf-8",
                 ).read(),
             ),
             HttpxResponse(
                 status_code=200,
                 text=open(
-                    "tests/test-data/rest-api-test-data/validation_report.json", encoding="utf-8"
+                    "tests/test-data/rest-api-test-data/validation_report.json",
+                    encoding="utf-8",
                 ).read(),
             ),
         ],
@@ -469,9 +472,7 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
 
     repository, credentials = submission_repository
 
-    validation_file_path = (
-        f"test-temp/mtbls_unit_test_validation_{random.randint(1000000, 9999999)}_tmp.json"
-    )
+    validation_file_path = f"test-temp/mtbls_unit_test_validation_{random.randint(1000000, 9999999)}_tmp.json"
     try:
         success, message = repository.validate_study(
             study_id=study_id,
@@ -484,7 +485,11 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
 
 
 @pytest.mark.parametrize("study_id", ["MTBLS1"])
-def test_private_ftp_sync_01(mocker: MockerFixture, submission_repository, study_id):
+def test_private_ftp_sync_01(
+    mocker: MockerFixture,
+    submission_repository: Tuple[MetabolightsSubmissionRepository, Dict[str, Any]],
+    study_id,
+):
     """
     Test private ftp sync (without error)
     """
@@ -501,7 +506,8 @@ def test_private_ftp_sync_01(mocker: MockerFixture, submission_repository, study
     get_response = HttpxResponse(
         status_code=201,
         text=open(
-            "tests/test-data/rest-api-test-data/ftp_sync_task_started_response.json", encoding="utf-8"
+            "tests/test-data/rest-api-test-data/ftp_sync_task_started_response.json",
+            encoding="utf-8",
         ).read(),
     )
     mocker.patch(
@@ -514,7 +520,8 @@ def test_private_ftp_sync_01(mocker: MockerFixture, submission_repository, study
         return_value=HttpxResponse(
             status_code=200,
             text=open(
-                "tests/test-data/rest-api-test-data/ftp_sync_task_success_response.json", encoding="utf-8"
+                "tests/test-data/rest-api-test-data/ftp_sync_task_success_response.json",
+                encoding="utf-8",
             ).read(),
         ),
     )

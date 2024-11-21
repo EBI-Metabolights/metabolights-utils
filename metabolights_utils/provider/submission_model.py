@@ -199,3 +199,11 @@ class PolicyResultResponse(WorkerTaskStatus):
             description="This field contains task id of the task.",
         ),
     ] = PolicySummaryResult()
+
+
+class FtpUploadDetails(BaseModel):
+    study_id: str
+    ftp_folder: str
+    ftp_host: str
+    ftp_user: str
+    ftp_password: str

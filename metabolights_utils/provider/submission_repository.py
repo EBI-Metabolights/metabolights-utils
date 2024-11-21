@@ -1,9 +1,10 @@
 import datetime
+import glob
 import io
 import json
 import os
 import time
-from typing import List, Tuple, Union
+from typing import List, Literal, Tuple, Union
 
 import httpx
 
@@ -41,9 +42,8 @@ from metabolights_utils.provider.study_provider import (
 )
 from metabolights_utils.provider.submission_model import (
     APIResponse,
-    PolicyMessage,
+    FtpUploadDetails,
     PolicyResultResponse,
-    PolicySummaryResult,
     ValidationMessage,
     ValidationReport,
     ValidationResponse,
@@ -196,21 +196,23 @@ class MetabolightsSubmissionRepository:
         study_id,
         remote_folder_directory: Union[str, None] = None,
         local_path: Union[str, None] = None,
-        credentials_file_path: Union[str, None] = None,
         ftp_server_url: Union[str, None] = None,
         metadata_files: Union[List[str], None] = None,
         override_remote_files: bool = False,
+        ftp_username: Union[str, None] = None,
+        ftp_password: Union[str, None] = None,
+        user_api_token: Union[str, None] = None,
     ) -> Tuple[bool, str]:
         if not local_path:
             local_path = self.local_storage_root_path
         local_path = join_path(local_path)
-        if not credentials_file_path:
-            credentials_file_path = self.credentials_file_path
-        credentials_file_path = join_path(credentials_file_path)
+
         if not ftp_server_url:
             ftp_server_url = self.ftp_server_url
 
-        response, errors = self.list_isa_metadata_files(study_id=study_id)
+        response, errors = self.list_isa_metadata_files(
+            study_id=study_id, user_api_token=user_api_token
+        )
         if not response:
             return False, "Errors while listing metadata files."
         if not remote_folder_directory:
@@ -257,24 +259,66 @@ class MetabolightsSubmissionRepository:
                 False,
                 "There is no metadata file to upload or local metadata files are up-to-date.",
             )
-        username, password, error = self.get_ftp_credentials()
-        if not error:
-            ftp_client = DefaultFtpClient(
-                local_storage_root_path=local_path,
-                ftp_server_url=ftp_server_url,
-                remote_repository_root_directory="",
-                username=username,
-                password=password,
-            )
-            input_files = [os.path.join(study_path, x) for x in new_requested_files]
-            try:
-                ftp_client.upload_files(remote_folder_directory, input_files)
+        if not ftp_password or not ftp_username:
+            ftp_username, ftp_password, error = self.get_ftp_credentials()
 
-                return True, "Uploaded Files: " + ", ".join(new_requested_files)
-            except Exception as ex:
-                return False, str(ex)
-        else:
-            return False, error
+        ftp_client = DefaultFtpClient(
+            local_storage_root_path=local_path,
+            ftp_server_url=ftp_server_url,
+            remote_repository_root_directory="",
+            username=ftp_username,
+            password=ftp_password,
+        )
+        input_files = [os.path.join(study_path, x) for x in new_requested_files]
+        try:
+            success, message = ftp_client.upload_files(
+                remote_folder_directory, input_files
+            )
+            if success:
+                return success, "Uploaded Files: " + ", ".join(new_requested_files)
+            else:
+                return success, message
+        except Exception as ex:
+            return False, str(ex)
+
+    def upload_data_files(
+        self,
+        study_id,
+        local_path: Union[str, None] = None,
+        remote_folder_directory: Union[str, None] = None,
+        ftp_server_url: Union[str, None] = None,
+        ftp_username: Union[str, None] = None,
+        ftp_password: Union[str, None] = None,
+    ) -> Tuple[bool, str]:
+        if not local_path:
+            local_path = self.local_storage_root_path
+        local_study_path = join_path(local_path, study_id)
+        if not ftp_server_url:
+            ftp_server_url = self.ftp_server_url
+
+        study_path = os.path.realpath(local_study_path)
+        if not os.path.exists(study_path):
+            return False, f"Study path does not exist: {study_path}"
+
+        files = glob.iglob(f"{study_path}/**/*", recursive=True)
+
+        input_files = [
+            x for x in files if not is_metadata_filename_pattern(os.path.basename(x))
+        ]
+
+        # username, password, error = self.get_ftp_credentials()
+        ftp_client = DefaultFtpClient(
+            local_storage_root_path=local_path,
+            ftp_server_url=ftp_server_url,
+            remote_repository_root_directory="",
+            username=ftp_username,
+            password=ftp_password,
+        )
+        try:
+            ftp_client.upload_files(remote_folder_directory, input_files)
+            return True, "Uploaded Files: " + ", ".join(input_files)
+        except Exception as ex:
+            return False, str(ex)
 
     def check_api_response(self, api_name, response):
         if not response:
@@ -288,6 +332,45 @@ class MetabolightsSubmissionRepository:
                 False,
                 f"Failure of {api_name} {code}: {text}",
             )
+
+    def get_ftp_upload_details(
+        self,
+        study_id,
+        rest_api_base_url: Union[str, None] = None,
+        user_api_token: Union[str, None] = None,
+        timeout: int = 5,
+    ) -> Tuple[Union[None, FtpUploadDetails], str]:
+
+        headers = {}
+        if not user_api_token:
+            user_api_token, error = self.get_api_token()
+            if not user_api_token:
+                return None, error
+        sub_path = f"/studies/{study_id}/upload-info"
+        headers["User-Token"] = user_api_token
+
+        api_name = "get private ftp upload details"
+        rest_api_base_url = (
+            rest_api_base_url if rest_api_base_url else self.rest_api_base_url
+        )
+        try:
+            url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+            parameters = {}
+            response = httpx.get(
+                url=url,
+                timeout=timeout,
+                headers=headers,
+                params=parameters,
+            )
+            success, error = self.check_api_response(api_name, response)
+            if not success:
+                return None, error
+
+            data = json.loads(response.text)
+            details = FtpUploadDetails.model_validate(data, from_attributes=True)
+            return details, ""
+        except Exception as ex:
+            return None, f"Validation task start failure: {str(ex)}."
 
     def validate_study(
         self,
@@ -431,7 +514,9 @@ class MetabolightsSubmissionRepository:
         pool_period: int = 5,
         retry: int = 20,
         timeout: int = 30,
-        api_token: str = None,
+        validation_api_base_url: Union[None, str] = None,
+        rest_api_base_url: Union[None, str] = None,
+        api_token: Union[None, str] = None,
     ):
 
         sub_path = f"/study-model/validation"
@@ -457,8 +542,12 @@ class MetabolightsSubmissionRepository:
             api_header, error = self.get_api_token()
         api_name = "validation v2 get jwt token"
         jwt_token = None
+        rest_api_base_url = (
+            rest_api_base_url if rest_api_base_url else self.rest_api_base_url
+        )
+
         try:
-            url = f"{self.rest_api_base_url.rstrip('/')}/{auth_sub_path.lstrip('/')}"
+            url = f"{rest_api_base_url.rstrip('/')}/{auth_sub_path.lstrip('/')}"
             parameters = {}
             response = httpx.post(
                 url=url,
@@ -488,8 +577,13 @@ class MetabolightsSubmissionRepository:
         headers["Authorization"] = f"Bearer {jwt_token}"
         task_id = None
         api_name = "validation v2 task start"
+        validation_api_base_url = (
+            validation_api_base_url
+            if validation_api_base_url
+            else self.validation_api_base_url
+        )
         try:
-            url = f"{self.validation_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+            url = f"{validation_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
             parameters = {}
             response = httpx.post(
                 url=url,
@@ -554,19 +648,58 @@ class MetabolightsSubmissionRepository:
         return True, task_status_response.content.task_id
 
     def sync_private_ftp_metadata_files(
-        self, study_id: str, pool_period: int = 10, retry: int = 10, timeout: int = 10
+        self,
+        study_id: str,
+        pool_period: int = 10,
+        retry: int = 10,
+        timeout: int = 10,
+        user_api_token: Union[None, str] = None,
+    ):
+        return self.sync_from_private_ftp(
+            study_id,
+            "metadata",
+            pool_period,
+            retry,
+            timeout,
+            user_api_token=user_api_token,
+        )
+
+    def sync_private_ftp_data_files(
+        self,
+        study_id: str,
+        pool_period: int = 10,
+        retry: int = 1000,
+        timeout: int = 10,
+        user_api_token: Union[None, str] = None,
+    ):
+        return self.sync_from_private_ftp(
+            study_id, "data", pool_period, retry, timeout, user_api_token=user_api_token
+        )
+
+    def sync_from_private_ftp(
+        self,
+        study_id: str,
+        sync_type: Literal["metadata", "data"] = "metadata",
+        pool_period: int = 10,
+        retry: int = 10,
+        timeout: int = 10,
+        user_api_token: Union[None, str] = None,
     ):
         sub_path = f"/studies/{study_id}/study-folders/rsync-task"
-        api_header, error = self.get_api_token()
+        if not user_api_token:
+            user_api_token, error = self.get_api_token()
         headers = {}
-        if api_header:
-            headers["User-Token"] = api_header
+        if user_api_token:
+            headers["User-Token"] = user_api_token
         else:
             return None, error
         headers["Dry-Run"] = "false"
-        headers["Sync-Type"] = "metadata"
+        headers["Sync-Type"] = sync_type
         headers["Source-Staging-Area"] = "private-ftp"
-        headers["Target-Staging-Area"] = "rw-study"
+        if sync_type == "metadata":
+            headers["Target-Staging-Area"] = "rw-study"
+        else:
+            headers["Target-Staging-Area"] = "readonly-study"
 
         url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         parameters = {}
@@ -601,8 +734,44 @@ class MetabolightsSubmissionRepository:
                                 return True, status
                             elif "FAIL" in status:
                                 return False, status
+                return False, "No result"
+            else:
+                return False, "Response does not have a task id"
         else:
-            return False, response.text if response else None
+            return (
+                (False, response.text)
+                if response
+                else (False, f"Response code: {str(response.status_code)}")
+            )
+
+    def create_submission(
+        self,
+        user_api_token: Union[None, str] = None,
+        timeout: int = 30,
+    ) -> Tuple[Union[None, str], Union[None, str]]:
+        if not user_api_token:
+            user_api_token, error = self.get_api_token()
+        headers = {}
+        if user_api_token:
+            headers["User-Token"] = user_api_token
+        else:
+            return None, error
+
+        sub_path = f"/studies/create"
+        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+
+        try:
+            response = httpx.get(url=url, timeout=timeout, headers=headers, params={})
+            if response and response.status_code in (200, 201):
+                data = json.loads(response.text)
+                if "new_study" in data:
+                    return data["new_study"], ""
+
+                return None, "Invalid response."
+            else:
+                return None, response.text if response else "Invalid response."
+        except Exception as ex:
+            return None, str(ex)
 
     def create_assay(
         self,
@@ -825,10 +994,14 @@ class MetabolightsSubmissionRepository:
         return response
 
     def list_isa_metadata_files(
-        self, study_id: str
+        self,
+        study_id: str,
+        user_api_token: Union[str, None] = None,
     ) -> Tuple[Union[StudyResponse, None], Union[None, str]]:
 
-        response, error = self.list_study_directory(study_id=study_id)
+        response, error = self.list_study_directory(
+            study_id=study_id, user_api_token=user_api_token
+        )
         if response:
             response.study = [
                 x for x in response.study if is_metadata_filename_pattern(x.file)
@@ -901,13 +1074,18 @@ class MetabolightsSubmissionRepository:
         return (result.user_name, result.password, None)
 
     def list_study_directory(
-        self, study_id: str, subdirectory: Union[str, None] = None, timeout=None
+        self,
+        study_id: str,
+        subdirectory: Union[str, None] = None,
+        timeout=None,
+        user_api_token: Union[str, None] = None,
     ) -> Tuple[Union[None, StudyResponse], Union[None, str]]:
         study_id = study_id.upper().strip("/") if study_id else ""
-        api_header, error = self.get_api_token()
+        if not user_api_token:
+            user_api_token, error = self.get_api_token()
         headers = {}
-        if api_header:
-            headers["User-Token"] = api_header
+        if user_api_token:
+            headers["User-Token"] = user_api_token
         else:
             return None, error
 
