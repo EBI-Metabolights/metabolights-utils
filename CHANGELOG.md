@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
+## v1.3.6 (2024-11-26)
+
+
 ## v1.3.5 (2024-11-21)
+
+### Bug Fixes
+
+- Strip qoutation characters while reading ISA table file
+  ([`b6aa029`](https://github.com/EBI-Metabolights/metabolights-utils/commit/b6aa0297a1d68b22004ca92c37c40f4b07ebc994))
 
 
 ## v1.3.4 (2024-11-20)
