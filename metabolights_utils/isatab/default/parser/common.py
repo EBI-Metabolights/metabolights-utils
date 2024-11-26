@@ -197,7 +197,7 @@ def read_table_file(
     total_line = len(file_lines)
     total_data_rows = total_line - 1
     file_buffer.seek(0)
-    rows = [x.split("\t") for x in file_lines]
+    rows = [[y.strip().strip('"') for y in x.split("\t")] for x in file_lines]
     if total_line == 0:
         raise ValueError("There is no row in file")
     content: SelectedTsvFileContent = SelectedTsvFileContent()
