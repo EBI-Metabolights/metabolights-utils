@@ -234,14 +234,14 @@ class AsyncMetabolightsStudyProvider(object):
 
     async def get_study_metadata_path(
         self,
-        folder: Union[None, str],
         study_id: Union[None, str],
+        folder: Union[None, str],
     ) -> Tuple[str, bool]:
         if not folder:
             study_path = await self.metadata_file_provider.get_study_metadata_path(
                 study_id
             )
-            exist = await self.metadata_file_provider.exists(study_path)
+            exist = await self.metadata_file_provider.exists(study_id)
         else:
             study_path = folder
             real_path = os.path.realpath(folder)
@@ -831,7 +831,7 @@ class AsyncMetabolightsStudyProvider(object):
         if not study_id:
             raise ValueError("invalid study_id")
         exist = False
-        study_path, exist = await self.get_study_metadata_path(study_path, study_id)
+        study_path, exist = await self.get_study_metadata_path(study_id, study_path)
 
         if not study_path:
             raise ValueError("invalid study_path")
