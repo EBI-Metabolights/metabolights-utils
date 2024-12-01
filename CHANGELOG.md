@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.3.7 (2024-12-01)
+
+### Bug Fixes
+
+- Get_study_metadata_path method update
+  ([`75d221c`](https://github.com/EBI-Metabolights/metabolights-utils/commit/75d221cd45124f441381c9ff67ae33e2e0621807))
+
+
 ## v1.3.6 (2024-11-26)
 
 
