@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.3.8 (2024-12-06)
+
+### Refactoring
+
+- Refactor code to export modules
+  ([`cadbafd`](https://github.com/EBI-Metabolights/metabolights-utils/commit/cadbafdb1fea5f95556a04f1855af287bb2935c0))
+
+
 ## v1.3.7 (2024-12-01)
 
 ### Bug Fixes

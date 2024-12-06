@@ -168,7 +168,7 @@ from metabolights_utils import (
     isa_file_utils,
 )
 
-__VERSION__ = "1.3.7"
+__VERSION__ = "1.3.8"
 
 __all__ = [
     "commands",
