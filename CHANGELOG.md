@@ -1,9 +1,18 @@
 # CHANGELOG
 
 
+## v1.3.9 (2024-12-06)
+
+
 ## v1.3.8 (2024-12-06)
 
 ### Refactoring
+
+- File formats are updated with isort and black.
+  ([`187b100`](https://github.com/EBI-Metabolights/metabolights-utils/commit/187b1004332e3fae5fcce3c01a05c3b64b561d83))
+
+- Column add method is defined.
+  ([`428b7ff`](https://github.com/EBI-Metabolights/metabolights-utils/commit/428b7ffae6363298475cb02e8d00009840ceedb8))
 
 - Refactor code to export modules
   ([`cadbafd`](https://github.com/EBI-Metabolights/metabolights-utils/commit/cadbafdb1fea5f95556a04f1855af287bb2935c0))

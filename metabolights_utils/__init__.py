@@ -160,7 +160,7 @@
 from metabolights_utils import (commands, common, isa_file_utils, isatab,
                                 models, provider, tsv, utils)
 
-__VERSION__ = "1.3.8"
+__VERSION__ = "1.3.9"
 
 __all__ = [
     "commands",
