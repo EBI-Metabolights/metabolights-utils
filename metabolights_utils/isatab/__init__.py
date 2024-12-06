@@ -15,6 +15,8 @@ from metabolights_utils.isatab.writer import (
     IsaTabWriterFactory,
 )
 
+from metabolights_utils.isatab import default, reader, writer
+
 
 @lru_cache
 def get_reader_factory():
@@ -72,3 +74,14 @@ class Writer:
     @classmethod
     def get_assignment_file_writer(cls) -> IsaTableFileWriter:
         return cls.writer_factory.get_sample_file_writer()
+
+
+__all__ = [
+    "reader",
+    "default",
+    "writer",
+    "Reader",
+    "Writer",
+    "get_reader_factory",
+    "get_writer_factory",
+]
