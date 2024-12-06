@@ -3,7 +3,8 @@ from typing import Any, Callable, Dict, Literal, Union
 
 import click
 
-from metabolights_utils.commands.utils import convert_html_to_plain_text, split_to_lines
+from metabolights_utils.commands.utils import (convert_html_to_plain_text,
+                                               split_to_lines)
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.utils import rest_api_post
 

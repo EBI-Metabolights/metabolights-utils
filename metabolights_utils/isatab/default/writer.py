@@ -3,11 +3,8 @@ from typing import Dict, Union
 
 from metabolights_utils.isatab.writer import IsaTableFileWriter
 from metabolights_utils.models.isa.common import IsaTable
-from metabolights_utils.tsv.model import (
-    TsvActionReport,
-    TsvColumnData,
-    TsvUpdateColumnsAction,
-)
+from metabolights_utils.tsv.model import (TsvActionReport, TsvColumnData,
+                                          TsvUpdateColumnsAction)
 from metabolights_utils.tsv.tsv_file_updater import TsvFileUpdater
 
 

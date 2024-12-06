@@ -3,11 +3,8 @@ from typing import List
 from pydantic import Field
 from typing_extensions import Annotated
 
-from metabolights_utils.models.isa.common import (
-    IsaTableFile,
-    OntologyItem,
-    OrganismAndOrganismPartPair,
-)
+from metabolights_utils.models.isa.common import (IsaTableFile, OntologyItem,
+                                                  OrganismAndOrganismPartPair)
 
 
 class SamplesFile(IsaTableFile):

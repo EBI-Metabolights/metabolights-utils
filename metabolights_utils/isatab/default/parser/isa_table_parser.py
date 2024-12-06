@@ -1,24 +1,19 @@
 import os
-import pathlib
 import re
 from functools import partial
 from io import IOBase
 from typing import Callable, List, Tuple, Union
 
 from metabolights_utils.isatab.default.parser.common import (
-    SelectedTsvFileContent,
-    TsvFileFilterOption,
-    read_table_file,
-)
+    SelectedTsvFileContent, TsvFileFilterOption, read_table_file)
 from metabolights_utils.models.isa.common import IsaTableColumn, IsaTableFile
-from metabolights_utils.models.isa.enums import (
-    ColumnsStructure,
-    IsaTableAdditionalColumn,
-)
+from metabolights_utils.models.isa.enums import (ColumnsStructure,
+                                                 IsaTableAdditionalColumn)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.tsv.sort import TsvFileSortOption
-from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
+from metabolights_utils.utils.hash_utils import \
+    MetabolightsHashUtils as HashUtils
 
 
 def fix_isa_table_file(

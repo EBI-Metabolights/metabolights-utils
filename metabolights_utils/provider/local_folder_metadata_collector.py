@@ -4,13 +4,13 @@ import re
 import subprocess
 from typing import Dict, List, Tuple, Union
 
-from metabolights_utils.models.common import GenericMessage, InfoMessage, WarningMessage
-from metabolights_utils.models.metabolights.model import (
-    StudyFileDescriptor,
-    StudyFolderMetadata,
-)
+from metabolights_utils.models.common import (GenericMessage, InfoMessage,
+                                              WarningMessage)
+from metabolights_utils.models.metabolights.model import (StudyFileDescriptor,
+                                                          StudyFolderMetadata)
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.study_provider import AbstractFolderMetadataCollector
+from metabolights_utils.provider.study_provider import \
+    AbstractFolderMetadataCollector
 
 
 class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):

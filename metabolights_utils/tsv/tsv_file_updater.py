@@ -7,7 +7,8 @@ from typing import Dict, List, Union
 
 from metabolights_utils.tsv.actions.add_column import AddColumnsTsvAction
 from metabolights_utils.tsv.actions.add_row import AddRowsTsvAction
-from metabolights_utils.tsv.actions.base import BaseTsvAction, TsvActionException
+from metabolights_utils.tsv.actions.base import (BaseTsvAction,
+                                                 TsvActionException)
 from metabolights_utils.tsv.actions.copy_column import CopyColumnTsvAction
 from metabolights_utils.tsv.actions.copy_row import CopyRowTsvAction
 from metabolights_utils.tsv.actions.delete_column import DeleteColumnsTsvAction
@@ -16,17 +17,13 @@ from metabolights_utils.tsv.actions.move_column import MoveColumnTsvAction
 from metabolights_utils.tsv.actions.move_row import MoveRowTsvAction
 from metabolights_utils.tsv.actions.update_cell import UpdateCellsTsvAction
 from metabolights_utils.tsv.actions.update_column import UpdateColumnsTsvAction
-from metabolights_utils.tsv.actions.update_column_header import (
-    UpdateColumnHeadersTsvAction,
-)
+from metabolights_utils.tsv.actions.update_column_header import \
+    UpdateColumnHeadersTsvAction
 from metabolights_utils.tsv.actions.update_row import UpdateRowsTsvAction
-from metabolights_utils.tsv.model import (
-    TsvAction,
-    TsvActionReport,
-    TsvActionResult,
-    TsvActionType,
-)
-from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
+from metabolights_utils.tsv.model import (TsvAction, TsvActionReport,
+                                          TsvActionResult, TsvActionType)
+from metabolights_utils.utils.hash_utils import \
+    MetabolightsHashUtils as HashUtils
 
 TSV_FILE_ACTIONS: Dict[TsvActionType, BaseTsvAction] = {}
 TSV_FILE_ACTIONS[TsvActionType.ADD_ROW] = AddRowsTsvAction()

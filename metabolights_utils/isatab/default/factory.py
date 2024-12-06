@@ -1,25 +1,19 @@
 import logging
 
 from metabolights_utils.isatab.default.assay_file import DefaultAssayFileReader
-from metabolights_utils.isatab.default.assignment_file import (
-    DefaultAssignmentFileReader,
-)
+from metabolights_utils.isatab.default.assignment_file import \
+    DefaultAssignmentFileReader
 from metabolights_utils.isatab.default.investigation_file import (
-    DefaultInvestigationFileReader,
-    DefaultInvestigationFileWriter,
-)
-from metabolights_utils.isatab.default.sample_file import DefaultSampleFileReader
+    DefaultInvestigationFileReader, DefaultInvestigationFileWriter)
+from metabolights_utils.isatab.default.sample_file import \
+    DefaultSampleFileReader
 from metabolights_utils.isatab.default.writer import DefaultIsaTableFileWriter
-from metabolights_utils.isatab.reader import (
-    InvestigationFileReader,
-    IsaTableFileReader,
-    IsaTabReaderFactory,
-)
-from metabolights_utils.isatab.writer import (
-    InvestigationFileWriter,
-    IsaTableFileWriter,
-    IsaTabWriterFactory,
-)
+from metabolights_utils.isatab.reader import (InvestigationFileReader,
+                                              IsaTableFileReader,
+                                              IsaTabReaderFactory)
+from metabolights_utils.isatab.writer import (InvestigationFileWriter,
+                                              IsaTableFileWriter,
+                                              IsaTabWriterFactory)
 
 logger = logging.getLogger(__name__)
 

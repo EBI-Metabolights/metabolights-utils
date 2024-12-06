@@ -3,9 +3,10 @@ import os
 from typing import Any, List, Tuple, Union
 
 from metabolights_utils.isatab import Writer
-from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
-from metabolights_utils.models.isa.common import IsaTable, IsaTableColumn, IsaTableFile
+from metabolights_utils.models.isa.common import (IsaTable, IsaTableColumn,
+                                                  IsaTableFile)
 from metabolights_utils.models.isa.enums import ColumnsStructure
+from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 
 logger = logging.getLogger(__name__)
 

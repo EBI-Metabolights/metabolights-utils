@@ -1,4 +1,3 @@
-import csv
 import logging
 import re
 import sys
@@ -8,13 +7,13 @@ from typing import Dict, List, Union
 
 from metabolights_utils.models.common import MetabolightsBaseModel
 from metabolights_utils.models.isa.common import (
-    INVESTIGATION_FILE_INITIAL_ROWS_SET,
-    INVESTIGATION_FILE_STUDY_ROWS_SET,
-)
+    INVESTIGATION_FILE_INITIAL_ROWS_SET, INVESTIGATION_FILE_STUDY_ROWS_SET)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
-from metabolights_utils.tsv.filter import Filter, FilterRegistry, TsvFileFilterOption
-from metabolights_utils.tsv.sort import Sorter, SorterRegistry, TsvFileSortOption
+from metabolights_utils.tsv.filter import (Filter, FilterRegistry,
+                                           TsvFileFilterOption)
+from metabolights_utils.tsv.sort import (Sorter, SorterRegistry,
+                                         TsvFileSortOption)
 
 logger = logging.getLogger()
 

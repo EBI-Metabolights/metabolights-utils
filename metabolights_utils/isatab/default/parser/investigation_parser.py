@@ -8,22 +8,16 @@ from typing import Callable, Dict, List, Tuple, Union
 from pydantic import BaseModel
 from pydantic.alias_generators import to_snake
 
-from metabolights_utils.isatab.default.parser.common import read_investigation_file
+from metabolights_utils.isatab.default.parser.common import \
+    read_investigation_file
 from metabolights_utils.models.isa import investigation_file
 from metabolights_utils.models.isa.common import (
-    INVESTIGATION_FILE_INITIAL_ROWS,
-    INVESTIGATION_FILE_INITIAL_ROWS_SET,
-    INVESTIGATION_FILE_SECTION_NAMES,
-    INVESTIGATION_FILE_STUDY_ROWS,
-    INVESTIGATION_FILE_STUDY_ROWS_SET,
-    Comment,
-    IsaAbstractModel,
-)
-from metabolights_utils.models.isa.investigation_file import (
-    BaseSection,
-    Investigation,
-    Study,
-)
+    INVESTIGATION_FILE_INITIAL_ROWS, INVESTIGATION_FILE_INITIAL_ROWS_SET,
+    INVESTIGATION_FILE_SECTION_NAMES, INVESTIGATION_FILE_STUDY_ROWS,
+    INVESTIGATION_FILE_STUDY_ROWS_SET, Comment, IsaAbstractModel)
+from metabolights_utils.models.isa.investigation_file import (BaseSection,
+                                                              Investigation,
+                                                              Study)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 

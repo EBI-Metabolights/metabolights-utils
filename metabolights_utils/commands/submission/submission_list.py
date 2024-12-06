@@ -3,14 +3,12 @@ from typing import Union
 import click
 
 from metabolights_utils.commands.submission.model import (
-    StudyResponse,
-    SubmittedStudySummary,
-)
-from metabolights_utils.commands.utils import convert_html_to_plain_text, split_to_lines
+    StudyResponse, SubmittedStudySummary)
+from metabolights_utils.commands.utils import (convert_html_to_plain_text,
+                                               split_to_lines)
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.submission_repository import (
-    MetabolightsSubmissionRepository,
-)
+from metabolights_utils.provider.submission_repository import \
+    MetabolightsSubmissionRepository
 
 
 def print_submitted_study(study: SubmittedStudySummary, log):

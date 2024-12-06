@@ -6,7 +6,8 @@ from jsonpath_ng import parse
 from metabolights_utils.commands.utils import print_study_model_summary
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
+from metabolights_utils.provider.ftp_repository import \
+    MetabolightsFtpRepository
 
 
 @click.command(no_args_is_help=True, name="describe")

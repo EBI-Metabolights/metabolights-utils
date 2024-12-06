@@ -9,22 +9,20 @@ from pydantic import BaseModel
 from pydantic.alias_generators import to_camel, to_snake
 
 from metabolights_utils.isatab.default.base_isa_file import BaseIsaFile
-from metabolights_utils.isatab.default.parser.investigation_parser import (
-    get_investigation,
-)
-from metabolights_utils.isatab.reader import (
-    InvestigationFileReader,
-    InvestigationFileReaderResult,
-)
+from metabolights_utils.isatab.default.parser.investigation_parser import \
+    get_investigation
+from metabolights_utils.isatab.reader import (InvestigationFileReader,
+                                              InvestigationFileReaderResult)
 from metabolights_utils.isatab.writer import InvestigationFileWriter
 from metabolights_utils.models.isa.common import IsaAbstractModel
-from metabolights_utils.models.isa.investigation_file import BaseSection, Investigation
-from metabolights_utils.models.isa.investigation_file import (
-    module_name as inv_module_name,
-)
+from metabolights_utils.models.isa.investigation_file import (BaseSection,
+                                                              Investigation)
+from metabolights_utils.models.isa.investigation_file import \
+    module_name as inv_module_name
 from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
-from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
+from metabolights_utils.utils.hash_utils import \
+    MetabolightsHashUtils as HashUtils
 
 logger = logging.getLogger(__name__)
 

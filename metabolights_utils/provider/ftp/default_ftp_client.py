@@ -5,7 +5,8 @@ import shutil
 from ftplib import FTP
 from typing import List, Set, Union
 
-from metabolights_utils.provider.ftp.model import FtpFolderContent, LocalDirectory
+from metabolights_utils.provider.ftp.model import (FtpFolderContent,
+                                                   LocalDirectory)
 from metabolights_utils.utils.filename_utils import join_path
 
 logger = logging.getLogger(__name__)

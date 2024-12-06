@@ -5,7 +5,8 @@ import click
 
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.model import LocalDirectory
-from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
+from metabolights_utils.provider.ftp_repository import \
+    MetabolightsFtpRepository
 from metabolights_utils.provider.utils import is_metadata_filename_pattern
 
 

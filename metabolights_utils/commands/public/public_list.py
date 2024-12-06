@@ -7,7 +7,8 @@ from metabolights_utils.commands.utils import split_to_lines
 from metabolights_utils.common import sort_by_study_id
 from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
+from metabolights_utils.provider.ftp_repository import \
+    MetabolightsFtpRepository
 
 
 @click.command(name="list")

@@ -3,7 +3,8 @@ from typing import List, Union
 from pydantic import Field
 from typing_extensions import Annotated
 
-from metabolights_utils.models.isa.common import Comment, IsaAbstractModel, IsaTabConfig
+from metabolights_utils.models.isa.common import (Comment, IsaAbstractModel,
+                                                  IsaTabConfig)
 
 module_name = __name__
 

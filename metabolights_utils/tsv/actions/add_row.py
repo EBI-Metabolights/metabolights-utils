@@ -3,12 +3,8 @@ import uuid
 from typing import Dict, List
 
 from metabolights_utils.tsv.actions.base import BaseTsvAction
-from metabolights_utils.tsv.model import (
-    TsvActionResult,
-    TsvActionType,
-    TsvAddRowsAction,
-    TsvRowData,
-)
+from metabolights_utils.tsv.model import (TsvActionResult, TsvActionType,
+                                          TsvAddRowsAction, TsvRowData)
 
 
 class AddRowsTsvAction(BaseTsvAction):

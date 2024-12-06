@@ -4,9 +4,8 @@ from typing import Union
 import click
 
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.submission_repository import (
-    MetabolightsSubmissionRepository,
-)
+from metabolights_utils.provider.submission_repository import \
+    MetabolightsSubmissionRepository
 
 
 @click.command(no_args_is_help=True, name="validate")

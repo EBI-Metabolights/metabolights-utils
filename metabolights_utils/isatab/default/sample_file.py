@@ -1,6 +1,7 @@
 from typing import List
 
-from metabolights_utils.isatab.default.base_isa_table_file import BaseIsaTableFileReader
+from metabolights_utils.isatab.default.base_isa_table_file import \
+    BaseIsaTableFileReader
 
 
 class DefaultSampleFileReader(BaseIsaTableFileReader):

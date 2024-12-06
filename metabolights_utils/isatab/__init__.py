@@ -1,21 +1,14 @@
 from functools import lru_cache
 
-from metabolights_utils.isatab.default.factory import (
-    DefaultIsaTabReaderFactory,
-    DefaultIsaTabWriterFactory,
-)
-from metabolights_utils.isatab.reader import (
-    InvestigationFileReader,
-    IsaTableFileReader,
-    IsaTabReaderFactory,
-)
-from metabolights_utils.isatab.writer import (
-    InvestigationFileWriter,
-    IsaTableFileWriter,
-    IsaTabWriterFactory,
-)
-
 from metabolights_utils.isatab import default, reader, writer
+from metabolights_utils.isatab.default.factory import (
+    DefaultIsaTabReaderFactory, DefaultIsaTabWriterFactory)
+from metabolights_utils.isatab.reader import (InvestigationFileReader,
+                                              IsaTableFileReader,
+                                              IsaTabReaderFactory)
+from metabolights_utils.isatab.writer import (InvestigationFileWriter,
+                                              IsaTableFileWriter,
+                                              IsaTabWriterFactory)
 
 
 @lru_cache

@@ -4,9 +4,8 @@ from typing import Union
 import click
 
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.submission_repository import (
-    MetabolightsSubmissionRepository,
-)
+from metabolights_utils.provider.submission_repository import \
+    MetabolightsSubmissionRepository
 
 VALID_PARAMETERS = {
     "LC-MS": (
@@ -82,9 +81,9 @@ def submission_create_assay(
     study_id: MetaboLights study accession number (MTBLSxxxx).
     assay_technique: Valid assay techniques:  NMR, LC-MS, LC-DAD, GC-MS, GCxGC-MS, GC-FID, DI-MS, FIA-MS, CE-MS, MALDI-MS, MSImaging
 
-    Acronyms: Diode array detection (LC-DAD), Tandem MS (GCxGC-MS), Flame ionisation detector (GC-FID), 
+    Acronyms: Diode array detection (LC-DAD), Tandem MS (GCxGC-MS), Flame ionisation detector (GC-FID),
     Direct infusion (DI-MS), Flow injection analysis (FIA-MS), Capillary electrophoresis (CE-MS),
-    Matrix-assisted laser desorption-ionisation imaging mass spectrometry (MALDI-MS), 
+    Matrix-assisted laser desorption-ionisation imaging mass spectrometry (MALDI-MS),
     Nuclear magnetic resonance (NMR), Mass spec spectrometry (MSImaging)
 
 

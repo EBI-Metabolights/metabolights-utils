@@ -1,7 +1,7 @@
 import logging
 import os
 import re
-from typing import List, Tuple, Union
+from typing import Tuple, Union
 
 import unidecode
 

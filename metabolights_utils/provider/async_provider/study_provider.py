@@ -4,39 +4,25 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Set, Tuple, Union
 
-from metabolights_utils.isatab.default.parser.investigation_parser import (
-    parse_investigation_from_fs,
-)
+from metabolights_utils.isatab.default.parser.investigation_parser import \
+    parse_investigation_from_fs
 from metabolights_utils.isatab.default.parser.isa_table_parser import (
-    assay_file_expected_patterns,
-    parse_isa_table_sheet_from_fs,
-    samples_file_expected_patterns,
-)
-from metabolights_utils.models.common import (
-    CriticalMessage,
-    GenericMessage,
-    GenericMessageType,
-)
+    assay_file_expected_patterns, parse_isa_table_sheet_from_fs,
+    samples_file_expected_patterns)
+from metabolights_utils.models.common import (CriticalMessage, GenericMessage,
+                                              GenericMessageType)
 from metabolights_utils.models.isa.assay_file import AssayFile
 from metabolights_utils.models.isa.assignment_file import AssignmentFile
-from metabolights_utils.models.isa.common import (
-    IsaTableFile,
-    OntologyItem,
-    OrganismAndOrganismPartPair,
-)
+from metabolights_utils.models.isa.common import (IsaTableFile, OntologyItem,
+                                                  OrganismAndOrganismPartPair)
 from metabolights_utils.models.isa.investigation_file import Investigation
 from metabolights_utils.models.isa.samples_file import SamplesFile
 from metabolights_utils.models.metabolights.model import (
-    MetabolightsStudyModel,
-    StudyDBMetadata,
-    StudyFolderMetadata,
-)
+    MetabolightsStudyModel, StudyDBMetadata, StudyFolderMetadata)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
-from metabolights_utils.provider.utils import (
-    find_assay_technique,
-    get_unique_file_extensions,
-)
+from metabolights_utils.provider.utils import (find_assay_technique,
+                                               get_unique_file_extensions)
 
 logger = logging.getLogger(__name__)
 

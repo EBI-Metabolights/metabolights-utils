@@ -1,9 +1,9 @@
 import datetime
 from enum import Enum
 from typing import Any, Dict, Generic, List, TypeVar, Union
-from typing_extensions import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, Field
+from typing_extensions import Annotated
 
 from metabolights_utils.common import CamelCaseModel
 

@@ -2,24 +2,22 @@ import sys
 
 import click
 
-from metabolights_utils.commands.submission.submission_create_assay import (
-    submission_create_assay,
-)
-from metabolights_utils.commands.submission.submission_delete_assay import (
-    submission_delete_assay,
-)
-from metabolights_utils.commands.submission.submission_describe import (
-    submission_describe,
-)
-from metabolights_utils.commands.submission.submission_download import (
-    submission_download,
-)
-from metabolights_utils.commands.submission.submission_list import submission_list
-from metabolights_utils.commands.submission.submission_login import submission_login
-from metabolights_utils.commands.submission.submission_upload import submission_upload
-from metabolights_utils.commands.submission.submission_validate import (
-    submission_validate,
-)
+from metabolights_utils.commands.submission.submission_create_assay import \
+    submission_create_assay
+from metabolights_utils.commands.submission.submission_delete_assay import \
+    submission_delete_assay
+from metabolights_utils.commands.submission.submission_describe import \
+    submission_describe
+from metabolights_utils.commands.submission.submission_download import \
+    submission_download
+from metabolights_utils.commands.submission.submission_list import \
+    submission_list
+from metabolights_utils.commands.submission.submission_login import \
+    submission_login
+from metabolights_utils.commands.submission.submission_upload import \
+    submission_upload
+from metabolights_utils.commands.submission.submission_validate import \
+    submission_validate
 
 
 @click.group(name="submission")

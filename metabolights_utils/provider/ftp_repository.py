@@ -4,38 +4,23 @@ import os
 from typing import List, Set, Tuple, Union
 
 from metabolights_utils.common import sort_by_study_id
-from metabolights_utils.models.common import (
-    ErrorMessage,
-    GenericMessage,
-    InfoMessage,
-    WarningMessage,
-)
+from metabolights_utils.models.common import (ErrorMessage, GenericMessage,
+                                              InfoMessage, WarningMessage)
 from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.models.metabolights.model import (
-    MetabolightsStudyModel,
-    StudyFolderMetadata,
-)
+    MetabolightsStudyModel, StudyFolderMetadata)
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.default_ftp_client import (
-    DefaultFtpClient,
-    FtpFolderContent,
-    LocalDirectory,
-)
-from metabolights_utils.provider.ftp.folder_metadata_collector import (
-    FtpFolderMetadataCollector,
-)
+    DefaultFtpClient, FtpFolderContent, LocalDirectory)
+from metabolights_utils.provider.ftp.folder_metadata_collector import \
+    FtpFolderMetadataCollector
 from metabolights_utils.provider.ftp.model import FtpFiles
-from metabolights_utils.provider.local_folder_metadata_collector import (
-    LocalFolderMetadataCollector,
-)
+from metabolights_utils.provider.local_folder_metadata_collector import \
+    LocalFolderMetadataCollector
 from metabolights_utils.provider.study_provider import (
-    AbstractDbMetadataCollector,
-    MetabolightsStudyProvider,
-)
-from metabolights_utils.provider.utils import (
-    is_metadata_file,
-    is_metadata_filename_pattern,
-)
+    AbstractDbMetadataCollector, MetabolightsStudyProvider)
+from metabolights_utils.provider.utils import (is_metadata_file,
+                                               is_metadata_filename_pattern)
 from metabolights_utils.utils.filename_utils import join_path
 
 logger = logging.getLogger(__name__)
@@ -51,7 +36,9 @@ class MetabolightsFtpRepository(DefaultFtpClient):
     ) -> None:
         self.local_storage_cache_path = local_storage_cache_path
         if not local_storage_cache_path:
-            self.local_storage_cache_path = definitions.default_local_repority_cache_path
+            self.local_storage_cache_path = (
+                definitions.default_local_repority_cache_path
+            )
         self.local_storage_cache_path = join_path(self.local_storage_cache_path)
         logger.debug(
             "local_storage_cache_path is set to path: %s",
@@ -77,7 +64,9 @@ class MetabolightsFtpRepository(DefaultFtpClient):
             self.remote_repository_root_directory = (
                 definitions.default_remote_repository_root_directory
             )
-        self.remote_repository_root_directory = self.remote_repository_root_directory.replace("\\", "/")
+        self.remote_repository_root_directory = (
+            self.remote_repository_root_directory.replace("\\", "/")
+        )
         logger.debug(
             "remote_repository_root_directory is set to directory: %s",
             self.remote_repository_root_directory,
@@ -106,7 +95,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         study_id = study_id.upper().strip("/")
         if not local_path:
             local_path = self.local_storage_root_path
-        
+
         target_path = join_path(local_path, study_id)
         if not folder_index_file_path:
             folder_index_file_path = join_path(
@@ -281,7 +270,9 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         try:
             for filename in requested_files:
                 # new_local_path = os.path.join(local_path, study_id)
-                new_relative_file_path = f"{study_id}/{filename}".replace("\\", "/").rstrip("/")
+                new_relative_file_path = f"{study_id}/{filename}".replace(
+                    "\\", "/"
+                ).rstrip("/")
                 current_file = filename
                 self.ftp_client.download_file(
                     relative_file_path=new_relative_file_path,
@@ -338,7 +329,9 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         study_id = study_id.upper().strip("/")
         try:
             for file in selected_data_files:
-                new_relative_file_path = f"{study_id}/{file}".replace("\\", "/").rstrip("/")
+                new_relative_file_path = f"{study_id}/{file}".replace("\\", "/").rstrip(
+                    "/"
+                )
                 self.ftp_client.download_file(
                     relative_file_path=new_relative_file_path,
                     local_path=local_path,
