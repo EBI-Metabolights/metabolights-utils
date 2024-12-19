@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
+## v1.3.10 (2024-12-19)
+
+
 ## v1.3.9 (2024-12-06)
+
+### Bug Fixes
+
+- Investigation file parse error and ruff is used for formatting and linting.
+  ([`1918ee6`](https://github.com/EBI-Metabolights/metabolights-utils/commit/1918ee69e261e2a5495c97b612bacd2c89a88259))
 
 
 ## v1.3.8 (2024-12-06)
