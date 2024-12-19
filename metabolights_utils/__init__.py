@@ -157,8 +157,16 @@
 #     MetabolightsHashUtils,
 # )
 # from metabolights_utils.utils.search_utils import MetabolightsSearchUtils
-from metabolights_utils import (commands, common, isa_file_utils, isatab,
-                                models, provider, tsv, utils)
+from metabolights_utils import (
+    commands,
+    common,
+    isa_file_utils,
+    isatab,
+    models,
+    provider,
+    tsv,
+    utils,
+)
 
 __VERSION__ = "1.3.8"
 

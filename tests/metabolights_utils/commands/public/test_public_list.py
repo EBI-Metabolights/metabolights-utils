@@ -12,7 +12,6 @@ from metabolights_utils.models.common import ErrorMessage
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])
 def test_public_list_01(mocker: MockerFixture, study_id: str):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_list.MetabolightsFtpRepository",
@@ -39,7 +38,6 @@ def test_public_list_01(mocker: MockerFixture, study_id: str):
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])
 def test_public_list_02(mocker: MockerFixture, study_id: str):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_list.MetabolightsFtpRepository",
@@ -61,7 +59,6 @@ def test_public_list_02(mocker: MockerFixture, study_id: str):
     "os.listdir", mock.MagicMock(return_value=[f"MTBLS{i}" for i in range(1, 3)])
 )
 def test_public_list_03(mocker: MockerFixture):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_list.MetabolightsFtpRepository",
@@ -83,7 +80,6 @@ def test_public_list_03(mocker: MockerFixture):
     "os.listdir", mock.MagicMock(return_value=[f"MTBLS{i}" for i in range(1, 600)])
 )
 def test_public_list_04(mocker: MockerFixture):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_list.MetabolightsFtpRepository",
@@ -103,7 +99,6 @@ def test_public_list_04(mocker: MockerFixture):
 
 @mock.patch("os.listdir", mock.MagicMock(return_value=[]))
 def test_public_list_05(mocker: MockerFixture):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_list.MetabolightsFtpRepository",
@@ -122,7 +117,6 @@ def test_public_list_05(mocker: MockerFixture):
 
 
 def test_public_list_06():
-
     runner = CliRunner()
     local_path = os.path.realpath("tests/test-data")
     result = runner.invoke(
@@ -133,7 +127,6 @@ def test_public_list_06():
 
 
 def test_public_list_07():
-
     runner = CliRunner()
     local_path = os.path.realpath("tests/test-data")
     result = runner.invoke(public_list, ["-l", "MTBLS1", "--local_path", local_path])
@@ -142,7 +135,6 @@ def test_public_list_07():
 
 
 def test_public_list_08():
-
     runner = CliRunner()
     local_path = os.path.realpath("tests/test-data")
     result = runner.invoke(public_list, ["-l", "--local_path", local_path])
@@ -151,7 +143,6 @@ def test_public_list_08():
 
 
 def test_public_list_09(mocker: MockerFixture):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_list.MetabolightsFtpRepository",
@@ -168,7 +159,6 @@ def test_public_list_09(mocker: MockerFixture):
 
 
 def test_public_list_10(mocker: MockerFixture):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_list.MetabolightsFtpRepository",

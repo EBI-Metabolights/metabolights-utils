@@ -3,8 +3,7 @@ import os
 from typing import Any, List, Tuple, Union
 
 from metabolights_utils.isatab import Writer
-from metabolights_utils.models.isa.common import (IsaTable, IsaTableColumn,
-                                                  IsaTableFile)
+from metabolights_utils.models.isa.common import IsaTable, IsaTableColumn, IsaTableFile
 from metabolights_utils.models.isa.enums import ColumnsStructure
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 
@@ -12,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class IsaFileUtils:
-
     @staticmethod
     async def save_metabolights_study_model(
         mtbls_model: MetabolightsStudyModel,
@@ -21,7 +19,7 @@ class IsaFileUtils:
         investigation_module_name: Union[None, str] = None,
     ):
         if not os.path.exists(output_dir):
-            logger.info(f"Study save folder % is created", output_dir)
+            logger.info("Study save folder %s is created", output_dir)
             os.makedirs(output_dir, exist_ok=True)
         i_file_name = mtbls_model.investigation_file_path
         logger.info("Saving investigation file: %s", i_file_name)
@@ -75,7 +73,7 @@ class IsaFileUtils:
         parent_dir = os.path.dirname(file_path)
         basename = os.path.dirname(file_path)
         if not os.path.exists(parent_dir):
-            logger.info(f"Study save folder % is created", parent_dir)
+            logger.info("Study save folder %s is created", parent_dir)
             os.makedirs(parent_dir, exist_ok=True)
 
         logger.info("Saving file: %s", basename)

@@ -2,9 +2,11 @@ import json
 import os
 from typing import Union
 
-from metabolights_utils.commands.submission.model import (FtpLoginCredentials,
-                                                          LoginCredentials,
-                                                          RestApiCredentials)
+from metabolights_utils.commands.submission.model import (
+    FtpLoginCredentials,
+    LoginCredentials,
+    RestApiCredentials,
+)
 
 
 def get_submission_private_ftp_credentials(

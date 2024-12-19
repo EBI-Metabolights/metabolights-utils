@@ -9,12 +9,13 @@ from pydantic import BaseModel
 
 from metabolights_utils.models.common import GenericMessage
 from metabolights_utils.models.enums import GenericMessageType
-from metabolights_utils.models.metabolights.model import (StudyFileDescriptor,
-                                                          StudyFolderMetadata)
+from metabolights_utils.models.metabolights.model import (
+    StudyFileDescriptor,
+    StudyFolderMetadata,
+)
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.default_ftp_client import DefaultFtpClient
-from metabolights_utils.provider.study_provider import \
-    AbstractFolderMetadataCollector
+from metabolights_utils.provider.study_provider import AbstractFolderMetadataCollector
 from metabolights_utils.utils.filename_utils import join_path
 
 logger = logging.getLogger(__name__)
@@ -68,7 +69,6 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
         messages: List[str],
     ):
         try:
-
             prefix = f"{str(study_path).rstrip('/')}/"
             directory = directory.replace("\\", "/")
             dir_relative_path = (

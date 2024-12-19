@@ -90,7 +90,6 @@ def test_public_search_04(mocker: MockerFixture):
 
 
 def test_public_search_05(mocker: MockerFixture):
-
     mocker.patch(
         "metabolights_utils.commands.public.public_search.rest_api_post",
         return_value=(
@@ -116,7 +115,6 @@ def test_public_search_05(mocker: MockerFixture):
 
 
 def test_public_search_06(mocker: MockerFixture):
-
     mocker.patch(
         "metabolights_utils.commands.public.public_search.rest_api_post",
         return_value=(
@@ -138,7 +136,6 @@ def test_public_search_06(mocker: MockerFixture):
 
 
 def test_public_search_07(mocker: MockerFixture):
-
     mocker.patch(
         "metabolights_utils.commands.public.public_search.rest_api_post",
         return_value=(
@@ -160,7 +157,6 @@ def test_public_search_07(mocker: MockerFixture):
 
 
 def test_public_search_08(mocker: MockerFixture):
-
     mocker.patch(
         "metabolights_utils.commands.public.public_search.rest_api_post",
         return_value=(
@@ -182,7 +178,6 @@ def test_public_search_08(mocker: MockerFixture):
 
 
 def test_public_search_09(mocker: MockerFixture):
-
     with open(
         "tests/test-data/rest-api-test-data/diet_aggregation_search.json",
         "r",

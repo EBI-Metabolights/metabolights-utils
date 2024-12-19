@@ -20,13 +20,11 @@ invalid_study_ids = [
 
 @pytest.mark.parametrize("study_id", valid_study_ids)
 def test_sort_by_study_id_01(study_id: str):
-
     actual = sort_by_study_id(study_id)
     assert actual > 0
 
 
 @pytest.mark.parametrize("study_id", invalid_study_ids)
 def test_sort_by_study_id_02(study_id: str):
-
     actual = sort_by_study_id(study_id)
     assert actual == -1

@@ -4,31 +4,44 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Set, Tuple, Union
 
-from metabolights_utils.isatab.default.parser.investigation_parser import \
-    parse_investigation_from_fs
+from metabolights_utils.isatab.default.parser.investigation_parser import (
+    parse_investigation_from_fs,
+)
 from metabolights_utils.isatab.default.parser.isa_table_parser import (
-    assay_file_expected_patterns, parse_isa_table_sheet_from_fs,
-    samples_file_expected_patterns)
-from metabolights_utils.models.common import (CriticalMessage, GenericMessage,
-                                              GenericMessageType)
+    assay_file_expected_patterns,
+    parse_isa_table_sheet_from_fs,
+    samples_file_expected_patterns,
+)
+from metabolights_utils.models.common import (
+    CriticalMessage,
+    GenericMessage,
+    GenericMessageType,
+)
 from metabolights_utils.models.isa.assay_file import AssayFile
 from metabolights_utils.models.isa.assignment_file import AssignmentFile
-from metabolights_utils.models.isa.common import (IsaTableFile, OntologyItem,
-                                                  OrganismAndOrganismPartPair)
+from metabolights_utils.models.isa.common import (
+    IsaTableFile,
+    OntologyItem,
+    OrganismAndOrganismPartPair,
+)
 from metabolights_utils.models.isa.investigation_file import Investigation
 from metabolights_utils.models.isa.samples_file import SamplesFile
 from metabolights_utils.models.metabolights.model import (
-    MetabolightsStudyModel, StudyDBMetadata, StudyFolderMetadata)
+    MetabolightsStudyModel,
+    StudyDBMetadata,
+    StudyFolderMetadata,
+)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
-from metabolights_utils.provider.utils import (find_assay_technique,
-                                               get_unique_file_extensions)
+from metabolights_utils.provider.utils import (
+    find_assay_technique,
+    get_unique_file_extensions,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class AbstractMetadataFileProvider(ABC):
-
     @abstractmethod
     def get_study_metadata_path(
         self, study_id: str, file_relative_path: Union[None, str] = None
@@ -64,7 +77,6 @@ class DefaultStudyMetadataFileProvider(AbstractMetadataFileProvider):
 
 
 class AbstractDbMetadataCollector(ABC):
-
     @abstractmethod
     def get_study_metadata_from_db(
         self, study_id: str, connection
@@ -83,7 +95,6 @@ class AbstractDbMetadataCollector(ABC):
 
 
 class AbstractFolderMetadataCollector(ABC):
-
     @abstractmethod
     def get_folder_metadata(
         self,
@@ -108,7 +119,6 @@ class AbstractFolderMetadataCollector(ABC):
 
 
 class MetabolightsStudyProvider(object):
-
     def __init__(
         self,
         db_metadata_collector: Union[None, AbstractDbMetadataCollector] = None,
@@ -140,7 +150,7 @@ class MetabolightsStudyProvider(object):
         ):
             logger.warning(
                 "Invalid sample file or there is no row or column in sample file. "
-                + "Skip to set organisms."
+                "Skip to set organisms."
             )
             return
         pairs = set()
@@ -268,7 +278,6 @@ class MetabolightsStudyProvider(object):
         folders_in_hierarchy = set()
         investigation = model.investigation
         for study_item in investigation.studies:
-
             file_path = self.get_file_path(study_item.file_name, folder, study_id)
 
             logger.debug("Load sample file headers %s", study_item.file_name)
@@ -543,9 +552,9 @@ class MetabolightsStudyProvider(object):
         for assay_file_name in model.assays:
             assay_file_item = model.assays[assay_file_name]
             for assignement_file_name in assay_file_item.referenced_assignment_files:
-                model.metabolite_assignments[assignement_file_name].assay_technique = (
-                    assay_file_item.assay_technique
-                )
+                model.metabolite_assignments[
+                    assignement_file_name
+                ].assay_technique = assay_file_item.assay_technique
         return model
 
     def get_sample_file_input(
@@ -573,9 +582,9 @@ class MetabolightsStudyProvider(object):
             )
             samples_isa_table: IsaTableFile = samples_isa_table_sheet
             model.samples[study_item.file_name].table = samples_isa_table.table
-            model.samples[study_item.file_name].sha256_hash = (
-                samples_isa_table.sha256_hash
-            )
+            model.samples[
+                study_item.file_name
+            ].sha256_hash = samples_isa_table.sha256_hash
             table = samples_isa_table.table
             table.row_count = 0
             if table.data:
@@ -615,9 +624,9 @@ class MetabolightsStudyProvider(object):
             )
             samples_isa_table: IsaTableFile = samples_isa_table_sheet
             model.samples[study_item.file_name].table = samples_isa_table.table
-            model.samples[study_item.file_name].sha256_hash = (
-                samples_isa_table.sha256_hash
-            )
+            model.samples[
+                study_item.file_name
+            ].sha256_hash = samples_isa_table.sha256_hash
 
             if samples_isa_table.table.data:
                 model.samples[study_item.file_name].table.row_count = len(
@@ -646,17 +655,19 @@ class MetabolightsStudyProvider(object):
                     self.filter_messages(messages)
                 )
                 model.assays[assay_item.file_name].table = assay_isa_table.table
-                model.assays[assay_item.file_name].sha256_hash = (
-                    assay_isa_table.sha256_hash
-                )
+                model.assays[
+                    assay_item.file_name
+                ].sha256_hash = assay_isa_table.sha256_hash
                 model.assays[assay_item.file_name].file_path = assay_isa_table.file_path
                 if assay_isa_table.table.data:
                     model.assays[assay_item.file_name].table.row_count = len(
                         assay_isa_table.table.data[assay_isa_table.table.columns[0]]
                     )
-                    model.assays[assay_item.file_name].number_of_assay_rows = (
-                        model.assays[assay_item.file_name].table.row_count
-                    )
+                    model.assays[
+                        assay_item.file_name
+                    ].number_of_assay_rows = model.assays[
+                        assay_item.file_name
+                    ].table.row_count
                 else:
                     model.assays[assay_item.file_name].table.row_count = 0
         if not samples_sheet_limit or samples_sheet_limit > 0:
@@ -695,12 +706,12 @@ class MetabolightsStudyProvider(object):
                 self.filter_messages(messages)
             )
             metabolite_assignment_isa_table.file_path = assignment_file
-            model.metabolite_assignments[assignment_file].table = (
-                metabolite_assignment_isa_table.table
-            )
-            model.metabolite_assignments[assignment_file].sha256_hash = (
-                metabolite_assignment_isa_table.sha256_hash
-            )
+            model.metabolite_assignments[
+                assignment_file
+            ].table = metabolite_assignment_isa_table.table
+            model.metabolite_assignments[
+                assignment_file
+            ].sha256_hash = metabolite_assignment_isa_table.sha256_hash
             model.metabolite_assignments[assignment_file].file_path = assignment_file
 
             if metabolite_assignment_isa_table.table.data:

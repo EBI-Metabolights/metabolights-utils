@@ -169,7 +169,6 @@ def test_load_study_data_04(study_id, study_path):
 
 @pytest.mark.parametrize("study_id,study_path", test_studies)
 def test_load_study_data_05(study_id, study_path):
-
     provider = MetabolightsStudyProvider()
     model: MetabolightsStudyModel = provider.load_study(
         study_id,

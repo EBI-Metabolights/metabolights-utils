@@ -265,6 +265,5 @@ def test_with_filter_and_sort_option():
 
 
 def test_sample_metadata_file_success_05():
-
     helper: IsaTableFileWriter = Writer.get_sample_file_writer()
     assert helper

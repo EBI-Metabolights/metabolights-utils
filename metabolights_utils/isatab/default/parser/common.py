@@ -7,13 +7,13 @@ from typing import Dict, List, Union
 
 from metabolights_utils.models.common import MetabolightsBaseModel
 from metabolights_utils.models.isa.common import (
-    INVESTIGATION_FILE_INITIAL_ROWS_SET, INVESTIGATION_FILE_STUDY_ROWS_SET)
+    INVESTIGATION_FILE_INITIAL_ROWS_SET,
+    INVESTIGATION_FILE_STUDY_ROWS_SET,
+)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
-from metabolights_utils.tsv.filter import (Filter, FilterRegistry,
-                                           TsvFileFilterOption)
-from metabolights_utils.tsv.sort import (Sorter, SorterRegistry,
-                                         TsvFileSortOption)
+from metabolights_utils.tsv.filter import Filter, FilterRegistry, TsvFileFilterOption
+from metabolights_utils.tsv.sort import Sorter, SorterRegistry, TsvFileSortOption
 
 logger = logging.getLogger()
 
@@ -162,7 +162,7 @@ def read_table_file(
         messages.append(
             ParserMessage(
                 type=ParserMessageType.WARNING,
-                short=f"Removed empty lines.",
+                short="Removed empty lines.",
                 detail="Removed empty lines.",
             )
         )
@@ -181,7 +181,7 @@ def read_table_file(
                 messages.append(
                     ParserMessage(
                         type=ParserMessageType.WARNING,
-                        short=f"Removed new line characters in cells.",
+                        short="Removed new line characters in cells.",
                         detail="Removed new line characters in cells.",
                     )
                 )
@@ -490,9 +490,8 @@ def prepare_column_names(
                         next_item: str = column_indices[
                             col_index + term_source_relative_index + 1
                         ]
-                        if (
-                            next_item == "Term Accession Number"
-                            or next_item.startswith("Term Accession Number.")
+                        if next_item == "Term Accession Number" or next_item.startswith(
+                            "Term Accession Number."
                         ):
                             new_ordered_columns.append(next_item)
         selected_column_names.clear()

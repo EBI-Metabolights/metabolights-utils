@@ -180,9 +180,9 @@ class TsvUpdateColumnsAction(TsvAction):
 
 class TsvUpdateCellsAction(TsvAction):
     action_type: TsvActionType = TsvActionType.UPDATE_CELL_DATA
-    cells: Annotated[List[TsvCellData], Field(description="Updated cell data list")] = (
-        []
-    )
+    cells: Annotated[
+        List[TsvCellData], Field(description="Updated cell data list")
+    ] = []
 
 
 class TsvUpdateColumnHeaderAction(TsvAction):

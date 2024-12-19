@@ -4,23 +4,38 @@ import os
 from typing import List, Set, Tuple, Union
 
 from metabolights_utils.common import sort_by_study_id
-from metabolights_utils.models.common import (ErrorMessage, GenericMessage,
-                                              InfoMessage, WarningMessage)
+from metabolights_utils.models.common import (
+    ErrorMessage,
+    GenericMessage,
+    InfoMessage,
+    WarningMessage,
+)
 from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.models.metabolights.model import (
-    MetabolightsStudyModel, StudyFolderMetadata)
+    MetabolightsStudyModel,
+    StudyFolderMetadata,
+)
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.default_ftp_client import (
-    DefaultFtpClient, FtpFolderContent, LocalDirectory)
-from metabolights_utils.provider.ftp.folder_metadata_collector import \
-    FtpFolderMetadataCollector
+    DefaultFtpClient,
+    FtpFolderContent,
+    LocalDirectory,
+)
+from metabolights_utils.provider.ftp.folder_metadata_collector import (
+    FtpFolderMetadataCollector,
+)
 from metabolights_utils.provider.ftp.model import FtpFiles
-from metabolights_utils.provider.local_folder_metadata_collector import \
-    LocalFolderMetadataCollector
+from metabolights_utils.provider.local_folder_metadata_collector import (
+    LocalFolderMetadataCollector,
+)
 from metabolights_utils.provider.study_provider import (
-    AbstractDbMetadataCollector, MetabolightsStudyProvider)
-from metabolights_utils.provider.utils import (is_metadata_file,
-                                               is_metadata_filename_pattern)
+    AbstractDbMetadataCollector,
+    MetabolightsStudyProvider,
+)
+from metabolights_utils.provider.utils import (
+    is_metadata_file,
+    is_metadata_filename_pattern,
+)
 from metabolights_utils.utils.filename_utils import join_path
 
 logger = logging.getLogger(__name__)
@@ -174,7 +189,6 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                 delete_unlisted_metadata_files=True,
             )
             if result.success:
-
                 messages.append(
                     InfoMessage(
                         short="Downloaded metadata file with response",
@@ -402,7 +416,6 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         folder_index_file_path: Union[str, None] = None,
         rebuild_folder_index_file: bool = False,
     ) -> Tuple[Union[None, StudyFolderMetadata], List[GenericMessage]]:
-
         if not study_id:
             return None, [
                 GenericMessage(type=GenericMessageType.ERROR, short="Invalid study_id")

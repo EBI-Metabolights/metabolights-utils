@@ -5,8 +5,7 @@ from typing import Dict
 
 from pydantic import BaseModel
 
-from metabolights_utils.utils.search_utils import \
-    MetabolightsSearchUtils as SearchUtils
+from metabolights_utils.utils.search_utils import MetabolightsSearchUtils as SearchUtils
 
 logger = logging.getLogger(__name__)
 

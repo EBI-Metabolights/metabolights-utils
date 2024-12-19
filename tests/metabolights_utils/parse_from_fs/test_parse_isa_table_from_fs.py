@@ -112,6 +112,7 @@ def test_parse_isa_table_sheet_from_fs_invalid_columns_03():
     temp_root_path = ".test-temp"
     temp_path = f"{temp_root_path}/parse-file-{uuid.uuid4()}"
     os.makedirs(temp_path, exist_ok=True)
+
     try:
         temp_file_path = os.path.join(temp_path, os.path.basename(file_path))
         shutil.copy2(file_path, temp_file_path)

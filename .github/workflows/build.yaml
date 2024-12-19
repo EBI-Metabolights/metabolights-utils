@@ -2,9 +2,9 @@ name: Build application
 
 on:
   push:
-    branches: ["master"]
+    branches: [ "master" ]
   pull_request:
-    branches: ["master"]
+    branches: [ "master" ]
 
 permissions:
   contents: read
@@ -29,6 +29,12 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install
+    - name: Ruff format check
+      run: |
+        ruff format --check
+    - name: Ruff lint check
+      run: |
+        ruff check
     - name: Test with pytest
       run: |
         poetry run pytest

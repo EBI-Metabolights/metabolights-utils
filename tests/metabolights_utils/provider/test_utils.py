@@ -98,7 +98,6 @@ assay_names = {
 
 @pytest.mark.parametrize("study_id,study_path,assay_name,technique_name", assay_names)
 def test_find_assay_technique_01(study_id, study_path, assay_name, technique_name):
-
     class DefaultDbMetadataCollector(AbstractDbMetadataCollector):
         def get_study_metadata_from_db(
             self, study_id: str, connection

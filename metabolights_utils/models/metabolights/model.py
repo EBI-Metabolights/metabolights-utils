@@ -7,8 +7,9 @@ from typing_extensions import Annotated
 from metabolights_utils.common import CamelCaseModel
 from metabolights_utils.models.common import GenericMessage
 from metabolights_utils.models.isa.common import IsaAbstractModel
-from metabolights_utils.models.metabolights.metabolights_study import \
-    BaseMetabolightsStudyModel
+from metabolights_utils.models.metabolights.metabolights_study import (
+    BaseMetabolightsStudyModel,
+)
 
 
 class UserStatus(str, Enum):

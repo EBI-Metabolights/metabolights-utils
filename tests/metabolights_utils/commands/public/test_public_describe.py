@@ -11,7 +11,6 @@ from metabolights_utils.provider.study_provider import MetabolightsStudyProvider
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])
 def test_public_describe(mocker: MockerFixture, study_id: str):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_describe.MetabolightsFtpRepository",

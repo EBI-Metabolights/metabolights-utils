@@ -6,17 +6,17 @@ from io import IOBase
 from typing import List, Union
 
 from metabolights_utils.isatab.default.base_isa_file import BaseIsaFile
-from metabolights_utils.isatab.default.parser.isa_table_parser import \
-    get_isa_table_file
-from metabolights_utils.isatab.reader import (IsaTableFileReader,
-                                              IsaTableFileReaderResult)
+from metabolights_utils.isatab.default.parser.isa_table_parser import get_isa_table_file
+from metabolights_utils.isatab.reader import (
+    IsaTableFileReader,
+    IsaTableFileReaderResult,
+)
 from metabolights_utils.models.isa.common import IsaTable, IsaTableFile
 from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.tsv.filter import TsvFileFilterOption
 from metabolights_utils.tsv.sort import TsvFileSortOption
-from metabolights_utils.utils.hash_utils import \
-    MetabolightsHashUtils as HashUtils
+from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 logger = logging.getLogger(__name__)
 

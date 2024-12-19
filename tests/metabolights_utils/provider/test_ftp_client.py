@@ -89,7 +89,6 @@ def test_is_metadata_filename_pattern_02(file_path: str):
 
 @pytest.mark.parametrize("study_id", [None, "", "\t", " "])
 def test_load_study_01(mocker: MockerFixture, study_id: str):
-
     client = MetabolightsFtpRepository()
     mock_ftp = MagicMock()
 
@@ -106,7 +105,6 @@ def test_load_study_01(mocker: MockerFixture, study_id: str):
 
 @pytest.mark.parametrize("study_id", ["MTBLS1"])
 def test_load_study__local_01(mocker: MockerFixture, study_id: str):
-
     client = MetabolightsFtpRepository()
     expected = "test.txt"
     mock_provider = MagicMock()
@@ -126,7 +124,6 @@ def test_load_study__local_01(mocker: MockerFixture, study_id: str):
 
 @pytest.mark.parametrize("study_id", ["MTBLS1"])
 def test_load_study__local_02(mocker: MockerFixture, study_id: str):
-
     client = MetabolightsFtpRepository()
     expected = "test.txt"
     mock_provider = MagicMock()
@@ -166,7 +163,6 @@ lrwxrwxrwx   1 45854    200            21 Jan 19  2002 link -> sschwarzer/index.
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])
 def test_load_study_02(mocker: MockerFixture, study_id: str):
-
     client = MetabolightsFtpRepository()
     mock_ftp = MagicMock()
 
@@ -192,7 +188,6 @@ def test_load_study_02(mocker: MockerFixture, study_id: str):
 
 
 def test_list_metadata_files_01(mocker: MockerFixture):
-
     client = MetabolightsFtpRepository()
 
     mock_ftp = MagicMock()
@@ -274,7 +269,6 @@ class MockFtpWriter:
 
 
 def test_download_study_data_files_01(mocker: MockerFixture):
-
     study_id = "MTBLS5195"
     client = MetabolightsFtpRepository()
 
@@ -310,7 +304,6 @@ def test_download_study_data_files_01(mocker: MockerFixture):
 
 
 def test_download_study_metadata_files_01(mocker: MockerFixture):
-
     study_id = "MTBLS5195"
     client = MetabolightsFtpRepository()
 
@@ -346,7 +339,6 @@ def test_download_study_metadata_files_01(mocker: MockerFixture):
 
 
 def test_download_study_metadata_files_02(mocker: MockerFixture):
-
     study_id = "MTBLS5195"
     client = MetabolightsFtpRepository()
 
@@ -393,7 +385,6 @@ def test_download_study_metadata_files_02(mocker: MockerFixture):
 
 
 def test_list_studies_01(mocker: MockerFixture):
-
     client = MetabolightsFtpRepository()
 
     mock_ftp = MagicMock()
@@ -422,7 +413,6 @@ def test_list_studies_01(mocker: MockerFixture):
 
 
 def test_list_study_folder_directory_01(mocker: MockerFixture):
-
     client = MetabolightsFtpRepository()
 
     mock_ftp = MagicMock()
@@ -454,7 +444,6 @@ def test_list_study_folder_directory_01(mocker: MockerFixture):
 
 
 def test_get_study_folder_content_01(mocker: MockerFixture):
-
     study_id = "MTBLS5195"
     client = MetabolightsFtpRepository()
 

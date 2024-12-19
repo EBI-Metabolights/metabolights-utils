@@ -5,14 +5,12 @@ import shutil
 from typing import Union
 
 from metabolights_utils.utils.filename_utils import join_path
-from metabolights_utils.utils.search_utils import \
-    MetabolightsSearchUtils as SearchUtils
+from metabolights_utils.utils.search_utils import MetabolightsSearchUtils as SearchUtils
 
 logger = logging.getLogger(__name__)
 
 
 class MetabolightsAuditUtils(object):
-
     @staticmethod
     def create_audit_folder(
         src_root_path: str,

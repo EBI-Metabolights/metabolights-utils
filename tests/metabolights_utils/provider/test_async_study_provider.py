@@ -176,7 +176,6 @@ async def test_load_study_data_04(study_id, study_path):
 @pytest.mark.parametrize("study_id,study_path", test_studies)
 @pytest.mark.asyncio
 async def test_load_study_data_05(study_id, study_path):
-
     provider = AsyncMetabolightsStudyProvider()
     model: MetabolightsStudyModel = await provider.load_study(
         study_id,

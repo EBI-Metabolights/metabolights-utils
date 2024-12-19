@@ -6,7 +6,6 @@ from metabolights_utils.utils.audit_utils import MetabolightsAuditUtils
 
 
 def test_create_audit_folder_01():
-
     tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         audit_path = MetabolightsAuditUtils.create_audit_folder(
@@ -24,7 +23,6 @@ def test_create_audit_folder_01():
 
 
 def test_create_audit_folder_non_exist_target_01():
-
     tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         audit_path = MetabolightsAuditUtils.create_audit_folder(
@@ -37,7 +35,6 @@ def test_create_audit_folder_non_exist_target_01():
 
 
 def test_copy_isa_metadata_files_01():
-
     tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         target_path = MetabolightsAuditUtils.copy_isa_metadata_files(
@@ -51,7 +48,6 @@ def test_copy_isa_metadata_files_01():
 
 
 def test_copy_isa_metadata_files_02():
-
     tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
     try:
         target_path = MetabolightsAuditUtils.copy_isa_metadata_files(

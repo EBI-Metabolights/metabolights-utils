@@ -9,20 +9,22 @@ from pydantic import BaseModel
 from pydantic.alias_generators import to_camel, to_snake
 
 from metabolights_utils.isatab.default.base_isa_file import BaseIsaFile
-from metabolights_utils.isatab.default.parser.investigation_parser import \
-    get_investigation
-from metabolights_utils.isatab.reader import (InvestigationFileReader,
-                                              InvestigationFileReaderResult)
+from metabolights_utils.isatab.default.parser.investigation_parser import (
+    get_investigation,
+)
+from metabolights_utils.isatab.reader import (
+    InvestigationFileReader,
+    InvestigationFileReaderResult,
+)
 from metabolights_utils.isatab.writer import InvestigationFileWriter
 from metabolights_utils.models.isa.common import IsaAbstractModel
-from metabolights_utils.models.isa.investigation_file import (BaseSection,
-                                                              Investigation)
-from metabolights_utils.models.isa.investigation_file import \
-    module_name as inv_module_name
+from metabolights_utils.models.isa.investigation_file import BaseSection, Investigation
+from metabolights_utils.models.isa.investigation_file import (
+    module_name as inv_module_name,
+)
 from metabolights_utils.models.parser.common import ParserMessage, ParserReport
 from metabolights_utils.models.parser.enums import ParserMessageType
-from metabolights_utils.utils.hash_utils import \
-    MetabolightsHashUtils as HashUtils
+from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +121,6 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
 
 
 class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
-
     def write(
         self,
         investigation: Investigation,
@@ -352,7 +353,7 @@ class InvestigationFileSerializer(object):
                                 sys.modules[module_name],
                                 default_object_name,
                             )
-                        except:
+                        except:  # noqa: E722
                             pass
                     # not set a value try to find on default module
                     if not obj:
@@ -438,7 +439,7 @@ class InvestigationFileSerializer(object):
                             sys.modules[module_name],
                             class_name,
                         )
-                    except:
+                    except:  # noqa: E722
                         pass
                 # not set a value try to find on default module
                 if not obj:
@@ -468,7 +469,7 @@ class InvestigationFileSerializer(object):
                 cls.assign_string_type(items, rows, row_map, fields, i, header_name)
             else:
                 logger.error(
-                    f"Unsopported type {properties[field_key]} for prefix {prefix}"
+                    "Unsupported type %s for prefix %s", properties[field_key], prefix
                 )
         return rows
 

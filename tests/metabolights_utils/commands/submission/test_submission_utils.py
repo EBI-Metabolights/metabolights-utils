@@ -64,7 +64,6 @@ def test_get_submission_credentials_03():
 
 
 def test_get_submission_private_ftp_credentials_01():
-
     test_data = {
         "ftp_login": {"ftp-private.ebi.ac.uk": {"user_name": "x", "password": "y"}},
         "rest_api_credentials": {
@@ -97,7 +96,6 @@ def test_get_submission_private_ftp_credentials_01():
 
 
 def test_get_submission_rest_api_credentials_01():
-
     test_data = {
         "ftp_login": {"ftp-private.ebi.ac.uk": {"user_name": "x", "password": "y"}},
         "rest_api_credentials": {

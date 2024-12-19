@@ -9,37 +9,52 @@ from typing import List, Literal, Tuple, Union
 import httpx
 
 from metabolights_utils.commands.submission.model import (
-    FtpLoginCredentials, RestApiCredentials, StudyResponse,
-    SubmittedStudiesResponse)
+    FtpLoginCredentials,
+    RestApiCredentials,
+    StudyResponse,
+    SubmittedStudiesResponse,
+)
 from metabolights_utils.commands.submission.utils import (
     get_submission_private_ftp_credentials,
-    get_submission_rest_api_credentials)
-from metabolights_utils.models.common import (ErrorMessage, GenericMessage,
-                                              InfoMessage)
+    get_submission_rest_api_credentials,
+)
+from metabolights_utils.models.common import ErrorMessage, GenericMessage, InfoMessage
 from metabolights_utils.models.enums import GenericMessageType
 from metabolights_utils.models.metabolights.model import (
-    MetabolightsStudyModel, StudyFolderMetadata)
+    MetabolightsStudyModel,
+    StudyFolderMetadata,
+)
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.ftp.default_ftp_client import (
-    DefaultFtpClient, LocalDirectory)
-from metabolights_utils.provider.ftp.folder_metadata_collector import \
-    FtpFolderMetadataCollector
-from metabolights_utils.provider.local_folder_metadata_collector import \
-    LocalFolderMetadataCollector
+    DefaultFtpClient,
+    LocalDirectory,
+)
+from metabolights_utils.provider.ftp.folder_metadata_collector import (
+    FtpFolderMetadataCollector,
+)
+from metabolights_utils.provider.local_folder_metadata_collector import (
+    LocalFolderMetadataCollector,
+)
 from metabolights_utils.provider.study_provider import (
-    AbstractDbMetadataCollector, AbstractFolderMetadataCollector,
-    MetabolightsStudyProvider)
-from metabolights_utils.provider.submission_model import (APIResponse,
-                                                          FtpUploadDetails,
-                                                          PolicyResultResponse,
-                                                          ValidationMessage,
-                                                          ValidationReport,
-                                                          ValidationResponse,
-                                                          WorkerTaskStatus)
-from metabolights_utils.provider.utils import (download_file_from_rest_api,
-                                               is_metadata_file,
-                                               is_metadata_filename_pattern,
-                                               rest_api_get)
+    AbstractDbMetadataCollector,
+    AbstractFolderMetadataCollector,
+    MetabolightsStudyProvider,
+)
+from metabolights_utils.provider.submission_model import (
+    APIResponse,
+    FtpUploadDetails,
+    PolicyResultResponse,
+    ValidationMessage,
+    ValidationReport,
+    ValidationResponse,
+    WorkerTaskStatus,
+)
+from metabolights_utils.provider.utils import (
+    download_file_from_rest_api,
+    is_metadata_file,
+    is_metadata_filename_pattern,
+    rest_api_get,
+)
 from metabolights_utils.utils.filename_utils import join_path
 
 
@@ -136,7 +151,6 @@ class MetabolightsSubmissionRepository:
                 delete_unlisted_metadata_files=True,
             )
             if result.success:
-
                 messages.append(
                     InfoMessage(
                         short="Downloaded metadata file with response",
@@ -325,7 +339,6 @@ class MetabolightsSubmissionRepository:
         user_api_token: Union[str, None] = None,
         timeout: int = 5,
     ) -> Tuple[Union[None, FtpUploadDetails], str]:
-
         headers = {}
         if not user_api_token:
             user_api_token, error = self.get_api_token()
@@ -503,8 +516,7 @@ class MetabolightsSubmissionRepository:
         rest_api_base_url: Union[None, str] = None,
         api_token: Union[None, str] = None,
     ):
-
-        sub_path = f"/study-model/validation"
+        sub_path = "/study-model/validation"
         auth_sub_path = "/auth/login-with-token"
         provider = MetabolightsStudyProvider(
             db_metadata_collector=None,
@@ -742,7 +754,7 @@ class MetabolightsSubmissionRepository:
         else:
             return None, error
 
-        sub_path = f"/studies/create"
+        sub_path = "/studies/create"
         url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
 
         try:
@@ -849,7 +861,6 @@ class MetabolightsSubmissionRepository:
         override_local_files: bool = False,
         delete_unlisted_metadata_files: bool = True,
     ) -> LocalDirectory:
-
         api_header, error = self.get_api_token()
         headers = {}
         if api_header:
@@ -983,7 +994,6 @@ class MetabolightsSubmissionRepository:
         study_id: str,
         user_api_token: Union[str, None] = None,
     ) -> Tuple[Union[StudyResponse, None], Union[None, str]]:
-
         response, error = self.list_study_directory(
             study_id=study_id, user_api_token=user_api_token
         )
@@ -1110,7 +1120,6 @@ class MetabolightsSubmissionRepository:
         folder_index_file_path: Union[str, None] = None,
         rebuild_folder_index_file: bool = False,
     ) -> Tuple[Union[None, StudyFolderMetadata], List[GenericMessage]]:
-
         if not study_id:
             return None, [
                 GenericMessage(type=GenericMessageType.ERROR, short="Invalid study_id")

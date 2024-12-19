@@ -4,9 +4,11 @@ from typing import Union
 
 import click
 
-from metabolights_utils.commands.submission.model import (FtpLoginCredentials,
-                                                          LoginCredentials,
-                                                          RestApiCredentials)
+from metabolights_utils.commands.submission.model import (
+    FtpLoginCredentials,
+    LoginCredentials,
+    RestApiCredentials,
+)
 from metabolights_utils.provider import definitions
 
 

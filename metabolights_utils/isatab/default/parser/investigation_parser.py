@@ -8,16 +8,22 @@ from typing import Callable, Dict, List, Tuple, Union
 from pydantic import BaseModel
 from pydantic.alias_generators import to_snake
 
-from metabolights_utils.isatab.default.parser.common import \
-    read_investigation_file
+from metabolights_utils.isatab.default.parser.common import read_investigation_file
 from metabolights_utils.models.isa import investigation_file
 from metabolights_utils.models.isa.common import (
-    INVESTIGATION_FILE_INITIAL_ROWS, INVESTIGATION_FILE_INITIAL_ROWS_SET,
-    INVESTIGATION_FILE_SECTION_NAMES, INVESTIGATION_FILE_STUDY_ROWS,
-    INVESTIGATION_FILE_STUDY_ROWS_SET, Comment, IsaAbstractModel)
-from metabolights_utils.models.isa.investigation_file import (BaseSection,
-                                                              Investigation,
-                                                              Study)
+    INVESTIGATION_FILE_INITIAL_ROWS,
+    INVESTIGATION_FILE_INITIAL_ROWS_SET,
+    INVESTIGATION_FILE_SECTION_NAMES,
+    INVESTIGATION_FILE_STUDY_ROWS,
+    INVESTIGATION_FILE_STUDY_ROWS_SET,
+    Comment,
+    IsaAbstractModel,
+)
+from metabolights_utils.models.isa.investigation_file import (
+    BaseSection,
+    Investigation,
+    Study,
+)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 
@@ -33,7 +39,7 @@ def parse_investigation_file_content(
     fix_unicode_exceptions: bool = False,
 ) -> Tuple[Investigation, List[ParserMessage]]:
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with pathlib.Path(file_path).open("r", encoding="utf-8") as f:
             model = parser(f, file_path, messages=messages)
             logger.debug("%s is loaded.", file_path)
             return model, messages
@@ -41,7 +47,7 @@ def parse_investigation_file_content(
         logger.warning("Unicode decode error for file %s: %s", file_path, str(ex))
         if fix_unicode_exceptions:
             try:
-                with open(file_path, "r", encoding="latin-1") as f:
+                with pathlib.Path(file_path).open("r", encoding="latin-1") as f:
                     model = parser(f, file_path, messages=messages)
                     message = ParserMessage(
                         short="File is read with latin-1 encoding",
@@ -115,7 +121,7 @@ def get_investigation(
     study_parts_index_map = []
     study_parts_index_map = []
     ignore_comments = []
-    inital_part_comments = {}
+    initial_part_comments = {}
     study_part_comment = {}
     study_part_comment_list = []
     is_study_part = False
@@ -131,7 +137,7 @@ def get_investigation(
             and isinstance(file_path, pathlib.Path)
             or isinstance(file_path, str)
         ):
-            with open(str(file_path), "r", encoding="utf-8") as f:
+            with pathlib.Path(file_path).open("r", encoding="utf-8") as f:
                 result: Dict[int, Dict[int, str]] = read_investigation_file(f, messages)
 
     if result is None:
@@ -178,7 +184,7 @@ def get_investigation(
             if index_string.startswith("Comment"):
                 if not is_study_part:
                     is_valid, message_detail = add_line_comment(
-                        line, index_string, current_section, inital_part_comments, tab
+                        line, index_string, current_section, initial_part_comments, tab
                     )
                 else:
                     is_valid, message_detail = add_line_comment(
@@ -201,7 +207,6 @@ def get_investigation(
                         detail=f"{index_string}",
                     )
                 )
-                message.line = str(line)
                 continue
 
         if re.match(r"^[A-Z][A-Z0-9 ]+[A-Z0-9]$", index_string):
@@ -272,7 +277,7 @@ def get_investigation(
         initial_part_index_map,
         tab,
         studies,
-        inital_part_comments,
+        initial_part_comments,
         messages=messages,
     )
     return investigation
@@ -636,16 +641,16 @@ def assign_by_field_name(
                                 separator = item_field_definition["seperator"]
                             attribute_key = to_snake(item_key)
                             item_val = getattr(instance, attribute_key) or ""
-                            seperated_values = item_val.split(separator)
-                            for _ in range(len(seperated_values)):
+                            separated_values = item_val.split(separator)
+                            for _ in range(len(separated_values)):
                                 instance_count = len(new_instances)
-                                values_count = len(seperated_values)
+                                values_count = len(separated_values)
                                 if instance_count < values_count:
                                     for _ in range(instance_count, values_count):
                                         new_instances.append(ref_class())
                                 for j in range(values_count):
                                     set_value(
-                                        new_instances[j], item_key, seperated_values[j]
+                                        new_instances[j], item_key, separated_values[j]
                                     )
                         count = len(new_instances)
                         for i in range(len(new_instances)):

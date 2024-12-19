@@ -93,7 +93,6 @@ def test_convert_html_to_plain_text_01():
 
 
 def test_split_to_lines_01():
-
     result = split_to_lines(None)
     assert len(result) == 0
 

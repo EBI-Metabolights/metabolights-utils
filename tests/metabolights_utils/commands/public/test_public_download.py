@@ -9,7 +9,6 @@ from metabolights_utils.commands.public.public_download import public_download
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])
 def test_public_download_01(mocker: MockerFixture, study_id: str):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_download.MetabolightsFtpRepository",
@@ -37,7 +36,6 @@ def test_public_download_01(mocker: MockerFixture, study_id: str):
 
 @pytest.mark.parametrize("study_id", ["MTBLS1", "MTBLS60"])
 def test_public_download_02(mocker: MockerFixture, study_id: str):
-
     mock_repository = MagicMock()
     mocker.patch(
         "metabolights_utils.commands.public.public_download.MetabolightsFtpRepository",

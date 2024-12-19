@@ -1,19 +1,23 @@
-import os
 import re
 from functools import partial
 from io import IOBase
+from pathlib import Path
 from typing import Callable, List, Tuple, Union
 
 from metabolights_utils.isatab.default.parser.common import (
-    SelectedTsvFileContent, TsvFileFilterOption, read_table_file)
+    SelectedTsvFileContent,
+    TsvFileFilterOption,
+    read_table_file,
+)
 from metabolights_utils.models.isa.common import IsaTableColumn, IsaTableFile
-from metabolights_utils.models.isa.enums import (ColumnsStructure,
-                                                 IsaTableAdditionalColumn)
+from metabolights_utils.models.isa.enums import (
+    ColumnsStructure,
+    IsaTableAdditionalColumn,
+)
 from metabolights_utils.models.parser.common import ParserMessage
 from metabolights_utils.models.parser.enums import ParserMessageType
 from metabolights_utils.tsv.sort import TsvFileSortOption
-from metabolights_utils.utils.hash_utils import \
-    MetabolightsHashUtils as HashUtils
+from metabolights_utils.utils.hash_utils import MetabolightsHashUtils as HashUtils
 
 
 def fix_isa_table_file(
@@ -27,8 +31,9 @@ def fix_isa_table_file(
 ):
     if not fix_new_lines_in_cells and not fix_empty_rows:
         return
-    basename = os.path.basename(file_path)
-    with open(file_path, "r", encoding=read_encoding) as f:
+    file = Path(file_path)
+    basename = file.name
+    with file.open("r", encoding=read_encoding) as f:
         file_content = f.read()
         find_empty_lines = None
         find_new_lines_in_cells = None
@@ -74,7 +79,7 @@ def fix_isa_table_file(
                     file_content = new_file_content
 
         if find_empty_lines or find_new_lines_in_cells:
-            with open(file_path, "w", encoding=write_encoding) as f:
+            with file.open("w", encoding=write_encoding) as f:
                 f.write(file_content)
 
 
@@ -86,10 +91,12 @@ def parse_isa_file_content(
     remove_empty_rows: bool = False,
     remove_new_lines_in_cells: bool = False,
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
+    file = Path(file_path)
     try:
         if remove_empty_rows:
             fix_isa_table_file(file_path, messages, "utf-8", "utf-8")
-        with open(file_path, "r", encoding="utf-8") as f:
+
+        with file.open("r", encoding="utf-8") as f:
             model = parser(f, messages=messages)
             return model, messages
     except UnicodeDecodeError as ex:
@@ -105,7 +112,7 @@ def parse_isa_file_content(
                         remove_new_lines_in_cells,
                         max_iteration_to_fix_new_lines_in_cells=5,
                     )
-                with open(file_path, "r", encoding="latin-1") as f:
+                with file.open("r", encoding="latin-1") as f:
                     model = parser(f, messages=messages)
                     message = ParserMessage(
                         short="File is read with latin-1 encoding",
@@ -149,8 +156,9 @@ def parse_isa_table_sheet_from_fs(
     remove_empty_rows: bool = False,
     remove_new_lines_in_cells: bool = False,
 ) -> Tuple[IsaTableFile, List[ParserMessage]]:
-    basename = os.path.basename(file_path)
-    dirname = os.path.basename(os.path.dirname(file_path))
+    file = Path(file_path)
+    basename = file.name
+    dirname = file.parent.name
     messages: List[ParserMessage] = []
     if not file_path:
         message = ParserMessage(
@@ -160,7 +168,7 @@ def parse_isa_table_sheet_from_fs(
         messages.append(message)
         return IsaTableFile(), messages
 
-    if not os.path.exists(file_path) or not os.path.isfile(file_path):
+    if not file.exists() or not file.is_file():
         message = ParserMessage(
             short="File does not exist or it is not a file",
             type=ParserMessageType.CRITICAL,
@@ -171,14 +179,14 @@ def parse_isa_table_sheet_from_fs(
         messages.append(message)
         return IsaTableFile(), messages
 
-    file_size = os.stat(file_path).st_size
+    file_size = file.stat().st_size
     if file_size == 0:
         message = ParserMessage(short="File is empty", type=ParserMessageType.CRITICAL)
         message.detail = f"File is empty: {basename} in {dirname}"
         messages.append(message)
         return IsaTableFile(), messages
 
-    basename = os.path.basename(file_path)
+    basename = file.name
     parser = partial(
         get_isa_table_file,
         file_name=basename,
@@ -200,7 +208,7 @@ def parse_isa_table_sheet_from_fs(
     )
     isa_table_file: IsaTableFile = table
     if isa_table_file:
-        if os.path.exists(file_path):
+        if file.exists():
             isa_table_file.sha256_hash = HashUtils.sha256sum(file_path)
         if isa_table_file.table:
             messages.extend(read_messages)

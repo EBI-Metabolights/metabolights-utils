@@ -133,7 +133,6 @@ def define_type(schema: Dict[str, Any], desc: Dict[str, Any]):
                 sub_type = define_type(schema, schema["$defs"][child])
                 _type = f"{_type} {sub_type}".strip()
     else:
-
         if _type == "object" and "properties" not in desc:
             _type = "dictionary of"
         elif _type == "array":
@@ -178,7 +177,6 @@ def define_type(schema: Dict[str, Any], desc: Dict[str, Any]):
                     prefix = "array of"
                     _type = f"{_type} {prefix} {child}".strip()
                 elif "$ref" in additional:
-
                     child_name = additional["$ref"].split("/")[-1]
                     child = define_type(schema, schema["$defs"][child_name])
                     prefix = "dictionary of"
@@ -223,7 +221,6 @@ def find_property(schema: Dict[str, Any], search_str: str):
         if "isatab_config" in property_name:
             continue
         if property_name in current_properties:
-
             definition = current_properties[property_name]
             _type = define_type(schema, definition)
             if _type and _type.split()[-1]:

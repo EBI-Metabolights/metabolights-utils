@@ -4,8 +4,9 @@ from typing import Union
 import click
 
 from metabolights_utils.provider import definitions
-from metabolights_utils.provider.submission_repository import \
-    MetabolightsSubmissionRepository
+from metabolights_utils.provider.submission_repository import (
+    MetabolightsSubmissionRepository,
+)
 
 VALID_PARAMETERS = {
     "LC-MS": (

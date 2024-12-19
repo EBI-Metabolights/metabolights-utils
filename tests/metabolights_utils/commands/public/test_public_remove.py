@@ -45,7 +45,6 @@ def test_public_remove_02(mocker: MockerFixture, study_id: str):
 
 @pytest.mark.parametrize("study_id", ["MTBLS1"])
 def test_public_remove_03(mocker: MockerFixture, study_id: str):
-
     mocker.patch(
         "metabolights_utils.commands.public.public_remove.os.path.exists",
         side_effect=FileNotFoundError,
@@ -67,7 +66,6 @@ def test_public_remove_03(mocker: MockerFixture, study_id: str):
 
 @pytest.mark.parametrize("study_id", ["MTBLS1X"])
 def test_public_remove_04(study_id: str):
-
     runner = CliRunner()
 
     result = runner.invoke(public_remove, [study_id])
@@ -78,7 +76,6 @@ def test_public_remove_04(study_id: str):
 
 @pytest.mark.parametrize("study_id", ["MTBLS1"])
 def test_public_remove_05(study_id: str):
-
     runner = CliRunner()
     local_path = f"test-temp/{random.randint(1000000, 9999999)}"
     local_cache_path = f"test-temp/{random.randint(1000000, 9999999)}_tmp"

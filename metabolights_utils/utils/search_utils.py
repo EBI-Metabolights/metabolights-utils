@@ -3,9 +3,9 @@ import logging
 import os
 from typing import List
 
-logger = logging.getLogger(__name__)
-
 from metabolights_utils.utils.filename_utils import join_path
+
+logger = logging.getLogger(__name__)
 
 
 class MetabolightsSearchUtils(object):
