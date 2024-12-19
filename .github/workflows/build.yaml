@@ -30,11 +30,11 @@ jobs:
       run: |
         poetry install
     - name: Ruff format check
-      run: |
-        ruff format --check
+      uses: astral-sh/ruff-action@v2.0.0
+      with:
+        args: "format --check"
     - name: Ruff lint check
-      run: |
-        ruff check
+      uses: astral-sh/ruff-action@v2.0.0
     - name: Test with pytest
       run: |
         poetry run pytest
