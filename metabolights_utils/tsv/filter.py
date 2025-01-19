@@ -167,7 +167,7 @@ class Filter(ABC):
             return int(value)
         elif self.parameter_data_type == FilterDataType.DATETIME:
             pattern = self.filter_option.default_datetime_pattern
-            return datetime.strptime(value, pattern)
+            return datetime.strptime(value, pattern)  # noqa: DTZ007
         if not value:
             return ""
 
@@ -351,7 +351,7 @@ class ValidNumberCustomFilter(CustomFilter):
 class ValidDatetimeCustomFilter(CustomFilter):
     def evaluate(self, row_value: str) -> bool:
         try:
-            value = datetime.strptime(
+            value = datetime.strptime(  # noqa: DTZ007
                 row_value, self.filter_option.default_datetime_pattern
             )
             return True if value else False

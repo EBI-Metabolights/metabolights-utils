@@ -181,7 +181,7 @@ def test_load_study_02(mocker: MockerFixture, study_id: str):
             folder_index_file_path=None,
         )
     except Exception as ex:
-        print(str(ex))
+        raise ex
     finally:
         shutil.rmtree(local_path, ignore_errors=True)
     assert model
@@ -297,8 +297,7 @@ def test_download_study_data_files_01(mocker: MockerFixture):
         )
         assert result.actions
     except Exception as ex:
-        print(str(ex))
-        raise AssertionError("Error while testing download_study_data_files")
+        raise AssertionError("Error while testing download_study_data_files") from ex
     finally:
         shutil.rmtree(local_path, ignore_errors=True)
 
@@ -332,8 +331,9 @@ def test_download_study_metadata_files_01(mocker: MockerFixture):
         )
         assert result.local_files
     except Exception as ex:
-        print(str(ex))
-        raise AssertionError("Error while testing download_study_metadata_files_01")
+        raise AssertionError(
+            "Error while testing download_study_metadata_files_01"
+        ) from ex
     finally:
         shutil.rmtree(local_path, ignore_errors=True)
 
@@ -376,10 +376,9 @@ def test_download_study_metadata_files_02(mocker: MockerFixture):
         assert not result.success
         assert result.message == "test"
     except Exception as ex:
-        print(str(ex))
         raise AssertionError(
             "Error while testing test_download_study_metadata_files_02"
-        )
+        ) from ex
     finally:
         shutil.rmtree(local_path, ignore_errors=True)
 
@@ -408,8 +407,7 @@ def test_list_studies_01(mocker: MockerFixture):
         assert "MTBLS1" in result
         assert not messages
     except Exception as ex:
-        print(str(ex))
-        raise AssertionError("Error while testing list_studies_01")
+        raise AssertionError("Error while testing list_studies_01") from ex
 
 
 def test_list_study_folder_directory_01(mocker: MockerFixture):
@@ -439,8 +437,9 @@ def test_list_study_folder_directory_01(mocker: MockerFixture):
         assert result.files
         assert not result.folders
     except Exception as ex:
-        print(str(ex))
-        raise AssertionError("Error while testing test_list_study_folder_directory_01")
+        raise AssertionError(
+            "Error while testing test_list_study_folder_directory_01"
+        ) from ex
 
 
 def test_get_study_folder_content_01(mocker: MockerFixture):
@@ -488,8 +487,9 @@ def test_get_study_folder_content_01(mocker: MockerFixture):
             index = FolderIndex.model_validate(data)
             assert "FILES/test.raw" in index.content.files
     except Exception as ex:
-        print(str(ex))
-        raise AssertionError("Error while testing test_get_study_folder_content_01")
+        raise AssertionError(
+            "Error while testing test_get_study_folder_content_01"
+        ) from ex
     finally:
         shutil.rmtree(local_path, ignore_errors=True)
 

@@ -274,7 +274,7 @@ class DateTimeSorter(AbstractSorter):
         super().__init__(sort_option, column_idx, column_name_indices, column_indices)
 
     def get_sorted_string(self, value: str) -> datetime:
-        val = datetime.strptime(value, self.sort_option.default_datetime_pattern)
+        val = datetime.strptime(value, self.sort_option.default_datetime_pattern)  # noqa: DTZ007
         return str(int(val.timestamp()))
 
 

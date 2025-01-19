@@ -609,7 +609,7 @@ def test_download_submission_metadata_files_02(
         file_path = study_path / Path(file.file)
         with file_path.open("w", encoding="utf-8") as fw:
             fw.write("test\n")
-        modified = datetime.datetime.strptime(
+        modified = datetime.datetime.strptime(  # noqa: DTZ007
             file.created_at,
             "%Y-%m-%d %H:%M:%S",
         ).timestamp()

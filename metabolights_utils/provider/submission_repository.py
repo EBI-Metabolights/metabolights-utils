@@ -224,7 +224,7 @@ class MetabolightsSubmissionRepository:
         for descriptor in response.study:
             _time = descriptor.created_at
             try:
-                modified = datetime.datetime.strptime(
+                modified = datetime.datetime.strptime(  # noqa: DTZ007
                     _time, "%Y-%m-%d %H:%M:%S"
                 ).timestamp()
             except ValueError:
@@ -913,7 +913,7 @@ class MetabolightsSubmissionRepository:
                     local_modified_time = int(os.path.getmtime(file_path))
                     _time = descriptors[filename].created_at
                     try:
-                        modified = datetime.datetime.strptime(
+                        modified = datetime.datetime.strptime(  # noqa: DTZ007
                             _time, "%Y-%m-%d %H:%M:%S"
                         ).timestamp()
                     except ValueError:
@@ -949,7 +949,7 @@ class MetabolightsSubmissionRepository:
                 try:
                     _time = descriptors[filename].created_at
                     try:
-                        modified = datetime.datetime.strptime(
+                        modified = datetime.datetime.strptime(  # noqa: DTZ007
                             _time, "%Y-%m-%d %H:%M:%S"
                         ).timestamp()
                     except ValueError:

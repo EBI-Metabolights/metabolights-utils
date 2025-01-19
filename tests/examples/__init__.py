@@ -18,4 +18,3 @@ if __name__ == "__main__":
     model, messages = client.load_study_model(
         study_id="MTBLS3", use_only_local_path=True
     )
-    print(result.success)
