@@ -380,7 +380,7 @@ assay_technique_non_protocol_search_columns = {
     "GCxGC-MS": [
         "Parameter Value[Column model 1]",
         "Parameter Value[Column model 2]",
-        "Parameter Value[Column type 1]" "Parameter Value[Column type 2]",
+        "Parameter Value[Column type 1]Parameter Value[Column type 2]",
     ],
     "SPE-IMS-MS": [
         "Parameter Value[SPE-IMS Instrument",

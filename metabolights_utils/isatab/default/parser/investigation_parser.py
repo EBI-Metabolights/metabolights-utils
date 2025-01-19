@@ -231,7 +231,7 @@ def get_investigation(
                 message = ParserMessage(
                     short="Unexpected line in the section", type=ParserMessageType.ERROR
                 )
-                message.detail = f"Unexpected line in {str(line  + 1)}"
+                message.detail = f"Unexpected line in {str(line + 1)}"
                 message.line = str(line)
                 messages.append(message)
                 continue
@@ -255,7 +255,7 @@ def get_investigation(
                     short="Unexpected line in the study section",
                     type=ParserMessageType.ERROR,
                 )
-                message.detail = f"Unexpected line in {str(line  + 1)}"
+                message.detail = f"Unexpected line in {str(line + 1)}"
                 message.line = str(line)
                 messages.append(message)
                 continue

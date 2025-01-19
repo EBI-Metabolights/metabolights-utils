@@ -494,9 +494,7 @@ class MetabolightsSubmissionRepository:
 
         validation_file.parent.mkdir(parents=True, exist_ok=True)
         with validation_file.open("w", encoding="utf-8") as f:
-            f.write(
-                "section\t" "status\t" "message\t" "description\t" "metadata_file\n"
-            )
+            f.write("section\tstatus\tmessage\tdescription\tmetadata_file\n")
             for e in errors:
                 f.write(
                     f"{e.section}\t"

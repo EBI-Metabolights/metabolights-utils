@@ -136,9 +136,9 @@ def test_create_assay_01(mocker: MockerFixture):
 
 
 @pytest.fixture
-def submission_repository() -> (
-    Generator[Tuple[MetabolightsSubmissionRepository, Dict[str, Any]], None, None]
-):
+def submission_repository() -> Generator[
+    Tuple[MetabolightsSubmissionRepository, Dict[str, Any]], None, None
+]:
     credentials_file_path = (
         f"test-temp/mtbls_unit_test_load_study_{random.randint(1000000, 9999999)}_tmp"
     )

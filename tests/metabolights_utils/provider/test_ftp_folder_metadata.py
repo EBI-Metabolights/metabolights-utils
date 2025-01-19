@@ -19,9 +19,9 @@ valid_study_ids = [
 
 
 @pytest.fixture
-def folder_index_file_path() -> (
-    Generator[Tuple[MetabolightsSubmissionRepository, Dict[str, Any]], None, None]
-):
+def folder_index_file_path() -> Generator[
+    Tuple[MetabolightsSubmissionRepository, Dict[str, Any]], None, None
+]:
     folder_index_file_path = (
         f"test-temp/mtbls_folder_index_file_path_{random.randint(1000000, 9999999)}_tmp"
     )

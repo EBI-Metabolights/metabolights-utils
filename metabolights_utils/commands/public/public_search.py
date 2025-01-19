@@ -151,7 +151,7 @@ def print_search_response(
         if "studyId" in item and "title" in item:
             log(f"  - {item['studyId']}: {item['title']}")
         if "contacts" in item:
-            names = [f'{x["firstName"]} {x["lastName"]}' for x in item["contacts"]]
+            names = [f"{x['firstName']} {x['lastName']}" for x in item["contacts"]]
             log(f"\t* Submitters: {', '.join(names)}")
 
         if "description" in item:
