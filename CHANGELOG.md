@@ -1,6 +1,27 @@
 # CHANGELOG
 
 
+## v1.3.11 (2025-01-19)
+
+### Bug Fixes
+
+- Tsv file read fix and lint updates
+  ([`e95246d`](https://github.com/EBI-Metabolights/metabolights-utils/commit/e95246dfbcaa2769753a29f3ff02bbbb91b50099))
+
+### Documentation
+
+- Initial docs folder
+  ([`38e286f`](https://github.com/EBI-Metabolights/metabolights-utils/commit/38e286f35f847ad74bd11cab037bb8e6bca20f85))
+
+### Refactoring
+
+- Ruff lint fixes
+  ([`4f4d601`](https://github.com/EBI-Metabolights/metabolights-utils/commit/4f4d601da90534f0ddbaa142ef79c0d92f5ad7e4))
+
+- Ruff lint fixes
+  ([`7be0b4e`](https://github.com/EBI-Metabolights/metabolights-utils/commit/7be0b4e062be57be5cb27f0fc7c87704e64cfd84))
+
+
 ## v1.3.10 (2024-12-19)
 
 
@@ -16,11 +37,11 @@
 
 ### Refactoring
 
-- File formats are updated with isort and black.
-  ([`187b100`](https://github.com/EBI-Metabolights/metabolights-utils/commit/187b1004332e3fae5fcce3c01a05c3b64b561d83))
-
 - Column add method is defined.
   ([`428b7ff`](https://github.com/EBI-Metabolights/metabolights-utils/commit/428b7ffae6363298475cb02e8d00009840ceedb8))
+
+- File formats are updated with isort and black.
+  ([`187b100`](https://github.com/EBI-Metabolights/metabolights-utils/commit/187b1004332e3fae5fcce3c01a05c3b64b561d83))
 
 - Refactor code to export modules
   ([`cadbafd`](https://github.com/EBI-Metabolights/metabolights-utils/commit/cadbafdb1fea5f95556a04f1855af287bb2935c0))
@@ -57,11 +78,11 @@
 
 ### Bug Fixes
 
-- Update search pattern to find new lines in cells
-  ([`bcf703a`](https://github.com/EBI-Metabolights/metabolights-utils/commit/bcf703acad1cbc173e56754aa94dad8742535468))
-
 - Ontology source parse errors
   ([`1d68f25`](https://github.com/EBI-Metabolights/metabolights-utils/commit/1d68f25aa5efc70fda6fa982c3f887b64069b275))
+
+- Update search pattern to find new lines in cells
+  ([`bcf703a`](https://github.com/EBI-Metabolights/metabolights-utils/commit/bcf703acad1cbc173e56754aa94dad8742535468))
 
 
 ## v1.3.2 (2024-11-20)
@@ -154,14 +175,14 @@
 
 ### Bug Fixes
 
-- Rollback @id field and update investigation tsv file write method
-  ([`ebf17b4`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ebf17b47b70a53d35cc997451ff2ff3b574b9eb8))
+- Id field is added to base class
+  ([`ef682f4`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ef682f45b9ec8e5a4c26790c339a1d78c87bace3))
 
 - Investigation file rows fixed
   ([`b664483`](https://github.com/EBI-Metabolights/metabolights-utils/commit/b664483025d9d1f938984f916d2c9771e41625d4))
 
-- Id field is added to base class
-  ([`ef682f4`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ef682f45b9ec8e5a4c26790c339a1d78c87bace3))
+- Rollback @id field and update investigation tsv file write method
+  ([`ebf17b4`](https://github.com/EBI-Metabolights/metabolights-utils/commit/ebf17b47b70a53d35cc997451ff2ff3b574b9eb8))
 
 ### Refactoring
 
@@ -230,12 +251,6 @@
 
 ## v1.1.0 (2024-06-20)
 
-### Cli
-
-- Submission delete-assay command is added. After deleting assay file, command downloads the latest
-  metadata files from MetaboLights study.
-  ([`f6b1ff5`](https://github.com/EBI-Metabolights/metabolights-utils/commit/f6b1ff580bc29484f392e73128d4985fe8ad3037))
-
 ### Documentation
 
 - Readme document and command message updates.
@@ -264,8 +279,8 @@
 
 ### Continuous Integration
 
-- Semantic versioning configuration updates
-  ([`085f5f5`](https://github.com/EBI-Metabolights/metabolights-utils/commit/085f5f5778900ccd6e89d66882bd02cca14d8be6))
-
 - Github actions to run unit tests
   ([`3529cd7`](https://github.com/EBI-Metabolights/metabolights-utils/commit/3529cd710eec408e5b266e3e638b91ce5bab84e3))
+
+- Semantic versioning configuration updates
+  ([`085f5f5`](https://github.com/EBI-Metabolights/metabolights-utils/commit/085f5f5778900ccd6e89d66882bd02cca14d8be6))

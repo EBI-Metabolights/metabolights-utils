@@ -168,7 +168,7 @@ from metabolights_utils import (
     utils,
 )
 
-__VERSION__ = "1.3.10"
+__VERSION__ = "1.3.11"
 
 __all__ = [
     "commands",
