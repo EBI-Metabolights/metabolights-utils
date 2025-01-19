@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from typing import Union
 
 import click
@@ -13,7 +13,7 @@ from metabolights_utils.provider.utils import is_metadata_filename_pattern
 @click.option(
     "--local_path",
     "-p",
-    default=definitions.default_local_repority_root_path,
+    default=definitions.default_local_repository_root_path,
     help="Local storage root path. Folder will be created if it does not exist.",
 )
 @click.option(
@@ -90,7 +90,7 @@ def public_download(
 
     if result.success:
         if result.actions:
-            local_study_path = os.path.join(local_path, study_id)
+            local_study_path = Path(local_path) / Path(study_id)
             click.echo(
                 click.style(f"Downloaded files on {local_study_path}", fg="green")
             )

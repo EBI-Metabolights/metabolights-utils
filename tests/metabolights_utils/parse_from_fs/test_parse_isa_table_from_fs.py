@@ -126,9 +126,8 @@ def test_parse_isa_table_sheet_from_fs_invalid_columns_03():
         assert isa_table
         assert len(messages) >= 2
         for item in messages:
-            assert "Removed" in item.detail
+            assert "Removed" in item.short
     except Exception as e:
-        print(e)
         raise e
     finally:
         if os.path.exists(temp_path):

@@ -86,7 +86,7 @@ def submission_login(
             json_data = credentials.model_dump()
             with open(credentials_file_path, "w", encoding="utf-8") as f:
                 json.dump(json_data, f, indent=4)
-            click.echo("User credentials are updated succesfully.")
+            click.echo("User credentials are updated successfully.")
         else:
             click.echo("User credentials are not updated.")
     except Exception as ex:

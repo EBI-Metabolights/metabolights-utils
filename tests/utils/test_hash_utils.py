@@ -1,6 +1,8 @@
-import os
 import shutil
 import uuid
+from pathlib import Path
+
+import pytest
 
 from metabolights_utils.utils.audit_utils import MetabolightsAuditUtils
 from metabolights_utils.utils.hash_utils import (
@@ -8,6 +10,17 @@ from metabolights_utils.utils.hash_utils import (
     IsaMetadataFolderHash,
     MetabolightsHashUtils,
 )
+
+
+@pytest.fixture(scope="function")
+def tmp_path():
+    tmp_path = None
+    try:
+        tmp_path = Path(f"test-temp/test_{uuid.uuid4().hex}")
+        yield str(tmp_path)
+    finally:
+        if tmp_path and tmp_path.exists():
+            shutil.rmtree(str(tmp_path))
 
 
 def test_get_sha256sum_01():
@@ -49,57 +62,49 @@ def test_get_isa_metadata_folder_hash_02():
     assert len(hash_val.files_sha256) > 0
 
 
-def test_get_isa_metadata_folder_hash_03():
+def test_get_isa_metadata_folder_hash_03(tmp_path: str):
     """
     additional isa medata files cause different hash
     """
-    tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
-    try:
-        source_path = "tests/test-data/MTBLS1"
-        target_path = MetabolightsAuditUtils.copy_isa_metadata_files(
-            src_folder_path=source_path, target_folder_path=tmp_path
-        )
-        assert target_path == tmp_path
-        assert len(os.listdir(tmp_path)) > 0
 
-        hash_val: IsaMetadataFolderHash = (
-            MetabolightsHashUtils.get_isa_metadata_folder_hash(tmp_path)
-        )
-        inv_file_path = os.path.join(tmp_path, "i_Investigation.txt")
-        target_file_path = os.path.join(tmp_path, "i_Investigation_2.txt")
-        shutil.copy(inv_file_path, target_file_path)
-        hash_val2: IsaMetadataFolderHash = (
-            MetabolightsHashUtils.get_isa_metadata_folder_hash(tmp_path)
-        )
-        assert hash_val.folder_sha256 != hash_val2.folder_sha256
-    finally:
-        if os.path.exists(tmp_path):
-            shutil.rmtree(tmp_path)
+    source_path = "tests/test-data/MTBLS1"
+    target_path = MetabolightsAuditUtils.copy_isa_metadata_files(
+        src_folder_path=source_path, target_folder_path=tmp_path
+    )
+    assert target_path == tmp_path
+    assert len(list(Path(tmp_path).iterdir())) > 0
+
+    hash_val: IsaMetadataFolderHash = (
+        MetabolightsHashUtils.get_isa_metadata_folder_hash(tmp_path)
+    )
+    inv_file_path = str(Path(tmp_path) / Path("i_Investigation.txt"))
+    target_file_path = str(Path(tmp_path) / Path("i_Investigation_2.txt"))
+    shutil.copy(inv_file_path, target_file_path)
+    hash_val2: IsaMetadataFolderHash = (
+        MetabolightsHashUtils.get_isa_metadata_folder_hash(tmp_path)
+    )
+    assert hash_val.folder_sha256 != hash_val2.folder_sha256
 
 
-def test_get_isa_metadata_folder_hash_04():
+def test_get_isa_metadata_folder_hash_04(tmp_path: str):
     """
     renamed files cause different hash
     """
-    tmp_path = f"test-temp/test_{uuid.uuid4().hex}"
-    try:
-        source_path = "tests/test-data/MTBLS1"
-        target_path = MetabolightsAuditUtils.copy_isa_metadata_files(
-            src_folder_path=source_path, target_folder_path=tmp_path
-        )
-        assert target_path == tmp_path
-        assert len(os.listdir(tmp_path)) > 0
 
-        hash_val: IsaMetadataFolderHash = (
-            MetabolightsHashUtils.get_isa_metadata_folder_hash(tmp_path)
-        )
-        inv_file_path = os.path.join(tmp_path, "i_Investigation.txt")
-        target_file_path = os.path.join(tmp_path, "i_Investigation_2.txt")
-        shutil.move(inv_file_path, target_file_path)
-        hash_val2: IsaMetadataFolderHash = (
-            MetabolightsHashUtils.get_isa_metadata_folder_hash(tmp_path)
-        )
-        assert hash_val.folder_sha256 != hash_val2.folder_sha256
-    finally:
-        if os.path.exists(tmp_path):
-            shutil.rmtree(tmp_path)
+    source_path = "tests/test-data/MTBLS1"
+    target_path = MetabolightsAuditUtils.copy_isa_metadata_files(
+        src_folder_path=source_path, target_folder_path=tmp_path
+    )
+    assert target_path == tmp_path
+    assert len(list(Path(tmp_path).iterdir())) > 0
+
+    hash_val: IsaMetadataFolderHash = (
+        MetabolightsHashUtils.get_isa_metadata_folder_hash(tmp_path)
+    )
+    inv_file_path = str(Path(tmp_path) / Path("i_Investigation.txt"))
+    target_file_path = str(Path(tmp_path) / Path("i_Investigation_2.txt"))
+    shutil.move(inv_file_path, target_file_path)
+    hash_val2: IsaMetadataFolderHash = (
+        MetabolightsHashUtils.get_isa_metadata_folder_hash(tmp_path)
+    )
+    assert hash_val.folder_sha256 != hash_val2.folder_sha256

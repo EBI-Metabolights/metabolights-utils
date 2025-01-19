@@ -1,4 +1,5 @@
 import glob
+import logging
 import os
 import re
 import subprocess
@@ -11,6 +12,8 @@ from metabolights_utils.models.metabolights.model import (
 )
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.study_provider import AbstractFolderMetadataCollector
+
+logger = logging.getLogger(__name__)
 
 
 class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
@@ -167,11 +170,11 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                 size_str = result.stdout.split()[0]
                 return int(size_str) * 1000
             else:
-                print(f"Error: {result.stderr.strip()}")
+                logger.error("Error", result.stderr.strip())
                 return None
         except FileNotFoundError as e:
-            print(f"An error occurred: {e}")
+            logger.exception(e)
             return None
         except Exception as e:
-            print(f"An error occurred: {e}")
+            logger.exception(e)
             return None

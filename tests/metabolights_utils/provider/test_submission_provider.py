@@ -3,6 +3,7 @@ import json
 import os
 import random
 import shutil
+from pathlib import Path
 from typing import Any, Dict, Generator, Tuple
 from unittest.mock import MagicMock
 
@@ -444,10 +445,11 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
         "metabolights_utils.provider.submission_repository.httpx.post",
         return_value=HttpxResponse(
             status_code=201,
-            text=open(
-                "tests/test-data/rest-api-test-data/validation_task_started_response.json",
-                encoding="utf-8",
-            ).read(),
+            text=Path(
+                "tests/test-data/rest-api-test-data/validation_task_started_response.json"
+            )
+            .open(encoding="utf-8")
+            .read(),
         ),
     )
     mocker.patch(
@@ -455,33 +457,37 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
         side_effect=[
             HttpxResponse(
                 status_code=200,
-                text=open(
-                    "tests/test-data/rest-api-test-data/validation_task_success_response.json",
+                text=Path(
+                    "tests/test-data/rest-api-test-data/validation_task_success_response.json"
+                )
+                .open(
                     encoding="utf-8",
-                ).read(),
+                )
+                .read(),
             ),
             HttpxResponse(
                 status_code=200,
-                text=open(
-                    "tests/test-data/rest-api-test-data/validation_report.json",
-                    encoding="utf-8",
-                ).read(),
+                text=Path("tests/test-data/rest-api-test-data/validation_report.json")
+                .open(encoding="utf-8")
+                .read(),
             ),
         ],
     )
 
     repository, credentials = submission_repository
 
-    validation_file_path = f"test-temp/mtbls_unit_test_validation_{random.randint(1000000, 9999999)}_tmp.json"
+    validation_file_path = Path(
+        f"test-temp/mtbls_unit_test_validation_{random.randint(1000000, 9999999)}_tmp.json"
+    )
     try:
         success, message = repository.validate_study(
             study_id=study_id,
-            validation_file_path=validation_file_path,
+            validation_file_path=str(validation_file_path),
         )
         assert success
     finally:
-        if os.path.exists(validation_file_path):
-            os.remove(validation_file_path)
+        if validation_file_path.exists():
+            validation_file_path.unlink(missing_ok=True)
 
 
 @pytest.mark.parametrize("study_id", ["MTBLS1"])
@@ -596,11 +602,12 @@ def test_download_submission_metadata_files_02(
         )
         return response, None
 
-    study_path = os.path.join(repository.local_storage_root_path, study_id)
-    os.makedirs(study_path, exist_ok=True)
+    study_path = Path(repository.local_storage_root_path) / Path(study_id)
+    # os.makedirs(study_path, exist_ok=True)
+    study_path.mkdir(parents=True, exist_ok=True)
     for file in list_isa_metadata_files()[0].study:
-        file_path = os.path.join(study_path, file.file)
-        with open(file_path, "w", encoding="utf-8") as fw:
+        file_path = study_path / Path(file.file)
+        with file_path.open("w", encoding="utf-8") as fw:
             fw.write("test\n")
         modified = datetime.datetime.strptime(
             file.created_at,

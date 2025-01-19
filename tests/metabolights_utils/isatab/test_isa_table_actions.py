@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 from typing import Dict, List
 
 from metabolights_utils.tsv.model import (
@@ -36,13 +37,15 @@ def test_add_row_action_01():
     action: TsvAddRowsAction = TsvAddRowsAction(
         new_row_indices=[2, 5, 7, 8170, 8171, 8172, 8173], row_data=row_data
     )
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
-    path_target = os.path.realpath(
-        join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
+    path_target = str(
+        Path(
+            join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
+        ).resolve()
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     isa_table_updater = TsvFileUpdater()
     result: TsvActionReport = isa_table_updater.apply_actions(
@@ -82,15 +85,15 @@ def test_add_row_action_01():
 def test_move_row_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     move_row_action: TsvActionReport = TsvMoveRowAction(
         source_row_index=4, new_row_index=1
@@ -107,15 +110,15 @@ def test_move_row_action_01():
 def test_move_row_action_02():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     move_row_action: TsvActionReport = TsvMoveRowAction(
         source_row_index=10, new_row_index=0
@@ -132,15 +135,15 @@ def test_move_row_action_02():
 def test_move_row_action_03():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     move_row_action: TsvActionReport = TsvMoveRowAction(
         source_row_index=2, new_row_index=8166
@@ -157,15 +160,15 @@ def test_move_row_action_03():
 def test_move_row_action_04():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     move_row_action: TsvActionReport = TsvMoveRowAction(
         source_row_index=8166, new_row_index=20
@@ -182,15 +185,15 @@ def test_move_row_action_04():
 def test_move_row_action_05():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     move_row_action: TsvActionReport = TsvMoveRowAction(
         source_row_index=20, new_row_index=21
@@ -207,15 +210,15 @@ def test_move_row_action_05():
 def test_move_row_action_06():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
-    path_target = os.path.realpath(
-        os.path.realpath(
+    path_target = str(
+        Path(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
-        )
+        ).resolve()
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     move_row_action: TsvActionReport = TsvMoveRowAction(
         source_row_index=25, new_row_index=24
@@ -232,15 +235,15 @@ def test_move_row_action_06():
 def test_move_row_action_07():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     move_row_action: TsvActionReport = TsvMoveRowAction(
         source_row_index=11, new_row_index=11
@@ -257,15 +260,15 @@ def test_move_row_action_07():
 def test_copy_row_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     copy_row_action: TsvActionReport = TsvCopyRowAction(
         source_row_index=7, target_row_indices=[0, 1, 2, 3, 4, 5]
@@ -282,15 +285,15 @@ def test_copy_row_action_01():
 def test_add_column_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     columns: Dict[int, TsvColumnData] = {}
     cell_default_values: Dict[int, str] = {}
@@ -312,15 +315,15 @@ def test_add_column_action_01():
 def test_delete_column_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     columns: Dict[int, TsvColumnData] = {}
     cell_default_values: Dict[int, str] = {}
@@ -342,15 +345,15 @@ def test_delete_column_action_01():
 def test_move_column_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     columns: Dict[int, TsvColumnData] = {}
     cell_default_values: Dict[int, str] = {}
@@ -374,15 +377,15 @@ def test_move_column_action_01():
 def test_copy_column_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     copy_column_action: TsvActionReport = TsvCopyColumnAction(
         source_column_index=1,
@@ -401,15 +404,15 @@ def test_copy_column_action_01():
 def test_update_column_header_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     update_column_header_action: TsvActionReport = TsvUpdateColumnHeaderAction(
         new_headers={7: "Characteristics[Variant].2", 8: "Term Source REF.2"},
@@ -426,15 +429,15 @@ def test_update_column_header_action_01():
 def test_update_column_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
     path_target = os.path.realpath(
         os.path.realpath(
             join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
         )
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     columns: Dict[int, TsvColumnData] = {}
     column = TsvColumnData(
@@ -459,13 +462,15 @@ def test_update_column_action_01():
 def test_update_cells_action_01():
     sha = "add85bc3770cda13450b6fd95fe1735fe6337553076ed7cd269fc8163e002fac"
     isa_table_updater = TsvFileUpdater()
-    path_original = os.path.realpath(
-        join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")
+    path_original = str(
+        Path(join_path("tests/test-data/test-data-01/s_MTBLS66_test_01.txt")).resolve()
     )
-    path_target = os.path.realpath(
-        join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
+    path_target = str(
+        Path(
+            join_path("test-temp/test-data/test-data-01/s_MTBLS66_test_01_result.txt")
+        ).resolve()
     )
-    os.makedirs(os.path.dirname(path_target), exist_ok=True)
+    Path(path_target).parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(path_original, path_target)
     cell1 = TsvCellData(row_index=1, column_index=2, value="Cell Update")
     cell2 = TsvCellData(row_index=2, column_index=1, value="Cell Update2")

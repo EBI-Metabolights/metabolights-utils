@@ -61,7 +61,9 @@ class MetabolightsFtpRepository(DefaultFtpClient):
         )
         self.local_storage_root_path = local_storage_root_path
         if not self.local_storage_root_path:
-            self.local_storage_root_path = definitions.default_local_repority_root_path
+            self.local_storage_root_path = (
+                definitions.default_local_repository_root_path
+            )
         self.local_storage_root_path = join_path(self.local_storage_root_path)
         logger.debug(
             "local_storage_root_path is set to path: %s",

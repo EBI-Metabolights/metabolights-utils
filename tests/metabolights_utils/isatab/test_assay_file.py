@@ -1,4 +1,3 @@
-import os
 import pathlib
 import shutil
 from enum import Enum
@@ -86,33 +85,33 @@ def test_assay_metadata_file_success_02():
     )
     helper: IsaTableFileReader = Reader.get_assay_file_reader()
     # with default results_per_page value - 100
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         page_count: int = helper.get_total_pages(file_buffer_or_path=file_buffer)
         assert page_count == 2
 
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         page_count = helper.get_total_pages(
             file_buffer_or_path=file_buffer, results_per_page=20
         )
         assert page_count == 7
 
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         total_rows_count = helper.get_total_row_count(file_buffer_or_path=file_buffer)
         assert total_rows_count == 132
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_headers(
             file_buffer_or_path=file_buffer
         )
         assert len(result.parser_report.messages) == 0
 
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_rows(
             file_buffer_or_path=file_buffer, limit=88
         )
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 88
 
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_rows(
             file_buffer_or_path=file_buffer,
             offset=100,
@@ -120,7 +119,7 @@ def test_assay_metadata_file_success_02():
         )
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 32
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer_or_path=file_buffer,
             page=2,
@@ -128,7 +127,7 @@ def test_assay_metadata_file_success_02():
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 32
 
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer_or_path=file_buffer,
             page=2,
@@ -137,7 +136,7 @@ def test_assay_metadata_file_success_02():
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 50
 
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer_or_path=file_buffer,
             page=2,
@@ -163,7 +162,7 @@ def test_assay_metadata_file_success_03():
     helper: IsaTableFileReader = Reader.get_assay_file_reader()
     # with default results_per_page value - 100
 
-    with open(file_path, "r", encoding="utf-8") as file_buffer:
+    with file_path.open("r", encoding="utf-8") as file_buffer:
         result: IsaTableFileReaderResult = helper.get_page(
             file_buffer_or_path=file_buffer,
             page=2,
@@ -183,16 +182,16 @@ def test_assay_metadata_file_read_write():
     path_original = pathlib.Path(
         "tests/test-data/MTBLS1/a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt"
     )
-    file_path = (
+    file_path = pathlib.Path(
         "test-temp/test-data/MTBLS1/a_MTBLS1_metabolite_profiling_NMR_spectroscopy.txt"
     )
     try:
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        file_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(path_original, file_path)
         helper: IsaTableFileReader = Reader.get_assay_file_reader()
         # with default results_per_page value - 100
 
-        with open(file_path, "r", encoding="utf-8") as file_buffer:
+        with file_path.open("r", encoding="utf-8") as file_buffer:
             result: IsaTableFileReaderResult = helper.get_page(
                 file_buffer_or_path=file_buffer,
                 page=2,
@@ -224,8 +223,8 @@ def test_assay_metadata_file_read_write():
         assert report.updated_file_sha256_hash != sha256_hash
         assert not report.message
     finally:
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        if file_path.exists():
+            file_path.unlink(missing_ok=True)
 
 
 def test_assay_metadata_file_success_04():

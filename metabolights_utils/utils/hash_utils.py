@@ -1,6 +1,6 @@
 import hashlib
 import logging
-import os
+from pathlib import Path
 from typing import Dict
 
 from pydantic import BaseModel
@@ -20,12 +20,12 @@ class IsaMetadataFolderHash(BaseModel):
 class MetabolightsHashUtils(object):
     @staticmethod
     def sha256sum(filepath: str, convert_to_linux_line_ending: bool = True):
-        if not filepath or not os.path.exists(filepath):
+        if not filepath or not Path(filepath).exists():
             logger.warning("Empty or invalid input file path %s", filepath)
             return EMPTY_FILE_HASH
-
+        file = Path(filepath)
         sha256_hash = hashlib.sha256()
-        with open(filepath, mode="rb") as f:
+        with file.open(mode="rb") as f:
             for byte_block in iter(lambda: f.read(4096), b""):
                 if convert_to_linux_line_ending:
                     byte_block = byte_block.replace(b"\r\n", b"\n")
@@ -44,7 +44,7 @@ class MetabolightsHashUtils(object):
         result = IsaMetadataFolderHash()
         hashes = []
         for file in files:
-            basename = os.path.basename(file)
+            basename = Path(file).name
             hash = MetabolightsHashUtils.sha256sum(file)
             result.files_sha256[basename] = hash
             hashes.append(f"{basename}:{hash}")

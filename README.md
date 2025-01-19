@@ -20,6 +20,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.8%7C3.9%7C3.10%7C3.11%7C3.12-dark_blue)
 ![Coverage](https://img.shields.io/badge/Coverage-85%25-dark_blue)
+![Lint](https://img.shields.io/badge/Lint-Ruff-dark_blue)
 
 ---
 

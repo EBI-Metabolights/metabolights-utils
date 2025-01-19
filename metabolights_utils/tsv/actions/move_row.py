@@ -38,7 +38,7 @@ class MoveRowTsvAction(BaseTsvAction):
         new_source_index = source_index
         moved_row = None
         if source_index >= new_row_index:
-            with open(source_file_path, "r", encoding=read_encoding) as source:
+            with source_file_path.open("r", encoding=read_encoding) as source:
                 source.readline()
                 row_index = -1
                 for line in source:
@@ -57,10 +57,10 @@ class MoveRowTsvAction(BaseTsvAction):
         moved = False
         source_deleted = False
         try:
-            with open(source_file_path, "r", encoding=read_encoding) as source:
+            with source_file_path.open("r", encoding=read_encoding) as source:
                 header_line = source.readline()
 
-                with open(target_file_path, "w", encoding=write_encoding) as target:
+                with target_file_path.open("w", encoding=write_encoding) as target:
                     target.write(header_line)
                     row_index = -1
                     for line in source:

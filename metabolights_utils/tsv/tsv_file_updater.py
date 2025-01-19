@@ -1,5 +1,4 @@
 import datetime
-import os
 import pathlib
 import shutil
 import uuid
@@ -91,8 +90,7 @@ class TsvFileUpdater:
         temp_folder = temp_root_path / pathlib.Path(
             f"isa_table_actions/{timestamp}/{task_id}"
         )
-        os.makedirs(str(temp_folder), exist_ok=True)
-
+        temp_folder.mkdir(parents=True, exist_ok=True)
         file_copy_path = temp_folder / pathlib.Path(f"{file.name}_{task_id}")
         temp_source_file_path = temp_folder / pathlib.Path(
             f".{file.name}_{task_id}_temp_1"

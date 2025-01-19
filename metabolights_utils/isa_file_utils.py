@@ -1,5 +1,5 @@
 import logging
-import os
+from pathlib import Path
 from typing import Any, List, Tuple, Union
 
 from metabolights_utils.isatab import Writer
@@ -18,9 +18,11 @@ class IsaFileUtils:
         values_in_quotation_mark: bool = False,
         investigation_module_name: Union[None, str] = None,
     ):
-        if not os.path.exists(output_dir):
+        output_dir_path = Path(output_dir)
+        if not output_dir_path.exists():
             logger.info("Study save folder %s is created", output_dir)
-            os.makedirs(output_dir, exist_ok=True)
+            output_dir_path.mkdir(parents=True, exist_ok=True)
+
         i_file_name = mtbls_model.investigation_file_path
         logger.info("Saving investigation file: %s", i_file_name)
         Writer.get_investigation_file_writer().write(
@@ -70,14 +72,14 @@ class IsaFileUtils:
         for column_model in isa_table_file.table.headers:
             column_order_map[column_model.column_index] = column_model.column_name
             column_header_map[column_model.column_index] = column_model.column_header
-        parent_dir = os.path.dirname(file_path)
-        basename = os.path.dirname(file_path)
-        if not os.path.exists(parent_dir):
-            logger.info("Study save folder %s is created", parent_dir)
-            os.makedirs(parent_dir, exist_ok=True)
+        file = Path(file_path)
+        basename = file.parent.name
+        if not file.parent.exists():
+            logger.info("Study save folder %s is created", file.parent)
+            file.parent.mkdir(parents=True, exist_ok=True)
 
         logger.info("Saving file: %s", basename)
-        with open(file_path, "w") as f:
+        with file.open("w") as f:
             if values_in_quotation_mark:
                 header = [
                     f'"{column_header_map[idx]}"'

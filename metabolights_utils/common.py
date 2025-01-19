@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
@@ -16,7 +16,7 @@ class CamelCaseModel(BaseModel):
 
 def sort_by_study_id(key: str):
     if key:
-        val = os.path.basename(key).upper().replace("MTBLS", "")
+        val = Path(key).name.upper().replace("MTBLS", "").replace("REQ", "")
         if val.isnumeric():
             value = int(val)
             return value if value > 0 else -1

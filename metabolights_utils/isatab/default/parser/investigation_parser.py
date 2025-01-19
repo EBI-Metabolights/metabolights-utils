@@ -445,7 +445,7 @@ def assign_by_field_name(
         messages = []
     data_schema = data.model_json_schema()
     if "properties" not in data_schema or not data_schema["properties"]:
-        print(f"Properties are not defined in {file_path}")
+        logger.debug("Properties are not defined in %s", file_path)
         message = ParserMessage(
             short="Property is not defined for object", type=ParserMessageType.WARNING
         )
@@ -560,8 +560,11 @@ def assign_by_field_name(
                         set_value(data, key, item_list)
 
                         if search_field not in index_map:
-                            print(
-                                f"{search_field} is not in file. Skipping {field_name} in {file_path}"
+                            logger.debug(
+                                "%s is not in file. Skipping %s in %s",
+                                search_field,
+                                field_name,
+                                file_path,
                             )
                             continue
                         index = index_map[search_field]
@@ -667,14 +670,14 @@ def assign_by_field_name(
                         )
                         message.detail = f"Reference item is not valid {data_type} "
                         messages.append(message)
-                        print("Reference item is not valid")
+                        logger.debug("Reference item is not valid")
                 else:
                     message = ParserMessage(
                         short="There is not item", type=ParserMessageType.WARNING
                     )
                     message.detail = "There is not item"
                     messages.append(message)
-                    print("There is not item")
+                    logger.debug("There is not item")
             elif data_type == "string":
                 if field_name not in index_map:
                     message = ParserMessage(
@@ -682,7 +685,7 @@ def assign_by_field_name(
                     )
                     message.detail = f"{field_name} is not in {file_path}. "
                     messages.append(message)
-                    print(f"{field_name} is not in {file_path}. Skipping")
+                    logger.warning("%sis not in %s Skipping", field_name, file_path)
                     set_value(data, key, "")
                     continue
                 index = index_map[field_name]

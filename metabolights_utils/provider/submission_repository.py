@@ -1,9 +1,9 @@
 import datetime
-import glob
 import io
 import json
 import os
 import time
+from pathlib import Path
 from typing import List, Literal, Tuple, Union
 
 import httpx
@@ -231,9 +231,9 @@ class MetabolightsSubmissionRepository:
                 modified = 0
             remote_modified_time = int(modified)
             modified_time_dict[descriptor.file] = remote_modified_time
-        study_path = os.path.join(local_path, study_id)
-        study_path = os.path.realpath(study_path)
-        if not os.path.exists(study_path):
+        study_folder = Path(local_path) / Path(study_id)
+        study_path = str(study_folder.resolve())
+        if not study_folder.exists():
             return False, f"Study path does not exist: {study_path}"
         if not metadata_files or override_remote_files:
             files = os.listdir(study_path)
@@ -246,9 +246,9 @@ class MetabolightsSubmissionRepository:
                 remote_modified_time = None
                 if relative_path in modified_time_dict:
                     remote_modified_time = modified_time_dict[relative_path]
-                file_path = os.path.join(study_path, file_name)
+                file_path = study_folder / Path(file_name)
                 if remote_modified_time:
-                    local_modified_time = int(os.path.getmtime(file_path))
+                    local_modified_time = int(file_path.stat().st_mtime)
                     if remote_modified_time < local_modified_time:
                         new_requested_files.append(relative_path)
                 else:
@@ -268,7 +268,7 @@ class MetabolightsSubmissionRepository:
             username=ftp_username,
             password=ftp_password,
         )
-        input_files = [os.path.join(study_path, x) for x in new_requested_files]
+        input_files = [str(study_folder / Path(x)) for x in new_requested_files]
         try:
             success, message = ftp_client.upload_files(
                 remote_folder_directory, input_files
@@ -294,15 +294,15 @@ class MetabolightsSubmissionRepository:
         local_study_path = join_path(local_path, study_id)
         if not ftp_server_url:
             ftp_server_url = self.ftp_server_url
-
-        study_path = os.path.realpath(local_study_path)
-        if not os.path.exists(study_path):
+        study_folder = Path(local_study_path)
+        study_path = str(study_folder.resolve())
+        if not study_folder.exists():
             return False, f"Study path does not exist: {study_path}"
 
-        files = glob.iglob(f"{study_path}/**/*", recursive=True)
+        files = study_folder.rglob("*")
 
         input_files = [
-            x for x in files if not is_metadata_filename_pattern(os.path.basename(x))
+            x for x in files if not is_metadata_filename_pattern(Path(x).name)
         ]
 
         # username, password, error = self.get_ftp_credentials()
@@ -379,10 +379,13 @@ class MetabolightsSubmissionRepository:
         timeout: int = 10,
     ):
         if not validation_file_path:
-            validation_file_path = os.path.join(
-                self.local_storage_cache_path, study_id, f"{study_id}_validation.tsv"
+            validation_file_path = str(
+                Path(self.local_storage_cache_path),
+                Path(study_id),
+                Path(f"{study_id}_validation.tsv"),
             )
-        validation_file_path = os.path.realpath(validation_file_path)
+        validation_file = Path(validation_file_path).resolve()
+        validation_file_path = str(validation_file)
 
         sub_path = f"/studies/{study_id}/validation-task"
 
@@ -488,10 +491,9 @@ class MetabolightsSubmissionRepository:
             for message in section.details:
                 if message.status.upper() == "ERROR":
                     errors.append(message)
-        dir_name = os.path.dirname(validation_file_path)
-        os.makedirs(dir_name, exist_ok=True)
 
-        with open(validation_file_path, "w", encoding="utf-8") as f:
+        validation_file.parent.mkdir(parents=True, exist_ok=True)
+        with validation_file.open("w", encoding="utf-8") as f:
             f.write(
                 "section\t" "status\t" "message\t" "description\t" "metadata_file\n"
             )
@@ -522,7 +524,8 @@ class MetabolightsSubmissionRepository:
             db_metadata_collector=None,
             folder_metadata_collector=LocalFolderMetadataCollector(),
         )
-        basename = os.path.basename(study_path)
+        file = Path(study_path)
+        basename = file.name
         model: MetabolightsStudyModel = provider.load_study(
             basename,
             study_path=study_path,
@@ -639,7 +642,7 @@ class MetabolightsSubmissionRepository:
             return None, f"{api_name} failure: {str(ex)}."
 
         result = task_status_response.content.task_result
-        with open(validation_result_file_path, "w", encoding="utf-8") as f:
+        with Path(validation_result_file_path).open("w", encoding="utf-8") as f:
             json.dump(result.model_dump(by_alias=True), f, indent=4)
 
         return True, task_status_response.content.task_id

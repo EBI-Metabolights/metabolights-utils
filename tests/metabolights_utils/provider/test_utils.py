@@ -1,7 +1,7 @@
 import datetime
-import os
 import random
 import shutil
+from pathlib import Path
 from typing import List, Tuple, Union
 from unittest import mock
 
@@ -235,7 +235,7 @@ class DownloadResponse:
         self.file_path = file_path
 
     def iter_bytes(self):
-        with open(self.file_path, "rb") as f:
+        with Path(self.file_path).open("rb") as f:
             yield f.read()
 
     def raise_for_status(self):
@@ -251,11 +251,11 @@ class DownloadResponse:
 def test_download_file_from_rest_api_01(mocker: MockerFixture):
     file_path = "tests/test-data/rest-api-test-data/s_MTBLS1.txt.zip"
     shutil.rmtree("test-temp/donwload_test", ignore_errors=True)
-    dir_path = "test-temp/donwload_test"
-    local_file_path = (
-        f"{dir_path}/download_test_{random.randint(1000000, 9999999)}_tmp.zip"
+    dir_path = Path("test-temp/donwload_test")
+    local_file_path = dir_path / Path(
+        f"download_test_{random.randint(1000000, 9999999)}_tmp.zip"
     )
-    os.makedirs(dir_path, exist_ok=True)
+    dir_path.mkdir(parents=True, exist_ok=True)
     try:
         response = DownloadResponse(status_code=200, file_path=file_path)
         mocker.patch(
@@ -270,22 +270,22 @@ def test_download_file_from_rest_api_01(mocker: MockerFixture):
             is_zip_response=True,
             modification_time=timestamp,
         )
-        assert os.path.exists(f"{dir_path}/s_MTBLS1.txt")
+        assert (dir_path / Path("s_MTBLS1.txt")).exists()
         assert success
 
-        shutil.rmtree(dir_path, ignore_errors=True)
-        os.makedirs(dir_path, exist_ok=True)
+        shutil.rmtree(str(dir_path), ignore_errors=True)
+        dir_path.mkdir(parents=True, exist_ok=True)
         success, message = download_file_from_rest_api(
-            local_file_path=local_file_path,
+            local_file_path=str(local_file_path),
             url=test_url,
             is_zip_response=False,
             modification_time=timestamp,
         )
-        assert os.path.exists(local_file_path)
+        assert local_file_path.exists()
         assert success
 
-        shutil.rmtree(dir_path, ignore_errors=True)
-        os.makedirs(dir_path, exist_ok=True)
+        shutil.rmtree(str(dir_path), ignore_errors=True)
+        dir_path.mkdir(parents=True, exist_ok=True)
 
         def raise_exception():
             raise TimeoutError("Timeout error")
@@ -297,10 +297,10 @@ def test_download_file_from_rest_api_01(mocker: MockerFixture):
             is_zip_response=False,
             modification_time=timestamp,
         )
-        assert not os.path.exists(local_file_path)
+        assert not local_file_path.exists()
         assert not success
         assert "Timeout error" in message
 
     finally:
-        if os.path.exists(dir_path):
-            shutil.rmtree(dir_path, ignore_errors=True)
+        if dir_path.exists():
+            shutil.rmtree(str(dir_path), ignore_errors=True)

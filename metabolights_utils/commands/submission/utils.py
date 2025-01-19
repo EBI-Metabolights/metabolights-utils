@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from typing import Union
 
@@ -7,6 +8,8 @@ from metabolights_utils.commands.submission.model import (
     LoginCredentials,
     RestApiCredentials,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def get_submission_private_ftp_credentials(
@@ -37,5 +40,5 @@ def get_submission_credentials(credentials_file_path: str):
                 data = json.load(f)
                 credentials = LoginCredentials.model_validate(data)
     except Exception as ex:
-        print(f"Error while loading {credentials_file_path}. {str(ex)}")
+        logger.exception("Error while loading %s", credentials_file_path, exc_info=ex)
     return credentials

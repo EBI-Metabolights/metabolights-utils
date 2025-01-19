@@ -14,7 +14,7 @@ from metabolights_utils.provider.ftp_repository import MetabolightsFtpRepository
 @click.option(
     "--local_path",
     "-p",
-    default=definitions.default_local_repority_root_path,
+    default=definitions.default_local_repository_root_path,
     help="Local storage root path. Folder will be created if it does not exist.",
 )
 @click.option(

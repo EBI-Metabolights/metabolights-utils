@@ -4,7 +4,7 @@ from pathlib import Path
 home = str(Path.home())
 default_ftp_server_url = "ftp.ebi.ac.uk"
 default_remote_repository_root_directory = "/pub/databases/metabolights/studies/public"
-default_local_repority_root_path = f"{home}/metabolights_data/studies/data"
+default_local_repository_root_path = f"{home}/metabolights_data/studies/data"
 default_local_submission_root_path = f"{home}/metabolights_data/submission/data"
 default_local_submission_cache_path = f"{home}/metabolights_data/submission/cache"
 default_local_submission_credentials_file_path = (

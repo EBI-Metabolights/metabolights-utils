@@ -1,7 +1,7 @@
 import datetime
 import logging
-import os
 import shutil
+from pathlib import Path
 from typing import Union
 
 from metabolights_utils.utils.filename_utils import join_path
@@ -36,19 +36,21 @@ class MetabolightsAuditUtils(object):
     def copy_isa_metadata_files(
         src_folder_path: str, target_folder_path: str
     ) -> Union[None, str]:
-        real_src_folder_path = os.path.realpath(src_folder_path)
-        real_target_folder_path = os.path.realpath(target_folder_path)
+        source = Path(src_folder_path)
+        target = Path(target_folder_path)
+        real_src_folder_path = source.resolve()
+        real_target_folder_path = target.resolve()
         metadata_files_list = SearchUtils.get_isa_metadata_files(
             folder_path=real_src_folder_path, recursive=False
         )
         metadata_files_list.sort()
 
         if metadata_files_list:
-            if not os.path.exists(real_target_folder_path):
-                os.makedirs(real_target_folder_path, exist_ok=True)
+            if not real_target_folder_path.exists():
+                real_target_folder_path.mkdir(parents=True, exist_ok=True)
                 logger.info("Target folder is created: %s", target_folder_path)
             for file in metadata_files_list:
-                basename = os.path.basename(file)
+                basename = Path(file).name
                 target_file = join_path(target_folder_path, basename)
                 shutil.copy2(file, target_file, follow_symlinks=False)
             logger.info(

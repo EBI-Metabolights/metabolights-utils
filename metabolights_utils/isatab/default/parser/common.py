@@ -167,27 +167,36 @@ def read_table_file(
             )
         )
         file_content = re.sub(r"[\r\n][\r\n]+", r"\n", file_content)
-    pattern = r'(^|\t)"([^"\t]*)([\r\n]+)([^"\t]*)"(\t|\n\|\r|$)'
+    pattern = r'(")([^"]*)\1(\t|\r|\n|$)'
     find_matches = re.findall(pattern, file_content)
 
     if find_matches:
-        max_iteration = 10
-        iteration = 0
-        while True:
-            new_file_content = re.sub(pattern, r'\1"\2\4"\5', file_content)
-            if new_file_content == file_content:
-                break
-            if iteration < 1:
-                messages.append(
-                    ParserMessage(
-                        type=ParserMessageType.WARNING,
-                        short="Removed new line characters in cells.",
-                        detail="Removed new line characters in cells.",
-                    )
+        results = []
+
+        def replace(x: re.Match):
+            groups = x.groups()
+            input_val = x.group()
+            val = re.sub(r"\s", " ", groups[1].strip())
+
+            result = groups[0] + val + groups[0] + groups[2]
+            if result != input_val:
+                results.append((groups[1], val))
+            return result
+
+        new_file_content = re.sub(pattern, replace, file_content)
+        if results:
+            printed_result = results if len(results) < 20 else results[:20]
+            printed_result = [
+                (re.sub("\r\t\n", "{ unexpected char }", x[0].strip()), x[1].strip())
+                for x in printed_result
+            ]
+            messages.append(
+                ParserMessage(
+                    type=ParserMessageType.WARNING,
+                    short="Removed new line characters and unexpected whitespaces in cells.",
+                    detail=f"{str(printed_result)}",
                 )
-            iteration += 1
-            if iteration > max_iteration:
-                break
+            )
             file_content = new_file_content
 
     file_lines = file_content.split("\n")

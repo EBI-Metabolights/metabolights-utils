@@ -1,4 +1,3 @@
-import os
 import pathlib
 import shutil
 from abc import ABC, abstractmethod
@@ -25,14 +24,13 @@ class BaseTsvAction(ABC):
     ) -> actions.TsvActionResult:
         pass
 
-    def delete_file(self, path):
-        if os.path.exists(path):
-            if os.path.islink(path):
-                os.unlink(path)
-            elif os.path.isfile(path):
-                os.remove(path)
-            elif os.path.isdir(path):
-                shutil.rmtree(path)
+    def delete_file(self, file_path: str):
+        file = pathlib.Path(file_path)
+        if file.exists():
+            if file.is_dir():
+                shutil.rmtree(file)
+            else:
+                file.unlink()
 
     def get_updated_row(self, empty_row, input_row: actions.TsvRowData):
         column_indices = range(len(empty_row))

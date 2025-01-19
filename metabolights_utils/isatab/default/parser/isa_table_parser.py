@@ -49,34 +49,37 @@ def fix_isa_table_file(
                 )
                 file_content = re.sub(r"[\r\n][\r\n]+", r"\n", file_content)
         if fix_new_lines_in_cells:
-            new_line_in_cells_pattern = (
-                r'(^|\t)"([^"\t]*)([\r\n]+)([^"\t]*)"(\t|\n\|\r|$)'
-            )
-            find_new_lines_in_cells = re.findall(
-                new_line_in_cells_pattern, file_content
-            )
+            results = []
 
-            if find_new_lines_in_cells:
-                max_iteration = max_iteration_to_fix_new_lines_in_cells
-                iteration = 0
-                while True:
-                    new_file_content = re.sub(
-                        new_line_in_cells_pattern, r'\1"\2\4"\5', file_content
+            def replace(x: re.Match):
+                groups = x.groups()
+                input_val = x.group()
+                val = re.sub(r"\s", " ", groups[1].strip())
+
+                result = groups[0] + val + groups[0] + groups[2]
+                if result != input_val:
+                    results.append((groups[1], val))
+                return result
+
+            pattern = r'(")([^"]*)\1(\t|\r|\n|$)'
+            new_file_content = re.sub(pattern, replace, file_content)
+            if results:
+                printed_result = results if len(results) < 20 else results[:20]
+                printed_result = [
+                    (
+                        re.sub("\r\t\n", "{ unexpected char }", x[0].strip()),
+                        x[1].strip(),
                     )
-                    if new_file_content == file_content:
-                        break
-                    if iteration < 1:
-                        messages.append(
-                            ParserMessage(
-                                type=ParserMessageType.WARNING,
-                                short=f"Removed new line characters in {basename} file table cells.",
-                                detail=f"Removed new line characters in {basename} file table cells.",
-                            )
-                        )
-                    iteration += 1
-                    if iteration > max_iteration:
-                        break
-                    file_content = new_file_content
+                    for x in printed_result
+                ]
+                messages.append(
+                    ParserMessage(
+                        type=ParserMessageType.WARNING,
+                        short=f"Removed new line characters and unexpected whitespaces in {basename} file table cells.",
+                        detail=f"Removed : {str(printed_result)}",
+                    )
+                )
+                file_content = new_file_content
 
         if find_empty_lines or find_new_lines_in_cells:
             with file.open("w", encoding=write_encoding) as f:

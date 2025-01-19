@@ -1,5 +1,4 @@
 import logging
-import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Set, Tuple, Union
@@ -63,11 +62,14 @@ class DefaultStudyMetadataFileProvider(AbstractMetadataFileProvider):
         self, study_id: str, file_relative_path: Union[None, str] = None
     ) -> str:
         if file_relative_path:
-            return os.path.join(
-                self.study_metadata_root_path, study_id, file_relative_path
+            return str(
+                Path(self.study_metadata_root_path)
+                / Path(study_id)
+                / Path(file_relative_path)
             )
+
         else:
-            return os.path.join(self.study_metadata_root_path, study_id)
+            return str(Path(self.study_metadata_root_path) / Path(study_id))
 
     def exists(
         self, study_id: str, file_relative_path: Union[None, str] = None
@@ -223,8 +225,8 @@ class MetabolightsStudyProvider(object):
                 study_id, relative_file_path
             )
         else:
-            file_path = os.path.join(folder, relative_file_path)
-        return file_path
+            file_path = Path(folder) / Path(relative_file_path)
+        return str(file_path)
 
     def get_study_metadata_path(
         self,
@@ -235,9 +237,10 @@ class MetabolightsStudyProvider(object):
             study_path = self.metadata_file_provider.get_study_metadata_path(study_id)
             exist = self.metadata_file_provider.exists(study_id)
         else:
+            file = Path(folder)
             study_path = folder
-            real_path = os.path.realpath(folder)
-            exist = os.path.exists(real_path)
+            real_path = file.resolve()
+            exist = real_path.exists()
         return study_path, exist
 
     def get_phase1_input_data(
@@ -464,7 +467,7 @@ class MetabolightsStudyProvider(object):
         for set_item in (raw_files, derived_files, assignment_files):
             for item in set_item:
                 if set_item != assignment_files:
-                    folders_in_hierarchy.add(os.path.dirname(item))
+                    folders_in_hierarchy.add(Path(item).parent.name)
 
         model.referenced_assignment_files.extend(list(assignment_files))
         model.referenced_raw_files.extend(list(raw_files))

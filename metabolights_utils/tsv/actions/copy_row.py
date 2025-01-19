@@ -40,7 +40,7 @@ class CopyRowTsvAction(BaseTsvAction):
             uuid_value = str(uuid.uuid4().hex)
             action.id = uuid_value
         copied_row = None
-        with open(source_file_path, "r", encoding=read_encoding) as source:
+        with source_file_path.open("r", encoding=read_encoding) as source:
             source.readline()
             row_index = 0
             for line in source:
@@ -55,10 +55,10 @@ class CopyRowTsvAction(BaseTsvAction):
             return result
 
         try:
-            with open(source_file_path, "r", encoding=read_encoding) as source:
+            with source_file_path.open("r", encoding=read_encoding) as source:
                 header_line = source.readline()
 
-                with open(target_file_path, "w", encoding=write_encoding) as target:
+                with target_file_path.open("w", encoding=write_encoding) as target:
                     target.write(header_line)
                     row_index = 0
                     for line in source:

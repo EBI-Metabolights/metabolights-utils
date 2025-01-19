@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import zipfile
+from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple, Union
 
 import httpx
@@ -44,7 +45,7 @@ def download_file_from_rest_api(
 ) -> Tuple[bool, str]:
     try:
         directory = os.path.dirname(local_file_path)
-        os.makedirs(directory, exist_ok=True)
+        Path(local_file_path).parent.mkdir(parents=True, exist_ok=True)
         data_bytes = io.BytesIO()
 
         with httpx.stream(
@@ -119,17 +120,21 @@ def rest_api_post(
         return None, str(ex)
 
 
-def get_unique_file_extensions(files: Set[str]) -> Set[str]:
+def get_unique_file_extensions(
+    files: Set[str], max_extension_length: int = 6
+) -> Set[str]:
     extensions = set()
 
     for item in files:
-        name1, ext1 = os.path.splitext(item)
-        _, ext2 = os.path.splitext(name1)
-        if ext1:
-            if ext2 and len(ext2) < 6:
-                extensions.add(f"{ext2.lower()}{ext1.lower()}")
+        item_path = Path(item)
+        suffixes = item_path.suffixes
+        if len(suffixes) == 1:
+            extensions.add(suffixes[0].lower())
+        elif len(suffixes) > 1:
+            if len(suffixes[-2]) <= max_extension_length:
+                extensions.add(f"{suffixes[-2].lower()}{suffixes[-1].lower()}")
             else:
-                extensions.add(f"{ext1.lower()}")
+                extensions.add(suffixes[0].lower())
     return extensions
 
 
