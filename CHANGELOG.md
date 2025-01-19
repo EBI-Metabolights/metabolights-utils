@@ -1,9 +1,15 @@
 # CHANGELOG
 
 
+## v1.3.12 (2025-01-19)
+
+
 ## v1.3.11 (2025-01-19)
 
 ### Bug Fixes
+
+- Python version support
+  ([`4bf7be2`](https://github.com/EBI-Metabolights/metabolights-utils/commit/4bf7be24ecbaf93c19c23418dbda9042248e7895))
 
 - Tsv file read fix and lint updates
   ([`e95246d`](https://github.com/EBI-Metabolights/metabolights-utils/commit/e95246dfbcaa2769753a29f3ff02bbbb91b50099))
