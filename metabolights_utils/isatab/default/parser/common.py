@@ -187,7 +187,7 @@ def read_table_file(
         if results:
             printed_result = results if len(results) < 20 else results[:20]
             printed_result = [
-                (re.sub("\r\t\n", "{ unexpected char }", x[0].strip()), x[1].strip())
+                (re.sub("\r\t\n", "{ unexpected char }", x[0]), x[1])
                 for x in printed_result
             ]
             messages.append(

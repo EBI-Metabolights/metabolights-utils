@@ -2,6 +2,7 @@ import sys
 
 import click
 
+from metabolights_utils.commands.model.model_create import model_create
 from metabolights_utils.commands.model.model_explain import model_explain
 
 
@@ -11,6 +12,7 @@ def model_cli():
 
 
 model_cli.add_command(model_explain)
+model_cli.add_command(model_create)
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         model_cli(["--help"])
