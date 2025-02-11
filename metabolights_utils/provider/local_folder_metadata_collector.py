@@ -122,8 +122,9 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
         data_folder_size = 0
         if calculate_data_folder_size:
             files_folder_path = os.path.join(study_path, "FILES")
-            size = self.folder_size(files_folder_path)
-            data_folder_size = size if size else 0
+            if os.path.exists(files_folder_path):
+                size = self.folder_size(files_folder_path)
+                data_folder_size = size if size else 0
 
             study_folder_metadata.folder_size_in_bytes = data_folder_size
 

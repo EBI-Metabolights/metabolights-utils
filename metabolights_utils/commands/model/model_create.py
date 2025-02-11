@@ -26,6 +26,7 @@ def model_create(
 ):
     """
     Validate submitted study and save validation report on local storage.
+    NOTE: Data files should be on FILES subfolder.
 
     study_path: MetaboLights study folder. Folder should contain ISAtab files.
 
