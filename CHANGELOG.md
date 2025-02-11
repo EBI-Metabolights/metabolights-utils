@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
+## v1.4.0 (2025-02-11)
+
+
 ## v1.3.12 (2025-01-19)
+
+### Features
+
+- New command to create metabolights study model on local (mtbls model create)
+  ([`9415dc8`](https://github.com/EBI-Metabolights/metabolights-utils/commit/9415dc839ca33edfefc233fc36109f8083cf1c97))
 
 
 ## v1.3.11 (2025-01-19)
