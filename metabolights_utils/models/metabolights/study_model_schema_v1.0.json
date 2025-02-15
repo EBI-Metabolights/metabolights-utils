@@ -2151,6 +2151,8 @@
       },
       "StudyStatus": {
           "enum": [
+              "PRIVATE",
+              "PROVISIONAL",
               "SUBMITTED",
               "INCURATION",
               "INREVIEW",

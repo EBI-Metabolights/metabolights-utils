@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Dict, List, Union
 
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict, Field, field_validator
 from typing_extensions import Annotated
 
 from metabolights_utils.common import CamelCaseModel
@@ -225,6 +225,21 @@ class StudyDBMetadata(CamelCaseModel):
     submitters: Annotated[
         List[Submitter], Field(description="Submitters of study.")
     ] = []
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def validate_value(cls, value) -> StudyStatus:
+        if not value:
+            return StudyStatus.DORMANT
+        if isinstance(value, StudyStatus):
+            return value
+        if isinstance(value, str):
+            if value.upper() == "PROVISIONAL":
+                return StudyStatus.SUBMITTED
+            elif value.upper() == "PRIVATE":
+                return StudyStatus.INCURATION
+            return StudyStatus(value)
+        return StudyStatus.DORMANT
 
 
 class MetabolightsStudyModel(BaseMetabolightsStudyModel):
