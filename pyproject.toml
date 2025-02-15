@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "metabolights-utils"
-version = "1.4.0"
+version = "1.4.1"
 description = "MetaboLights open metabolomics data repository utility tools and API."
 authors = ["MetaboLights Team <metabolights-dev@ebi.ac.uk>"]
 readme = "README.md"

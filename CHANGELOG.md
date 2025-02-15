@@ -1,7 +1,15 @@
 # CHANGELOG
 
 
+## v1.4.1 (2025-02-11)
+
+
 ## v1.4.0 (2025-02-11)
+
+### Bug Fixes
+
+- Data folder size calculation errors.
+  ([`36f61f9`](https://github.com/EBI-Metabolights/metabolights-utils/commit/36f61f90f74c6596a3b0a312db7e7254c7b27fd5))
 
 
 ## v1.3.12 (2025-01-19)
