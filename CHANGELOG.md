@@ -1,7 +1,16 @@
 # CHANGELOG
 
 
+## v1.4.2 (2025-02-15)
+
+
 ## v1.4.1 (2025-02-11)
+
+### Refactoring
+
+- Provisional and private study status are accepted. They will converted to submitted and in
+  curation status respectively.
+  ([`8372ca9`](https://github.com/EBI-Metabolights/metabolights-utils/commit/8372ca9f53f80f880e2a7127f89700556d26b35c))
 
 
 ## v1.4.0 (2025-02-11)
