@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.4.3 (2025-04-02)
+
+### Bug Fixes
+
+- Write investigation file
+  ([`3f89da6`](https://github.com/EBI-Metabolights/metabolights-utils/commit/3f89da62d56fc97319add1aea6b8ba27cc116ea5))
+
+
 ## v1.4.2 (2025-02-15)
 
 
