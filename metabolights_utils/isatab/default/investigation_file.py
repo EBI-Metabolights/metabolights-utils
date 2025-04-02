@@ -94,7 +94,7 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
             )
         finally:
             self._close_file(file_buffer_or_path)
-
+        messages = read_messages if read_messages else []
         if skip_parser_info_messages:
             messages = [x for x in read_messages if x.type != ParserMessageType.INFO]
         report = ParserReport(messages=messages)
@@ -124,7 +124,7 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
     def write(
         self,
         investigation: Investigation,
-        file_buffer_or_path: Union[str, pathlib.Path, IOBase] = None,
+        file_buffer_or_path: Union[str, pathlib.Path, IOBase, None] = None,
         values_in_quotation_mark: bool = True,
         verify_file_after_update: bool = True,
         skip_parser_info_messages: bool = True,
@@ -412,7 +412,9 @@ class InvestigationFileSerializer(object):
         )
         rows = []
         row_map = {}
-        fields = properties["isatabConfig"]["default"]["fieldOrder"]
+        fields = properties["isatabConfig"]["default"].get("fieldOrder")
+        if not fields:
+            fields = properties["isatabConfig"]["default"]["field_order"]
         for i in range(len(fields)):
             field = fields[i]
             field_key = to_camel(field)
