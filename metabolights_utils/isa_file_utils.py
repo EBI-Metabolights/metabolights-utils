@@ -45,7 +45,7 @@ class IsaFileUtils:
                 )
 
     @staticmethod
-    def sanitise_data(self, value: Union[None, Any]):
+    def sanitise_data(value: Union[None, Any]):
         if isinstance(value, list):
             for idx, val in enumerate(value):
                 value[idx] = IsaFileUtils.sanitise_single_value(val)
@@ -53,7 +53,7 @@ class IsaFileUtils:
         return IsaFileUtils.sanitise_single_value(value)
 
     @staticmethod
-    def sanitise_single_value(self, value: Union[None, Any]):
+    def sanitise_single_value(value: Union[None, Any]):
         if value is None:
             return ""
         return (
