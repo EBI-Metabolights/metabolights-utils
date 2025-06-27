@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.4.4 (2025-06-27)
+
+### Bug Fixes
+
+- Isa table file save without hash check
+  ([`728bd61`](https://github.com/EBI-Metabolights/metabolights-utils/commit/728bd6115eec146ab393f61fa7296ccff8141d23))
+
+
 ## v1.4.3 (2025-04-02)
 
 ### Bug Fixes
