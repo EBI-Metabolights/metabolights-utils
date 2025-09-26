@@ -385,7 +385,7 @@ class InvestigationFileSerializer(object):
                 rows.append([header_name, value])
             else:
                 raise InvestigationFileException(
-                    message=f"Unsopported type {type(value)}. Value {str(value)}"
+                    message=f"Unsupported type {type(value)}. Value {str(value)}"
                 )
 
         cls.add_comments(model, rows)

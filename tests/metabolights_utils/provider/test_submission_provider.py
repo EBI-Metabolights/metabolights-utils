@@ -395,7 +395,7 @@ def test_upload_metadata_04(mocker: MockerFixture, submission_repository, study_
 @pytest.mark.parametrize("study_id", ["MTBLS1"])
 def test_upload_metadata_05(mocker: MockerFixture, submission_repository, study_id):
     """
-    Test successfull upload
+    Test successful upload
     """
 
     mock_ftp = MagicMock()

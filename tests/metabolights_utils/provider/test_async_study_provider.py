@@ -26,7 +26,7 @@ pytest_plugins = ("pytest_asyncio",)
 
 
 @pytest.mark.asyncio
-async def test_load_study_data_with_default_paramters_01():
+async def test_load_study_data_with_default_parameters_01():
     provider = AsyncMetabolightsStudyProvider()
     model: MetabolightsStudyModel = await provider.load_study(
         "MTBLS1", "tests/test-data/MTBLS1"

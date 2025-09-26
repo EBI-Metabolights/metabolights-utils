@@ -225,7 +225,7 @@
                 },
                 "subTechnique": {
                     "default": "",
-                    "description": "Sub-techniique",
+                    "description": "Sub-technique",
                     "title": "Subtechnique",
                     "type": "string"
                 }
@@ -689,7 +689,7 @@
             "properties": {
                 "columns": {
                     "default": [],
-                    "description": "Unique column names of ISA table. If there are dublicate column headers, column names are created with the following pattern: header name + '.X' where X is sequencial number for each duplicate header name.",
+                    "description": "Unique column names of ISA table. If there are duplicate column headers, column names are created with the following pattern: header name + '.X' where X is sequencial number for each duplicate header name.",
                     "items": {
                         "type": "string"
                     },
@@ -1771,13 +1771,13 @@
                 },
                 "numericStudyId": {
                     "default": -1,
-                    "description": "Numarical part of study accession number. e.g., 123 for MTBLS123",
+                    "description": "Numerical part of study accession number. e.g., 123 for MTBLS123",
                     "title": "Numericstudyid",
                     "type": "integer"
                 },
                 "obfuscationCode": {
                     "default": "",
-                    "description": "Obfusication code of study.",
+                    "description": "Obfuscation code of study.",
                     "title": "Obfuscationcode",
                     "type": "string"
                 },
@@ -1850,7 +1850,7 @@
                         "type": "string"
                     },
                     "default": {},
-                    "description": "Overrided validation rules.",
+                    "description": "Overridden validation rules.",
                     "title": "Overrides",
                     "type": "object"
                 },
@@ -2239,7 +2239,7 @@
                         }
                     ],
                     "default": "ANONYMOUS",
-                    "description": "Role of submmiter."
+                    "description": "Role of submitter."
                 }
             },
             "required": [
@@ -2664,7 +2664,7 @@
                 "overrides": {},
                 "submitters": []
             },
-            "description": "Basic metatada information (status, database id, etc.) stored in database."
+            "description": "Basic metadata information (status, database id, etc.) stored in database."
         },
         "studyFolderMetadata": {
             "allOf": [
@@ -2732,7 +2732,7 @@
         },
         "hasInvestigationData": {
             "default": false,
-            "description": "True if investtigation file is loaded.",
+            "description": "True if investigation file is loaded.",
             "title": "Hasinvestigationdata",
             "type": "boolean"
         }

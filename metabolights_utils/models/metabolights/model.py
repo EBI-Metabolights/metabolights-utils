@@ -93,24 +93,28 @@ class StudyCategory(enum.IntEnum):
 
 class StudyFileDescriptor(IsaAbstractModel):
     file_path: Annotated[
-        str, Field(description="File relative path. e.g., FILES/RAW_FILES/raw_data.d")
+        str,
+        Field(description="File relative path. " + "e.g., FILES/RAW_FILES/raw_data.d"),
     ] = ""
     base_name: Annotated[
         str,
         Field(
-            description="File basename. e.g., raw_data.d for FILES/RAW_FILES/raw_data.d"
+            description="File basename. "
+            + "e.g., raw_data.d for FILES/RAW_FILES/raw_data.d"
         ),
     ] = ""
     parent_directory: Annotated[
         str,
         Field(
-            description="Relative parent directory. e.g., FILES/RAW_FILES for FILES/RAW_FILES/raw_data.d"
+            description="Relative parent directory. "
+            "e.g., FILES/RAW_FILES for FILES/RAW_FILES/raw_data.d"
         ),
     ] = ""
     extension: Annotated[
         str,
         Field(
-            description="File extension. e.g., .d for raw_data.d for FILES/RAW_FILES/raw_data.d"
+            description="File extension. "
+            "e.g., .d for raw_data.d for FILES/RAW_FILES/raw_data.d"
         ),
     ] = ""
     size_in_bytes: Annotated[int, Field(description="Size of file in bytes.")] = 0
@@ -148,8 +152,10 @@ class StudyFolderMetadata(IsaAbstractModel):
     folder_size_in_bytes: Annotated[
         int,
         Field(
-            description="Study folder size in bytes. Folder size may be size of metadata files,"
-            + " data files or both depends on data_folder_size_calculated or metadata_folder_size_calculated."
+            description="Study folder size in bytes. "
+            "Folder size may be size of metadata files,"
+            " data files or both depends on data_folder_size_calculated "
+            "or metadata_folder_size_calculated."
         ),
     ] = -1
     folder_size_in_str: Annotated[
@@ -158,13 +164,15 @@ class StudyFolderMetadata(IsaAbstractModel):
     folders: Annotated[
         Dict[str, StudyFileDescriptor],
         Field(
-            description="Folders and summary information about each one within a study folder."
+            description="Folders and summary information "
+            "about each one within a study folder."
         ),
     ] = {}
     files: Annotated[
         Dict[str, StudyFileDescriptor],
         Field(
-            description="Files and summary information about each one within a study folder."
+            description="Files and summary information "
+            "about each one within a study folder."
         ),
     ] = {}
 
@@ -186,7 +194,7 @@ class Submitter(CamelCaseModel):
     status: Annotated[UserStatus, Field(description="Status of user.")] = (
         UserStatus.FROZEN
     )
-    role: Annotated[UserRole, Field(description="Role of submmiter.")] = (
+    role: Annotated[UserRole, Field(description="Role of submitter.")] = (
         UserRole.ANONYMOUS
     )
 
@@ -199,11 +207,12 @@ class StudyDBMetadata(CamelCaseModel):
     numeric_study_id: Annotated[
         int,
         Field(
-            description="Numarical part of study accession number. e.g., 123 for MTBLS123"
+            description="Numerical part of study accession number. "
+            "e.g., 123 for MTBLS123"
         ),
     ] = -1
     obfuscation_code: Annotated[
-        str, Field(description="Obfusication code of study.")
+        str, Field(description="Obfuscation code of study.")
     ] = ""
     study_size: Annotated[
         Union[None, int], Field(description="Total size (bytes) of study folder.")
@@ -225,11 +234,12 @@ class StudyDBMetadata(CamelCaseModel):
     curation_request: Annotated[
         CurationRequest,
         Field(
-            description="Curation request. e.g., no curation request, manual curation request."
+            description="Curation request. "
+            "e.g., no curation request, manual curation request."
         ),
     ] = CurationRequest.MANUAL_CURATION
     overrides: Annotated[
-        Dict[str, str], Field(description="Overrided validation rules.")
+        Dict[str, str], Field(description="Overridden validation rules.")
     ] = {}
     submitters: Annotated[
         List[Submitter], Field(description="Submitters of study.")
@@ -286,7 +296,8 @@ class MetabolightsStudyModel(BaseMetabolightsStudyModel):
     study_db_metadata: Annotated[
         StudyDBMetadata,
         Field(
-            description="Basic metatada information (status, database id, etc.) stored in database."
+            description="Basic metadata information (status, database id, etc.) "
+            "stored in database."
         ),
     ] = StudyDBMetadata()
 
@@ -317,5 +328,5 @@ class MetabolightsStudyModel(BaseMetabolightsStudyModel):
         bool, Field(description="True if folder metadata is complete.")
     ] = False
     has_investigation_data: Annotated[
-        bool, Field(description="True if investtigation file is loaded.")
+        bool, Field(description="True if investigation file is loaded.")
     ] = False

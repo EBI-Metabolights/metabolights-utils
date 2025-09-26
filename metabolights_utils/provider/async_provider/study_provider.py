@@ -91,8 +91,10 @@ class AbstractDbMetadataCollector(ABC):
 
 
         Returns:
-            StudyDBMetadata: study metadata object that contains all the study db metadata fields.
-            messages: List[GenericMessage]: list of messages to be populated with any errors or warnings.
+            StudyDBMetadata: study metadata object
+            that contains all the study db metadata fields.
+            messages: List[GenericMessage]: list of messages
+            to be populated with any errors or warnings.
         """
 
 
@@ -108,15 +110,21 @@ class AbstractFolderMetadataCollector(ABC):
 
         Args:
             study_path (_type_): MetaboLights study accession number.
-            calculate_data_folder_size (bool, optional): calculate study FILES folder size. Defaults to False.
-            calculate_metadata_size (bool, optional): calculate size of study ISA metadata files
+            calculate_data_folder_size (bool, optional): calculate study
+            FILES folder size. Defaults to False.
+            calculate_metadata_size (bool, optional): calculate size of
+            study ISA metadata files
                 even if they are referenced or not. Defaults to False.
-                If calculate_data_folder_size and calculate_metadata_size are False, folder size will be set to -1.
+                If calculate_data_folder_size and
+                calculate_metadata_size are False, folder size will be set to -1.
 
         Returns:
-            StudyFolderMetadata: study folder metadata object that contains all descriptors of the study folders and files.
-                .d, .raw and .m folders are included but not their content. If there is an error, None is returned.
-            messages: List[GenericMessage]: list of messages to be populated with any errors or warnings.
+            StudyFolderMetadata: study folder metadata object
+            that contains all descriptors of the study folders and files.
+                .d, .raw and .m folders are included but not their content.
+                If there is an error, None is returned.
+            messages: List[GenericMessage]: list of messages
+            to be populated with any errors or warnings.
         """
 
 
@@ -220,7 +228,7 @@ class AsyncMetabolightsStudyProvider(object):
     ):
         if not folder:
             if not self.metadata_file_provider:
-                raise ValueError("Define metadata file povider if folder is None.")
+                raise ValueError("Define metadata file provider if folder is None.")
             file_path = await self.metadata_file_provider.get_study_metadata_path(
                 study_id, relative_file_path
             )
@@ -557,9 +565,9 @@ class AsyncMetabolightsStudyProvider(object):
 
         for assay_file_name in model.assays:
             assay_file_item = model.assays[assay_file_name]
-            for assignement_file_name in assay_file_item.referenced_assignment_files:
+            for assignment_file_name in assay_file_item.referenced_assignment_files:
                 model.metabolite_assignments[
-                    assignement_file_name
+                    assignment_file_name
                 ].assay_technique = assay_file_item.assay_technique
         return model
 

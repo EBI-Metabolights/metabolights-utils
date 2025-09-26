@@ -36,10 +36,10 @@ def read_investigation_file_lines(file_buffer: IOBase, messages: List[ParserMess
         lines = file_buffer.readlines()
 
         content = "".join(lines)
-        line_seperation = content.split("\n")
+        line_separation = content.split("\n")
         richtext_lines = None
         tracked_lines = []
-        for token in line_seperation:
+        for token in line_separation:
             if not token:
                 continue
             cleared_item = token.split("\t")[0]
@@ -104,7 +104,8 @@ def read_investigation_file_lines(file_buffer: IOBase, messages: List[ParserMess
                     message = ParserMessage(type=ParserMessageType.WARNING)
                     short = "\n".join(
                         [
-                            f"Line '{first_item}' is updated. Whitespace characters are removed",
+                            f"Line '{first_item}' is updated. "
+                            "Whitespace characters are removed",
                             f"Old: '{old}'",
                             f"New: '{value}'",
                         ]
@@ -193,7 +194,8 @@ def read_table_file(
             messages.append(
                 ParserMessage(
                     type=ParserMessageType.WARNING,
-                    short="Removed new line characters and unexpected whitespaces in cells.",
+                    short="Removed new line characters and "
+                    "unexpected whitespaces in cells.",
                     detail=f"{str(printed_result)}",
                 )
             )
@@ -549,13 +551,5 @@ def read_tsv_file_header(
                 columns[column_name] = column
                 selected_column_indices[col_index] = column_name
                 content.columns.append(column)
-
-        # if column_names:
-        #     invalid_column_names = []
-        #     for selected_column in column_names:
-        #         if selected_column not in columns:
-        #             invalid_column_names.append(selected_column)
-        #     if invalid_column_names:
-        #         raise TypeError(f"Column(s) do(es) not exist: " + ", ".join(invalid_column_names))
     except Exception as exc:
         raise exc

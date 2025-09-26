@@ -176,7 +176,7 @@ class AssayTechnique(IsaAbstractModel):
         Field(description="Main category of metabolite identification technique."),
     ] = ""
     technique: Annotated[str, Field(description="Technique")] = ""
-    sub_technique: Annotated[str, Field(description="Sub-techniique")] = ""
+    sub_technique: Annotated[str, Field(description="Sub-technique")] = ""
 
     def __str__(self) -> str:
         return self.name
@@ -350,7 +350,8 @@ class IsaTableColumn(IsaAbstractModel):
     column_name: Annotated[
         str,
         Field(
-            description="Unique name of column. It is same if column header is unique in ISA table."
+            description="Unique name of column. "
+            "It is same if column header is unique in ISA table."
         ),
     ] = ""
 
@@ -359,7 +360,8 @@ class IsaTableColumn(IsaAbstractModel):
     additional_columns: Annotated[
         List[str],
         Field(
-            description="Linked column names. If column is ontology or a column with unit ontology column, it lists the following column headers."
+            description="Linked column names. If column is ontology or "
+            "a column with unit ontology column, it lists the following column headers."
         ),
     ] = []
 
@@ -386,7 +388,8 @@ class IsaTableColumn(IsaAbstractModel):
     column_search_pattern: Annotated[
         str,
         Field(
-            description="Search regex expression to fetch value if if header has a value between []."
+            description="Search regex expression to fetch value "
+            "if header has a value between []."
         ),
     ] = ""
 
@@ -398,19 +401,18 @@ class IsaTable(IsaAbstractModel):
     columns: Annotated[
         List[str],
         Field(
-            description="Unique column names of ISA table. If there are dublicate column headers, column names are created with the following pattern: header name + '.X' where X is sequencial number for each duplicate header name."
+            description="Unique column names of ISA table. "
+            "If there are duplicate column headers, column names are created "
+            "with the following pattern: header name + '.X' "
+            "where X is sequential number for each duplicate header name."
         ),
     ] = []
-
-    # column_baseline: Annotated[
-    #     List[str],
-    #     Field(description="Baseline (before modification) column names of this table."),
-    # ] = []
 
     headers: Annotated[
         List[IsaTableColumn],
         Field(
-            description="Metadata of ISA table columns. e.i., header name, column name, column index"
+            description="Metadata of ISA table columns. "
+            "e.i., header name, column name, column index"
         ),
     ] = []
 
@@ -418,15 +420,11 @@ class IsaTable(IsaAbstractModel):
         Dict[str, List[str]], Field(description="Data columns and their row values.")
     ] = {}
 
-    # row_baseline: Annotated[
-    #     List[int],
-    #     Field(description="Baseline (before modification) rows of this table."),
-    # ] = []
-
     row_indices: Annotated[
         List[int],
         Field(
-            description="Current rows' positions in ISA table. e.g., [2, 3, 5]: First three rows of 'data' are 2nd, 3th and 5th rows in ISA Table."
+            description="Current rows' positions in ISA table. e.g., [2, 3, 5]: "
+            "First three rows of 'data' are 2nd, 3th and 5th rows in ISA Table."
         ),
     ] = []
 
@@ -474,7 +472,8 @@ class IsaTableFile(IsaAbstractModel):
     file_path: Annotated[
         str,
         Field(
-            description="Relative file path of ISA table file (s_*.txt, a_*.txt, m_*.tsv)."
+            description="Relative file path of ISA table file "
+            "(s_*.txt, a_*.txt, m_*.tsv)."
         ),
     ] = ""
 

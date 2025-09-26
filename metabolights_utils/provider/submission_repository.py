@@ -184,7 +184,8 @@ class MetabolightsSubmissionRepository:
         except Exception as ex:
             messages.append(
                 ErrorMessage(
-                    short="Download metadata file failure. Try -l option if there is a local copy.",
+                    short="Download metadata file failure. "
+                    "Try -l option if there is a local copy.",
                     detail=str(ex),
                 )
             )
@@ -256,7 +257,8 @@ class MetabolightsSubmissionRepository:
         if not new_requested_files:
             return (
                 False,
-                "There is no metadata file to upload or local metadata files are up-to-date.",
+                "There is no metadata file to upload or "
+                "local metadata files are up-to-date.",
             )
         if not ftp_password or not ftp_username:
             ftp_username, ftp_password, error = self.get_ftp_credentials()
@@ -906,7 +908,7 @@ class MetabolightsSubmissionRepository:
             key = f"{study_id}/{filename}"
             if os.path.exists(file_path):
                 if override_local_files:
-                    response.actions[key] = "OVERRIDED"
+                    response.actions[key] = "OVERRIDDEN"
                 else:
                     local_modified_time = int(os.path.getmtime(file_path))
                     _time = descriptors[filename].created_at
@@ -983,7 +985,7 @@ class MetabolightsSubmissionRepository:
         except Exception as ex:
             messages.append(
                 ErrorMessage(
-                    short=f"Download data file {current_file if current_file else ''} failure",
+                    short=f"Download data file {current_file or ''} failure",
                     detail=f"Error message: {str(ex)}",
                 )
             )

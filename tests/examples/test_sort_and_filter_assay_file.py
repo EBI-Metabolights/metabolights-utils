@@ -11,8 +11,9 @@ from metabolights_utils.tsv.sort import SortType, TsvFileSortOption
 
 def test_with_filter_and_sort_option_01():
     # Sample Name value does not start with 'control'  and
-    # Parameter Value[Chromatography Instrument] value is 'Thermo Scientific TRACE GC Ultra'.
-    # Both filters are applied in case insesitive mode.
+    # Parameter Value[Chromatography Instrument] value is
+    # 'Thermo Scientific TRACE GC Ultra'.
+    # Both filters are applied in case insensitive mode.
     filter_options = [
         TsvFileFilterOption(
             search_columns=["Sample Name"],
@@ -44,7 +45,8 @@ def test_with_filter_and_sort_option_01():
     )
     helper: IsaTableFileReader = Reader.get_assay_file_reader()
 
-    # Result pages will contain second 111 rows (page 2) after filter and sort operations.
+    # Result pages will contain second 111 rows (page 2)
+    # after filter and sort operations.
     # Selected columns are not set. Result will contain all columns.
     result: IsaTableFileReaderResult = helper.get_page(
         page=2,
@@ -76,7 +78,8 @@ def test_with_filter_and_sort_option_01():
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 50
 
-    # First filter applies regex epression math on Sample Name column in case insensitive mode
+    # First filter applies regex expression math
+    # on Sample Name column in case insensitive mode
     # Second filter is exact match on Parameter Value[Chromatography Instrument]
     filter_options = [
         TsvFileFilterOption(
@@ -100,9 +103,11 @@ def test_with_filter_and_sort_option_01():
         "Parameter Value[Autosampler model]",
     ]
 
-    # Result pages will be 111 and read 2. page after filter operations (No sort options).
+    # Result pages will be 111 and read 2.
+    # Page after filter operations (No sort options).
     # Selected columns are set. Result will contain 6 columns.
-    # 4 selected columns + Term Source REF and Term Accession Number columns of Parameter Value[Autosampler model].
+    # 4 selected columns + Term Source REF
+    # and Term Accession Number columns of Parameter Value[Autosampler model].
     result: IsaTableFileReaderResult = helper.get_page(
         page=1,
         results_per_page=111,

@@ -37,17 +37,24 @@
 
       "editor.defaultFormatter": "charliermarsh.ruff",
       "cSpell.words": [
+        "CHEBI",
+        "commitizen",
+        "funder",
+        "funders",
         "isatab",
         "metabolights",
         "metabolomics",
         "mtbls",
         "NCIT",
+        "omics",
+        "orcid",
+        "pytest",
         "seperator"
       ],
 "yaml.schemas": {
     "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs.yml"
   },
-  "yaml.customTags": [ 
+  "yaml.customTags": [
 
 
     "!ENV scalar",
@@ -60,5 +67,8 @@
   ],
   "python-envs.defaultEnvManager": "ms-python.python:poetry",
   "python-envs.defaultPackageManager": "ms-python.python:poetry",
-  "python-envs.pythonProjects": []
+  "python-envs.pythonProjects": [],
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+  }
 }

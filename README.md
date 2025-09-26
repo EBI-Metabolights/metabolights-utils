@@ -1,9 +1,5 @@
 
-
-
-
 # <img src="https://www.ebi.ac.uk/metabolights/img/MetaboLightsLogo.png" width="30" height="30" alt="Metabolights"> MetaboLights Utils Library
-
 
 <a href="https:/www.ebi.ac.uk/metabolights" target="_blank">
     <img src="https://img.shields.io/badge/Homepage-MetaboLights-blue" alt="MetaboLights">
@@ -24,16 +20,19 @@
 
 ---
 
-#### **metaboligts-utils** is a *lightweight API* and *command line interface* (CLI) to use or search MetaboLights public studies, update MetaboLights submitted studies and [ISA-Tab](https://isa-specs.readthedocs.io/en/latest/isatab.html) metadata files. 
+#### **metaboligts-utils** is a *lightweight API* and *command line interface* (CLI) to use or search MetaboLights public studies, update MetaboLights submitted studies and [ISA-Tab](https://isa-specs.readthedocs.io/en/latest/isatab.html) metadata files
+
 ---
 
 #### CLI Features
+
 * Download and list MetaboLights public study metadata files.
 * Search MetaboLights public studies [beta release].
 * Download, upload and validate MetaboLights submitted studies
 * Create assay file templates.
 
 #### API Features
+
 * **Read and update ISA files** with minimum pyhton package dependency.
 * Read MetaboLights study metadata files
 * Calculate hash value of each ISA metadata file or study ISA metadata folder
@@ -44,14 +43,15 @@
 
 ---
 
-
 ## Installation
+
 ---
 The following command installs metabolights-utils from the Python Package Index. You will need Python 3.8+ and pip3 on your operating system.
 
 * (If python3 is not installed) Download and install [Python](https://www.python.org/downloads)
-* (If pip3 is not installed) Install [pip3](https://pip.pypa.io/en/stable/installation) 
+* (If pip3 is not installed) Install [pip3](https://pip.pypa.io/en/stable/installation)
 * Install metabolights-utils library
+
 ```shell
 cd <directory to create a virtual environment>
 
@@ -66,9 +66,11 @@ mtbls --version
 ```
 
 ## CLI (**mtbls**) Usage
+
 After installation of metabolights-utils, *mtbls* command will be enabled to use or search MetaboLights studies.
 
-### Commands to use MetaboLights Public Studies 
+### Commands to use MetaboLights Public Studies
+
 ```shell
 cd <directory to installed virtual environment.>
 # activate your virtual environment
@@ -175,7 +177,8 @@ mtbls public remove MTBLS1
 
 ```
 
-#### Commands to search MetaboLights Public Studies 
+#### Commands to search MetaboLights Public Studies
+
 ```shell
 
 # prints help for public study search command.
@@ -215,14 +218,14 @@ mtbls public search MTBLS1 --raw
 mtbls public search "targeted + lipid" --limit=0
 
 
-# prints summary of first 10 studies in search results 
+# prints summary of first 10 studies in search results
 mtbls public search "targeted + lipid" --skip=0 --limit=10
 
 
-# prints summary of 10 studies in search results 
+# prints summary of 10 studies in search results
 mtbls public search "targeted + lipid" --skip=10 --limit=10
 
-# prints summary of the first public study in search results  
+# prints summary of the first public study in search results
 mtbls public search "(mus musculus) + cancer + (lipidomics | lipidomic)" --skip=0 --limit=1
 
 
@@ -235,7 +238,7 @@ mtbls public search "cancer" --body '{"ontologyFilters": {"organism":{ "joinOper
 # prints number of the public studies in search results (search cancer term if there is an organism sample from mus musculus **or** homo sapiens)
 mtbls public search "cancer" --body '{"ontologyFilters": {"organism":{ "joinOperator": "and", "values": ["mus musculus", "homo sapiens"]}}}' --limit=0
 
-# prints only study ids of search result (list studies that contain goose or chicken term and have LC-MS or GC-MS assays) 
+# prints only study ids of search result (list studies that contain goose or chicken term and have LC-MS or GC-MS assays)
 mtbls public search "(goose | chicken)" --body '{"assayTechniqueNameFilter": { "joinOperator": "or", "values": ["LC-MS", "GC-MS"] }}' --limit=100 --id
 
 # prints studies both NMR and LC-MS assays (no query)
@@ -244,7 +247,7 @@ mtbls public search --body '{"assayTechniqueNameFilter": { "joinOperator": "and"
 # select term
 mtbls public search "(cow + -sheep + -(blood serum | milk))" --body '{"assayTechniqueNameFilter": { "joinOperator": "or", "values": ["LC-MS", "GC-MS"] }}'
 
-# prints only study ids 
+# prints only study ids
 mtbls public search "(cow | -sheep)" --body '{"assayTechniqueNameFilter": { "joinOperator": "or", "values": ["LC-MS", "GC-MS"] }}' --limit=100 --id
 
 # prints only study ids if study has 'SCIEX QTRAP' term in mass spectrometry assay files
@@ -267,7 +270,8 @@ mtbls public search --body '{"aggregations": [{ "aggregationName": "assay_techni
 
 ```
 
-#### Commands to update MetaboLights Submitted (private) Studies 
+#### Commands to update MetaboLights Submitted (private) Studies
+
 ```shell
 
 # prints help for submitted studies.
@@ -381,20 +385,22 @@ mtbls submission validate
     #   --help                          Show this message and exit.
 
 
-# runs study validation and creates tsv validation report for errors. 
+# runs study validation and creates tsv validation report for errors.
 mtbls submission validate <MTBLSXXX>
 
-# runs study validation and creates tsv validation report with given filename on current working directory. 
+# runs study validation and creates tsv validation report with given filename on current working directory.
 mtbls submission validate <MTBLSXXX> --validation_file_path errors.tsv
 
 ```
-## API Usage 
+
+## API Usage
 
 ### Load MetaboLights study model from a directory
+
 ---
 Read i_Investigation.txt, s_*,txt, a_*.txt and m_*.tsv files in a study folder.
 
-```python 
+```python
     provider = MetabolightsStudyProvider()
     model, messages = provider.load_study(
         study_id,
@@ -405,12 +411,12 @@ Read i_Investigation.txt, s_*,txt, a_*.txt and m_*.tsv files in a study folder.
     )
 ```
 
-
 ### Read and update Investigation files
----
-Read and update an investigation file. Results are json serializable, so you can use them with REST APIs.  
 
-```python 
+---
+Read and update an investigation file. Results are json serializable, so you can use them with REST APIs.
+
+```python
 import os
 import pathlib
 import uuid
@@ -450,17 +456,22 @@ def test_investigation_file_write_01():
 ```
 
 ### Read and Update ISA Table Files with Pagination Support
+
 ---
+
 * Select page size (number of rows in a page) and read results with the selected page size.
-* Define custom row offset and read only selected rows. Actual row indices in a result may be unordered after filter and sort operations. 
-* Read the selected columns you defined. If a selected column has additional columns (Term Source REF, etc) and these columns are not defined by user, they will also be in the result. Column names may be different than header if there are multiple columns with same header. 
+* Define custom row offset and read only selected rows. Actual row indices in a result may be unordered after filter and sort operations.
+* Read the selected columns you defined. If a selected column has additional columns (Term Source REF, etc) and these columns are not defined by user, they will also be in the result. Column names may be different than header if there are multiple columns with same header.
 * If columns are not selected, all table columns will be returned in result. If columns are selected, result will contain only these columns in selected order.
 
 ---
+
 #### Example 1: Read ISA table file
+
 ---
 
 Read selected assay file (a_*.txt) rows and columns with pagination support. You can use same methods with sample (s_*.txt) and metabolite assignment (m_*.tsv) files.
+
 ```python
 import pathlib
 
@@ -541,8 +552,8 @@ def test_assay_file_success_01():
     assert len(result.isa_table_file.table.columns) == 4
 ```
 
-
 #### Example 2: Update ISA table file
+
 ---
 
 Load ISA table page and save after update table content
@@ -587,7 +598,7 @@ def test_assay_file_read_write():
         assert len(result.parser_report.messages) == 0
         assert result.isa_table_file.table.row_count == 50
         assert len(result.isa_table_file.table.columns) == 3
-    
+
     writer: IsaTableFileWriter = Writer.get_assay_file_writer()
     isa_table = result.isa_table_file.table
 
@@ -611,36 +622,39 @@ def test_assay_file_read_write():
 ```
 
 ### Multi-column filters and sort options
----
-* Case sensitive or case insensitive multi-column sort is supported.
-    - Multi-column sorts can be defined with combination of ascending and descending orders. For example; You can sort 'Parameter Value\[Gender\]' by ascending and Parameter Value\[Age\] by descending order. 
-    - Columns can be sorted as different data type. Supported sort data types are: str, int, float and datetime. datetime pattern can be defined.
-    - Sort orders for invalid and empty values can also be defined. For example, If it is defined as VALID_EMPTY_INVALID, invalid values will be at the end. Empty values will follow valid values. This value order option is applicable for only int, datetime and float data types. All sort placement combinations are poossible for EMPTY, INVALID, VALID values.
-    - You can define your custom sorters. A custom "enum-sorter" sorter has been already implemented. It sorts enums with given string values.
 
-* There are **10 different filters** (plus (NOT) options of them). Any filter can be applied to any column. Multiple filters can be defined. 
-    - CONTAINS / NOT CONTAINS
-    - EQUAL / NOT EQUAL
-    - STARTSWITH / NOT STARTSWITH
-    - ENDSWITH / NOT ENDSWITH
-    - GREATER / NOT GREATER
-    - GREATER_EQUAL / NOT GREATER_EQUAL
-    - LESS / NOT LESS
-    - LESS_EQUAL / NOT LESS_EQUAL
-    - REGEX (regex match) / NOT REGEX (not regex match)
-    - EMPTY / NOT EMPTY (None or empty)
+---
+
+* Case sensitive or case insensitive multi-column sort is supported.
+  * Multi-column sorts can be defined with combination of ascending and descending orders. For example; You can sort 'Parameter Value\[Gender\]' by ascending and Parameter Value\[Age\] by descending order.
+  * Columns can be sorted as different data type. Supported sort data types are: str, int, float and datetime. datetime pattern can be defined.
+  * Sort orders for invalid and empty values can also be defined. For example, If it is defined as VALID_EMPTY_INVALID, invalid values will be at the end. Empty values will follow valid values. This value order option is applicable for only int, datetime and float data types. All sort placement combinations are poossible for EMPTY, INVALID, VALID values.
+  * You can define your custom sorters. A custom "enum-sorter" sorter has been already implemented. It sorts enums with given string values.
+
+* There are **10 different filters** (plus (NOT) options of them). Any filter can be applied to any column. Multiple filters can be defined.
+  * CONTAINS / NOT CONTAINS
+  * EQUAL / NOT EQUAL
+  * STARTSWITH / NOT STARTSWITH
+  * ENDSWITH / NOT ENDSWITH
+  * GREATER / NOT GREATER
+  * GREATER_EQUAL / NOT GREATER_EQUAL
+  * LESS / NOT LESS
+  * LESS_EQUAL / NOT LESS_EQUAL
+  * REGEX (regex match) / NOT REGEX (not regex match)
+  * EMPTY / NOT EMPTY (None or empty)
 * You can define multiple filters. If one filter rejects row, row will not be selected (AND operation).
 * You can define one or more columns for a filter. If there are multiple columns for a filter. If any column matches, the filter selects the row (OR operation).
-* If you do not select any column for a filter, the filter will evaluate all columns. If filter matches with any column, it will select the row. Moreover, you can define some column names to skip them while filter is evaluating a row. 
+* If you do not select any column for a filter, the filter will evaluate all columns. If filter matches with any column, it will select the row. Moreover, you can define some column names to skip them while filter is evaluating a row.
 
 * You can define your custom filters. Some custom filters have been already implemented.
-    - "between-equal": Returns row if value between given min and max. Min and max inputs can be datetime, str, int or float.
-    - "valid-datetime" Return row if value is valid datetime with given pattern. Default pattern is DD/MM/YYYY.
-    - "valid-number": Return row if value is valid int or float.
-    - "enum-contains": Gets a map to define a text for each enum value. Returns row if input parameter is in the enum text map. Enum data typese can be any allowed type (str, int, etc.).
-        + Example: Enum values are 1, 2, 3, 4 (You store status values as in on database). Enum values are mapped to 1: "In Review", 2: "Published", 3: "In Curation", 4: "Public". If parameter is "Pub", all rows contain enum value 2 or 4 will be returned.
+  * "between-equal": Returns row if value between given min and max. Min and max inputs can be datetime, str, int or float.
+  * "valid-datetime" Return row if value is valid datetime with given pattern. Default pattern is DD/MM/YYYY.
+  * "valid-number": Return row if value is valid int or float.
+  * "enum-contains": Gets a map to define a text for each enum value. Returns row if input parameter is in the enum text map. Enum data typese can be any allowed type (str, int, etc.).
+    * Example: Enum values are 1, 2, 3, 4 (You store status values as in on database). Enum values are mapped to 1: "In Review", 2: "Published", 3: "In Curation", 4: "Public". If parameter is "Pub", all rows contain enum value 2 or 4 will be returned.
 
 #### Example
+
 Users can apply multiple filters and sort operations before retriving ISA table rows.
 
 ```python
@@ -726,7 +740,7 @@ def test_with_filter_and_sort_option_01():
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 50
 
-    # First filter applies regex epression math on Sample Name column in case insensitive mode
+    # First filter applies regex expression math on Sample Name column in case insensitive mode
     # Second filter is exact match on Parameter Value[Chromatography Instrument]
     filter_options = [
         TsvFileFilterOption(
@@ -768,6 +782,7 @@ def test_with_filter_and_sort_option_01():
 ### Update ISA table files with actions
 
 User can manuplate ISA table files in row, column or cell level with actions. Supported actions:
+
 * ADD_ROW: Insert rows to given indices
 * DELETE_ROW: delete selected rows
 * MOVE_ROW: move row to new index
@@ -780,7 +795,6 @@ User can manuplate ISA table files in row, column or cell level with actions. Su
 * UPDATE_COLUMN_DATA: update selected column values
 * UPDATE_COLUMN_HEADER: update column headers
 * UPDATE_CELL_DATA: update cells given with row and column index
-
 
 View **model and action definitions** on [this file](https://github.com/EBI-Metabolights/metabolights-utils/blob/master/metabolights_utils/tsv/model.py).
 

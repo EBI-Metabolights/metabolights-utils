@@ -23,7 +23,7 @@ from metabolights_utils.provider.study_provider import (
 )
 
 
-def test_load_study_data_with_default_paramters_01():
+def test_load_study_data_with_default_parameters_01():
     provider = MetabolightsStudyProvider()
     model: MetabolightsStudyModel = provider.load_study(
         "MTBLS1", "tests/test-data/MTBLS1"
