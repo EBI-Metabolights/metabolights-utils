@@ -374,9 +374,9 @@ class InvestigationFileSerializer(object):
                         rows.extend(sub_model_rows)
             elif isinstance(value, str):
                 field_attribute = to_snake(field_name)
-                header_name = model.model_fields[field_attribute].json_schema_extra[
-                    "header_name"
-                ]
+                header_name = model.__class__.model_fields[
+                    field_attribute
+                ].json_schema_extra["header_name"]
                 header_name = (
                     f"{model.isatab_config.section_prefix} {header_name}"
                     if model.isatab_config.section_prefix

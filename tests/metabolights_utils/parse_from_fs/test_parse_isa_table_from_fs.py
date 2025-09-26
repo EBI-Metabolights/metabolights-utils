@@ -173,7 +173,10 @@ class MockParser(object):
 
 
 def test_parse_isa_file_content_errors_01():
-    file_path = "tests/test-data/MTBLS1/m_MTBLS1_metabolite_profiling_NMR_spectroscopy_v2_maf.tsv"
+    file_path = (
+        "tests/test-data/MTBLS1/"
+        "m_MTBLS1_metabolite_profiling_NMR_spectroscopy_v2_maf.tsv"
+    )
     messages: List[str] = []
     mock_parser = MockParser()
     table, messages = parse_isa_file_content(
@@ -224,7 +227,10 @@ def test_parse_isa_table_sheet_from_fs_invalid_01():
     assert not table.file_path
     assert messages
 
-    maf_file_path = "tests/test-data/MTBLS1/m_MTBLS1_metabolite_profiling_NMR_spectroscopy_v2_maf.tsv"
+    maf_file_path = (
+        "tests/test-data/MTBLS1/"
+        "m_MTBLS1_metabolite_profiling_NMR_spectroscopy_v2_maf.tsv"
+    )
     basename = os.path.basename(maf_file_path)
     table, messages = parse_isa_table_sheet_from_fs(maf_file_path)
     assert table

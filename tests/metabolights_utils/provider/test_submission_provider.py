@@ -145,7 +145,10 @@ def submission_repository() -> Generator[
     local_storage_root_path = (
         f"test-temp/mtbls_unit_test_load_study_{random.randint(1000000, 9999999)}_tmp"
     )
-    local_storage_cache_path = f"test-temp/mtbls_unit_test_local_cache_load_study_{random.randint(1000000, 9999999)}_tmp"
+    rand_num = random.randint(1000000, 9999999)
+    local_storage_cache_path = (
+        f"test-temp/mtbls_unit_test_local_cache_load_study_{rand_num}_tmp"
+    )
     try:
         credentials = {
             "ftp_login": {"ftp-private.ebi.ac.uk": {"user_name": "x", "password": "y"}},
@@ -475,9 +478,9 @@ def test_validate_study_01(mocker: MockerFixture, submission_repository, study_i
     )
 
     repository, credentials = submission_repository
-
+    rand_val = random.randint(1000000, 9999999)
     validation_file_path = Path(
-        f"test-temp/mtbls_unit_test_validation_{random.randint(1000000, 9999999)}_tmp.json"
+        f"test-temp/mtbls_unit_test_validation_{rand_val}_tmp.json"
     )
     try:
         success, message = repository.validate_study(

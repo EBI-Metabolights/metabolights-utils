@@ -38,9 +38,11 @@ class TsvFileSortOption(CamelCaseModel):
         str,
         Field(
             description="Column name that sort operation will be applied."
-            + "Column name may be different if there are multiple columns with same name."
+            " Column name may be different "
+            "if there are multiple columns with same name."
             "If there are multiple column headers, "
-            "Second column and others are named as <column header>.1 <column header>.2 and so on.",
+            "Second column and others are named as "
+            "<column header>.1 <column header>.2 and so on.",
         ),
     ] = ""
 
@@ -61,7 +63,8 @@ class TsvFileSortOption(CamelCaseModel):
     value_order: Annotated[
         TsvFileSortValueOrder,
         Field(
-            description="Position of valid and empty values if sort type is int, float or datetime",
+            description="Position of valid and empty values "
+            "if sort type is int, float or datetime",
         ),
     ] = TsvFileSortValueOrder.VALID_EMPTY_INVALID
 
@@ -76,7 +79,9 @@ class TsvFileSortOption(CamelCaseModel):
     min_key_length: Annotated[
         int,
         Field(
-            description="If sort type is not string, values will be converted to string and short strings will be filled with 0.",
+            description="If sort type is not string, "
+            "values will be converted to string and "
+            "short strings will be filled with 0.",
         ),
     ] = -1
 
@@ -335,7 +340,8 @@ class EnumSorter(CustomSorter):
                         )
                     else:
                         raise TsvSortException(
-                            "Selected enum class name is not valid. Use format <module name>:<enum class name>"
+                            "Selected enum class name is not valid. "
+                            "Use format <module name>:<enum class name>"
                         )
             except Exception as exc:
                 if isinstance(exc, TsvSortException):
@@ -360,7 +366,8 @@ class EnumSorter(CustomSorter):
             missing_values = [x for x in enum_values if x not in self.enum_string_map]
             if missing_values:
                 raise TsvSortException(
-                    f"There are some missing values to map an enum {', '.join(missing_values)}"
+                    "There are some missing values to map an enum "
+                    f"{', '.join(missing_values)}"
                 )
 
     def get_sorted_string(self, value: str) -> str:
