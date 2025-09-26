@@ -110,6 +110,17 @@ class OntologyAnnotation(IsaAbstractModel):
         return ""
 
 
+class DesignDescriptor(OntologyAnnotation):
+    category: Annotated[
+        str,
+        Field(description="Category of descriptor annotation"),
+    ] = ""
+    source: Annotated[
+        str,
+        Field(description="Source of ontology annotation"),
+    ] = ""
+
+
 class ValueTypeAnnotation(IsaAbstractModel):
     isatab_config: Annotated[IsaTabConfig, Field(exclude=True)] = IsaTabConfig(
         field_order=[
@@ -294,6 +305,27 @@ class Person(IsaAbstractModel):
             },
         ),
     ] = []
+    orcid: Annotated[
+        str,
+        Field(
+            description="ORCID of person associated with the investigation or study",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+    additional_emails: Annotated[
+        list[str],
+        Field(
+            description="Additional email addresses of person associated with the investigation or study",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = []
+    affiliation_ror_id: Annotated[
+        str,
+        Field(
+            description="ROR Id of the person's affiliation",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
 
 
 class Factor(IsaAbstractModel):
@@ -368,6 +400,23 @@ class Assay(IsaAbstractModel):
             json_schema_extra={"auto_fill": True, "header_name": "Technology Platform"},
         ),
     ] = ""
+
+    assay_identifier: Annotated[
+        str,
+        Field(description="Assay identifier.", json_schema_extra={"auto_fill": False}),
+    ] = ""
+    assay_type: Annotated[
+        OntologyAnnotation,
+        Field(description="Assay type.", json_schema_extra={"auto_fill": False}),
+    ] = OntologyAnnotation()
+    omics_type: Annotated[
+        OntologyAnnotation,
+        Field(description="Assay type.", json_schema_extra={"auto_fill": False}),
+    ] = OntologyAnnotation()
+    assay_descriptors: Annotated[
+        list[DesignDescriptor],
+        Field(description="Assay descriptors.", json_schema_extra={"auto_fill": False}),
+    ] = []
 
 
 class Protocol(IsaAbstractModel):
@@ -542,7 +591,7 @@ class StudyDesignDescriptors(BaseSection):
     )
 
     design_types: Annotated[
-        List[OntologyAnnotation],
+        List[DesignDescriptor],
         Field(
             description="Design descriptors defined in study design descriptors section.",
             json_schema_extra={"auto_fill": True, "header_name": "Type"},
@@ -673,6 +722,14 @@ class StudyContacts(BaseSection):
     ] = []
 
 
+class Funder(IsaAbstractModel):
+    funder_name: Annotated[str, Field(description="Funder organization full name.")] = (
+        ""
+    )
+    funder_id: Annotated[str, Field(description="Funder ID.")] = ""
+    grant_ids: Annotated[list[str], Field(description="Grant ID.")] = []
+
+
 class Study(BaseSection):
     isatab_config: Annotated[
         IsaTabConfig,
@@ -734,7 +791,73 @@ class Study(BaseSection):
             json_schema_extra={"auto_fill": True, "header_name": "File Name"},
         ),
     ] = ""
-
+    study_category: Annotated[
+        str,
+        Field(description="Study category", json_schema_extra={"auto_fill": False}),
+    ] = ""
+    sample_template: Annotated[
+        str,
+        Field(
+            description="Study sample file template",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+    mhd_accession: Annotated[
+        str,
+        Field(
+            description="MetabolomicsHub accession number of the study",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+    mhd_model_version: Annotated[
+        str,
+        Field(
+            description="MetabolomicsHub model version of the study",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+    revision_number: Annotated[
+        str,
+        Field(
+            description="Revision number of the study",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+    revision_date: Annotated[
+        str,
+        Field(
+            description="Revision date of the study",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+    revision_comment: Annotated[
+        str,
+        Field(
+            description="Revision comment of the study",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+    dataset_license: Annotated[
+        str,
+        Field(
+            description="Data license of the study",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+    funders: Annotated[
+        list[Funder],
+        Field(
+            description="Study funders.",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = []
+    characteristic_types: Annotated[
+        list[ValueTypeAnnotation],
+        Field(
+            description="Study funders.",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = []
     study_design_descriptors: Annotated[
         StudyDesignDescriptors,
         Field(
@@ -782,9 +905,7 @@ class Study(BaseSection):
 class Investigation(BaseSection):
     isatab_config: Annotated[
         IsaTabConfig,
-        Field(
-            exclude=True,
-        ),
+        Field(exclude=True),
     ] = IsaTabConfig(
         field_order=[
             "identifier",

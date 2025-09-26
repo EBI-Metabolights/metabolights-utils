@@ -1,0 +1,126 @@
+ONTOLOGY SOURCE REFERENCE
+Term Source Name	BTO	NCBITAXON	EFO	ROLEO	CHMO	OBI	MS
+Term Source File	http://data.bioontology.org/ontologies/BTO	http://data.bioontology.org/ontologies/NCBITAXON	http://data.bioontology.org/ontologies/EFO	http://data.bioontology.org/ontologies/ROLEO	http://data.bioontology.org/ontologies/CHMO	http://data.bioontology.org/ontologies/OBI	http://data.bioontology.org/ontologies/MS
+Term Source Version	26	2	113	1	16	22	86
+Term Source Description	BRENDA Tissue and Enzyme Source Ontology	National Center for Biotechnology Information (NCBI) Organismal Classification	Experimental Factor Ontology	Role Ontology	Chemical Methods Ontology	Ontology for Biomedical Investigations	Mass Spectrometry Ontology
+INVESTIGATION
+Investigation Identifier	MTBLS74
+Investigation Title	
+Investigation Description	
+Investigation Submission Date	2014-11-05
+Investigation Public Release Date	2014-11-06
+Comment[Created With Configuration]	
+Comment[Last Opened With Configuration]	
+INVESTIGATION PUBLICATIONS
+Investigation PubMed ID
+Investigation Publication DOI
+Investigation Publication Author List
+Investigation Publication Title
+Investigation Publication Status
+Investigation Publication Status Term Accession Number
+Investigation Publication Status Term Source REF
+INVESTIGATION CONTACTS
+Investigation Person Last Name
+Investigation Person First Name
+Investigation Person Mid Initials
+Investigation Person Email
+Investigation Person Phone
+Investigation Person Fax
+Investigation Person Address
+Investigation Person Affiliation
+Investigation Person Roles
+Investigation Person Roles Term Accession Number
+Investigation Person Roles Term Source REF
+STUDY
+Study Identifier	MTBLS74
+Study Title	Experiment design beyond gut feeling: statistical tests and power to detect differential metabolites in mass spectrometry data
+Study Description	We use metabolite profiles of the model plant Arabidopsis thaliana measured on an UPLC-ESI/QqTOF-MS as a pilot study to estimate variance levels which then can be used to obtain several statistical parameters (e.g. minimum detectable effect, number of required replicates and error probabilities) which influence the design of a subsequent study.
+Study Submission Date	2014-11-05
+Study Public Release Date	2014-11-06
+Study File Name	s_MTBLS74.txt
+Comment[License]	EMBL-EBI Terms of Use
+Comment[Revision]	2
+Comment[Revision Date]	2025-09-03
+Comment[Revision Log]	updating data license
+Comment[Sample Template]	minimum
+Comment[Study Category]	other
+Comment[MHD Accession]	MHD000001
+Comment[MHD Model Version]	0.1
+Comment[Funder]	European Bioinformatics Institute	University of Liverpool
+Comment[Funder ROR Id]	https://ror.org/02catss52	https://ror.org/04xs57h96
+Comment[Grant Identifier]	Grant1111;Grant1112	Grant222
+Comment[Study Characteristics Name]	Organism	Organism part	Variant	Sample type
+Comment[Study Characteristics Type]	Organism	Organism Part	Variant	Sample Type
+Comment[Study Characteristics Type Term Accession Number]	http://purl.obolibrary.org/obo/NCIT_C14250	http://purl.obolibrary.org/obo/NCIT_C103199		http://purl.obolibrary.org/obo/NCIT_C210102
+Comment[Study Characteristics Type Term Source REF]	NCIT	NCIT		NCIT
+STUDY DESIGN DESCRIPTORS
+Study Design Type	replicate design	ultra-performance liquid chromatography-mass spectrometry	time-of-flight mass spectrometry	cancer
+Study Design Type Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0001776	http://purl.obolibrary.org/obo/CHMO_0000715	http://purl.obolibrary.org/obo/CHMO_0000580	http://purl.obolibrary.org/obo/DOID_162
+Study Design Type Term Source REF	EFO	CHMO	CHMO	DOID
+Comment[Study Design Category]	default	default	default	disease
+Comment[Study Design Source]	submitter	submitter	submitter	repository
+STUDY PUBLICATIONS
+Study PubMed ID	
+Study Publication DOI	10.1007/s11306-014-0742-y
+Study Publication Author List	Diana Trutschel, Stephan Schmidt, Ivo Grosse and Steffen Neumann
+Study Publication Title	Experiment design beyond gut feeling: statistical tests and power to detect differential metabolites in mass spectrometry data
+Study Publication Status	Published
+Study Publication Status Term Accession Number	
+Study Publication Status Term Source REF	
+STUDY FACTORS
+Study Factor Name	Extraction replicate	Injection replicate
+Study Factor Type	technical replicate	technical replicate
+Study Factor Type Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0002090	http://www.ebi.ac.uk/efo/EFO_0002090
+Study Factor Type Term Source REF	EFO	EFO
+Comment[Study Factor Column Format]	Text	Numeric
+STUDY ASSAYS
+Study Assay File Name	a_MTBLS74_scse305_metabolite_profiling_mass_spectrometry.txt
+Study Assay Measurement Type	metabolite profiling
+Study Assay Measurement Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000366
+Study Assay Measurement Type Term Source REF	OBI
+Study Assay Technology Type	mass spectrometry
+Study Assay Technology Type Term Accession Number	http://purl.obolibrary.org/obo/OBI_0000470
+Study Assay Technology Type Term Source REF	OBI
+Study Assay Technology Platform	micrOTOF-Q II ESI-Qq-TOF (Bruker)
+Comment[Assay Identifier]	MTBLS74-01
+Comment[Assay Type]	liquid chromatography mass spectrometry assay
+Comment[Assay Type Term Accession Number]	http://purl.obolibrary.org/obo/OBI_0003097
+Comment[Assay Type Term Source REF]	OBI
+Comment[Omics Type]	Lipidomics
+Comment[Omics Type Term Accession Number]	http://edamontology.org/topic_0153
+Comment[Omics Type Term Source REF]	EDAM
+Comment[Assay Descriptor]	ultra-performance liquid chromatography-mass spectrometry;data-independent acquisition
+Comment[Assay Descriptor Term Accession Number]	http://purl.obolibrary.org/obo/CHMO_0000715;http://purl.obolibrary.org/obo/MS_1003215
+Comment[Assay Descriptor Term Source REF]	CHMO;MS
+Comment[Assay Descriptor Category]	default;default
+Comment[Assay Descriptor Source]	submitter;submitter
+STUDY PROTOCOLS
+Study Protocol Name	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification	Growth conditions
+Study Protocol Type	Sample collection	Extraction	Chromatography	Mass spectrometry	Data transformation	Metabolite identification	Growth conditions
+Study Protocol Type Term Accession Number							
+Study Protocol Type Term Source REF							
+Study Protocol Description	Leaves were harvested and processed with a cryogrinding robot: Fill ~50% volume of the scintillation vials with frozen leaf material (leaves can be broken to fit in). Add 3 steel balls, diameter 5 mm. Use robot sample program Arabidopsis leaf. Weights: 100 mg weight, 2 mg tolerance.	To the frozen leaf material 200 µl methanol/water, 80/20 (v/v) pre-cooled at –40 °C and spiked with biochanin A (5 µM, Sigma) as internal standard, the samples were immediately vortexed for 15 s. Probes were placed in ice to slowly warm up to ~0 °C. Then the probes were vortexed, sonicated for 15 min at 20 °C and centrifuged for 10 min at 19000 /g. The supernatants were transferred to new 2 ml tubes and the remaining pellets subjected to a second extraction using 200 µl methanol/water, 80/20 (v/v). The combined extracts were evaporated to dryness in a vacuum centrifuge at 30 °C, reconstituted in 200 µl methanol/water, 30/70 (v/v), vortexed and centrifuged for 10 min at 19000 /g. The supernatants were transferred to glass vial for measurement.	Chromatographic separations were performed on an Acquity UPLC system (Waters) equipped with a HSS T3 column (100 x 1.0 mm, particle size 1.8 µm, Waters, oven temperature 40 °C) applying the following binary gradient at a flow rate of 150 µl/min: 0-1 min, isocratic 95% A (water/formic acid, 99.9/0.1 (v/v)), 5% B (acetonitrile/formic acid, 99.9/0.1 (v/v)); 1-16 min, linear from 5 to 45% B; 16-18 min, isocratic 95% B; 18-20 min, isocratic 5% B. The injection volume was 3.0 µl (full loop injection).	Eluting compounds were detected from m/z 100-1000 using a micrOTOF-Q hybrid quadrupole time-of-flight mass spectrometer (Bruker Daltonics) equipped with an Apollo II electrospray ion source in positive and negative ion mode using following instrument settings: nebulizer gas, nitrogen, 1.6 bar; dry gas, nitrogen, 6 l/min, 190 °C; capillary, –4500 V; end plate offset, -500 V; funnel 1 RF, 200 V; funnel 2 RF, 200 V; in-source CID energy, 0 V; hexapole RF, 100 V; quadrupole ion energy, 5 eV; collision gas, nitrogen; collision energy, 7 eV; collision RF 150/350 V (timing 50/50); transfer time, 70 µs; pre pulse storage, 5 µs; pulser frequency, 10 kHz; spectra rate, 3 Hz. Mass spectra were acquired in centroid mode. Mass calibration of individual raw data files was performed on lithium formate cluster ions obtained by automatic infusion of 20 µl 10 mM lithium hydroxide in isopropanol/water/formic acid, 49.9/49.9/0.2 (v/v/v) at a gradient time of 18 min using a diverter valve.	Raw data files were converted to mzData format using the vendor-specific CompassXport (http://www.bdal.de/) with useRecalibratedSpectra=TRUE and processed using the XCMS package (http://bioconductor.org/packages/release/bioc/html/xcms.html). XCMS settings for processing LC/MS data were prefilter=3,100; snthr=6; ppm=30, peakwidth=5,12. For alignment group.density function with parameters mzwid=0.015, minfrac=1 and bw=3 was used.	<p>No metabolite identification was carried out in this experiment.</p>	Perceval growth chamber, short day conditions - light: 9:00-17:00, temperature day/night 23/23 °C.
+Study Protocol URI							
+Study Protocol Version							
+Study Protocol Parameters Name		Post Extraction;Derivatization	Chromatography Instrument;Autosampler model;Column model;Column type;Guard column	Scan polarity;Scan m/z range;Instrument;Mass analyzer;Ion source			
+Study Protocol Parameters Name Term Accession Number		;	;;;;	;;;;			
+Study Protocol Parameters Name Term Source REF		;	;;;;	;;;;			
+Study Protocol Components Name							
+Study Protocol Components Type							
+Study Protocol Components Type Term Accession Number							
+Study Protocol Components Type Term Source REF							
+STUDY CONTACTS
+Study Person Last Name	Schmidt	Neumann	Trutschel	Grosse
+Study Person First Name	Stephan	Steffen	Diana	Ivo
+Study Person Mid Initials				
+Study Person Email	Stephan.Schmidt@ipb-halle.de	sneumann@ipb-halle.de	Diana.Trutschel@ipb-halle.de	grosse@informatik.uni-halle.de
+Study Person Phone	+49 345 5582 1420	+49 345 5582 1470	na	+49 345 5524774
+Study Person Fax	+49 345 5582 1409	+49 345 5582 1409	na	+49 345 5527039
+Study Person Address	Weinberg 3, 06120 Halle, Germany	Weinberg 3, 06120 Halle, Germany	Weinberg 3, 06120 Halle, Germany	Von-Seckendorff-Platz 1, 06120 Halle, Germany
+Study Person Affiliation	IPB Halle	IPB Halle	IPB Halle	MLU Halle
+Study Person Roles	biochemists	computer scientists	computer scientists	computer scientists
+Study Person Roles Term Accession Number	http://purl.obolibrary.org/obo/RoleO_0000629	http://purl.obolibrary.org/obo/RoleO_0000633	http://purl.obolibrary.org/obo/RoleO_0000633	http://purl.obolibrary.org/obo/RoleO_0000633
+Study Person Roles Term Source REF	ROLEO	ROLEO	ROLEO	ROLEO
+Comment[Study Person ORCID]	0000-0002-7899-7192			
+Comment[Study Person Additional Email]	Stephan.Schmidt@ipb-halle.de			
+Comment[Study Person Affiliation ROR Id]	https://ror.org/02catss52	https://ror.org/04xs57h96		

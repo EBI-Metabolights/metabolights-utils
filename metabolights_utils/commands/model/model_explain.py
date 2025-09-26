@@ -12,7 +12,7 @@ from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 def model_explain(
     model_pattern: Union[None, str] = None,
 ):
-    """Expain properties and sub-properties of MetaboLights study model.
+    """Explain properties and sub-properties of MetaboLights study model.
        It lists root properties of the model, If it is not specified
 
     Examples:

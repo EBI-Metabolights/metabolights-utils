@@ -1,4 +1,4 @@
-from enum import Enum
+import enum
 from typing import Dict, List, Union
 
 from pydantic import ConfigDict, Field, field_validator
@@ -12,7 +12,7 @@ from metabolights_utils.models.metabolights.metabolights_study import (
 )
 
 
-class UserStatus(str, Enum):
+class UserStatus(enum.StrEnum):
     NEW = "NEW"
     VERIFIED = "VERIFIED"
     ACTIVE = "ACTIVE"
@@ -30,7 +30,7 @@ class UserStatus(str, Enum):
             return UserStatus.FROZEN
 
 
-class UserRole(str, Enum):
+class UserRole(enum.StrEnum):
     SUBMITTER = "SUBMITTER"
     CURATOR = "CURATOR"
     ANONYMOUS = "ANONYMOUS"
@@ -45,7 +45,7 @@ class UserRole(str, Enum):
             return UserRole.ANONYMOUS
 
 
-class CurationRequest(str, Enum):
+class CurationRequest(enum.StrEnum):
     MANUAL_CURATION = "MANUAL_CURATION"
     NO_CURATION = "NO_CURATION"
     SEMI_AUTOMATED_CURATION = "SEMI_AUTOMATED_CURATION"
@@ -61,7 +61,7 @@ class CurationRequest(str, Enum):
         return CurationRequest.MANUAL_CURATION
 
 
-class StudyStatus(str, Enum):
+class StudyStatus(enum.StrEnum):
     SUBMITTED = "SUBMITTED"
     INCURATION = "INCURATION"
     INREVIEW = "INREVIEW"
@@ -80,6 +80,15 @@ class StudyStatus(str, Enum):
             return StudyStatus.PUBLIC
         else:
             return StudyStatus.DORMANT
+
+
+class StudyCategory(enum.IntEnum):
+    OTHER = 0
+    MS_MHD_ENABLED = 1
+    MS_IMAGING = 2
+    MS_OTHER = 3
+    NMR = 4
+    MS_MHD_LEGACY = 5
 
 
 class StudyFileDescriptor(IsaAbstractModel):
@@ -225,6 +234,37 @@ class StudyDBMetadata(CamelCaseModel):
     submitters: Annotated[
         List[Submitter], Field(description="Submitters of study.")
     ] = []
+    ########################################################################################
+    # UPDATES after 09/2025
+    ########################################################################################
+    reserved_accession: Annotated[str, Field(description="Reserved accession.")] = ""
+    reserved_submission_id: Annotated[
+        str, Field(description="Reserved submission id. REQ...")
+    ] = ""
+
+    revision_date: Annotated[str, Field(description="Revision date of study.")] = ""
+    revision_number: Annotated[int, Field(description="Revision date of study.")] = 0
+    revision_comment: Annotated[str, Field(description="Revision comment.")] = ""
+    first_private_date: Annotated[
+        str, Field(description="Study first release date")
+    ] = ""
+    first_public_date: Annotated[
+        str, Field(description="Study first release date.")
+    ] = ""
+    dataset_license: Annotated[str, Field(description="Dataset license name.")] = ""
+    dataset_license_version: Annotated[
+        str, Field(description="Dataset license version.")
+    ] = ""
+    dataset_license_url: Annotated[str, Field(description="Dataset license URL.")] = ""
+    sample_template: Annotated[str, Field(description="Study template name.")] = ""
+    study_category: Annotated[StudyCategory, Field(description="Study category.")] = (
+        StudyCategory.OTHER
+    )
+    reserved_mhd_accession: Annotated[
+        str, Field(description="Reserved MHD accession.")
+    ] = ""
+    mhd_model_version: Annotated[str, Field(description="MHD model version.")] = ""
+    ########################################################################################
 
     @field_validator("status", mode="before")
     @classmethod

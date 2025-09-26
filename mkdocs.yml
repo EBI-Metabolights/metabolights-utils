@@ -1,0 +1,88 @@
+site_name: MetaboLights Utilities
+site_url: https://wwww.ebi.ac.uk/metabolights/resources/metabolights-utils
+theme:
+  name: material
+  logo: assets/metabolights.png
+  favicon: assets/favicon.ico
+  features:
+  - content.code.annotate
+  - content.code.copy
+  # - content.code.select
+  - content.footnote.tooltips
+  - content.tabs.link
+  - content.tooltips
+  - navigation.footer
+  - navigation.indexes
+  - navigation.instant
+  - navigation.instant.prefetch
+  # - navigation.instant.preview
+  - navigation.instant.progress
+  - navigation.path
+  - navigation.tabs
+  - navigation.tabs.sticky
+  - navigation.top
+  - navigation.tracking
+  - search.highlight
+  - search.share
+  - search.suggest
+  - toc.follow
+extra:
+  social:
+  - icon: fontawesome/brands/x-twitter
+    link: https://x.com/MetaboLights
+  - icon: fontawesome/brands/bluesky
+    link: https://bsky.app/profile/metabolights.bsky.social
+nav:
+- Overview: index.md
+- Installation: installation.md
+- Usage:
+  - API Usage: api.md
+  - CLI Usage: cli.md
+markdown_extensions:
+# Python Markdown
+- abbr:
+- attr_list:
+- footnotes:
+- md_in_html:
+- tables:
+- admonition:
+- toc:
+    permalink: true
+  # Python Markdown Extensions
+
+- pymdownx.highlight:
+    anchor_linenums: true
+    line_spans: __span
+    pygments_lang_class: true
+    use_pygments: true
+    linenums: true
+    linenums_style: pymdownx-inline
+- pymdownx.inlinehilite:
+- pymdownx.snippets:
+    base_path: [ "metabolights_utils", "tests", "docs" ]
+    check_paths: true
+- pymdownx.superfences:
+- pymdownx.betterem:
+- pymdownx.caret:
+- pymdownx.inlinehilite:
+- pymdownx.keys:
+- pymdownx.mark:
+- pymdownx.tilde:
+
+    # pymdownx blocks
+- pymdownx.blocks.admonition:
+    types:
+    - note
+    - attention
+    - caution
+    - danger
+    - error
+    - tip
+    - hint
+    - warning
+    # Custom types
+    - info
+    - check
+- pymdownx.blocks.details:
+- pymdownx.blocks.tab:
+    alternate_style: True

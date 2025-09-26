@@ -23,6 +23,11 @@ def test_parse_investigation_from_fs_valid_01():
     assert investigation
     assert not messages
 
+def test_parse_investigation_from_fs_valid_02_comments():
+    file_path = pathlib.Path("tests/test-data/investigation-files/i_Investigation_MTBLS74.txt")
+    investigation, messages = parse_investigation_from_fs(file_path)
+    assert investigation
+    assert not messages
 
 def test_parse_investigation_from_fs_invalid_01():
     file_path = pathlib.Path("tests/test-data/MTBLS1/xi_Investigation.txt")
