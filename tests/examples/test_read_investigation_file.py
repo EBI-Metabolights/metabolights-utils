@@ -34,7 +34,7 @@ def test_investigation_file_write_01():
     assay.measurement_type = OntologyItem(
         term="test",
         term_source_ref="test source",
-        term_accession_number="test accesion",
+        term_accession_number="test accession",
     )
 
     tmp_file_name = uuid.uuid4().hex
@@ -46,5 +46,5 @@ def test_investigation_file_write_01():
     assay_read: Assay = result2.investigation.studies[0].study_assays.assays[0]
     assert assay_read.measurement_type.term == "test"
     assert assay_read.measurement_type.term_source_ref == "test source"
-    assert assay_read.measurement_type.term_accession_number == "test accesion"
+    assert assay_read.measurement_type.term_accession_number == "test accession"
     os.remove(tmp_path)

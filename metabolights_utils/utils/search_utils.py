@@ -1,13 +1,12 @@
 import logging
 from pathlib import Path
-from typing import List
 
 logger = logging.getLogger(__name__)
 
 
-class MetabolightsSearchUtils(object):
+class MetabolightsSearchUtils:
     @staticmethod
-    def get_isa_metadata_files(folder_path: str, recursive: bool = False) -> List[str]:
+    def get_isa_metadata_files(folder_path: str, recursive: bool = False) -> list[str]:
         metadata_files = []
         patterns = ["[asi]_*.txt", "m_*.tsv"]
         folder = Path(folder_path)

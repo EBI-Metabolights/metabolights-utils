@@ -7,7 +7,7 @@ from typing import Tuple, Union
 logger = logging.getLogger(__name__)
 
 
-class BaseIsaFile(object):
+class BaseIsaFile:
     def _get_file_path(
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],

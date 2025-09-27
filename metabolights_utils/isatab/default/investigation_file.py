@@ -125,11 +125,15 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
         self,
         investigation: Investigation,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase, None] = None,
-        values_in_quotation_mark: bool = True,
+        values_in_quotation_mark: bool = False,
         verify_file_after_update: bool = True,
         skip_parser_info_messages: bool = True,
         investigation_module_name: Union[None, str] = None,
+        sync_comments_from_fields: bool = True,
     ) -> InvestigationFileReaderResult:
+        if sync_comments_from_fields:
+            investigation.sync_comments_from_fields()
+
         content = InvestigationFileSerializer.to_isa_file_string(
             investigation=investigation,
             values_in_quotation_mark=values_in_quotation_mark,
@@ -181,7 +185,7 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
             raise exc
 
 
-class InvestigationFileSerializer(object):
+class InvestigationFileSerializer:
     @classmethod
     def to_isa_file_lines(
         cls,

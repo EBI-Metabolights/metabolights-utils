@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, OrderedDict, Union
 
 from pydantic import Field
 from typing_extensions import Annotated
@@ -116,7 +116,7 @@ class OntologyAnnotation(IsaAbstractModel):
         return ""
 
 
-class DesignDescriptor(OntologyAnnotation):
+class ExtendedOntologyAnnotation(OntologyAnnotation):
     category: Annotated[
         str,
         Field(description="Category of descriptor annotation"),
@@ -378,6 +378,17 @@ class Factor(IsaAbstractModel):
         ),
     ] = OntologyAnnotation()
 
+    column_format: Annotated[
+        str,
+        Field(
+            description="Column Format, empty value is used for undefined value."
+            "text (one column)"
+            "ontology ( one column+ term source ref and accession number), "
+            "number (one column + unit, unit term source ref and accession number)",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+
     def __str__(self):
         return f"{self.name if self.name else ''} ({str(self.type)})"
 
@@ -443,7 +454,7 @@ class Assay(IsaAbstractModel):
         Field(description="Assay type.", json_schema_extra={"auto_fill": False}),
     ] = OntologyAnnotation()
     assay_descriptors: Annotated[
-        list[DesignDescriptor],
+        list[ExtendedOntologyAnnotation],
         Field(description="Assay descriptors.", json_schema_extra={"auto_fill": False}),
     ] = []
 
@@ -622,7 +633,7 @@ class StudyDesignDescriptors(BaseSection):
     )
 
     design_types: Annotated[
-        List[DesignDescriptor],
+        List[ExtendedOntologyAnnotation],
         Field(
             description="Design descriptors "
             "defined in study design descriptors section.",
@@ -1030,3 +1041,563 @@ class Investigation(BaseSection):
     studies: Annotated[
         List[Study], Field(description="Studies carried out in the investigation.")
     ] = []
+
+    def sync_study_comments_from_fields(self):
+        if not self.studies:
+            return
+
+        study_comment_field_map = OrderedDict(
+            [
+                ("Revision", "revision_number"),
+                ("Revision Date", "revision_date"),
+                ("Revision Log", "revision_comment"),
+                ("License", "dataset_license"),
+                ("MHD Accession", "mhd_accession"),
+                ("MHD Model Version", "mhd_model_version"),
+                ("Study Category", "study_category"),
+                ("Sample Template", "sample_template"),
+            ]
+        )
+        for study in self.studies:
+            comment_values = OrderedDict()
+            comment_names = set()
+            for comment_name, field_name in study_comment_field_map.items():
+                val = getattr(study, field_name or "")
+                if val:
+                    comment_values[comment_name] = val
+                    comment_names.add(comment_name.lower())
+            old_study_comments = study.comments
+            study.comments = [
+                Comment(name=x, value=[y]) for x, y in comment_values.items()
+            ]
+
+            funder_comments = OrderedDict(
+                [("Funder", []), ("Funder ROR Id", []), ("Grant Identifier", [])]
+            )
+
+            if study.funders:
+                for funder in study.funders:
+                    if (
+                        funder.funder_name
+                        or funder.funder_id
+                        or ";".join(funder.grant_ids)
+                    ):
+                        funder_comments["Funder"].append(funder.funder_name)
+                        funder_comments["Funder ROR Id"].append(funder.funder_id)
+                        funder_comments["Grant Identifier"].append(
+                            ";".join(funder.grant_ids)
+                        )
+            self.add_non_empty_comments(study.comments, funder_comments, comment_names)
+
+            characteristic_comments = OrderedDict(
+                [
+                    ("Study Characteristics Name", []),
+                    ("Study Characteristics Type", []),
+                    ("Study Characteristics Type Term Accession Number", []),
+                    ("Study Characteristics Type Term Source REF", []),
+                ]
+            )
+            if study.characteristic_types:
+                for characteristic in study.characteristic_types:
+                    characteristic_comments["Study Characteristics Name"].append(
+                        characteristic.name
+                    )
+                    characteristic_comments["Study Characteristics Type"].append(
+                        characteristic.type
+                    )
+                    characteristic_comments[
+                        "Study Characteristics Type Term Accession Number"
+                    ].append(characteristic.term_accession_number)
+                    characteristic_comments[
+                        "Study Characteristics Type Term Source REF"
+                    ].append(characteristic.term_source_ref)
+
+            self.add_non_empty_comments(
+                study.comments,
+                characteristic_comments,
+                comment_names,
+                old_study_comments,
+            )
+
+    def sync_study_design_descriptor_comments_from_fields(self):
+        if not self.studies:
+            return
+        for study in self.studies:
+            descriptor_comments = OrderedDict(
+                [("Study Design Category", []), ("Study Design Source", [])]
+            )
+            old_comments = study.study_design_descriptors.comments
+            comment_names = set()
+            if study.study_design_descriptors.design_types:
+                study.study_design_descriptors.comments = []
+                # comment_names = set([x.lower() for x in descriptor_comments])
+                for characteristic in study.study_design_descriptors.design_types:
+                    descriptor_comments["Study Design Category"].append(
+                        characteristic.category
+                    )
+                    descriptor_comments["Study Design Source"].append(
+                        characteristic.source
+                    )
+            self.add_non_empty_comments(
+                study.study_design_descriptors.comments,
+                descriptor_comments,
+                comment_names,
+                old_comments,
+            )
+
+    def sync_study_factor_comments_from_fields(self):
+        if not self.studies:
+            return
+        for study in self.studies:
+            factor_comments = OrderedDict([("Study Factor Column Format", [])])
+            old_comments = study.study_factors.comments
+            comment_names = set()
+
+            if study.study_factors.factors:
+                study.study_factors.comments = []
+                comment_names = set([x.lower() for x in factor_comments])
+                for characteristic in study.study_factors.factors:
+                    factor_comments["Study Factor Column Format"].append(
+                        characteristic.column_format or ""
+                    )
+            self.add_non_empty_comments(
+                study.study_factors.comments,
+                factor_comments,
+                comment_names,
+                old_comments,
+            )
+
+    def sync_study_contact_comments_from_fields(self):
+        if not self.studies:
+            return
+        for study in self.studies:
+            old_comments = study.study_contacts.comments
+            comment_names = set()
+            study.study_contacts.comments = []
+
+            for comment_name, field_name in [
+                ("Study Person ORCID", "orcid"),
+                ("Study Person Additional Email", "additional_emails"),
+                ("Study Person Affiliation ROR Id", "affiliation_ror_id"),
+            ]:
+                contact_comments = OrderedDict([(comment_name, [])])
+                if study.study_contacts.people:
+                    for person in study.study_contacts.people:
+                        val = getattr(person, field_name) or ""
+                        if isinstance(val, list):
+                            val = ";".join(val)
+                        contact_comments[comment_name].append(val)
+
+                self.add_non_empty_comments(
+                    study.study_contacts.comments, contact_comments, comment_names
+                )
+
+            self.add_non_empty_comments(
+                study.study_contacts.comments, {}, comment_names, old_comments
+            )
+
+    def sync_assay_comments_from_fields(self):
+        if not self.studies:
+            return
+        for study in self.studies:
+            assay_comments = OrderedDict([("Assay Identifier", [])])
+            assay_type_comments = OrderedDict(
+                [
+                    ("Assay Type", []),
+                    ("Assay Type Term Accession Number", []),
+                    ("Assay Type Term Source REF", []),
+                ]
+            )
+            assay_omics_comments = OrderedDict(
+                [
+                    ("Omics Type", []),
+                    ("Omics Type Term Accession Number", []),
+                    ("Omics Type Term Source REF", []),
+                ]
+            )
+            assay_descriptor_comments = OrderedDict(
+                [
+                    ("Assay Descriptor", []),
+                    ("Assay Descriptor Term Accession Number", []),
+                    ("Assay Descriptor Term Source REF", []),
+                    ("Assay Descriptor Category", []),
+                    ("Assay Descriptor Source", []),
+                ]
+            )
+            old_comments = study.study_assays.comments
+            comment_names = set()
+            if study.study_assays:
+                study.study_assays.comments = []
+
+                for assay in study.study_assays.assays:
+                    assay_comments["Assay Identifier"].append(
+                        assay.assay_identifier or ""
+                    )
+                    assay_type_comments["Assay Type"].append(
+                        assay.assay_type.term or ""
+                    )
+                    assay_type_comments["Assay Type Term Accession Number"].append(
+                        assay.assay_type.term_accession_number
+                        if assay.assay_type
+                        else ""
+                    )
+                    assay_type_comments["Assay Type Term Source REF"].append(
+                        assay.assay_type.term_source_ref if assay.assay_type else ""
+                    )
+                    assay_omics_comments["Omics Type"].append(
+                        assay.omics_type.term if assay.omics_type else ""
+                    )
+                    assay_omics_comments["Omics Type Term Accession Number"].append(
+                        assay.omics_type.term_accession_number
+                        if assay.omics_type
+                        else ""
+                    )
+                    assay_omics_comments["Omics Type Term Source REF"].append(
+                        assay.omics_type.term_source_ref if assay.omics_type else ""
+                    )
+
+                    for term, field_name in [
+                        ("Assay Descriptor", "term"),
+                        (
+                            "Assay Descriptor Term Accession Number",
+                            "term_accession_number",
+                        ),
+                        ("Assay Descriptor Term Source REF", "term_source_ref"),
+                        ("Assay Descriptor Category", "category"),
+                        ("Assay Descriptor Source", "source"),
+                    ]:
+                        assay_descriptor_comments[term].append(
+                            ";".join(
+                                [
+                                    getattr(x, field_name)
+                                    for x in assay.assay_descriptors
+                                    if x and x.term
+                                ]
+                            )
+                        )
+            self.add_non_empty_comments(
+                study.study_assays.comments, assay_comments, comment_names
+            )
+            self.add_non_empty_comments(
+                study.study_assays.comments, assay_type_comments, comment_names
+            )
+            self.add_non_empty_comments(
+                study.study_assays.comments, assay_omics_comments, comment_names
+            )
+            self.add_non_empty_comments(
+                study.study_assays.comments,
+                assay_descriptor_comments,
+                comment_names,
+                old_comments,
+            )
+
+    def add_non_empty_comments(
+        self,
+        new_comment_list: list[Comment],
+        field_comments_map: OrderedDict[str, list[str]],
+        new_comment_names: set[str],
+        old_comment_list: None | list[Comment] = None,
+    ):
+        empty = True
+        for v in field_comments_map.values():
+            non_empty_vals = [x for x in v if str(x)]
+            if non_empty_vals:
+                empty = False
+                break
+
+        if not empty:
+            new_comment_names.update([x.lower() for x in field_comments_map.keys()])
+
+            new_comment_list.extend(
+                [Comment(name=x, value=y) for x, y in field_comments_map.items()]
+            )
+        if old_comment_list:
+            for old_comment in old_comment_list:
+                if old_comment.name.lower() not in new_comment_names:
+                    new_comment_list.append(old_comment)
+
+    def sync_comments_from_fields(self):
+        self.sync_study_comments_from_fields()
+        self.sync_study_design_descriptor_comments_from_fields()
+        self.sync_study_contact_comments_from_fields()
+        self.sync_assay_comments_from_fields()
+        self.sync_study_factor_comments_from_fields()
+
+    def sync_fields_from_comments(self):
+        self.sync_study_design_descriptors_from_comments()
+        self.sync_contact_fields_from_comments()
+        self.sync_assay_fields_from_comments()
+        self.sync_study_fields_from_comments()
+        self.sync_factors_from_comments()
+
+    def sync_study_design_descriptors_from_comments(self):
+        if not self.studies:
+            return
+        design_descriptor_comment_field_map = {
+            "study design category": "category",
+            "study design source": "source",
+        }
+        for study in self.studies:
+            if not study.study_design_descriptors.comments:
+                continue
+            comments_dict: dict[str, list[str]] = {}
+            for comment in study.study_design_descriptors.comments:
+                if comment.name:
+                    comments_dict[comment.name.lower()] = comment.value
+
+            for comment_name, field_name in design_descriptor_comment_field_map.items():
+                val = comments_dict.get(comment_name, [])
+                if not val:
+                    continue
+                for idx, comment_item in enumerate(val):
+                    types = study.study_design_descriptors.design_types
+                    if len(types) > idx:
+                        setattr(types[idx], field_name, comment_item or "")
+
+    def sync_factors_from_comments(self):
+        if not self.studies:
+            return
+        factor_comment_field_map = {"study factor column format": "column_format"}
+        for study in self.studies:
+            if not study.study_factors.comments:
+                continue
+            comments_dict: dict[str, list[str]] = {}
+            for comment in study.study_factors.comments:
+                if comment.name:
+                    comments_dict[comment.name.lower()] = comment.value
+
+            for comment_name, field_name in factor_comment_field_map.items():
+                val = comments_dict.get(comment_name, [])
+                if not val:
+                    continue
+                for idx, comment_item in enumerate(val):
+                    factors = study.study_factors.factors
+                    if len(factors) > idx:
+                        setattr(factors[idx], field_name, comment_item or "")
+
+    def sync_contact_fields_from_comments(self):
+        if not self.studies:
+            return
+        for study in self.studies:
+            if not study.study_contacts.comments:
+                continue
+            comments_dict: dict[str, list[str]] = {}
+            for comment in study.study_contacts.comments:
+                if comment.name:
+                    comments_dict[comment.name.lower()] = comment.value
+
+            orcid = comments_dict.get("study person orcid", [])
+            additional_emails = comments_dict.get("study person additional email", [])
+            affiliation_ror_id = comments_dict.get(
+                "study person affiliation ror id", []
+            )
+
+            for idx, contact in enumerate(study.study_contacts.people):
+                if len(orcid) > idx:
+                    contact.orcid = orcid[idx] or ""
+                if len(affiliation_ror_id) > idx:
+                    contact.affiliation_ror_id = affiliation_ror_id[idx] or ""
+                if len(additional_emails) > idx:
+                    additional_email = additional_emails[idx] or ""
+                    additional_email = additional_email.replace(",", ";")
+                    additional_email = additional_email.replace(" ", "")
+                    contact.additional_emails = [
+                        x for x in additional_email.split(";") if x
+                    ]
+
+    def sync_assay_fields_from_comments(self):
+        if not self.studies:
+            return
+        for study in self.studies:
+            if not study.study_assays.comments:
+                continue
+            comments_dict: dict[str, list[str]] = {}
+            for comment in study.study_assays.comments:
+                if comment.name:
+                    comments_dict[comment.name.lower()] = comment.value
+
+            identifier = comments_dict.get("assay identifier", [])
+            assay_type = comments_dict.get("assay type", [])
+            assay_type_term_accession = comments_dict.get(
+                "assay type term accession number", []
+            )
+            assay_type_term_source = comments_dict.get("assay type term source ref", [])
+
+            omics_type = comments_dict.get("omics type", [])
+            omics_type_term_accession = comments_dict.get(
+                "omics type term accession number", []
+            )
+            omics_type_term_source = comments_dict.get("omics type term source ref", [])
+
+            assay_descriptor = comments_dict.get("assay descriptor", [])
+            assay_descriptor_term_accession = comments_dict.get(
+                "assay descriptor term accession number", []
+            )
+            assay_descriptor_term_source = comments_dict.get(
+                "assay descriptor term source ref", []
+            )
+            assay_descriptor_category = comments_dict.get(
+                "assay descriptor category", []
+            )
+            assay_descriptor_source = comments_dict.get("assay descriptor source", [])
+
+            for idx, assay in enumerate(study.study_assays.assays):
+                if len(identifier) > idx:
+                    assay.assay_identifier = identifier[idx]
+
+                if len(assay_type) > idx:
+                    assay.assay_type.term = assay_type[idx]
+                if len(assay_type_term_source) > idx:
+                    assay.assay_type.term_source_ref = assay_type_term_source[idx]
+                if len(assay_type_term_accession) > idx:
+                    assay.assay_type.term_accession_number = assay_type_term_accession[
+                        idx
+                    ]
+
+                if len(omics_type) > idx:
+                    assay.omics_type.term = omics_type[idx]
+                if len(omics_type_term_source) > idx:
+                    assay.omics_type.term_source_ref = omics_type_term_source[idx]
+                if len(omics_type_term_accession) > idx:
+                    assay.omics_type.term_accession_number = omics_type_term_accession[
+                        idx
+                    ]
+                desc = assay_descriptor[idx] if len(assay_descriptor) > idx else ""
+                desc_term_accession = (
+                    assay_descriptor_term_accession[idx]
+                    if len(assay_descriptor_term_accession) > idx
+                    else ""
+                )
+                desc_term_source = (
+                    assay_descriptor_term_source[idx]
+                    if len(assay_descriptor_term_source) > idx
+                    else ""
+                )
+                desc_category = (
+                    assay_descriptor_category[idx]
+                    if len(assay_descriptor_category) > idx
+                    else ""
+                )
+                desc_source = (
+                    assay_descriptor_source[idx]
+                    if len(assay_descriptor_source) > idx
+                    else ""
+                )
+                if len(desc.split(";")) > 1:
+                    desc_parts = desc.split(";")
+                    desc_term_accession_parts = desc_term_accession.split(";")
+                    desc_term_source_parts = desc_term_source.split(";")
+                    desc_category_parts = desc_category.split(";")
+                    desc_source_parts = desc_source.split(";")
+                    for sub_index, desc in enumerate(desc_parts):
+                        assay.assay_descriptors.append(
+                            ExtendedOntologyAnnotation(
+                                term=desc,
+                                term_accession_number=desc_term_accession_parts[
+                                    sub_index
+                                ]
+                                if len(desc_term_accession_parts) > sub_index
+                                else "",
+                                term_source_ref=desc_term_source_parts[sub_index]
+                                if len(desc_term_source_parts) > sub_index
+                                else "",
+                                category=desc_category_parts[sub_index]
+                                if len(desc_category_parts) > sub_index
+                                else "",
+                                source=desc_source_parts[sub_index]
+                                if len(desc_source_parts) > sub_index
+                                else "",
+                            )
+                        )
+                else:
+                    assay.assay_descriptors.append(
+                        ExtendedOntologyAnnotation(
+                            term=desc,
+                            term_accession_number=desc_term_accession,
+                            term_source_ref=desc_term_source,
+                            category=desc_category,
+                            source=desc_source,
+                        )
+                    )
+
+    def sync_study_fields_from_comments(self):
+        if not self.studies:
+            return
+        study_comment_field_map = {
+            "revision": "revision_number",
+            "revision date": "revision_date",
+            "revision log": "revision_comment",
+            "license": "dataset_license",
+            "mhd accession": "mhd_accession",
+            "mhd model version": "mhd_model_version",
+            "study category": "study_category",
+            "sample template": "sample_template",
+        }
+        for study in self.studies:
+            if not study.comments:
+                continue
+            comments_dict: dict[str, list[str]] = {}
+            for comment in study.comments:
+                if comment.name:
+                    comments_dict[comment.name.lower()] = comment.value
+
+            for comment_name, field_name in study_comment_field_map.items():
+                val = comments_dict.get(comment_name, [])
+                if val:
+                    setattr(study, field_name, val[0] if val else "")
+
+            funders = comments_dict.get("funder", [])
+            funder_ids = comments_dict.get("funder ror id", [])
+            grant_ids = comments_dict.get("grant identifier", [])
+            counts = [len(x) for x in (funders, funder_ids, grant_ids) if x and x[0]]
+
+            if counts and len(counts) > 0:
+                study.funders = []
+                for idx in range(max(counts)):
+                    study.funders.append(
+                        Funder(
+                            funder_name=funders[idx] if len(funders) > idx else "",
+                            funder_id=funder_ids[idx] if len(funder_ids) > idx else "",
+                            grant_ids=grant_ids[idx].split(";")
+                            if len(grant_ids) > idx
+                            else "",
+                        )
+                    )
+            characteristic_names = comments_dict.get("study characteristics name", [])
+            characteristic_types = comments_dict.get("study characteristics type", [])
+            characteristic_type_accessions = comments_dict.get(
+                "study characteristics type term accession number", []
+            )
+            characteristic_type_sources = comments_dict.get(
+                "study characteristics type term source ref", []
+            )
+
+            counts = [
+                len(x)
+                for x in (
+                    characteristic_names,
+                    characteristic_types,
+                    characteristic_type_accessions,
+                    characteristic_type_sources,
+                )
+                if x and x[0]
+            ]
+            if counts and len(counts) > 0:
+                study.characteristic_types = []
+                for idx in range(max(counts)):
+                    study.characteristic_types.append(
+                        ValueTypeAnnotation(
+                            name=characteristic_names[idx]
+                            if len(characteristic_names) > idx
+                            else "",
+                            type=characteristic_types[idx]
+                            if len(characteristic_types) > idx
+                            else "",
+                            term_accession_number=characteristic_type_accessions[idx]
+                            if len(characteristic_type_accessions) > idx
+                            else "",
+                            term_source_ref=characteristic_type_sources[idx]
+                            if len(characteristic_type_sources) > idx
+                            else "",
+                        )
+                    )

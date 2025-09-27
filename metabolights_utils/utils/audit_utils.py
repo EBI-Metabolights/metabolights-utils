@@ -10,7 +10,7 @@ from metabolights_utils.utils.search_utils import MetabolightsSearchUtils as Sea
 logger = logging.getLogger(__name__)
 
 
-class MetabolightsAuditUtils(object):
+class MetabolightsAuditUtils:
     @staticmethod
     def create_audit_folder(
         src_root_path: str,

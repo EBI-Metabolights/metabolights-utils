@@ -77,7 +77,7 @@
                     "default": [],
                     "description": "Assay descriptors.",
                     "items": {
-                        "$ref": "#/$defs/DesignDescriptor"
+                        "$ref": "#/$defs/ExtendedOntologyAnnotation"
                     },
                     "title": "Assay Descriptors",
                     "type": "array"
@@ -421,7 +421,7 @@
             "title": "CurationRequest",
             "type": "string"
         },
-        "DesignDescriptor": {
+        "ExtendedOntologyAnnotation": {
             "additionalProperties": false,
             "properties": {
                 "term": {
@@ -468,7 +468,7 @@
                 "category",
                 "source"
             ],
-            "title": "DesignDescriptor",
+            "title": "ExtendedOntologyAnnotation",
             "type": "object"
         },
         "Factor": {
@@ -493,11 +493,19 @@
                     "description": "A term allowing the classification of the factor into categories. The term is a controlled vocabulary or an ontology",
                     "header_name": "Type",
                     "title": "Type"
+                },
+                "columnFormat": {
+                    "auto_fill": false,
+                    "default": "",
+                    "description": "Column Format, empty value is used for undefined value.text (one column)ontology ( one column+ term source ref and accession number), number (one column + unit, unit term source ref and accession number)",
+                    "title": "Column Format",
+                    "type": "string"
                 }
             },
             "required": [
                 "name",
-                "type"
+                "type",
+                "columnFormat"
             ],
             "title": "Factor",
             "type": "object"
@@ -782,7 +790,7 @@
             "properties": {
                 "columns": {
                     "default": [],
-                    "description": "Unique column names of ISA table. If there are duplicate column headers, column names are created with the following pattern: header name + '.X' where X is sequencial number for each duplicate header name.",
+                    "description": "Unique column names of ISA table. If there are duplicate column headers, column names are created with the following pattern: header name + '.X' where X is sequential number for each duplicate header name.",
                     "items": {
                         "type": "string"
                     },
@@ -958,7 +966,7 @@
                 },
                 "columnSearchPattern": {
                     "default": "",
-                    "description": "Search regex expression to fetch value if if header has a value between [].",
+                    "description": "Search regex expression to fetch value if header has a value between [].",
                     "title": "Column Search Pattern",
                     "type": "string"
                 }
@@ -1652,7 +1660,7 @@
                 "description": {
                     "auto_fill": true,
                     "default": "",
-                    "description": "A textual description of the study, with components such as objective or goals.",
+                    "description": "A textual description of the study with components such as objective or goals.",
                     "header_name": "Description",
                     "title": "Description",
                     "type": "string"
@@ -2166,7 +2174,7 @@
                     "description": "Design descriptors defined in study design descriptors section.",
                     "header_name": "Type",
                     "items": {
-                        "$ref": "#/$defs/DesignDescriptor"
+                        "$ref": "#/$defs/ExtendedOntologyAnnotation"
                     },
                     "title": "Design Types",
                     "type": "array"

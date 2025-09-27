@@ -1,3 +1,4 @@
+import pathlib
 import shutil
 import uuid
 from pathlib import Path
@@ -42,16 +43,23 @@ def test_get_sha256sum_02():
 
 def test_get_isa_metadata_folder_hash_01():
     expected = EMPTY_FILE_HASH
-    hash_val: IsaMetadataFolderHash = (
-        MetabolightsHashUtils.get_isa_metadata_folder_hash("")
-    )
-    assert hash_val.folder_sha256 == expected
-    assert len(hash_val.files_sha256) == 0
-    hash_val = MetabolightsHashUtils.get_isa_metadata_folder_hash(
-        "tests/test-data/MTBLS1x"
-    )
-    assert hash_val.folder_sha256 == expected
-    assert len(hash_val.files_sha256) == 0
+    empty_path = pathlib.Path(f"/tmp/empty-{uuid.uuid4().hex}")
+
+    try:
+        empty_path.mkdir(parents=True, exist_ok=True)
+        hash_val: IsaMetadataFolderHash = (
+            MetabolightsHashUtils.get_isa_metadata_folder_hash(str(empty_path))
+        )
+        assert hash_val.folder_sha256 == expected
+        assert len(hash_val.files_sha256) == 0
+        hash_val = MetabolightsHashUtils.get_isa_metadata_folder_hash(
+            "tests/test-data/MTBLS1x"
+        )
+        assert hash_val.folder_sha256 == expected
+        assert len(hash_val.files_sha256) == 0
+    finally:
+        if empty_path.exists():
+            empty_path.rmdir()
 
 
 def test_get_isa_metadata_folder_hash_02():

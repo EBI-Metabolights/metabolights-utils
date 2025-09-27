@@ -17,6 +17,7 @@ class IsaFileUtils:
         output_dir: str,
         values_in_quotation_mark: bool = False,
         investigation_module_name: Union[None, str] = None,
+        sync_comments_from_fields: bool = True,
     ):
         output_dir_path = Path(output_dir)
         if not output_dir_path.exists():
@@ -30,6 +31,7 @@ class IsaFileUtils:
             f"{output_dir}/{mtbls_model.investigation_file_path}",
             values_in_quotation_mark=values_in_quotation_mark,
             investigation_module_name=investigation_module_name,
+            sync_comments_from_fields=sync_comments_from_fields,
         )
         for isa_table_files in (
             mtbls_model.samples,

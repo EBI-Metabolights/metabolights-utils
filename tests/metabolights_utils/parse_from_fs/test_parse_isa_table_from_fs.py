@@ -158,7 +158,7 @@ def test_parse_isa_table_sheet_012():
     assert not messages
 
 
-class MockParser(object):
+class MockParser:
     def __init__(self) -> None:
         self.counter = 0
 

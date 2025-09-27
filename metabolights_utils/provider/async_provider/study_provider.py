@@ -128,7 +128,7 @@ class AbstractFolderMetadataCollector(ABC):
         """
 
 
-class AsyncMetabolightsStudyProvider(object):
+class AsyncMetabolightsStudyProvider:
     def __init__(
         self,
         db_metadata_collector: Union[None, AbstractDbMetadataCollector] = None,
