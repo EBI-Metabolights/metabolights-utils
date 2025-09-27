@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## v1.4.6 (2025-09-27)
+
+### Fix
+
+- model update with new fields and lint fixes
+- investigation file comment handling. Fix lint errors.
+
 ## v1.4.5 (2025-09-26)
 
 ### Fix

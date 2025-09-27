@@ -1,6 +1,6 @@
 [project]
 name = "metabolights-utils"
-version = "1.4.5"
+version = "1.4.6"
 description = "MetaboLights open metabolomics data repository utility tools and API."
 authors = [{ name = "MetaboLights Team", email = "metabolights-dev@ebi.ac.uk" }]
 requires-python = ">=3.12,<4"
