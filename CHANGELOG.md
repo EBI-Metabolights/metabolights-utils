@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.5 (2025-09-26)
+
+### Fix
+
+- documentation update
+
 ## v1.4.4 (2025-06-27)
 
 ### Bug Fixes
