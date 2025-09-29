@@ -2796,7 +2796,7 @@
     },
     "properties": {
         "version": {
-            "default": "v1.0",
+            "default": "v1.1",
             "description": "Version of Metabolights Study Model",
             "title": "Version",
             "type": "string"

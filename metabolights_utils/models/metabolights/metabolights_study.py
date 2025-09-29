@@ -14,7 +14,7 @@ from metabolights_utils.models.parser.common import ParserMessage
 class BaseMetabolightsStudyModel(MetabolightsBaseModel):
     version: Annotated[
         str, Field(description="Version of Metabolights Study Model")
-    ] = "v1.0"
+    ] = "v1.1"
 
     investigation_file_path: Annotated[
         str,
