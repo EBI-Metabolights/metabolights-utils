@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.7 (2025-09-29)
+
+### Fix
+
+- assay result file format and study template version fields are added.
+
 ## v1.4.6 (2025-09-27)
 
 ### Fix

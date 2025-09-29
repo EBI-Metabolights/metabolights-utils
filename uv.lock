@@ -802,7 +802,7 @@ wheels = [
 
 [[package]]
 name = "metabolights-utils"
-version = "1.4.6"
+version = "1.4.7"
 source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
