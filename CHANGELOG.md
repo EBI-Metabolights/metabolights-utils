@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.8 (2025-09-29)
+
+### Fix
+
+- study model version is updated.
+
 ## v1.4.7 (2025-09-29)
 
 ### Fix
