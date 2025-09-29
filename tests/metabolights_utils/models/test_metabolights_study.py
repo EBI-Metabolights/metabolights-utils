@@ -46,8 +46,14 @@ def test_get_schema():
         # )
         # with open("schema.json", "w") as f:
         #     import json
+        #     import pathlib
 
         #     json.dump(schema, f, indent=4)
+        # with pathlib.Path("MTBLS1.json").open("w") as f:
+        #     import json
+
+        #     json.dump(model.model_dump(by_alias=True), f)
+
         jsonschema.validate(model.model_dump(by_alias=True), result)
     except Exception as x:
         raise AssertionError(f"schema validation failed. {str(x)}")

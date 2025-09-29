@@ -57,6 +57,7 @@ def test_parse_investigation_from_fs_valid_03_comments():
                 term="Test-new", category="test-new", source="test-new"
             )
         )
+        assay.result_file_format = "MAF v2.0"
     for idx, design in enumerate(
         investigation.studies[0].study_design_descriptors.design_types, start=1
     ):
@@ -108,7 +109,7 @@ def test_parse_investigation_from_fs_valid_04_comments():
     person.additional_emails = []
     assay.assay_identifier = f"{study.identifier}-01"
     assay.assay_descriptors.append(ExtendedOntologyAnnotation(term="MS/MS"))
-
+    assay.result_file_format = "MAF v2.0"
     investigation.studies[0].funders.append(
         Funder(
             funder_name="Test Funder",
@@ -124,8 +125,8 @@ def test_parse_investigation_from_fs_valid_04_comments():
     #     sync_comments_from_fields=True,
     # )
     investigation.sync_comments_from_fields()
-
-    assert len(study.study_assays.comments) == 6  # 1 identifier + 5 assay descriptor
+    # 1 identifier + result file + 5 assay descriptor
+    assert len(study.study_assays.comments) == 7
     assert len(study.study_contacts.comments) == 2
     assert len(study.study_design_descriptors.comments) == 2
     assert len(study.study_factors.comments) == 1

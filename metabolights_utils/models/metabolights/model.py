@@ -270,6 +270,7 @@ class StudyDBMetadata(CamelCaseModel):
     study_category: Annotated[StudyCategory, Field(description="Study category.")] = (
         StudyCategory.OTHER
     )
+    template_version: Annotated[str, Field(description="Study template version.")] = ""
     reserved_mhd_accession: Annotated[
         str, Field(description="Reserved MHD accession.")
     ] = ""

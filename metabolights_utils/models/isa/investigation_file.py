@@ -457,6 +457,13 @@ class Assay(IsaAbstractModel):
         list[ExtendedOntologyAnnotation],
         Field(description="Assay descriptors.", json_schema_extra={"auto_fill": False}),
     ] = []
+    result_file_format: Annotated[
+        str,
+        Field(
+            description="result file format. e.g., MAF v2.0, mzTab-M v2.1, etc.",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
 
 
 class Protocol(IsaAbstractModel):
@@ -844,6 +851,10 @@ class Study(BaseSection):
         str,
         Field(description="Study category", json_schema_extra={"auto_fill": False}),
     ] = ""
+    template_version: Annotated[
+        str,
+        Field(description="Template version", json_schema_extra={"auto_fill": False}),
+    ] = ""
     sample_template: Annotated[
         str,
         Field(
@@ -1055,6 +1066,7 @@ class Investigation(BaseSection):
                 ("MHD Accession", "mhd_accession"),
                 ("MHD Model Version", "mhd_model_version"),
                 ("Study Category", "study_category"),
+                ("Template Version", "template_version"),
                 ("Sample Template", "sample_template"),
             ]
         )
@@ -1201,6 +1213,9 @@ class Investigation(BaseSection):
             return
         for study in self.studies:
             assay_comments = OrderedDict([("Assay Identifier", [])])
+            result_file_format_comments = OrderedDict(
+                [("Assay Result File Format", [])]
+            )
             assay_type_comments = OrderedDict(
                 [
                     ("Assay Type", []),
@@ -1232,6 +1247,9 @@ class Investigation(BaseSection):
                 for assay in study.study_assays.assays:
                     assay_comments["Assay Identifier"].append(
                         assay.assay_identifier or ""
+                    )
+                    result_file_format_comments["Assay Result File Format"].append(
+                        assay.result_file_format or ""
                     )
                     assay_type_comments["Assay Type"].append(
                         assay.assay_type.term or ""
@@ -1287,6 +1305,11 @@ class Investigation(BaseSection):
             self.add_non_empty_comments(
                 study.study_assays.comments,
                 assay_descriptor_comments,
+                comment_names,
+            )
+            self.add_non_empty_comments(
+                study.study_assays.comments,
+                result_file_format_comments,
                 comment_names,
                 old_comments,
             )
@@ -1440,28 +1463,34 @@ class Investigation(BaseSection):
                 "assay descriptor category", []
             )
             assay_descriptor_source = comments_dict.get("assay descriptor source", [])
+            result_file_format = comments_dict.get("assay result file format", [])
 
             for idx, assay in enumerate(study.study_assays.assays):
                 if len(identifier) > idx:
-                    assay.assay_identifier = identifier[idx]
-
+                    assay.assay_identifier = identifier[idx].strip()
+                if len(result_file_format) > idx:
+                    assay.result_file_format = result_file_format[idx].strip()
                 if len(assay_type) > idx:
-                    assay.assay_type.term = assay_type[idx]
+                    assay.assay_type.term = assay_type[idx].strip()
                 if len(assay_type_term_source) > idx:
-                    assay.assay_type.term_source_ref = assay_type_term_source[idx]
+                    assay.assay_type.term_source_ref = assay_type_term_source[
+                        idx
+                    ].strip()
                 if len(assay_type_term_accession) > idx:
                     assay.assay_type.term_accession_number = assay_type_term_accession[
                         idx
-                    ]
+                    ].strip()
 
                 if len(omics_type) > idx:
-                    assay.omics_type.term = omics_type[idx]
+                    assay.omics_type.term = omics_type[idx].strip()
                 if len(omics_type_term_source) > idx:
-                    assay.omics_type.term_source_ref = omics_type_term_source[idx]
+                    assay.omics_type.term_source_ref = omics_type_term_source[
+                        idx
+                    ].strip()
                 if len(omics_type_term_accession) > idx:
                     assay.omics_type.term_accession_number = omics_type_term_accession[
                         idx
-                    ]
+                    ].strip()
                 desc = assay_descriptor[idx] if len(assay_descriptor) > idx else ""
                 desc_term_accession = (
                     assay_descriptor_term_accession[idx]
@@ -1469,17 +1498,17 @@ class Investigation(BaseSection):
                     else ""
                 )
                 desc_term_source = (
-                    assay_descriptor_term_source[idx]
+                    assay_descriptor_term_source[idx].strip()
                     if len(assay_descriptor_term_source) > idx
                     else ""
                 )
                 desc_category = (
-                    assay_descriptor_category[idx]
+                    assay_descriptor_category[idx].strip()
                     if len(assay_descriptor_category) > idx
                     else ""
                 )
                 desc_source = (
-                    assay_descriptor_source[idx]
+                    assay_descriptor_source[idx].strip()
                     if len(assay_descriptor_source) > idx
                     else ""
                 )
@@ -1531,6 +1560,7 @@ class Investigation(BaseSection):
             "mhd accession": "mhd_accession",
             "mhd model version": "mhd_model_version",
             "study category": "study_category",
+            "template version": "template_version",
             "sample template": "sample_template",
         }
         for study in self.studies:

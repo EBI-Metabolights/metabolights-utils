@@ -81,6 +81,13 @@
                     },
                     "title": "Assay Descriptors",
                     "type": "array"
+                },
+                "resultFileFormat": {
+                    "auto_fill": false,
+                    "default": "",
+                    "description": "result file format. e.g., MAF v2.0, mzTab-M v2.1, etc.",
+                    "title": "Result File Format",
+                    "type": "string"
                 }
             },
             "required": [
@@ -91,7 +98,8 @@
                 "assayIdentifier",
                 "assayType",
                 "omicsType",
-                "assayDescriptors"
+                "assayDescriptors",
+                "resultFileFormat"
             ],
             "title": "Assay",
             "type": "object"
@@ -1696,6 +1704,13 @@
                     "title": "Study Category",
                     "type": "string"
                 },
+                "templateVersion": {
+                    "auto_fill": false,
+                    "default": "",
+                    "description": "Template version",
+                    "title": "Template Version",
+                    "type": "string"
+                },
                 "sampleTemplate": {
                     "auto_fill": false,
                     "default": "",
@@ -1841,6 +1856,7 @@
                 "publicReleaseDate",
                 "fileName",
                 "studyCategory",
+                "templateVersion",
                 "sampleTemplate",
                 "mhdAccession",
                 "mhdModelVersion",
@@ -2110,6 +2126,12 @@
                     "description": "Study category.",
                     "title": "Study Category"
                 },
+                "templateVersion": {
+                    "default": "",
+                    "description": "Study template version.",
+                    "title": "Template Version",
+                    "type": "string"
+                },
                 "reservedMhdAccession": {
                     "default": "",
                     "description": "Reserved MHD accession.",
@@ -2150,6 +2172,7 @@
                 "datasetLicenseUrl",
                 "sampleTemplate",
                 "studyCategory",
+                "templateVersion",
                 "reservedMhdAccession",
                 "mhdModelVersion"
             ],
@@ -2922,6 +2945,7 @@
                 "datasetLicenseUrl": "",
                 "sampleTemplate": "",
                 "studyCategory": 0,
+                "templateVersion": "",
                 "reservedMhdAccession": "",
                 "mhdModelVersion": ""
             },
