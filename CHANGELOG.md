@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.9 (2025-10-05)
+
+### Fix
+
+- get study schema does not get version parameter.
+
 ## v1.4.8 (2025-09-29)
 
 ### Fix
