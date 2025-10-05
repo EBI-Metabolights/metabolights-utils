@@ -44,7 +44,7 @@ def test_get_schema():
         # schema = MetabolightsStudyModel.model_json_schema(
         #     by_alias=True, mode="serialization"
         # )
-        # with open("schema.json", "w") as f:
+        # with open("metabolights_utils/models/metabolights/study_model_schema_v1.1.json", "w") as f:
         #     import json
         #     import pathlib
 

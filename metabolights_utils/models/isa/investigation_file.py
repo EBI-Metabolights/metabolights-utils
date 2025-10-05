@@ -1,4 +1,4 @@
-from typing import List, OrderedDict, Union
+from typing import List, Literal, OrderedDict, Union
 
 from pydantic import Field
 from typing_extensions import Annotated
@@ -169,6 +169,37 @@ class ValueTypeAnnotation(IsaAbstractModel):
             },
         ),
     ] = ""
+
+
+class CharacteristicDefinition(ValueTypeAnnotation):
+    value_format: Annotated[
+        Literal["", "text", "ontology", "numeric"],
+        Field(
+            description="Format of characteristic value, "
+            "empty value is used for undefined value."
+            "text (one column), "
+            "ontology ( one column+ term source ref and accession number), "
+            "numeric (one column + unit, unit term source ref and accession number)",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+
+
+class ParameterDefinition(OntologyAnnotation):
+    value_format: Annotated[
+        Literal["", "text", "ontology", "numeric"],
+        Field(
+            description="Format of parameter value, "
+            "empty value is used for undefined value."
+            "text (one column), "
+            "ontology ( one column+ term source ref and accession number), "
+            "numeric (one column + unit, unit term source ref and accession number)",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
+
+
+class ProtocolComponent(ValueTypeAnnotation): ...
 
 
 class Publication(IsaAbstractModel):
@@ -378,13 +409,14 @@ class Factor(IsaAbstractModel):
         ),
     ] = OntologyAnnotation()
 
-    column_format: Annotated[
-        str,
+    value_format: Annotated[
+        Literal["", "text", "ontology", "numeric"],
         Field(
-            description="Column Format, empty value is used for undefined value."
-            "text (one column)"
+            description="Format of factor value, "
+            "empty value is used for undefined value."
+            "text (one column), "
             "ontology ( one column+ term source ref and accession number), "
-            "number (one column + unit, unit term source ref and accession number)",
+            "numeric (one column + unit, unit term source ref and accession number)",
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""
@@ -521,7 +553,7 @@ class Protocol(IsaAbstractModel):
         ),
     ] = ""
     parameters: Annotated[
-        List[OntologyAnnotation],
+        List[ParameterDefinition],
         Field(
             description="Protocol's parameters.",
             json_schema_extra={
@@ -533,7 +565,7 @@ class Protocol(IsaAbstractModel):
         ),
     ] = []
     components: Annotated[
-        List[ValueTypeAnnotation],
+        List[ProtocolComponent],
         Field(
             description="Protocol’s components; e.g. instrument names, "
             "software names, and reagents names.",
@@ -912,9 +944,9 @@ class Study(BaseSection):
         ),
     ] = []
     characteristic_types: Annotated[
-        list[ValueTypeAnnotation],
+        list[CharacteristicDefinition],
         Field(
-            description="Study funders.",
+            description="Study characteristic types.",
             json_schema_extra={"auto_fill": False},
         ),
     ] = []
@@ -1105,8 +1137,9 @@ class Investigation(BaseSection):
                 [
                     ("Study Characteristics Name", []),
                     ("Study Characteristics Type", []),
-                    ("Study Characteristics Type Term Accession Number", []),
                     ("Study Characteristics Type Term Source REF", []),
+                    ("Study Characteristics Type Term Accession Number", []),
+                    ("Study Characteristics Value Format", []),
                 ]
             )
             if study.characteristic_types:
@@ -1123,6 +1156,9 @@ class Investigation(BaseSection):
                     characteristic_comments[
                         "Study Characteristics Type Term Source REF"
                     ].append(characteristic.term_source_ref)
+                    characteristic_comments[
+                        "Study Characteristics Value Format"
+                    ].append(characteristic.value_format)
 
             self.add_non_empty_comments(
                 study.comments,
@@ -1142,7 +1178,6 @@ class Investigation(BaseSection):
             comment_names = set()
             if study.study_design_descriptors.design_types:
                 study.study_design_descriptors.comments = []
-                # comment_names = set([x.lower() for x in descriptor_comments])
                 for characteristic in study.study_design_descriptors.design_types:
                     descriptor_comments["Study Design Category"].append(
                         characteristic.category
@@ -1161,7 +1196,7 @@ class Investigation(BaseSection):
         if not self.studies:
             return
         for study in self.studies:
-            factor_comments = OrderedDict([("Study Factor Column Format", [])])
+            factor_comments = OrderedDict([("Study Factor Value Format", [])])
             old_comments = study.study_factors.comments
             comment_names = set()
 
@@ -1169,12 +1204,47 @@ class Investigation(BaseSection):
                 study.study_factors.comments = []
                 comment_names = set([x.lower() for x in factor_comments])
                 for characteristic in study.study_factors.factors:
-                    factor_comments["Study Factor Column Format"].append(
-                        characteristic.column_format or ""
+                    factor_comments["Study Factor Value Format"].append(
+                        characteristic.value_format or ""
                     )
             self.add_non_empty_comments(
                 study.study_factors.comments,
                 factor_comments,
+                comment_names,
+                old_comments,
+            )
+
+    def sync_protocol_parameter_comments_from_fields(self):
+        if not self.studies:
+            return
+        for study in self.studies:
+            protocol_param_comments = OrderedDict(
+                [("Study Protocol Parameters Value Format", [])]
+            )
+            old_comments = study.study_protocols.comments
+            comment_names = set()
+            protocols = study.study_protocols.protocols
+            if protocols:
+                study.study_protocols.comments = []
+                comment_names = set([x.lower() for x in protocol_param_comments])
+                for protocol in protocols:
+                    values = [
+                        x.value_format or ""
+                        for x in protocol.parameters
+                        if x.value_format and x.value_format.strip()
+                    ]
+                    param_value_formats = ""
+                    if values:
+                        param_value_formats = ";".join(
+                            [x.value_format or "" for x in protocol.parameters]
+                        )
+                    protocol_param_comments[
+                        "Study Protocol Parameters Value Format"
+                    ].append(param_value_formats or "")
+
+            self.add_non_empty_comments(
+                study.study_protocols.comments,
+                protocol_param_comments,
                 comment_names,
                 old_comments,
             )
@@ -1345,6 +1415,7 @@ class Investigation(BaseSection):
         self.sync_study_contact_comments_from_fields()
         self.sync_assay_comments_from_fields()
         self.sync_study_factor_comments_from_fields()
+        self.sync_protocol_parameter_comments_from_fields()
 
     def sync_fields_from_comments(self):
         self.sync_study_design_descriptors_from_comments()
@@ -1352,6 +1423,7 @@ class Investigation(BaseSection):
         self.sync_assay_fields_from_comments()
         self.sync_study_fields_from_comments()
         self.sync_factors_from_comments()
+        self.sync_protocols_from_comments()
 
     def sync_study_design_descriptors_from_comments(self):
         if not self.studies:
@@ -1380,7 +1452,7 @@ class Investigation(BaseSection):
     def sync_factors_from_comments(self):
         if not self.studies:
             return
-        factor_comment_field_map = {"study factor column format": "column_format"}
+        factor_comment_field_map = {"study factor value format": "value_format"}
         for study in self.studies:
             if not study.study_factors.comments:
                 continue
@@ -1397,6 +1469,36 @@ class Investigation(BaseSection):
                     factors = study.study_factors.factors
                     if len(factors) > idx:
                         setattr(factors[idx], field_name, comment_item or "")
+
+    def sync_protocols_from_comments(self):
+        if not self.studies:
+            return
+        protocol_comment_field_map = {
+            "study protocol parameters value format": "value_format"
+        }
+        for study in self.studies:
+            if not study.study_protocols.comments:
+                continue
+            comments_dict: dict[str, list[str]] = {}
+            for comment in study.study_protocols.comments:
+                if comment.name:
+                    comments_dict[comment.name.lower()] = comment.value
+
+            for comment_name, field_name in protocol_comment_field_map.items():
+                val = comments_dict.get(comment_name, [])
+                if not val:
+                    continue
+                for idx, comment_item in enumerate(val):
+                    protocols = study.study_protocols.protocols
+                    if len(protocols) > idx:
+                        parameter_comments = comment_item.split(";")
+                        for param_ind, param in enumerate(parameter_comments):
+                            if len(protocols[idx].parameters) > param_ind:
+                                setattr(
+                                    protocols[idx].parameters[param_ind],
+                                    field_name,
+                                    param or "",
+                                )
 
     def sync_contact_fields_from_comments(self):
         if not self.studies:
@@ -1601,7 +1703,9 @@ class Investigation(BaseSection):
             characteristic_type_sources = comments_dict.get(
                 "study characteristics type term source ref", []
             )
-
+            characteristic_value_formats = comments_dict.get(
+                "study characteristics value format", []
+            )
             counts = [
                 len(x)
                 for x in (
@@ -1609,6 +1713,7 @@ class Investigation(BaseSection):
                     characteristic_types,
                     characteristic_type_accessions,
                     characteristic_type_sources,
+                    characteristic_value_formats,
                 )
                 if x and x[0]
             ]
@@ -1616,7 +1721,7 @@ class Investigation(BaseSection):
                 study.characteristic_types = []
                 for idx in range(max(counts)):
                     study.characteristic_types.append(
-                        ValueTypeAnnotation(
+                        CharacteristicDefinition(
                             name=characteristic_names[idx]
                             if len(characteristic_names) > idx
                             else "",
@@ -1628,6 +1733,9 @@ class Investigation(BaseSection):
                             else "",
                             term_source_ref=characteristic_type_sources[idx]
                             if len(characteristic_type_sources) > idx
+                            else "",
+                            value_format=characteristic_value_formats[idx]
+                            if len(characteristic_value_formats) > idx
                             else "",
                         )
                     )

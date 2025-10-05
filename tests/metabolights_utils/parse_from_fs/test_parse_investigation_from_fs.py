@@ -62,13 +62,16 @@ def test_parse_investigation_from_fs_valid_03_comments():
         investigation.studies[0].study_design_descriptors.design_types, start=1
     ):
         design.category = f"test-{idx}"
+    for protocol in investigation.studies[0].study_protocols.protocols:
+        for param in protocol.parameters:
+            param.value_format = "ontology"
     for idx, person in enumerate(
         investigation.studies[0].study_contacts.people, start=1
     ):
         person.orcid = f"test-orcid-{idx}"
         person.additional_emails = [f"test-{idx}-1", f"test-{idx}-2"]
     investigation.studies[0].funders[0].grant_ids = ["test1", "test2"]
-    investigation.studies[0].study_factors.factors[0].column_format = "test-format"
+    investigation.studies[0].study_factors.factors[0].value_format = "test-format"
     investigation.sync_comments_from_fields()
     # Writer.get_investigation_file_writer().write(
     #     investigation,
@@ -102,7 +105,7 @@ def test_parse_investigation_from_fs_valid_04_comments():
     person = study.study_contacts.people[0]
     descriptor = study.study_design_descriptors.design_types[0]
     factor = study.study_factors.factors[0]
-    factor.column_format = "ontology"
+    factor.value_format = "ontology"
     descriptor.category = "disease"
     person.affiliation_ror_id = "https://ror.org/02catss52"
     person.orcid = "10000-10000"

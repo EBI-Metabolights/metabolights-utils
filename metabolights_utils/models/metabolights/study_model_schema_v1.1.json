@@ -375,6 +375,65 @@
             "title": "AssignmentFile",
             "type": "object"
         },
+        "CharacteristicDefinition": {
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "type": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "termAccessionNumber": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type Term Accession Number",
+                    "title": "Term Accession Number",
+                    "type": "string"
+                },
+                "termSourceRef": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type Term Source REF",
+                    "title": "Term Source Ref",
+                    "type": "string"
+                },
+                "valueFormat": {
+                    "auto_fill": false,
+                    "default": "",
+                    "description": "Format of characteristic value, empty value is used for undefined value.text (one column), ontology ( one column+ term source ref and accession number), numeric (one column + unit, unit term source ref and accession number)",
+                    "enum": [
+                        "",
+                        "text",
+                        "ontology",
+                        "numeric"
+                    ],
+                    "title": "Value Format",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "type",
+                "termAccessionNumber",
+                "termSourceRef",
+                "valueFormat"
+            ],
+            "title": "CharacteristicDefinition",
+            "type": "object"
+        },
         "ColumnsStructure": {
             "enum": [
                 "SINGLE_COLUMN",
@@ -502,18 +561,24 @@
                     "header_name": "Type",
                     "title": "Type"
                 },
-                "columnFormat": {
+                "valueFormat": {
                     "auto_fill": false,
                     "default": "",
-                    "description": "Column Format, empty value is used for undefined value.text (one column)ontology ( one column+ term source ref and accession number), number (one column + unit, unit term source ref and accession number)",
-                    "title": "Column Format",
+                    "description": "Format of factor value, empty value is used for undefined value.text (one column), ontology ( one column+ term source ref and accession number), numeric (one column + unit, unit term source ref and accession number)",
+                    "enum": [
+                        "",
+                        "text",
+                        "ontology",
+                        "numeric"
+                    ],
+                    "title": "Value Format",
                     "type": "string"
                 }
             },
             "required": [
                 "name",
                 "type",
-                "columnFormat"
+                "valueFormat"
             ],
             "title": "Factor",
             "type": "object"
@@ -1196,6 +1261,56 @@
             "title": "OrganismAndOrganismPartPair",
             "type": "object"
         },
+        "ParameterDefinition": {
+            "additionalProperties": false,
+            "properties": {
+                "term": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Ontology term",
+                    "header_name": "",
+                    "title": "Term",
+                    "type": "string"
+                },
+                "termAccessionNumber": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "The accession number from the Term Source associated with the term.",
+                    "header_name": "Term Accession Number",
+                    "title": "Term Accession Number",
+                    "type": "string"
+                },
+                "termSourceRef": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "Source reference name of ontology term. e.g., EFO, OBO, NCIT. Ontology source reference names should be defined in ontology source references section in i_Investigation.txt file",
+                    "header_name": "Term Source REF",
+                    "title": "Term Source Ref",
+                    "type": "string"
+                },
+                "valueFormat": {
+                    "auto_fill": false,
+                    "default": "",
+                    "description": "Format of parameter value, empty value is used for undefined value.text (one column), ontology ( one column+ term source ref and accession number), numeric (one column + unit, unit term source ref and accession number)",
+                    "enum": [
+                        "",
+                        "text",
+                        "ontology",
+                        "numeric"
+                    ],
+                    "title": "Value Format",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "term",
+                "termAccessionNumber",
+                "termSourceRef",
+                "valueFormat"
+            ],
+            "title": "ParameterDefinition",
+            "type": "object"
+        },
         "ParserMessage": {
             "properties": {
                 "type": {
@@ -1431,7 +1546,7 @@
                     "description": "Protocol's parameters.",
                     "header_name": "Parameters Name",
                     "items": {
-                        "$ref": "#/$defs/OntologyAnnotation"
+                        "$ref": "#/$defs/ParameterDefinition"
                     },
                     "seperator": ";",
                     "text_multiple_value": true,
@@ -1444,7 +1559,7 @@
                     "description": "Protocol\u2019s components; e.g. instrument names, software names, and reagents names.",
                     "header_name": "Components",
                     "items": {
-                        "$ref": "#/$defs/ValueTypeAnnotation"
+                        "$ref": "#/$defs/ProtocolComponent"
                     },
                     "seperator": ";",
                     "text_multiple_value": true,
@@ -1462,6 +1577,51 @@
                 "components"
             ],
             "title": "Protocol",
+            "type": "object"
+        },
+        "ProtocolComponent": {
+            "additionalProperties": false,
+            "properties": {
+                "name": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "type": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "termAccessionNumber": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type Term Accession Number",
+                    "title": "Term Accession Number",
+                    "type": "string"
+                },
+                "termSourceRef": {
+                    "auto_fill": true,
+                    "default": "",
+                    "description": "",
+                    "header_name": "Type Term Source REF",
+                    "title": "Term Source Ref",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "type",
+                "termAccessionNumber",
+                "termSourceRef"
+            ],
+            "title": "ProtocolComponent",
             "type": "object"
         },
         "Publication": {
@@ -1773,9 +1933,9 @@
                 "characteristicTypes": {
                     "auto_fill": false,
                     "default": [],
-                    "description": "Study funders.",
+                    "description": "Study characteristic types.",
                     "items": {
-                        "$ref": "#/$defs/ValueTypeAnnotation"
+                        "$ref": "#/$defs/CharacteristicDefinition"
                     },
                     "title": "Characteristic Types",
                     "type": "array"
@@ -2747,51 +2907,6 @@
             ],
             "title": "UserStatus",
             "type": "string"
-        },
-        "ValueTypeAnnotation": {
-            "additionalProperties": false,
-            "properties": {
-                "name": {
-                    "auto_fill": true,
-                    "default": "",
-                    "description": "",
-                    "header_name": "Name",
-                    "title": "Name",
-                    "type": "string"
-                },
-                "type": {
-                    "auto_fill": true,
-                    "default": "",
-                    "description": "",
-                    "header_name": "Type",
-                    "title": "Type",
-                    "type": "string"
-                },
-                "termAccessionNumber": {
-                    "auto_fill": true,
-                    "default": "",
-                    "description": "",
-                    "header_name": "Type Term Accession Number",
-                    "title": "Term Accession Number",
-                    "type": "string"
-                },
-                "termSourceRef": {
-                    "auto_fill": true,
-                    "default": "",
-                    "description": "",
-                    "header_name": "Type Term Source REF",
-                    "title": "Term Source Ref",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "type",
-                "termAccessionNumber",
-                "termSourceRef"
-            ],
-            "title": "ValueTypeAnnotation",
-            "type": "object"
         }
     },
     "properties": {

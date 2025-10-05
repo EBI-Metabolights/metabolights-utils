@@ -12,7 +12,7 @@ from metabolights_utils.models.metabolights.metabolights_study import (
 )
 
 
-class UserStatus(enum.StrEnum):
+class UserStatus(str, enum.Enum):
     NEW = "NEW"
     VERIFIED = "VERIFIED"
     ACTIVE = "ACTIVE"
@@ -30,7 +30,7 @@ class UserStatus(enum.StrEnum):
             return UserStatus.FROZEN
 
 
-class UserRole(enum.StrEnum):
+class UserRole(str, enum.Enum):
     SUBMITTER = "SUBMITTER"
     CURATOR = "CURATOR"
     ANONYMOUS = "ANONYMOUS"
@@ -45,7 +45,7 @@ class UserRole(enum.StrEnum):
             return UserRole.ANONYMOUS
 
 
-class CurationRequest(enum.StrEnum):
+class CurationRequest(str, enum.Enum):
     MANUAL_CURATION = "MANUAL_CURATION"
     NO_CURATION = "NO_CURATION"
     SEMI_AUTOMATED_CURATION = "SEMI_AUTOMATED_CURATION"
@@ -61,7 +61,7 @@ class CurationRequest(enum.StrEnum):
         return CurationRequest.MANUAL_CURATION
 
 
-class StudyStatus(enum.StrEnum):
+class StudyStatus(str, enum.Enum):
     SUBMITTED = "SUBMITTED"
     INCURATION = "INCURATION"
     INREVIEW = "INREVIEW"

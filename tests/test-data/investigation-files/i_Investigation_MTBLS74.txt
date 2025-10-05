@@ -53,6 +53,7 @@ Comment[Study Characteristics Name]	Organism	Organism part	Variant	Sample type
 Comment[Study Characteristics Type]	Organism	Organism Part	Variant	Sample Type
 Comment[Study Characteristics Type Term Accession Number]	http://purl.obolibrary.org/obo/NCIT_C14250	http://purl.obolibrary.org/obo/NCIT_C103199		http://purl.obolibrary.org/obo/NCIT_C210102
 Comment[Study Characteristics Type Term Source REF]	NCIT	NCIT		NCIT
+Comment[Study Characteristics Value Format]	ontology	ontology	ontology	ontology
 STUDY DESIGN DESCRIPTORS
 Study Design Type	replicate design	ultra-performance liquid chromatography-mass spectrometry	time-of-flight mass spectrometry	cancer
 Study Design Type Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0001776	http://purl.obolibrary.org/obo/CHMO_0000715	http://purl.obolibrary.org/obo/CHMO_0000580	http://purl.obolibrary.org/obo/DOID_162
@@ -72,7 +73,7 @@ Study Factor Name	Extraction replicate	Injection replicate
 Study Factor Type	technical replicate	technical replicate
 Study Factor Type Term Accession Number	http://www.ebi.ac.uk/efo/EFO_0002090	http://www.ebi.ac.uk/efo/EFO_0002090
 Study Factor Type Term Source REF	EFO	EFO
-Comment[Study Factor Column Format]	Text	Numeric
+Comment[Study Factor Value Format]	Text	Numeric
 STUDY ASSAYS
 Study Assay File Name	a_MTBLS74_scse305_metabolite_profiling_mass_spectrometry.txt
 Study Assay Measurement Type	metabolite profiling
@@ -109,6 +110,7 @@ Study Protocol Components Name
 Study Protocol Components Type							
 Study Protocol Components Type Term Accession Number							
 Study Protocol Components Type Term Source REF							
+Comment[Study Protocol Parameters Value Format]		text;text	ontology;text;ontology;ontology;ontology	;;;;			
 STUDY CONTACTS
 Study Person Last Name	Schmidt	Neumann	Trutschel	Grosse
 Study Person First Name	Stephan	Steffen	Diana	Ivo
