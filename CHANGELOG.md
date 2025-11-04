@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.10 (2025-11-04)
+
+### Refactor
+
+- enable to load study folder metadata (for metadata files and data files) from different folders.
+
 ## v1.4.9 (2025-10-05)
 
 ### Fix

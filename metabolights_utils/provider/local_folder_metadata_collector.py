@@ -60,7 +60,7 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                     is_directory=True,
                     is_link=False,
                     created_at=int(datetime.datetime.now().timestamp()),
-                    mode="755"
+                    mode="755",
                 )
                 metadata[data_files_mapping_folder_name] = descriptor
 
