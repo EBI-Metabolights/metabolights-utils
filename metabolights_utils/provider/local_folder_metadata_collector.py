@@ -1,3 +1,4 @@
+import datetime
 import glob
 import logging
 import os
@@ -12,6 +13,7 @@ from metabolights_utils.models.metabolights.model import (
 )
 from metabolights_utils.provider import definitions
 from metabolights_utils.provider.study_provider import AbstractFolderMetadataCollector
+from metabolights_utils.provider.utils import is_metadata_filename_pattern
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +25,15 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
     def visit_folder(
         self,
         directory: str,
-        study_path: str,
+        root_path: str,
         metadata: Dict[str, StudyFileDescriptor],
         messages: List[GenericMessage],
+        metadata_files_only: bool = False,
+        data_files_mapping_folder_name: None | str = None,
     ):
         try:
             dir_relative_path = str(directory).replace(
-                f"{str(study_path).rstrip(os.sep)}", ""
+                f"{str(root_path).rstrip(os.sep)}", ""
             )
             dir_relative_path = dir_relative_path.lstrip("/")
             skip_content = False
@@ -44,9 +48,32 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                     )
                 )
                 return
+            if data_files_mapping_folder_name and directory == root_path:
+                # emulate folder
+                parent = os.path.dirname(data_files_mapping_folder_name)
+                parent = parent if not parent.startswith(".") else ""
+                base = os.path.basename(data_files_mapping_folder_name)
+                descriptor = StudyFileDescriptor(
+                    base_name=base,
+                    file_path=data_files_mapping_folder_name,
+                    parent_directory=parent,
+                    is_directory=True,
+                    is_link=False,
+                    created_at=int(datetime.datetime.now().timestamp()),
+                    mode="755"
+                )
+                metadata[data_files_mapping_folder_name] = descriptor
+
             entries = os.listdir(directory)
             for entry in entries:
                 full_path: str = os.path.join(directory, entry)
+
+                if metadata_files_only:
+                    if not is_metadata_filename_pattern(entry):
+                        continue
+                    if not os.path.isfile(full_path):
+                        continue
+
                 relative_path = os.path.join(dir_relative_path, entry)
                 base_name = os.path.basename(relative_path)
                 parent_directory = os.path.dirname(relative_path)
@@ -70,10 +97,17 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                         if re.match(pattern, base_name, re.IGNORECASE):
                             descriptor.tags.append(tag)
                 _, ext = os.path.splitext(relative_path)
+                key = relative_path
+                key_parent = parent_directory
+                if data_files_mapping_folder_name:
+                    key = os.path.join(data_files_mapping_folder_name, relative_path)
+                    key_parent = os.path.join(
+                        data_files_mapping_folder_name, relative_path
+                    )
                 descriptor.extension = ext
                 descriptor.base_name = base_name
-                descriptor.parent_directory = parent_directory
-                descriptor.file_path = relative_path
+                descriptor.parent_directory = key_parent
+                descriptor.file_path = key
                 descriptor.is_directory = os.path.isdir(full_path)
                 descriptor.is_link = os.path.islink(full_path)
                 if os.path.exists(full_path):
@@ -85,11 +119,16 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                     descriptor.created_at = int(stats.st_ctime)
                     descriptor.modified_at = int(stats.st_mtime)
                     descriptor.mode = oct(stats.st_mode & 0o777).replace("0o", "")
-                metadata[relative_path] = descriptor
+                metadata[key] = descriptor
 
                 if os.path.isdir(full_path):
                     self.visit_folder(
-                        full_path, study_path, metadata=metadata, messages=messages
+                        full_path,
+                        root_path,
+                        metadata=metadata,
+                        messages=messages,
+                        metadata_files_only=metadata_files_only,
+                        data_files_mapping_folder_name=data_files_mapping_folder_name,
                     )
 
         except PermissionError as ex:
@@ -108,11 +147,32 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
         study_path,
         calculate_data_folder_size: bool = False,
         calculate_metadata_size: bool = False,
+        data_files_path: str = "FILES",
+        data_files_mapping_folder_name: None | str = None,
     ) -> Tuple[Union[None, StudyFolderMetadata], List[GenericMessage]]:
         messages: List[GenericMessage] = []
         study_folder_metadata = StudyFolderMetadata()
         metadata: Dict[str, StudyFileDescriptor] = {}
-        self.visit_folder(study_path, study_path, metadata=metadata, messages=messages)
+        self.visit_folder(
+            study_path,
+            study_path,
+            metadata=metadata,
+            messages=messages,
+            metadata_files_only=True,
+            data_files_mapping_folder_name=None,
+        )
+        search_path = data_files_path
+        if not os.path.isabs(data_files_path):
+            search_path = os.path.join(study_path, data_files_path)
+
+        self.visit_folder(
+            search_path,
+            search_path,
+            metadata=metadata,
+            messages=messages,
+            metadata_files_only=False,
+            data_files_mapping_folder_name=data_files_mapping_folder_name,
+        )
         study_folder_metadata.folders = {
             x: metadata[x] for x in metadata if metadata[x].is_directory
         }
@@ -179,3 +239,15 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
         except Exception as e:
             logger.exception(e)
             return None
+
+
+if __name__ == "__main__":
+    local = LocalFolderMetadataCollector()
+    metadata_path = "/Users/ozgury/work/development/mztabm2mtbls/submission_validation_test/studies/MTBLS263"
+    data_files_path = "/Users/ozgury/work/development/mztabm2mtbls/submission_validation_test/studies/MTBLS263/FILES"
+    result, messages = local.get_folder_metadata(
+        metadata_path,
+        data_files_path=data_files_path,
+        data_files_mapping_folder_name="FILES",
+    )
+    pass

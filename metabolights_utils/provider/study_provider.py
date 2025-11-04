@@ -105,11 +105,13 @@ class AbstractFolderMetadataCollector(ABC):
         study_path,
         calculate_data_folder_size: bool = False,
         calculate_metadata_size: bool = False,
+        data_files_path: str = "FILES",
+        data_files_mapping_folder_name: None | str = None,
     ) -> Tuple[Union[StudyFolderMetadata, None], List[GenericMessage]]:
         """_summary_
 
         Args:
-            study_path (_type_): MetaboLights study accession number.
+            study_path (_type_): MetaboLights study metadata files path.
             calculate_data_folder_size (bool, optional): calculate study
             FILES folder size. Defaults to False.
             calculate_metadata_size (bool, optional): calculate size of
@@ -117,7 +119,10 @@ class AbstractFolderMetadataCollector(ABC):
                 even if they are referenced or not. Defaults to False.
                 If calculate_data_folder_size and calculate_metadata_size are
                 False, folder size will be set to -1.
-
+            data_files_path: Current relative or absolute data files path.
+                Default is "FILES"
+            data_files_mapping_folder_name: Final data files folder on Public storage.
+                Default is "FILES"
         Returns:
             StudyFolderMetadata: study folder metadata object that contains
             all descriptors of the study folders and files.
@@ -746,6 +751,8 @@ class MetabolightsStudyProvider:
         model: MetabolightsStudyModel = None,
         calculate_data_folder_size: bool = False,
         calculate_metadata_size: bool = False,
+        data_files_path: str = "FILES",
+        data_files_mapping_folder_name: None | str = None,
     ) -> MetabolightsStudyModel:
         if not model:
             model = self.get_phase2_input_data(study_id, folder, connection)
@@ -754,6 +761,8 @@ class MetabolightsStudyProvider:
                 folder,
                 calculate_data_folder_size=calculate_data_folder_size,
                 calculate_metadata_size=calculate_metadata_size,
+                data_files_path=data_files_path,
+                data_files_mapping_folder_name=data_files_mapping_folder_name,
             )
 
             if messages:
@@ -825,6 +834,8 @@ class MetabolightsStudyProvider:
         assignment_sheet_limit: Union[int, None] = None,
         calculate_data_folder_size: bool = False,
         calculate_metadata_size: bool = False,
+        data_files_path: str = "FILES",
+        data_files_mapping_folder_name: None | str = None,
     ) -> MetabolightsStudyModel:
         if not study_id:
             raise ValueError("invalid study_id")
@@ -872,6 +883,8 @@ class MetabolightsStudyProvider:
                 model=model,
                 calculate_data_folder_size=calculate_data_folder_size,
                 calculate_metadata_size=calculate_metadata_size,
+                data_files_path=data_files_path,
+                data_files_mapping_folder_name=data_files_mapping_folder_name,
             )
         else:
             message = GenericMessage(
