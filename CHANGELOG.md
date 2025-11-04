@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.11 (2025-11-04)
+
+### Fix
+
+- folder metadata collector error
+
 ## v1.4.10 (2025-11-04)
 
 ### Refactor
