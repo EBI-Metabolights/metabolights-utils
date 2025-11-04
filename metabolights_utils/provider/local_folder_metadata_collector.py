@@ -162,8 +162,12 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
             data_files_mapping_folder_name=None,
         )
         search_path = data_files_path
-        if not os.path.isabs(data_files_path):
-            search_path = os.path.join(study_path, data_files_path)
+        if not os.path.isabs(data_files_path) and not data_files_path.startswith(
+            study_path
+        ):
+            merged_path = os.path.join(study_path, data_files_path)
+            if os.path.exists(merged_path):
+                search_path = merged_path
 
         self.visit_folder(
             search_path,
