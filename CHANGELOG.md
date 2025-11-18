@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.12 (2025-11-18)
+
+### Fix
+
+- add created_at field in studyDbMetadata
+
 ## v1.4.11 (2025-11-04)
 
 ### Fix
