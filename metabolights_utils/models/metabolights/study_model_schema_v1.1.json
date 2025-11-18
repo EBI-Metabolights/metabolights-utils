@@ -1892,6 +1892,13 @@
                     "title": "Mhd Model Version",
                     "type": "string"
                 },
+                "createdAt": {
+                    "auto_fill": false,
+                    "default": "",
+                    "description": "Study creation time",
+                    "title": "Created At",
+                    "type": "string"
+                },
                 "revisionNumber": {
                     "auto_fill": false,
                     "default": "",
@@ -2020,6 +2027,7 @@
                 "sampleTemplate",
                 "mhdAccession",
                 "mhdModelVersion",
+                "createdAt",
                 "revisionNumber",
                 "revisionDate",
                 "revisionComment",
@@ -2303,6 +2311,12 @@
                     "description": "MHD model version.",
                     "title": "Mhd Model Version",
                     "type": "string"
+                },
+                "createdAt": {
+                    "default": "",
+                    "description": "Study creation datetime.",
+                    "title": "Created At",
+                    "type": "string"
                 }
             },
             "required": [
@@ -2334,7 +2348,8 @@
                 "studyCategory",
                 "templateVersion",
                 "reservedMhdAccession",
-                "mhdModelVersion"
+                "mhdModelVersion",
+                "createdAt"
             ],
             "title": "StudyDBMetadata",
             "type": "object"
@@ -3062,7 +3077,8 @@
                 "studyCategory": 0,
                 "templateVersion": "",
                 "reservedMhdAccession": "",
-                "mhdModelVersion": ""
+                "mhdModelVersion": "",
+                "createdAt": ""
             },
             "description": "Basic metadata information (status, database id, etc.) stored in database.",
             "title": "Study Db Metadata"

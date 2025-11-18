@@ -908,6 +908,13 @@ class Study(BaseSection):
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""
+    created_at: Annotated[
+        str,
+        Field(
+            description="Study creation time",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
     revision_number: Annotated[
         str,
         Field(
@@ -1100,6 +1107,7 @@ class Investigation(BaseSection):
                 ("Study Category", "study_category"),
                 ("Template Version", "template_version"),
                 ("Sample Template", "sample_template"),
+                ("Created At", "created_at"),
             ]
         )
         for study in self.studies:
@@ -1664,6 +1672,7 @@ class Investigation(BaseSection):
             "study category": "study_category",
             "template version": "template_version",
             "sample template": "sample_template",
+            "created at": "created_at",
         }
         for study in self.studies:
             if not study.comments:

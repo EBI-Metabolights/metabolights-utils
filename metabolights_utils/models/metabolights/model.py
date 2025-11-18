@@ -256,10 +256,18 @@ class StudyDBMetadata(CamelCaseModel):
     revision_number: Annotated[int, Field(description="Revision date of study.")] = 0
     revision_comment: Annotated[str, Field(description="Revision comment.")] = ""
     first_private_date: Annotated[
-        str, Field(description="Study first release date")
+        str,
+        Field(
+            description="Study first release date. "
+            "Its format MUST be ISO8601 date or date time"
+        ),
     ] = ""
     first_public_date: Annotated[
-        str, Field(description="Study first release date.")
+        str,
+        Field(
+            description="Study first release date. "
+            "Its format MUST be ISO8601 date or date time"
+        ),
     ] = ""
     dataset_license: Annotated[str, Field(description="Dataset license name.")] = ""
     dataset_license_version: Annotated[
@@ -275,6 +283,13 @@ class StudyDBMetadata(CamelCaseModel):
         str, Field(description="Reserved MHD accession.")
     ] = ""
     mhd_model_version: Annotated[str, Field(description="MHD model version.")] = ""
+    created_at: Annotated[
+        str,
+        Field(
+            description="Study creation datetime. "
+            "Its format MUST be ISO8601 date or date time"
+        ),
+    ] = ""
     ########################################################################################
 
     @field_validator("status", mode="before")
