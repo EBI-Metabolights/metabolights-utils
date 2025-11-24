@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.13 (2025-11-24)
+
+### Fix
+
+- local validate command is added
+
 ## v1.4.12 (2025-11-18)
 
 ### Fix
