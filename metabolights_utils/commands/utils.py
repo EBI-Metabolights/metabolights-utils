@@ -2,6 +2,7 @@ import io
 import re
 from typing import Callable, List
 
+import requests
 from bs4 import BeautifulSoup
 
 from metabolights_utils.models.enums import GenericMessageType
@@ -9,6 +10,21 @@ from metabolights_utils.models.isa.common import IsaTable
 from metabolights_utils.models.isa.investigation_file import Study
 from metabolights_utils.models.metabolights.model import MetabolightsStudyModel
 from metabolights_utils.models.parser.enums import ParserMessageType
+
+
+def download_file(url: str, output_path: str):
+    """
+    Download a file from a URL and save it to output_path.
+    """
+    response = requests.get(url, stream=True)
+    response.raise_for_status()  # Raise error for bad status codes
+
+    with open(output_path, "wb") as f:
+        for chunk in response.iter_content(chunk_size=8192):
+            if chunk:  # Filter out keep-alive chunks
+                f.write(chunk)
+
+    return output_path
 
 
 def sub_arrays(arr: List[str], k: int):
@@ -131,7 +147,8 @@ def print_study_model_summary(model: MetabolightsStudyModel, log: Callable = pri
         report: List[str] = []
         report.append(f"- {assay.file_path}")
         report.append(
-            f"Row count: {assay.table.total_row_count} Column Count: {assay.table.total_column_count}"
+            f"Row count: {assay.table.total_row_count} "
+            "Column Count: {assay.table.total_column_count}"
         )
         report.append(f"Technique: {assay.assay_technique}")
         report.append(f"Raw Files: {len(assay.referenced_raw_files)}")
