@@ -169,10 +169,12 @@ class PolicyMessage(CamelCaseModel):
     source_file: str = ""
     source_column_header: str = ""
     source_column_index: Union[str, int] = ""
-    has_more_miolations: bool = False
+    has_more_violations: bool = False
     total_violations: int = 0
     values: List[str] = []
     technique: str = ""
+    overridden: bool = False
+    override_comment: str = ""
 
 
 class OpaValidationResult(BaseModel):

@@ -84,9 +84,17 @@ def local_validate(
         data_files_path = Path(metadata_files_path) / Path("FILES")
     if not overridden_rules_file_path:
         overridden_rules = set()
+        overridden_files = set()
     elif Path(overridden_rules_file_path).exists():
         overridden_rules = {
-            x for x in Path(overridden_rules_file_path).read_text().split() if x
+            x
+            for x in Path(overridden_rules_file_path).read_text().split()
+            if x and x.startswith("rule_")
+        }
+        overridden_files = {
+            x
+            for x in Path(overridden_rules_file_path).read_text().split()
+            if x and len(x) > 2 and x[:2] in {"a_", "i_", "s_", "m_"}
         }
     if not output_directory:
         output_directory = ".mtbls-validation-outputs"
@@ -164,21 +172,38 @@ def local_validate(
             raw_validation_result.get("result")[0].get("expressions")[0].get("value")
         )
 
-        with open(mtbls_validation_result_file_path, "w") as f:
-            json.dump(validation_result, f, indent=2)
         violation_results = OpaValidationResult.model_validate(validation_result)
         errors = [
             x
             for x in violation_results.violations
             if x.type == PolicyMessageType.ERROR
             and x.identifier not in overridden_rules
+            and x.source_file not in overridden_files
         ]
         overridden_errors = {}
+        overridden_files_map = {}
         for x in violation_results.violations:
             if x.type == PolicyMessageType.ERROR and x.identifier in overridden_rules:
                 if x.identifier not in overridden_errors:
                     overridden_errors[x.identifier] = []
                 overridden_errors[x.identifier].append(x)
+                x.overridden = True
+                x.override_comment = "rule id is in the exclude list"
+                x.type = PolicyMessageType.WARNING
+            elif (
+                x.type == PolicyMessageType.ERROR and x.source_file in overridden_files
+            ):
+                if x.source_file not in overridden_files_map:
+                    overridden_files_map[x.source_file] = []
+                overridden_files_map[x.source_file].append(x.identifier)
+                x.overridden = True
+                x.override_comment = "file name is in the exclude list"
+                x.type = PolicyMessageType.WARNING
+
+        violation_results.summary = []
+
+        with open(mtbls_validation_result_file_path, "w") as f:
+            json.dump(violation_results.model_dump(by_alias=True), f, indent=2)
 
         # for idx, x in enumerate(errors):
         #     click.echo(f"{idx + 1}\t{x.identifier}\t{x.violation}")
@@ -191,20 +216,26 @@ def local_validate(
                 )
 
             click.echo(
-                f"ERRORS.\nNumber of errors: {len(errors)}. "
+                f"ERRORS\nNumber of errors: {len(errors)}. "
                 f"Validation results and errors stored on "
                 f"{mtbls_validation_result_file_path} and"
                 f" {mtbls_validation_errors_file_path} respectively."
             )
         else:
             click.echo(
-                "SUCCESS.\n"
+                "SUCCESS\n"
                 f"Validation result is stored on {mtbls_validation_result_file_path}"
             )
         if overridden_errors:
             click.echo(
-                f"Overridden errors: {', '.join([f'{k} ({len(v)})' for k, v in overridden_errors.items()])}"
+                f"Overridden rules: {', '.join([f'{k} ({len(v)})' for k, v in overridden_errors.items()])}"
             )
+        if overridden_files_map:
+            files = []
+            for k, v in overridden_files_map.items():
+                rules = ", ".join(v)
+                files.append(f"{k} ({len(v)} - {rules})")
+            click.echo(f"Overridden file rules: {', '.join(files)}")
         return True
     except subprocess.TimeoutExpired as exc:
         click.echo("The validation process timed out.")
@@ -231,5 +262,9 @@ if __name__ == "__main__":
             "tests/test-data/MTBLS1",
             "--data_files_path",
             "tests/test-data/MTBLS1/FILES",
+            "--output_directory",
+            "outputs",
+            "--overridden_rules_file_path",
+            "mtbls_overriden_rules.txt",
         ]
     )
