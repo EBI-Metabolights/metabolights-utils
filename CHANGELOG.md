@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.14 (2025-11-25)
+
+### Fix
+
+- isa-tab performer and date colum patterns are defined. local validation improvements.
+
 ## v1.4.13 (2025-11-24)
 
 ### Fix
