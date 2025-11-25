@@ -15,6 +15,8 @@ class DefaultAssayFileReader(BaseIsaTableFileReader):
         [r"^[ ]*Comment[ ]*\[[ ]*(\w[ -~]*)[ ]*\](.\d+)?$", "Comment"],
         [r"^(Labeled Extract Name)$", ""],
         [r"^(Label)$", ""],
+        [r"^[ ]*(Performer)[ ]*(.\d+)?[ ]*$", "Performer"],
+        [r"^[ ]*(Date)[ ]*(.\d+)?[ ]*$", "Date"],
     ]
 
     def __init__(self, results_per_page=100) -> None:

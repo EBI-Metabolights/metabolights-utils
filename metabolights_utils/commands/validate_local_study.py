@@ -30,12 +30,29 @@ from metabolights_utils.provider.submission_model import (
     default=".mtbls-validation-outputs",
 )
 @click.option(
+    "--overridden_rules_file_path",
+    required=False,
+    help="A txt file that contains a validation rule identifier in each row."
+    " e.g. one row: rule_i_100_350_003_01. All validation errors listed in this file "
+    " will be filtered from the result.",
+    type=click.Path(exists=True),
+)
+@click.option(
     "--mtbls_validation_bundle_path",
     required=False,
-    help="A flag to enable remote validation of the study. "
+    help="Location of MetaboLights validation bundle path. "
     "You can download the latest one on "
     "https://raw.githubusercontent.com/EBI-Metabolights/mtbls-validation/refs/heads/test/docs/bundle.tar.gz",
     default="bundle.tar.gz",
+)
+@click.option(
+    "--refetch_mtbls_validation_bundle",
+    required=False,
+    is_flag=True,
+    help="A flag to enable remote validation of the study. "
+    "You can download the latest one on "
+    "https://raw.githubusercontent.com/EBI-Metabolights/mtbls-validation/refs/heads/test/docs/bundle.tar.gz",
+    default=False,
 )
 @click.option(
     "--mtbls_validation_bundle_url",
@@ -56,14 +73,21 @@ def local_validate(
     metadata_files_path: str,
     data_files_path: None | str = None,
     output_directory: None | str = None,
+    overridden_rules_file_path: None | str = None,
     opa_executable_path: str = "opa",
     mtbls_validation_bundle_path: None | str = "./bundle.tar.gz",
+    refetch_mtbls_validation_bundle: bool = False,
     mtbls_validation_bundle_url: str = "https://raw.githubusercontent.com/EBI-Metabolights/mtbls-validation/refs/heads/test/docs/bundle.tar.gz",
 ):
     """Validate local ISA metadata files."""
     if not data_files_path:
         data_files_path = Path(metadata_files_path) / Path("FILES")
-
+    if not overridden_rules_file_path:
+        overridden_rules = set()
+    elif Path(overridden_rules_file_path).exists():
+        overridden_rules = {
+            x for x in Path(overridden_rules_file_path).read_text().split() if x
+        }
     if not output_directory:
         output_directory = ".mtbls-validation-outputs"
     Path(output_directory).mkdir(exist_ok=True, parents=True)
@@ -77,7 +101,10 @@ def local_validate(
     mtbls_validation_errors_file_path = (
         f"{output_directory}/{mtbls_provisional_study_id}_mtbls_validation_errors.json"
     )
-    if not Path(mtbls_validation_bundle_path).exists():
+    if (
+        refetch_mtbls_validation_bundle
+        or not Path(mtbls_validation_bundle_path).exists()
+    ):
         if not mtbls_validation_bundle_url:
             click.echo(
                 f"Validation bundle does not exist on {mtbls_validation_bundle_path}"
@@ -141,8 +168,18 @@ def local_validate(
             json.dump(validation_result, f, indent=2)
         violation_results = OpaValidationResult.model_validate(validation_result)
         errors = [
-            x for x in violation_results.violations if x.type == PolicyMessageType.ERROR
+            x
+            for x in violation_results.violations
+            if x.type == PolicyMessageType.ERROR
+            and x.identifier not in overridden_rules
         ]
+        overridden_errors = {}
+        for x in violation_results.violations:
+            if x.type == PolicyMessageType.ERROR and x.identifier in overridden_rules:
+                if not x.identifier in overridden_errors:
+                    overridden_errors[x.identifier] = []
+                overridden_errors[x.identifier].append(x)
+
         # for idx, x in enumerate(errors):
         #     click.echo(f"{idx + 1}\t{x.identifier}\t{x.violation}")
         if errors:
@@ -163,6 +200,10 @@ def local_validate(
             click.echo(
                 "SUCCESS.\n"
                 f"Validation result is stored on {mtbls_validation_result_file_path}"
+            )
+        if overridden_errors:
+            click.echo(
+                f"Overridden errors: {', '.join([f'{k} ({len(v)})' for k, v in overridden_errors.items()])}"
             )
         return True
     except subprocess.TimeoutExpired as exc:

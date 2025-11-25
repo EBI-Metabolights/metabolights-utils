@@ -11,6 +11,8 @@ class DefaultSampleFileReader(BaseIsaTableFileReader):
         [r"^[ ]*(Sample Name)[ ]*$", ""],
         [r"^[ ]*Factor[ ]+Value[ ]*\[[ ]*(\w[ -~]*)[ ]*\](.\d+)?$", "Factor Value"],
         [r"^[ ]*Comment[ ]*\[[ ]*(\w[ -~]*)[ ]*\](.\d+)?$", "Comment"],
+        [r"^[ ]*(Performer)[ ]*(.\d+)?[ ]*$", "Performer"],
+        [r"^[ ]*(Date)[ ]*(.\d+)?[ ]*$", "Date"],
     ]
 
     def __init__(self, results_per_page=100) -> None:
