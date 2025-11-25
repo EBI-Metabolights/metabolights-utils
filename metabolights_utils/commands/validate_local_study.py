@@ -176,7 +176,7 @@ def local_validate(
         overridden_errors = {}
         for x in violation_results.violations:
             if x.type == PolicyMessageType.ERROR and x.identifier in overridden_rules:
-                if not x.identifier in overridden_errors:
+                if x.identifier not in overridden_errors:
                     overridden_errors[x.identifier] = []
                 overridden_errors[x.identifier].append(x)
 
