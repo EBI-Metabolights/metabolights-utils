@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.15 (2025-11-25)
+
+### Fix
+
+- allow metadata datafile name override mechanism
+
 ## v1.4.14 (2025-11-25)
 
 ### Fix
