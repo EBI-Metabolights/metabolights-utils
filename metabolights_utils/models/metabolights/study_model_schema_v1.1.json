@@ -1471,8 +1471,8 @@
                 "affiliationRorId": {
                     "auto_fill": false,
                     "default": "",
-                    "description": "ROR Id of the person's affiliation",
-                    "title": "Affiliation ROR Id",
+                    "description": "ROR ID of the person's affiliation",
+                    "title": "Affiliation ROR ID",
                     "type": "string"
                 }
             },
@@ -1682,6 +1682,29 @@
             "title": "Publication",
             "type": "object"
         },
+        "RelatedDataset": {
+            "additionalProperties": false,
+            "properties": {
+                "repository": {
+                    "default": "",
+                    "description": "Repository name in https://identifiers.org/. (e.g. MetaboLights)",
+                    "title": "Repository",
+                    "type": "string"
+                },
+                "accession": {
+                    "default": "",
+                    "description": "Dataset accession.",
+                    "title": "Accession",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "repository",
+                "accession"
+            ],
+            "title": "RelatedDataset",
+            "type": "object"
+        },
         "SamplesFile": {
             "additionalProperties": false,
             "properties": {
@@ -1878,6 +1901,13 @@
                     "title": "Sample Template",
                     "type": "string"
                 },
+                "studyTemplate": {
+                    "auto_fill": false,
+                    "default": "",
+                    "description": "Study template",
+                    "title": "Study Template",
+                    "type": "string"
+                },
                 "mhdAccession": {
                     "auto_fill": false,
                     "default": "",
@@ -1935,6 +1965,16 @@
                         "$ref": "#/$defs/Funder"
                     },
                     "title": "Funders",
+                    "type": "array"
+                },
+                "relatedDatasets": {
+                    "auto_fill": false,
+                    "default": [],
+                    "description": "Related datasets.",
+                    "items": {
+                        "$ref": "#/$defs/RelatedDataset"
+                    },
+                    "title": "Related Datasets",
                     "type": "array"
                 },
                 "characteristicTypes": {
@@ -2254,13 +2294,13 @@
                 },
                 "firstPrivateDate": {
                     "default": "",
-                    "description": "Study first release date",
+                    "description": "Study first release date. Its format MUST be ISO8601 date or date time",
                     "title": "First Private Date",
                     "type": "string"
                 },
                 "firstPublicDate": {
                     "default": "",
-                    "description": "Study first release date.",
+                    "description": "Study first release date. Its format MUST be ISO8601 date or date time",
                     "title": "First Public Date",
                     "type": "string"
                 },
@@ -2284,8 +2324,14 @@
                 },
                 "sampleTemplate": {
                     "default": "",
-                    "description": "Study template name.",
+                    "description": "Sample template name.",
                     "title": "Sample Template",
+                    "type": "string"
+                },
+                "studyTemplate": {
+                    "default": "",
+                    "description": "Study template name.",
+                    "title": "Study Template",
                     "type": "string"
                 },
                 "studyCategory": {
@@ -2314,7 +2360,7 @@
                 },
                 "createdAt": {
                     "default": "",
-                    "description": "Study creation datetime.",
+                    "description": "Study creation datetime. Its format MUST be ISO8601 date or date time",
                     "title": "Created At",
                     "type": "string"
                 }
@@ -2794,6 +2840,7 @@
                     "type": "string"
                 },
                 "customFilterArguments": {
+                    "additionalProperties": true,
                     "default": {},
                     "description": "Additional arguments for custom filters",
                     "title": "Custom Filter Arguments",
@@ -2866,6 +2913,7 @@
                     "type": "string"
                 },
                 "customSorterArguments": {
+                    "additionalProperties": true,
                     "default": {},
                     "description": "Additional arguments for custom sorters",
                     "title": "Custom Sorter Arguments",
@@ -3074,6 +3122,7 @@
                 "datasetLicenseVersion": "",
                 "datasetLicenseUrl": "",
                 "sampleTemplate": "",
+                "studyTemplate": "",
                 "studyCategory": 0,
                 "templateVersion": "",
                 "reservedMhdAccession": "",

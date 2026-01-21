@@ -373,9 +373,9 @@ class Person(IsaAbstractModel):
     affiliation_ror_id: Annotated[
         str,
         Field(
-            description="ROR Id of the person's affiliation",
+            description="ROR ID of the person's affiliation",
             json_schema_extra={"auto_fill": False},
-            title="Affiliation ROR Id",
+            title="Affiliation ROR ID",
         ),
     ] = ""
 
@@ -812,6 +812,16 @@ class Funder(IsaAbstractModel):
     grant_ids: Annotated[list[str], Field(description="Grant ID.")] = []
 
 
+class RelatedDataset(IsaAbstractModel):
+    repository: Annotated[
+        str,
+        Field(
+            description="Repository name in https://identifiers.org/. (e.g. MetaboLights)"
+        ),
+    ] = ""
+    accession: Annotated[str, Field(description="Dataset accession.")] = ""
+
+
 class Study(BaseSection):
     isatab_config: Annotated[
         IsaTabConfig,
@@ -894,6 +904,13 @@ class Study(BaseSection):
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""
+    study_template: Annotated[
+        str,
+        Field(
+            description="Study template",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = ""
     mhd_accession: Annotated[
         str,
         Field(
@@ -947,6 +964,13 @@ class Study(BaseSection):
         list[Funder],
         Field(
             description="Study funders.",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = []
+    related_datasets: Annotated[
+        list[RelatedDataset],
+        Field(
+            description="Related datasets.",
             json_schema_extra={"auto_fill": False},
         ),
     ] = []
@@ -1107,6 +1131,7 @@ class Investigation(BaseSection):
                 ("Study Category", "study_category"),
                 ("Template Version", "template_version"),
                 ("Sample Template", "sample_template"),
+                ("Study Template", "study_template"),
                 ("Created At", "created_at"),
             ]
         )
@@ -1124,7 +1149,7 @@ class Investigation(BaseSection):
             ]
 
             funder_comments = OrderedDict(
-                [("Funder", []), ("Funder ROR Id", []), ("Grant Identifier", [])]
+                [("Funder", []), ("Funder ROR ID", []), ("Grant Identifier", [])]
             )
 
             if study.funders:
@@ -1135,11 +1160,27 @@ class Investigation(BaseSection):
                         or ";".join(funder.grant_ids)
                     ):
                         funder_comments["Funder"].append(funder.funder_name)
-                        funder_comments["Funder ROR Id"].append(funder.funder_id)
+                        funder_comments["Funder ROR ID"].append(funder.funder_id)
                         funder_comments["Grant Identifier"].append(
                             ";".join(funder.grant_ids)
                         )
             self.add_non_empty_comments(study.comments, funder_comments, comment_names)
+
+            related_dataset_comments = OrderedDict(
+                [("Related Data Repository", []), ("Related Data Accession", [])]
+            )
+            if study.related_datasets:
+                for dataset in study.related_datasets:
+                    if dataset.repository or dataset.accession:
+                        related_dataset_comments["Related Data Repository"].append(
+                            dataset.repository
+                        )
+                        related_dataset_comments["Related Data Accession"].append(
+                            dataset.accession
+                        )
+            self.add_non_empty_comments(
+                study.comments, related_dataset_comments, comment_names
+            )
 
             characteristic_comments = OrderedDict(
                 [
@@ -1211,9 +1252,9 @@ class Investigation(BaseSection):
             if study.study_factors.factors:
                 study.study_factors.comments = []
                 comment_names = set([x.lower() for x in factor_comments])
-                for characteristic in study.study_factors.factors:
+                for factor in study.study_factors.factors:
                     factor_comments["Study Factor Value Format"].append(
-                        characteristic.value_format or ""
+                        factor.value_format.lower() if factor.value_format else ""
                     )
             self.add_non_empty_comments(
                 study.study_factors.comments,
@@ -1237,14 +1278,17 @@ class Investigation(BaseSection):
                 comment_names = set([x.lower() for x in protocol_param_comments])
                 for protocol in protocols:
                     values = [
-                        x.value_format or ""
+                        x.value_format.lower() if x.value_format else ""
                         for x in protocol.parameters
                         if x.value_format and x.value_format.strip()
                     ]
                     param_value_formats = ""
                     if values:
                         param_value_formats = ";".join(
-                            [x.value_format or "" for x in protocol.parameters]
+                            [
+                                x.value_format.lower() if x.value_format else ""
+                                for x in protocol.parameters
+                            ]
                         )
                     protocol_param_comments[
                         "Study Protocol Parameters Value Format"
@@ -1268,7 +1312,7 @@ class Investigation(BaseSection):
             for comment_name, field_name in [
                 ("Study Person ORCID", "orcid"),
                 ("Study Person Additional Email", "additional_emails"),
-                ("Study Person Affiliation ROR Id", "affiliation_ror_id"),
+                ("Study Person Affiliation ROR ID", "affiliation_ror_id"),
             ]:
                 contact_comments = OrderedDict([(comment_name, [])])
                 if study.study_contacts.people:

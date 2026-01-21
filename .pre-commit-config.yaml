@@ -8,42 +8,42 @@ repos:
   hooks:
   - id: check-added-large-files
     args: [ "--maxkb=2000" ]
-    exclude: "tests/data/.+"
+    exclude: "tests/test-data/.+"
   - id: check-toml
   - id: check-json
     exclude: .vscode/.+
   - id: check-yaml
+    exclude: "tests/test-data/.+"
     args:
     - --unsafe
   - id: end-of-file-fixer
+    exclude: "tests/test-data/.+"
   - id: trailing-whitespace
-    exclude: "tests/data/.+"
+    exclude: "tests/test-data/.+"
 - repo: https://github.com/lk16/detect-missing-init
   rev: v0.1.6
   hooks:
   - id: detect-missing-init
     args: [ "--create", "--track", "--python-folders", "metabolights_utils" ]
 - repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.8.22
+  rev: 0.9.26
   hooks:
   - id: uv-lock
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.13.2
+  rev: v0.14.13
   hooks:
   - id: ruff-check
     args:
-    - --extend-select
-    - I,E4,E5,E7,E9,F,G,SLF,Q,T
     - --exit-non-zero-on-fix
   - id: ruff-format
 - repo: https://github.com/seddonym/import-linter.git
-  rev: "v2.5"
+  rev: "v2.9"
   hooks:
   - id: import-linter
     name: architecture and package structure check (lint-importer)
     args: [ "--no-cache" ]
 - repo: https://github.com/commitizen-tools/commitizen
-  rev: v4.9.1
+  rev: v4.12.0
   hooks:
   - id: commitizen
     stages: [ commit-msg ]

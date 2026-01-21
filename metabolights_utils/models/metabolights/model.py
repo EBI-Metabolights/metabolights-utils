@@ -274,7 +274,8 @@ class StudyDBMetadata(CamelCaseModel):
         str, Field(description="Dataset license version.")
     ] = ""
     dataset_license_url: Annotated[str, Field(description="Dataset license URL.")] = ""
-    sample_template: Annotated[str, Field(description="Study template name.")] = ""
+    sample_template: Annotated[str, Field(description="Sample template name.")] = ""
+    study_template: Annotated[str, Field(description="Study template name.")] = ""
     study_category: Annotated[StudyCategory, Field(description="Study category.")] = (
         StudyCategory.OTHER
     )

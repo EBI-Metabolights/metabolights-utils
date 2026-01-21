@@ -21,7 +21,7 @@
 
 
 ---
-The `metaboligts-utils` is a *lightweight API* and *command line interface* (CLI) to use or search MetaboLights public studies, update your [ISA-Tab](https://isa-specs.readthedocs.io/en/latest/isatab.html) metadata files. 
+The `metaboligts-utils` is a *lightweight API* and *command line interface* (CLI) to use or search MetaboLights public studies, update your [ISA-Tab](https://isa-specs.readthedocs.io/en/latest/isatab.html) metadata files.
 
 ---
 

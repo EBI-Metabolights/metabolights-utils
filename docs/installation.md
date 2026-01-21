@@ -4,7 +4,7 @@
 The following command installs metabolights-utils from the Python Package Index. You will need Python 3.8+ and pip3 on your operating system.
 
 * (If python3 is not installed) Download and install [Python](https://www.python.org/downloads)
-* (If pip3 is not installed) Install [pip3](https://pip.pypa.io/en/stable/installation) 
+* (If pip3 is not installed) Install [pip3](https://pip.pypa.io/en/stable/installation)
 * Install metabolights-utils library
 ```bash
 cd <directory to create a virtual environment>
