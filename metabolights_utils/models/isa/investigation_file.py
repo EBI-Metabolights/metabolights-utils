@@ -8,14 +8,14 @@ from metabolights_utils.models.isa.common import Comment, IsaAbstractModel, IsaT
 module_name = __name__
 
 FORMAT_MAP = {
-    "text": "Text",
-    "string": "Text",
-    "cv": "Ontology",
-    "ontology": "Ontology",
-    "numeric": "Numeric",
-    "number": "Numeric",
-    "integer": "Numeric",
-    "float": "Numeric",
+    "text": "text",
+    "string": "text",
+    "cv": "ontology",
+    "ontology": "ontology",
+    "numeric": "numeric",
+    "number": "numeric",
+    "integer": "numeric",
+    "float": "numeric",
 }
 
 
@@ -184,13 +184,13 @@ class ValueTypeAnnotation(IsaAbstractModel):
 
 class CharacteristicDefinition(ValueTypeAnnotation):
     value_format: Annotated[
-        Literal["", "Text", "Ontology", "Numeric"],
+        Literal["", "text", "ontology", "numeric"],
         Field(
             description="Format of characteristic value, "
             "empty value is used for undefined value."
-            "Text (one column), "
-            "Ontology ( one column+ term source ref and accession number), "
-            "Numeric (one column + unit, unit term source ref and accession number)",
+            "text (one column), "
+            "ontology ( one column+ term source ref and accession number), "
+            "numeric (one column + unit, unit term source ref and accession number)",
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""
@@ -205,12 +205,12 @@ class CharacteristicDefinition(ValueTypeAnnotation):
 
 class ParameterDefinition(OntologyAnnotation):
     value_format: Annotated[
-        Literal["", "Text", "Ontology", "Numeric"],
+        Literal["", "text", "ontology", "numeric"],
         Field(
             description="Format of parameter value, "
             "empty value is used for undefined value."
-            "Text (one column), "
-            "Ontology ( one column+ term source ref and accession number), "
+            "text (one column), "
+            "ontology ( one column+ term source ref and accession number), "
             "numeric (one column + unit, unit term source ref and accession number)",
             json_schema_extra={"auto_fill": False},
         ),
@@ -435,13 +435,13 @@ class Factor(IsaAbstractModel):
     ] = OntologyAnnotation()
 
     value_format: Annotated[
-        Literal["", "Text", "Ontology", "Numeric"],
+        Literal["", "text", "ontology", "numeric"],
         Field(
             description="Format of factor value, "
             "empty value is used for undefined value."
-            "Text (one column), "
-            "Ontology ( one column+ term source ref and accession number), "
-            "Numeric (one column + unit, unit term source ref and accession number)",
+            "text (one column), "
+            "ontology ( one column+ term source ref and accession number), "
+            "numeric (one column + unit, unit term source ref and accession number)",
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""

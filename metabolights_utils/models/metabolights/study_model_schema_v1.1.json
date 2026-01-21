@@ -416,9 +416,9 @@
                     "description": "Format of characteristic value, empty value is used for undefined value.text (one column), ontology ( one column+ term source ref and accession number), numeric (one column + unit, unit term source ref and accession number)",
                     "enum": [
                         "",
-                        "Text",
-                        "Ontology",
-                        "Numeric"
+                        "text",
+                        "ontology",
+                        "numeric"
                     ],
                     "title": "Value Format",
                     "type": "string"
@@ -567,9 +567,9 @@
                     "description": "Format of factor value, empty value is used for undefined value.text (one column), ontology ( one column+ term source ref and accession number), numeric (one column + unit, unit term source ref and accession number)",
                     "enum": [
                         "",
-                        "Text",
-                        "Ontology",
-                        "Numeric"
+                        "text",
+                        "ontology",
+                        "numeric"
                     ],
                     "title": "Value Format",
                     "type": "string"
@@ -1294,9 +1294,9 @@
                     "description": "Format of parameter value, empty value is used for undefined value.text (one column), ontology ( one column+ term source ref and accession number), numeric (one column + unit, unit term source ref and accession number)",
                     "enum": [
                         "",
-                        "Text",
-                        "Ontology",
-                        "Numeric"
+                        "text",
+                        "ontology",
+                        "numeric"
                     ],
                     "title": "Value Format",
                     "type": "string"
