@@ -1,11 +1,22 @@
 from typing import List, Literal, OrderedDict, Union
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from typing_extensions import Annotated
 
 from metabolights_utils.models.isa.common import Comment, IsaAbstractModel, IsaTabConfig
 
 module_name = __name__
+
+FORMAT_MAP = {
+    "text": "Text",
+    "string": "Text",
+    "cv": "Ontology",
+    "ontology": "Ontology",
+    "numeric": "Numeric",
+    "number": "Numeric",
+    "integer": "Numeric",
+    "float": "Numeric",
+}
 
 
 class BaseSection(IsaAbstractModel):
@@ -173,30 +184,44 @@ class ValueTypeAnnotation(IsaAbstractModel):
 
 class CharacteristicDefinition(ValueTypeAnnotation):
     value_format: Annotated[
-        Literal["", "text", "ontology", "numeric"],
+        Literal["", "Text", "Ontology", "Numeric"],
         Field(
             description="Format of characteristic value, "
             "empty value is used for undefined value."
-            "text (one column), "
-            "ontology ( one column+ term source ref and accession number), "
-            "numeric (one column + unit, unit term source ref and accession number)",
+            "Text (one column), "
+            "Ontology ( one column+ term source ref and accession number), "
+            "Numeric (one column + unit, unit term source ref and accession number)",
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""
+
+    @field_validator("value_format", mode="before")
+    @classmethod
+    def validate_value_format(cls, value) -> str:
+        if value is None:
+            return ""
+        return FORMAT_MAP.get(value.lower(), "")
 
 
 class ParameterDefinition(OntologyAnnotation):
     value_format: Annotated[
-        Literal["", "text", "ontology", "numeric"],
+        Literal["", "Text", "Ontology", "Numeric"],
         Field(
             description="Format of parameter value, "
             "empty value is used for undefined value."
-            "text (one column), "
-            "ontology ( one column+ term source ref and accession number), "
+            "Text (one column), "
+            "Ontology ( one column+ term source ref and accession number), "
             "numeric (one column + unit, unit term source ref and accession number)",
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""
+
+    @field_validator("value_format", mode="before")
+    @classmethod
+    def validate_value_format(cls, value) -> str:
+        if value is None:
+            return ""
+        return FORMAT_MAP.get(value.lower(), "")
 
 
 class ProtocolComponent(ValueTypeAnnotation): ...
@@ -410,16 +435,23 @@ class Factor(IsaAbstractModel):
     ] = OntologyAnnotation()
 
     value_format: Annotated[
-        Literal["", "text", "ontology", "numeric"],
+        Literal["", "Text", "Ontology", "Numeric"],
         Field(
             description="Format of factor value, "
             "empty value is used for undefined value."
-            "text (one column), "
-            "ontology ( one column+ term source ref and accession number), "
-            "numeric (one column + unit, unit term source ref and accession number)",
+            "Text (one column), "
+            "Ontology ( one column+ term source ref and accession number), "
+            "Numeric (one column + unit, unit term source ref and accession number)",
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""
+
+    @field_validator("value_format", mode="before")
+    @classmethod
+    def validate_value_format(cls, value) -> str:
+        if value is None:
+            return ""
+        return FORMAT_MAP.get(value.lower(), "")
 
     def __str__(self):
         return f"{self.name if self.name else ''} ({str(self.type)})"
