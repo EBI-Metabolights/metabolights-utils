@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.18 (2026-01-21)
+
+### Fix
+
+- value format field update
+
 ## v1.4.17 (2026-01-21)
 
 ### Fix
