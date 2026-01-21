@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.17 (2026-01-21)
+
+### Fix
+
+- format, characteristic and parameter format fields are updated
+
 ## v1.4.16 (2026-01-21)
 
 ### Fix
