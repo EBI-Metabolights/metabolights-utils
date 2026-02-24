@@ -1777,7 +1777,7 @@ class Investigation(BaseSection):
                             funder_id=funder_ids[idx] if len(funder_ids) > idx else "",
                             grant_ids=grant_ids[idx].split(";")
                             if len(grant_ids) > idx
-                            else "",
+                            else [],
                         )
                     )
             characteristic_names = comments_dict.get("study characteristics name", [])
