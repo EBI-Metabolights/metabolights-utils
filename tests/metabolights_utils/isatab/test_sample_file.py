@@ -294,7 +294,7 @@ def test_sample_metadata_file_success_07():
     )
     assert result.isa_table_file.table.row_count > 0
     assert result.isa_table_file.file_path == "s_MTBLS1.txt"
-
+    bytes_io = io.BytesIO(file_path.read_bytes())
     result: IsaTableFileReaderResult = helper.read(bytes_io, offset=0, limit=None)
     assert result.isa_table_file.table.row_count > 0
     assert result.isa_table_file.file_path == ""
@@ -310,7 +310,7 @@ def test_sample_metadata_file_success_08():
     )
     assert result.isa_table_file.table.row_count > 0
     assert result.isa_table_file.file_path == "s_MTBLS1.txt"
-
+    text_io = io.StringIO(file_path.read_text())
     result: IsaTableFileReaderResult = helper.read(text_io, offset=0, limit=None)
     assert result.isa_table_file.table.row_count > 0
     assert result.isa_table_file.file_path == ""
