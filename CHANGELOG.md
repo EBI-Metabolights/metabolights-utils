@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## v1.4.20 (2026-03-06)
+
+### Fix
+
+- dependency and lint updates
+- io.StringIO and io.BytesIO input error while reading metadata
+
 ## v1.4.19 (2026-02-24)
 
 ### Fix
