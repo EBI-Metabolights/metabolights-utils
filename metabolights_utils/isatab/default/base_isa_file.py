@@ -1,7 +1,7 @@
 import logging
 import os
 import pathlib
-from io import IOBase
+from io import BytesIO, IOBase
 from typing import Tuple, Union
 
 logger = logging.getLogger(__name__)
@@ -10,13 +10,18 @@ logger = logging.getLogger(__name__)
 class BaseIsaFile:
     def _get_file_path(
         self,
-        file_buffer_or_path: Union[str, pathlib.Path, IOBase],
+        file_buffer_or_path: Union[str, bytes, pathlib.Path, IOBase],
+        filename: Union[str, None] = None,
     ) -> Tuple[Union[str, pathlib.Path, IOBase], str]:
         if not file_buffer_or_path:
             logger.warning("file_buffer_or_path input is not defined.")
             return None
+        if isinstance(file_buffer_or_path, bytes):
+            file_buffer_or_path = BytesIO(file_buffer_or_path)
         if isinstance(file_buffer_or_path, IOBase):
-            return file_buffer_or_path, os.path.realpath(file_buffer_or_path.name)
+            if hasattr(file_buffer_or_path, "name"):
+                return file_buffer_or_path, os.path.realpath(file_buffer_or_path.name)
+            return file_buffer_or_path, os.path.realpath(filename) if filename else ""
         if isinstance(file_buffer_or_path, pathlib.Path):
             return file_buffer_or_path, os.path.realpath(str(file_buffer_or_path))
         elif isinstance(file_buffer_or_path, str):

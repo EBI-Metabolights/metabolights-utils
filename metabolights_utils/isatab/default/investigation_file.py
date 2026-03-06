@@ -42,8 +42,9 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
         skip_parser_info_messages: bool = True,
+        filename: Union[None | str] = None,
     ) -> InvestigationFileReaderResult:
-        buffer_or_path, path = self._get_file_path(file_buffer_or_path)
+        buffer_or_path, path = self._get_file_path(file_buffer_or_path, filename)
         investigation = Investigation()
         parse_success = False
         read_messages: List[ParserMessage] = []

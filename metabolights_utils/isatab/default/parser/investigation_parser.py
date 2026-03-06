@@ -2,7 +2,7 @@ import logging
 import pathlib
 import re
 import sys
-from io import IOBase
+from io import BytesIO, IOBase
 from typing import Callable, Dict, List, Tuple, Union
 
 from pydantic import BaseModel
@@ -127,6 +127,8 @@ def get_investigation(
     is_study_part = False
     current_section = ""
     result = None
+    if isinstance(file_buffer, bytes):
+        file_buffer = BytesIO(file_buffer)
     if file_buffer and isinstance(file_buffer, IOBase):
         result: Dict[int, Dict[int, str]] = read_investigation_file(
             file_buffer, messages

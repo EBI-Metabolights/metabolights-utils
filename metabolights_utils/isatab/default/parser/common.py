@@ -33,7 +33,10 @@ def read_investigation_file(file_buffer: IOBase, messages: List[ParserMessage]):
 def read_investigation_file_lines(file_buffer: IOBase, messages: List[ParserMessage]):
     new_lines: List[List[str]] = []
     try:
-        lines = file_buffer.readlines()
+        content = file_buffer.read()
+        if isinstance(content, bytes):
+            content = content.decode("utf-8")
+        lines = [f"{x}\n" for x in content.split("\n")]
 
         content = "".join(lines)
         line_separation = content.split("\n")
@@ -158,6 +161,8 @@ def read_table_file(
 ) -> SelectedTsvFileContent:
     file_buffer.seek(0)
     file_content = file_buffer.read()
+    if isinstance(file_content, bytes):
+        file_content = file_content.decode("utf-8")
     find_empty_lines = re.findall(r"[\r\n][\r\n]+", file_content)
     if find_empty_lines:
         messages.append(

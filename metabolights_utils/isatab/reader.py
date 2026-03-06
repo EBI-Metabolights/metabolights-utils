@@ -32,6 +32,7 @@ class InvestigationFileReader(ABC):
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
         skip_parser_info_messages: bool = True,
+        filename: Union[str, None] = None,
     ) -> InvestigationFileReaderResult:
         """Reads investigation an file and return Investigation model and parser messages.
             If file buffer is not defined, it reads file_path.
@@ -44,6 +45,7 @@ class InvestigationFileReader(ABC):
             Defaults to None.
             skip_parser_info_messages (bool, optional): clear INFO messages from parser messages.
             Defaults to True.
+            filename (Union[str, None], optional): File name if input is file buffer. Defaults to None.
 
         Raises:
             exc: any unexpected exception while reading file
@@ -56,14 +58,15 @@ class InvestigationFileReader(ABC):
 class IsaTableFileReader(ABC):
     @abstractmethod
     def get_headers(
-        self, file_buffer_or_path: Union[str, pathlib.Path, IOBase]
+        self,
+        file_buffer_or_path: Union[str, pathlib.Path, IOBase],
+        filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
-        """_summary_
+        """Return IsaTableFile without rows.
 
         Args:
-            file_buffer (Union[str, pathlib.Path, IOBase]): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
-            file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
-
+            file_buffer_or_path (Union[str, pathlib.Path, IOBase]): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
+            filename: filename if input is file buffer
         Returns:
             IsaTableFileWrapperResult: Returns IsaTableFile without rows and parser messages.
         """
@@ -73,15 +76,15 @@ class IsaTableFileReader(ABC):
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
         results_per_page: int = 100,
+        filename: Union[str, None] = None,
     ) -> int:
         """Returns total number of pages according to results_per_page. At least one of the file_buffer and file_path parameters should be defined.
-           If file_buffer is not defined, file_path is not used to read content.
-           If file_path is not defined, file path and name will not be added to messages.
+
 
         Args:
-            file_buffer (Union[str, pathlib.Path, IOBase]): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
+            file_buffer_or_path (Union[str, pathlib.Path, IOBase]): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
             results_per_page (int): Items per page. Defaults: 100.
-
+            filename: filename if input is file buffer
         Returns:
             int: total number of pages in file.
         """
@@ -90,14 +93,13 @@ class IsaTableFileReader(ABC):
     def get_total_row_count(
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
+        filename: Union[str, None] = None,
     ) -> int:
         """Returns total number of rows. At least one of the file_buffer and file_path parameters should be defined.
-           If file_buffer is not defined, file_path is not used to read content.
-           If file_path is not defined, file path and name will not be added to messages.
 
         Args:
             file_buffer_or_path (str, pathlib.Path, IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
-            file_path (Union[str, pathlib.Path], optional): File path or pathlib.Path object.
+            filename: filename if input is file buffer
 
         Returns:
             int: total number of rows in file. First column is assigned as header row.
@@ -112,6 +114,7 @@ class IsaTableFileReader(ABC):
         selected_columns: Union[List[str], None] = None,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
+        filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         """Reads file and returns the selected page of file. At least one of the file_buffer and file_path parameters should be defined.
            If file_buffer is not defined, file_path is not used to read content.
@@ -122,9 +125,9 @@ class IsaTableFileReader(ABC):
             page (int, optional): The page number requested. Defaults to 1.
             results_per_page (int, optional): Number of rows in each page. Defaults to 100.
             selected_columns (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
-            file_path (Union[str, pathlib.Path], optional): File path str or pathlib.Path object
             filter_options (List[TsvFileFilterOption]): filter column names and filter methods. Defaults to None.
             sort_options (List[TsvFileSortOption]): Sort column names. Defaults to None.
+            filename: filename if input is file buffer
         Returns:
             IsaTableFileReaderResult: IsaTableFile model and parser messages
         """
@@ -138,6 +141,7 @@ class IsaTableFileReader(ABC):
         selected_columns: Union[None, List[str]] = None,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
+        filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         """Reads file and returns rows of the file starting from offset.
            At least one of the file_buffer and file_path parameters should be defined.
@@ -147,10 +151,10 @@ class IsaTableFileReader(ABC):
             file_buffer_or_path (str, pathlib.Path, IOBase): File buffer to read file content. io.StringIO, io.TextIOWrapper with open(), etc.
             offset (int, optional): Starting index of rows will be returned. First rows is header and index of second row is 0. Defaults to 0.
             limit (Union[int, None], optional): Number of rows will be returned. If it is None, return all rows. Defaults to None.
-            column_names (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
+            selected_columns (Union[List[str], None], optional): Column names will be returned. Returns all columns if it is None. Defaults to None.
             filter_options (List[TsvFileFilterOption]): filter column names and filter methods. Defaults to None.
-            sort_options (List[TsvFileSortOption]): Sort column names. Defaults to None.
-
+            sort_options (List  [TsvFileSortOption]): Sort column names. Defaults to None.
+            filename: filename if input is file buffer
         Returns:
             IsaTableFileReaderResult: IsaTableFile model and parser messages.
         """
@@ -159,12 +163,13 @@ class IsaTableFileReader(ABC):
     def read(
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
-        offset: Union[None, int],
-        limit: Union[None, int],
+        offset: int = 0,
+        limit: Union[None, int] = None,
         selected_columns: Union[None, List[str]] = None,
         skip_parser_info_messages: bool = True,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
+        filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         """Reads selected rows with selected columns from tsv file. If sort and filter options are enabled, offset and limit are applied to the final filter and sort result.
 
@@ -176,6 +181,7 @@ class IsaTableFileReader(ABC):
             skip_parser_info_messages (bool, optional): clear INFO messages from parser messages. Defaults to True.
             filter_options (List[TsvFileFilterOption]): filter column names and filter methods. Defaults to None.
             sort_options (List[TsvFileSortOption]): Sort column names. Defaults to None.
+            filename: filename if input is file buffer
         Returns:
             IsaTableFileReaderResult: IsaTableFile model and parser messages.
         """

@@ -33,8 +33,9 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
         results_per_page: int = 100,
+        filename: Union[str, None] = None,
     ) -> int:
-        total = self.get_total_row_count(file_buffer_or_path)
+        total = self.get_total_row_count(file_buffer_or_path, filename)
         logger.debug("Total rows: %s, default page size: %s", total, results_per_page)
         return int(total / results_per_page) + (
             1 if total % results_per_page > 0 else 0
@@ -43,9 +44,10 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
     def get_total_row_count(
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
+        filename: Union[str, None] = None,
     ) -> int:
         isa_file_result: IsaTableFileReaderResult = self.get_headers(
-            file_buffer_or_path
+            file_buffer_or_path, filename
         )
         table_file: IsaTableFile = isa_file_result.isa_table_file
         table: IsaTable = table_file.table
@@ -59,6 +61,7 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         selected_columns: Union[List[str], None] = None,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
+        filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         page = page if page and page > 1 else 1
         results_per_page = (
@@ -80,6 +83,7 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
             selected_columns=selected_columns,
             filter_options=filter_options,
             sort_options=sort_options,
+            filename=filename,
         )
 
     def get_rows(
@@ -90,6 +94,7 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         selected_columns: Union[None, List[str]] = None,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
+        filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         offset = offset if offset > 0 else None
         limit = limit if limit is not None and limit >= 0 else None
@@ -106,11 +111,13 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
             selected_columns=selected_columns,
             filter_options=filter_options,
             sort_options=sort_options,
+            filename=filename,
         )
 
     def get_headers(
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
+        filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         offset = None
         limit = 0
@@ -122,20 +129,22 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
             limit=limit,
             selected_columns=selected_columns,
             skip_parser_info_messages=True,
+            filename=filename,
         )
 
     def read(
         self,
         file_buffer_or_path: Union[str, pathlib.Path, IOBase],
-        offset: Union[None, int],
-        limit: Union[None, int],
+        offset: int = 0,
+        limit: Union[None, int] = None,
         selected_columns: Union[None, List[str]] = None,
         skip_parser_info_messages: bool = True,
         filter_options: List[TsvFileFilterOption] = None,
         sort_options: List[TsvFileSortOption] = None,
+        filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         read_messages: List[ParserMessage] = []
-        buffer_or_path, path = self._get_file_path(file_buffer_or_path)
+        buffer_or_path, path = self._get_file_path(file_buffer_or_path, filename)
         basename = os.path.basename(str(path))
         logger.debug("Basename: %s", basename)
         isa_table_file = None

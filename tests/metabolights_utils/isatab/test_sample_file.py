@@ -1,3 +1,4 @@
+import io
 import pathlib
 
 from metabolights_utils.isatab import Reader, Writer
@@ -267,3 +268,49 @@ def test_with_filter_and_sort_option():
 def test_sample_metadata_file_success_05():
     helper: IsaTableFileWriter = Writer.get_sample_file_writer()
     assert helper
+
+
+def test_sample_metadata_file_success_06():
+    file_path = pathlib.Path("tests/test-data/MTBLS1/s_MTBLS1.txt")
+    bytes_io = file_path.read_bytes()
+    helper: IsaTableFileReader = Reader.get_sample_file_reader()
+    result: IsaTableFileReaderResult = helper.read(
+        bytes_io, offset=0, limit=None, filename="s_MTBLS1.txt"
+    )
+    assert result.isa_table_file.table.row_count > 0
+    assert result.isa_table_file.file_path == "s_MTBLS1.txt"
+
+    result: IsaTableFileReaderResult = helper.read(bytes_io, offset=0, limit=None)
+    assert result.isa_table_file.table.row_count > 0
+    assert result.isa_table_file.file_path == ""
+
+
+def test_sample_metadata_file_success_07():
+    file_path = pathlib.Path("tests/test-data/MTBLS1/s_MTBLS1.txt")
+    bytes_io = io.BytesIO(file_path.read_bytes())
+    helper: IsaTableFileReader = Reader.get_sample_file_reader()
+    result: IsaTableFileReaderResult = helper.read(
+        bytes_io, offset=0, limit=None, filename="s_MTBLS1.txt"
+    )
+    assert result.isa_table_file.table.row_count > 0
+    assert result.isa_table_file.file_path == "s_MTBLS1.txt"
+
+    result: IsaTableFileReaderResult = helper.read(bytes_io, offset=0, limit=None)
+    assert result.isa_table_file.table.row_count > 0
+    assert result.isa_table_file.file_path == ""
+
+
+def test_sample_metadata_file_success_08():
+    file_path = pathlib.Path("tests/test-data/MTBLS1/s_MTBLS1.txt")
+    text_io = io.StringIO(file_path.read_text())
+
+    helper: IsaTableFileReader = Reader.get_sample_file_reader()
+    result: IsaTableFileReaderResult = helper.read(
+        text_io, offset=0, limit=None, filename="s_MTBLS1.txt"
+    )
+    assert result.isa_table_file.table.row_count > 0
+    assert result.isa_table_file.file_path == "s_MTBLS1.txt"
+
+    result: IsaTableFileReaderResult = helper.read(text_io, offset=0, limit=None)
+    assert result.isa_table_file.table.row_count > 0
+    assert result.isa_table_file.file_path == ""

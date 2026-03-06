@@ -1,3 +1,4 @@
+import io
 import os
 import pathlib
 import uuid
@@ -30,6 +31,30 @@ def test_investigation_file_success_01():
         lines = f.readlines()
         assert len(lines) > 0
     os.remove(tmp_path)
+
+
+def test_investigation_file_success_02():
+    file_path = pathlib.Path("tests/test-data/MTBLS1/i_Investigation.txt")
+    reader: InvestigationFileReader = Reader.get_investigation_file_reader()
+    bytes_data = io.BytesIO(file_path.read_bytes())
+    result: InvestigationFileReaderResult = reader.read(bytes_data)
+    assert len(result.investigation.studies) == 1
+
+
+def test_investigation_file_success_03():
+    file_path = pathlib.Path("tests/test-data/MTBLS1/i_Investigation.txt")
+    reader: InvestigationFileReader = Reader.get_investigation_file_reader()
+    bytes_io = io.BytesIO(file_path.read_bytes())
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=bytes_io)
+    assert len(result.investigation.studies) == 1
+
+
+def test_investigation_file_success_04():
+    file_path = pathlib.Path("tests/test-data/MTBLS1/i_Investigation.txt")
+    reader: InvestigationFileReader = Reader.get_investigation_file_reader()
+    bytes_io = io.StringIO(file_path.read_text())
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=bytes_io)
+    assert len(result.investigation.studies) == 1
 
 
 def test_investigation_file_fail_01(mocker: MockFixture):
