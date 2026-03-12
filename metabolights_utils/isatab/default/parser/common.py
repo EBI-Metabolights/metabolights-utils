@@ -119,10 +119,9 @@ def read_investigation_file_lines(file_buffer: IOBase, messages: List[ParserMess
                 values.append(value.strip('"'))
             new_lines.append(values)
     except Exception as exc:
-        message = ParserMessage(type=ParserMessageType.CRITICAL)
-        message.short = f"The file can not read successfully. {str(exc)}"
-        message.detail = f"Returned result is not complete. {str(exc)}"
-        messages.append(message)
+        message = f"The file can not read successfully. {str(exc)}"
+        logger.error(message)
+        raise exc
 
     for item in new_lines:
         new_line: List[str] = item
