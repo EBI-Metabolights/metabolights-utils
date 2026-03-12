@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.21 (2026-03-12)
+
+### Fix
+
+- read non utf-8 investigation file error
+
 ## v1.4.20 (2026-03-06)
 
 ### Fix
