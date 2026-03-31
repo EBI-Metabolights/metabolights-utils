@@ -852,6 +852,7 @@ class RelatedDataset(IsaAbstractModel):
         ),
     ] = ""
     accession: Annotated[str, Field(description="Dataset accession.")] = ""
+    url: Annotated[str, Field(description="Dataset URL.")] = ""
 
 
 class Study(BaseSection):
@@ -1199,17 +1200,25 @@ class Investigation(BaseSection):
             self.add_non_empty_comments(study.comments, funder_comments, comment_names)
 
             related_dataset_comments = OrderedDict(
-                [("Related Data Repository", []), ("Related Data Accession", [])]
+                [
+                    ("Related Data Repository", []),
+                    ("Related Data Accession", []),
+                    ("Related Data URL", []),
+                ]
             )
             if study.related_datasets:
                 for dataset in study.related_datasets:
                     if dataset.repository or dataset.accession:
                         related_dataset_comments["Related Data Repository"].append(
-                            dataset.repository
+                            dataset.repository or ""
                         )
                         related_dataset_comments["Related Data Accession"].append(
-                            dataset.accession
+                            dataset.accession or ""
                         )
+                        related_dataset_comments["Related Data URL"].append(
+                            dataset.url or ""
+                        )
+
             self.add_non_empty_comments(
                 study.comments, related_dataset_comments, comment_names
             )
@@ -1763,6 +1772,34 @@ class Investigation(BaseSection):
                 if val:
                     setattr(study, field_name, val[0] if val else "")
 
+            related_data_repository = comments_dict.get("related data repository", [])
+            related_data_accession = comments_dict.get("related data accession", [])
+            related_data_url = comments_dict.get("related data url", [])
+            counts = [
+                len(x)
+                for x in (
+                    related_data_repository,
+                    related_data_accession,
+                    related_data_url,
+                )
+                if x and x[0]
+            ]
+            if counts and len(counts) > 0:
+                study.related_data = []
+                for idx in range(max(counts)):
+                    study.related_data.append(
+                        RelatedDataset(
+                            repository=related_data_repository[idx]
+                            if len(related_data_repository) > idx
+                            else "",
+                            accession=related_data_accession[idx]
+                            if len(related_data_accession) > idx
+                            else "",
+                            url=related_data_url[idx].split(";")
+                            if len(related_data_url) > idx
+                            else [],
+                        )
+                    )
             funders = comments_dict.get("funder", [])
             funder_ids = comments_dict.get("funder ror id", [])
             grant_ids = comments_dict.get("grant identifier", [])
