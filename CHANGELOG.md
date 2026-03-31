@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.22 (2026-03-31)
+
+### Fix
+
+- related data is not collected from comments
+
 ## v1.4.21 (2026-03-12)
 
 ### Fix
