@@ -32,7 +32,7 @@ jobs:
         cache-dependency-glob: uv.lock
 
     - name: Sync dependencies
-      run: uv sync --group dev --group test
+      run: uv sync --group dev
 
     - uses: astral-sh/ruff-action@v3
     - run: ruff check
