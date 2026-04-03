@@ -1785,9 +1785,9 @@ class Investigation(BaseSection):
                 if x and x[0]
             ]
             if counts and len(counts) > 0:
-                study.related_data = []
+                study.related_datasets = []
                 for idx in range(max(counts)):
-                    study.related_data.append(
+                    study.related_datasets.append(
                         RelatedDataset(
                             repository=related_data_repository[idx]
                             if len(related_data_repository) > idx
