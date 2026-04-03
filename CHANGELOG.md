@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## v1.4.23 (2026-04-03)
+
+### Fix
+
+- cicd pipeline update
+- study related_data mapping and dependency updates
+
 ## v1.4.22 (2026-03-31)
 
 ### Fix
