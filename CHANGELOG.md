@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.24 (2026-04-12)
+
+### Fix
+
+- parse funder and related dataset error
+
 ## v1.4.23 (2026-04-03)
 
 ### Fix
