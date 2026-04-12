@@ -1776,7 +1776,7 @@ class Investigation(BaseSection):
             related_data_accession = comments_dict.get("related data accession", [])
             related_data_url = comments_dict.get("related data url", [])
             counts = [
-                len(x)
+                len(x[0].split(";"))
                 for x in (
                     related_data_repository,
                     related_data_accession,
@@ -1789,31 +1789,51 @@ class Investigation(BaseSection):
                 for idx in range(max(counts)):
                     study.related_datasets.append(
                         RelatedDataset(
-                            repository=related_data_repository[idx]
-                            if len(related_data_repository) > idx
+                            repository=related_data_repository[0].split(";")[idx]
+                            if related_data_repository
+                            and len(related_data_repository[0].split(";")) > idx
+                            and related_data_repository[0].split(";")[idx].strip()
                             else "",
-                            accession=related_data_accession[idx]
-                            if len(related_data_accession) > idx
+                            accession=related_data_accession[0].split(";")[idx]
+                            if related_data_accession
+                            and len(related_data_accession[0].split(";")) > idx
+                            and related_data_accession[0].split(";")[idx].strip()
                             else "",
-                            url=related_data_url[idx].split(";")
-                            if len(related_data_url) > idx
-                            else [],
+                            url=related_data_url[0].split(";")[idx]
+                            if related_data_url
+                            and len(related_data_url[0].split(";")) > idx
+                            and related_data_url[0].split(";")[idx].strip()
+                            else "",
                         )
                     )
             funders = comments_dict.get("funder", [])
             funder_ids = comments_dict.get("funder ror id", [])
             grant_ids = comments_dict.get("grant identifier", [])
-            counts = [len(x) for x in (funders, funder_ids, grant_ids) if x and x[0]]
+            counts = [
+                len(x[0].split(";"))
+                for x in (funders, funder_ids, grant_ids)
+                if x and x[0]
+            ]
 
             if counts and len(counts) > 0:
                 study.funders = []
                 for idx in range(max(counts)):
                     study.funders.append(
                         Funder(
-                            funder_name=funders[idx] if len(funders) > idx else "",
-                            funder_id=funder_ids[idx] if len(funder_ids) > idx else "",
-                            grant_ids=grant_ids[idx].split(";")
-                            if len(grant_ids) > idx
+                            funder_name=funders[0].split(";")[idx]
+                            if funders
+                            and len(funders[0].split(";")) > idx
+                            and funders[0].split(";")[idx].strip()
+                            else "",
+                            funder_id=funder_ids[0].split(";")[idx]
+                            if funder_ids
+                            and len(funder_ids[0].split(";")) > idx
+                            and funder_ids[0].split(";")[idx].strip()
+                            else "",
+                            grant_ids=grant_ids[0].split(";")[idx].split(";")
+                            if grant_ids
+                            and len(grant_ids[0].split(";")) > idx
+                            and grant_ids[0].split(";")[idx].strip()
                             else [],
                         )
                     )
@@ -1829,7 +1849,7 @@ class Investigation(BaseSection):
                 "study characteristics value format", []
             )
             counts = [
-                len(x)
+                len(x[0].split(";"))
                 for x in (
                     characteristic_names,
                     characteristic_types,
@@ -1844,20 +1864,29 @@ class Investigation(BaseSection):
                 for idx in range(max(counts)):
                     study.characteristic_types.append(
                         CharacteristicDefinition(
-                            name=characteristic_names[idx]
-                            if len(characteristic_names) > idx
+                            name=characteristic_names[0].split(";")[idx]
+                            if characteristic_names
+                            and len(characteristic_names[0].split(";")) > idx
                             else "",
-                            type=characteristic_types[idx]
-                            if len(characteristic_types) > idx
+                            type=characteristic_types[0].split(";")[idx]
+                            if characteristic_types
+                            and len(characteristic_types[0].split(";")) > idx
                             else "",
-                            term_accession_number=characteristic_type_accessions[idx]
-                            if len(characteristic_type_accessions) > idx
+                            term_accession_number=characteristic_type_accessions[
+                                0
+                            ].split(";")[idx]
+                            if characteristic_type_accessions
+                            and len(characteristic_type_accessions[0].split(";")) > idx
                             else "",
-                            term_source_ref=characteristic_type_sources[idx]
-                            if len(characteristic_type_sources) > idx
+                            term_source_ref=characteristic_type_sources[0].split(";")[
+                                idx
+                            ]
+                            if characteristic_type_sources
+                            and len(characteristic_type_sources[0].split(";")) > idx
                             else "",
-                            value_format=characteristic_value_formats[idx]
-                            if len(characteristic_value_formats) > idx
+                            value_format=characteristic_value_formats[0].split(";")[idx]
+                            if characteristic_value_formats
+                            and len(characteristic_value_formats[0].split(";")) > idx
                             else "",
                         )
                     )
