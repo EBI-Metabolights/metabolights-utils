@@ -138,11 +138,46 @@ def get_unique_file_extensions(
     return extensions
 
 
+assay_type_cv_terms = {
+    "LC-MS": "liquid chromatography",
+    "GC-MS": "gas chromatography",
+    "CE-MS": "capillary electrophoresis",
+}
+
+
 def find_assay_technique(
     model: MetabolightsStudyModel,
     assay_file: AssayFile,
     assay_file_subset: AssayFile,
 ):
+    technique_referenced_in_filename = None
+    assay_file_name_parts = assay_file.file_path.split("_")
+    if len(assay_file_name_parts) > 3:
+        technique_name = assay_file_name_parts[3]
+        if technique_name.upper() in assay_techniques:
+            technique_referenced_in_filename = assay_techniques[technique_name]
+
+    for study in model.investigation.studies:
+        assays = study.study_assays.assays
+        for comment in study.study_assays.comments or []:
+            if comment.name == "Assay Type Label":
+                values = comment.value.split(";")
+                for idx, assay in enumerate(assays):
+                    if assay.file_name == assay_file.file_path and idx < len(values):
+                        tech_label = values[idx]
+                        if tech_label.upper() in assay_techniques:
+                            return assay_techniques[tech_label]
+                        else:
+                            break
+            elif comment.name == "Assay Type":
+                values = comment.value.split(";")
+                for idx, assay in enumerate(assays):
+                    if assay.file_name == assay_file.file_path and idx < len(values):
+                        assay_type = values[idx]
+                        for k, v in assay_type_cv_terms.items():
+                            if v in assay_type.lower():
+                                return assay_techniques[k]
+
     nmr_assay_name = "NMR Assay Name"
     ms_assay_name = "MS Assay Name"
     # if nmr_assay_name and ms_assay_name are in the assay file, it is not well-structured assay
@@ -151,13 +186,18 @@ def find_assay_technique(
         nmr_assay_name in assay_file.table.columns
         and ms_assay_name in assay_file.table.columns
     ):
-        return AssayTechnique()
+        # Assume it is NMR
+        return assay_techniques["NMR"]
 
     if nmr_assay_name in assay_file.table.columns:
-        columns = get_assay_technique_search_columns("MRImaging")
-        columns_in_assay_file = {x for x in assay_file.table.columns if x in columns}
-        if len(columns) > 0 and len(columns_in_assay_file) == len(columns):
-            return assay_techniques["MRImaging"]
+        technique_names = ["MRImaging", "NMR"]
+        for technique_name in technique_names:
+            columns = get_assay_technique_search_columns(technique_name)
+            columns_in_assay_file = {
+                x for x in assay_file.table.columns if x in columns
+            }
+            if len(columns) > 0 and len(columns_in_assay_file) == len(columns):
+                return assay_techniques[technique_name]
     elif ms_assay_name in assay_file.table.columns:
         # search unique column names for each assay technique
         # return technique if assay has the relevant unique column names
@@ -213,6 +253,8 @@ def find_assay_technique(
                 result = re.search(pattern, study_type_str)
                 if result:
                     return assay_techniques[technique_name]
+    if technique_referenced_in_filename:
+        return technique_referenced_in_filename
     # if there is no match, use assay technology type and return generic assay technique
     if (
         investigation_assay
@@ -226,7 +268,7 @@ def find_assay_technique(
 
     if nmr_assay_name in assay_file.table.columns:
         return assay_techniques["NMR"]
-    return AssayTechnique()
+    return assay_techniques["MS"]
 
 
 assay_techniques = {
@@ -393,6 +435,10 @@ assay_technique_non_protocol_search_columns = {
         "Parameter Value[Signal range]",
         "Parameter Value[Resolution]",
         "Parameter Value[Detector]",
+    ],
+    "NMR": [
+        "Parameter Value[NMR tube type]",
+        "Parameter Value[NMR Probe]",
     ],
 }
 

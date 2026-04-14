@@ -515,7 +515,7 @@ class Assay(IsaAbstractModel):
     ] = OntologyAnnotation()
     omics_type: Annotated[
         OntologyAnnotation,
-        Field(description="Assay type.", json_schema_extra={"auto_fill": False}),
+        Field(description="Omics type.", json_schema_extra={"auto_fill": False}),
     ] = OntologyAnnotation()
     assay_descriptors: Annotated[
         list[ExtendedOntologyAnnotation],

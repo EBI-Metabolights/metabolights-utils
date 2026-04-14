@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/abravalheri/validate-pyproject
-  rev: v0.24.1
+  rev: v0.25
   hooks:
   - id: validate-pyproject
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -26,24 +26,24 @@ repos:
   - id: detect-missing-init
     args: [ "--create", "--track", "--python-folders", "metabolights_utils" ]
 - repo: https://github.com/astral-sh/uv-pre-commit
-  rev: 0.9.26
+  rev: 0.11.6
   hooks:
   - id: uv-lock
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.14.13
+  rev: v0.15.10
   hooks:
   - id: ruff-check
     args:
     - --exit-non-zero-on-fix
   - id: ruff-format
 - repo: https://github.com/seddonym/import-linter.git
-  rev: "v2.9"
+  rev: "v2.11"
   hooks:
   - id: import-linter
     name: architecture and package structure check (lint-importer)
     args: [ "--no-cache" ]
 - repo: https://github.com/commitizen-tools/commitizen
-  rev: v4.12.0
+  rev: v4.13.10
   hooks:
   - id: commitizen
     stages: [ commit-msg ]
