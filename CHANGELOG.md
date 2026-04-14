@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.25 (2026-04-14)
+
+### Fix
+
+- assay technique detection updates
+
 ## v1.4.24 (2026-04-12)
 
 ### Fix
