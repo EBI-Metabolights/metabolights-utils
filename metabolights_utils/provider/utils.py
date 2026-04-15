@@ -161,18 +161,27 @@ def find_assay_technique(
         assays = study.study_assays.assays
         for comment in study.study_assays.comments or []:
             if comment.name == "Assay Type Label":
-                values = comment.value
-                for idx, assay in enumerate(comment.value):
-                    if assay.file_name == assay_file.file_path and idx < len(values):
+                values = []
+                if isinstance(comment.value, list):
+                    values = comment.value
+                else:
+                    values = [comment.value or ""]
+                for idx, assay_file_name in enumerate(values):
+                    if assay_file_name == assay_file.file_path and idx < len(values):
                         tech_label = values[idx]
-                        if tech_label.upper() in assay_techniques:
+                        if tech_label and tech_label.upper() in assay_techniques:
                             return assay_techniques[tech_label]
                         else:
                             break
             elif comment.name == "Assay Type":
-                values = comment.value
-                for idx, assay in enumerate(assays):
-                    if assay.file_name == assay_file.file_path and idx < len(values):
+                values = []
+                if isinstance(comment.value, list):
+                    values = comment.value
+                else:
+                    values = [comment.value or ""]
+
+                for idx, assay_file_name in enumerate(assays):
+                    if assay_file_name == assay_file.file_path and idx < len(values):
                         assay_type = values[idx]
                         for k, v in assay_type_cv_terms.items():
                             if v in assay_type.lower():
