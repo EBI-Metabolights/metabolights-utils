@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.26 (2026-04-15)
+
+### Fix
+
+- assay type label parse error
+
 ## v1.4.25 (2026-04-14)
 
 ### Fix
