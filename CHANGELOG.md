@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.27 (2026-04-15)
+
+### Fix
+
+- comment value process error
+
 ## v1.4.26 (2026-04-15)
 
 ### Fix
