@@ -152,10 +152,10 @@ def find_assay_technique(
 ):
     technique_referenced_in_filename = None
     assay_file_name_parts = assay_file.file_path.split("_")
-    if len(assay_file_name_parts) > 3:
-        technique_name = assay_file_name_parts[3]
+    if len(assay_file_name_parts) > 2:
+        technique_name = assay_file_name_parts[2]
         if technique_name.upper() in assay_techniques:
-            technique_referenced_in_filename = assay_techniques[technique_name]
+            technique_referenced_in_filename = assay_techniques[technique_name.upper()]
 
     for study in model.investigation.studies:
         assays = study.study_assays.assays
