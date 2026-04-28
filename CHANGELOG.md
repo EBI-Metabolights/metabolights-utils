@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.29 (2026-04-28)
+
+### Fix
+
+- study design descriptor comment update error
+
 ## v1.4.28 (2026-04-18)
 
 ### Fix
