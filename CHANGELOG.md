@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.28 (2026-04-18)
+
+### Fix
+
+- assay tecnique parse from assay name
+
 ## v1.4.27 (2026-04-15)
 
 ### Fix
