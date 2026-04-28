@@ -1498,7 +1498,7 @@ class Investigation(BaseSection):
                 [Comment(name=x, value=y) for x, y in field_comments_map.items()]
             )
         if old_comment_list:
-            for old_comment in old_comment_list:
+            for old_comment in old_comment_list.copy():
                 if old_comment.name.lower() not in new_comment_names:
                     new_comment_list.append(old_comment)
 
