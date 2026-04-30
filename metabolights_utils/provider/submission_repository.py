@@ -317,7 +317,7 @@ class MetabolightsSubmissionRepository:
 
         # username, password, error = self.get_ftp_credentials()
         ftp_client = DefaultFtpClient(
-            local_storage_root_path=local_path,
+            local_storage_root_path=data_files_path,
             ftp_server_url=ftp_server_url,
             remote_repository_root_directory="",
             username=ftp_username,
