@@ -35,6 +35,7 @@ from metabolights_utils.provider.ftp.folder_metadata_collector import (
 from metabolights_utils.provider.local_folder_metadata_collector import (
     LocalFolderMetadataCollector,
 )
+from metabolights_utils.provider.model import StudyCreationRequest
 from metabolights_utils.provider.study_provider import (
     AbstractDbMetadataCollector,
     AbstractFolderMetadataCollector,
@@ -98,21 +99,24 @@ class MetabolightsSubmissionRepository:
     def load_study_model(
         self,
         study_id: str,
-        local_path: Union[str, None] = None,
+        metadata_files_path: Union[str, None] = None,
+        data_files_path: Union[str, None] = None,
         use_only_local_path: bool = False,
-        override_local_files: bool = False,
+        override_local_files: bool = True,
         load_folder_metadata: bool = True,
-        rebuild_folder_index_file: bool = False,
         folder_index_file_path: Union[str, None] = None,
         db_metadata_collector: Union[None, AbstractDbMetadataCollector] = None,
         folder_metadata_collector: Union[None, AbstractFolderMetadataCollector] = None,
+        local_path: Union[str, None] = None,
     ) -> Tuple[Union[None, MetabolightsStudyModel], List[GenericMessage]]:
         if not study_id or not study_id.strip():
             return None, [ErrorMessage(short="Invalid study_id")]
         study_id = study_id.upper().strip("/")
         if not local_path:
             local_path = self.local_storage_root_path
-        target_path = os.path.join(local_path, study_id)
+        study_path = os.path.join(local_path, study_id)
+        metadata_files_path = metadata_files_path or study_path
+
         if not folder_index_file_path:
             folder_index_file_path = os.path.join(
                 self.local_storage_cache_path,
@@ -129,14 +133,15 @@ class MetabolightsSubmissionRepository:
             )
             model: MetabolightsStudyModel = provider.load_study(
                 study_id,
-                study_path=target_path,
+                study_path=metadata_files_path,
+                data_files_path=data_files_path,
                 connection=None,
                 load_assay_files=True,
                 load_sample_file=True,
                 load_maf_files=True,
                 load_folder_metadata=load_folder_metadata,
-                calculate_data_folder_size=True,
-                calculate_metadata_size=True,
+                calculate_data_folder_size=False,
+                calculate_metadata_size=False,
             )
 
             return model, [InfoMessage(short="Loaded from local isa metadata files.")]
@@ -164,7 +169,8 @@ class MetabolightsSubmissionRepository:
                 )
                 model: MetabolightsStudyModel = provider.load_study(
                     study_id,
-                    study_path=target_path,
+                    study_path=metadata_files_path,
+                    data_files_path=data_files_path,
                     connection=None,
                     load_assay_files=True,
                     load_sample_file=True,
@@ -194,32 +200,26 @@ class MetabolightsSubmissionRepository:
     def upload_metadata_files(
         self,
         study_id,
-        remote_folder_directory: Union[str, None] = None,
-        local_path: Union[str, None] = None,
-        ftp_server_url: Union[str, None] = None,
+        metatadata_files_path: str,
+        user_api_token: str,
         metadata_files: Union[List[str], None] = None,
         override_remote_files: bool = False,
-        ftp_username: Union[str, None] = None,
-        ftp_password: Union[str, None] = None,
-        user_api_token: Union[str, None] = None,
     ) -> Tuple[bool, str]:
-        if not local_path:
+        if not metatadata_files_path:
             local_path = self.local_storage_root_path
-        local_path = join_path(local_path)
-
-        if not ftp_server_url:
-            ftp_server_url = self.ftp_server_url
+            local_path = join_path(local_path)
+            study_folder = Path(local_path) / Path(study_id)
+            study_path = str(study_folder.resolve())
+        else:
+            study_folder = Path(metatadata_files_path)
+            study_path = str(study_folder.resolve())
 
         response, errors = self.list_isa_metadata_files(
             study_id=study_id, user_api_token=user_api_token
         )
         if not response:
             return False, "Errors while listing metadata files."
-        if not remote_folder_directory:
-            if response.upload_path:
-                remote_folder_directory = response.upload_path
-            else:
-                return False, "Remote folder does not defined."
+
         modified_time_dict = {}
         new_requested_files = []
         for descriptor in response.study:
@@ -232,8 +232,7 @@ class MetabolightsSubmissionRepository:
                 modified = 0
             remote_modified_time = int(modified)
             modified_time_dict[descriptor.file] = remote_modified_time
-        study_folder = Path(local_path) / Path(study_id)
-        study_path = str(study_folder.resolve())
+
         if not study_folder.exists():
             return False, f"Study path does not exist: {study_path}"
         if not metadata_files or override_remote_files:
@@ -260,43 +259,52 @@ class MetabolightsSubmissionRepository:
                 "There is no metadata file to upload or "
                 "local metadata files are up-to-date.",
             )
-        if not ftp_password or not ftp_username:
-            ftp_username, ftp_password, error = self.get_ftp_credentials()
 
-        ftp_client = DefaultFtpClient(
-            local_storage_root_path=local_path,
-            ftp_server_url=ftp_server_url,
-            remote_repository_root_directory="",
-            username=ftp_username,
-            password=ftp_password,
-        )
-        input_files = [str(study_folder / Path(x)) for x in new_requested_files]
-        try:
-            success, message = ftp_client.upload_files(
-                remote_folder_directory, input_files
-            )
-            if success:
-                return success, "Uploaded Files: " + ", ".join(new_requested_files)
-            else:
-                return success, message
-        except Exception as ex:
-            return False, str(ex)
+        headers = {}
+        headers["User-Token"] = user_api_token
+        timeout = 120
+        sub_path = f"/studies/{study_id}/submission/drag-drop-upload"
+        file_paths = [study_folder / Path(x) for x in new_requested_files]
+
+        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+        errors = []
+        for file_path in file_paths:
+            try:
+                with open(file_path, "rb") as fh:
+                    files = [("files", (file_path.name, fh))]
+                    response = httpx.post(
+                        url=url,
+                        timeout=timeout,
+                        headers=headers,
+                        params={},
+                        files=files,
+                    )
+                    if response.status_code not in (200, 201):
+                        errors.append(
+                            f"{file_path.name}: {response.status_code} {response.text}"
+                        )
+            except Exception as ex:
+                errors.append(f"{file_path.name}: {ex}")
+
+        if errors:
+            return False, "Upload failures:\n" + "\n".join(errors)
+        return True, "Success"
 
     def upload_data_files(
         self,
         study_id,
-        local_path: Union[str, None] = None,
+        data_files_path: Union[str, None] = None,
         remote_folder_directory: Union[str, None] = None,
         ftp_server_url: Union[str, None] = None,
         ftp_username: Union[str, None] = None,
         ftp_password: Union[str, None] = None,
     ) -> Tuple[bool, str]:
-        if not local_path:
+        if not data_files_path:
             local_path = self.local_storage_root_path
-        local_study_path = join_path(local_path, study_id)
+            data_files_path = join_path(local_path, study_id)
         if not ftp_server_url:
             ftp_server_url = self.ftp_server_url
-        study_folder = Path(local_study_path)
+        study_folder = Path(data_files_path)
         study_path = str(study_folder.resolve())
         if not study_folder.exists():
             return False, f"Study path does not exist: {study_path}"
@@ -746,30 +754,39 @@ class MetabolightsSubmissionRepository:
 
     def create_submission(
         self,
-        user_api_token: Union[None, str] = None,
+        study_creation_request: StudyCreationRequest,
+        user_api_token: str,
         timeout: int = 30,
-    ) -> Tuple[Union[None, str], Union[None, str]]:
-        if not user_api_token:
-            user_api_token, error = self.get_api_token()
+    ) -> Tuple[Union[None, list[str]], Union[None, str]]:
         headers = {}
+        if not study_creation_request:
+            return None, "Study creation request must be provided"
+        if not study_creation_request.dataset_policy_agreement:
+            return None, "Dataset policy agreement must be selected"
+        if not study_creation_request.dataset_license_agreement:
+            return None, "Dataset license agreement must be selected"
+        if not user_api_token:
+            return None, "User api token must be provided"
         if user_api_token:
             headers["User-Token"] = user_api_token
-        else:
-            return None, error
-
-        sub_path = "/studies/create"
+        if not study_creation_request.selected_study_categories:
+            study_creation_request.selected_study_categories = {"ms-mhd-legacy": []}
+        if not study_creation_request.title:
+            study_creation_request.title = "A new study submission"
+        if not study_creation_request.description:
+            study_creation_request.description = "A new study submission"
+        sub_path = "/provisional-studies"
         url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
-
+        data = study_creation_request.model_dump(by_alias=True)
         try:
-            response = httpx.get(url=url, timeout=timeout, headers=headers, params={})
+            response = httpx.post(
+                url=url, timeout=timeout, headers=headers, params={}, json=data
+            )
             if response and response.status_code in (200, 201):
                 data = json.loads(response.text)
-                if "new_study" in data:
-                    return data["new_study"], ""
-
-                return None, "Invalid response."
-            else:
-                return None, response.text if response else "Invalid response."
+                submission_ids = list(data.get("studies", []).keys()) or []
+                return submission_ids, None
+            return None, f"Invalid response. {response.text if response else ''}"
         except Exception as ex:
             return None, str(ex)
 
@@ -859,7 +876,7 @@ class MetabolightsSubmissionRepository:
     def download_submission_metadata_files(
         self,
         study_id: str,
-        local_path: Union[str, None] = None,
+        metadata_files_path: Union[str, None] = None,
         metadata_files: Union[List[str], None] = None,
         override_local_files: bool = False,
         delete_unlisted_metadata_files: bool = True,
@@ -873,9 +890,12 @@ class MetabolightsSubmissionRepository:
 
         if not study_id:
             return LocalDirectory(code=400, message="Invalid study_id")
-        if not local_path:
+        if not metadata_files_path:
             local_path = self.local_storage_root_path
-        local_path = join_path(local_path)
+            local_path = join_path(local_path)
+        else:
+            local_path = metadata_files_path
+
         response = LocalDirectory(root_path=local_path)
 
         study_id = study_id.upper().strip("/")
