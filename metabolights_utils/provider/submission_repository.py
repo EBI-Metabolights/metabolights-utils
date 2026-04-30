@@ -200,19 +200,19 @@ class MetabolightsSubmissionRepository:
     def upload_metadata_files(
         self,
         study_id,
-        metatadata_files_path: str,
+        metadata_files_path: str,
         user_api_token: str,
         metadata_files: Union[List[str], None] = None,
         override_remote_files: bool = False,
         rest_api_base_url: Union[None, str] = None,
     ) -> Tuple[bool, str]:
-        if not metatadata_files_path:
+        if not metadata_files_path:
             local_path = self.local_storage_root_path
             local_path = join_path(local_path)
             study_folder = Path(local_path) / Path(study_id)
             study_path = str(study_folder.resolve())
         else:
-            study_folder = Path(metatadata_files_path)
+            study_folder = Path(metadata_files_path)
             study_path = str(study_folder.resolve())
 
         if not rest_api_base_url:
