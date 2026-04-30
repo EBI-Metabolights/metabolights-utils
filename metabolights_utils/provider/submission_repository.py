@@ -204,6 +204,7 @@ class MetabolightsSubmissionRepository:
         user_api_token: str,
         metadata_files: Union[List[str], None] = None,
         override_remote_files: bool = False,
+        rest_api_base_url: Union[None, str] = None,
     ) -> Tuple[bool, str]:
         if not metatadata_files_path:
             local_path = self.local_storage_root_path
@@ -214,8 +215,13 @@ class MetabolightsSubmissionRepository:
             study_folder = Path(metatadata_files_path)
             study_path = str(study_folder.resolve())
 
+        if not rest_api_base_url:
+            rest_api_base_url = self.rest_api_base_url
+
         response, errors = self.list_isa_metadata_files(
-            study_id=study_id, user_api_token=user_api_token
+            study_id=study_id,
+            user_api_token=user_api_token,
+            rest_api_base_url=rest_api_base_url,
         )
         if not response:
             return False, "Errors while listing metadata files."
@@ -265,8 +271,7 @@ class MetabolightsSubmissionRepository:
         timeout = 120
         sub_path = f"/studies/{study_id}/submission/drag-drop-upload"
         file_paths = [study_folder / Path(x) for x in new_requested_files]
-
-        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+        url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         errors = []
         for file_path in file_paths:
             try:
@@ -324,7 +329,9 @@ class MetabolightsSubmissionRepository:
             password=ftp_password,
         )
         try:
-            status, message = ftp_client.upload_files(remote_folder_directory, input_files)
+            status, message = ftp_client.upload_files(
+                remote_folder_directory, input_files
+            )
             if not status:
                 return False, message
             return True, "Uploaded Files: " + ", ".join(input_files)
@@ -681,9 +688,16 @@ class MetabolightsSubmissionRepository:
         retry: int = 1000,
         timeout: int = 10,
         user_api_token: Union[None, str] = None,
+        rest_api_base_url: Union[None, str] = None,
     ):
         return self.sync_from_private_ftp(
-            study_id, "data", pool_period, retry, timeout, user_api_token=user_api_token
+            study_id,
+            "data",
+            pool_period,
+            retry,
+            timeout,
+            user_api_token=user_api_token,
+            rest_api_base_url=rest_api_base_url,
         )
 
     def sync_from_private_ftp(
@@ -694,7 +708,8 @@ class MetabolightsSubmissionRepository:
         retry: int = 10,
         timeout: int = 10,
         user_api_token: Union[None, str] = None,
-    ):
+        rest_api_base_url: Union[None, str] = None,
+    ) -> Tuple[bool, Tuple[None | str]]:
         sub_path = f"/studies/{study_id}/study-folders/rsync-task"
         if not user_api_token:
             user_api_token, error = self.get_api_token()
@@ -710,8 +725,9 @@ class MetabolightsSubmissionRepository:
             headers["Target-Staging-Area"] = "rw-study"
         else:
             headers["Target-Staging-Area"] = "readonly-study"
-
-        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+        if not rest_api_base_url:
+            rest_api_base_url = self.rest_api_base_url
+        url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         parameters = {}
         response = httpx.post(
             url=url,
@@ -1018,9 +1034,12 @@ class MetabolightsSubmissionRepository:
         self,
         study_id: str,
         user_api_token: Union[str, None] = None,
+        rest_api_base_url: Union[None, str] = None,
     ) -> Tuple[Union[StudyResponse, None], Union[None, str]]:
         response, error = self.list_study_directory(
-            study_id=study_id, user_api_token=user_api_token
+            study_id=study_id,
+            user_api_token=user_api_token,
+            rest_api_base_url=rest_api_base_url,
         )
         if response:
             response.study = [
@@ -1099,6 +1118,7 @@ class MetabolightsSubmissionRepository:
         subdirectory: Union[str, None] = None,
         timeout=None,
         user_api_token: Union[str, None] = None,
+        rest_api_base_url: Union[None, str] = None,
     ) -> Tuple[Union[None, StudyResponse], Union[None, str]]:
         study_id = study_id.upper().strip("/") if study_id else ""
         if not user_api_token:
@@ -1119,7 +1139,9 @@ class MetabolightsSubmissionRepository:
         if subdirectory:
             parameters["directory"] = subdirectory.strip("/")
             paths.append(subdirectory.strip("/"))
-        url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+        if not rest_api_base_url:
+            rest_api_base_url = self.rest_api_base_url
+        url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         data, error = rest_api_get(
             url, timeout=timeout, parameters=parameters, headers=headers
         )
