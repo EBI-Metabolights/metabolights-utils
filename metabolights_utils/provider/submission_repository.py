@@ -269,14 +269,14 @@ class MetabolightsSubmissionRepository:
         headers = {}
         headers["User-Token"] = user_api_token
         timeout = 120
-        sub_path = f"/studies/{study_id}/submission/drag-drop-upload"
+        sub_path = f"/studies/{study_id}/drag-drop-upload"
         file_paths = [study_folder / Path(x) for x in new_requested_files]
         url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         errors = []
         for file_path in file_paths:
             try:
                 with open(file_path, "rb") as fh:
-                    files = [("files", (file_path.name, fh))]
+                    files = [("file", (file_path.name, fh))]
                     response = httpx.post(
                         url=url,
                         timeout=timeout,
