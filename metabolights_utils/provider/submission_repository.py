@@ -304,8 +304,8 @@ class MetabolightsSubmissionRepository:
             data_files_path = join_path(local_path, study_id)
         if not ftp_server_url:
             ftp_server_url = self.ftp_server_url
-        study_folder = Path(data_files_path)
-        study_path = str(study_folder.resolve())
+        study_folder = Path(data_files_path).resolve()
+        study_path = str(study_folder)
         if not study_folder.exists():
             return False, f"Study path does not exist: {study_path}"
 
@@ -324,7 +324,9 @@ class MetabolightsSubmissionRepository:
             password=ftp_password,
         )
         try:
-            ftp_client.upload_files(remote_folder_directory, input_files)
+            status, message = ftp_client.upload_files(remote_folder_directory, input_files)
+            if not status:
+                return False, message
             return True, "Uploaded Files: " + ", ".join(input_files)
         except Exception as ex:
             return False, str(ex)

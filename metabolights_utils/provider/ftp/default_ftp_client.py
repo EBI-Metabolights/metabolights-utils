@@ -120,6 +120,7 @@ class DefaultFtpClient:
 
                 with open(file_path, "rb") as file:
                     self.ftp.storbinary(f"STOR {filename}", file)
+                logger.info("'%s' is uploaded.", filename)
             return True, ""
         except Exception as ex:
             message = f"FTP directory {remote_directory} upload error: {str(ex)}"
