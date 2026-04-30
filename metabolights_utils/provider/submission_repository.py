@@ -306,10 +306,10 @@ class MetabolightsSubmissionRepository:
             ftp_server_url = self.ftp_server_url
         study_folder = Path(data_files_path)
         study_path = str(study_folder.resolve())
-        if not study_path.exists():
+        if not study_folder.exists():
             return False, f"Study path does not exist: {study_path}"
 
-        files = study_path.rglob("*")
+        files = study_folder.rglob("*")
 
         input_files = [
             str(x) for x in files if not is_metadata_filename_pattern(Path(x).name)
