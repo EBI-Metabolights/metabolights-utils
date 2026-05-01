@@ -205,6 +205,7 @@ class MetabolightsSubmissionRepository:
         metadata_files: Union[List[str], None] = None,
         override_remote_files: bool = False,
         rest_api_base_url: Union[None, str] = None,
+        remove_unreferenced_metadata_files: bool = False,
     ) -> Tuple[bool, str]:
         if not metadata_files_path:
             local_path = self.local_storage_root_path
@@ -244,6 +245,12 @@ class MetabolightsSubmissionRepository:
         if not metadata_files or override_remote_files:
             files = os.listdir(study_path)
             metadata_files = [x for x in files if is_metadata_filename_pattern(x)]
+
+        will_be_deleted_files = []
+        current_files = {descriptor.file for descriptor in response.study}
+        if remove_unreferenced_metadata_files:
+            will_be_deleted_files = list(current_files - set(metadata_files))
+
         if override_remote_files:
             new_requested_files = metadata_files
         else:
@@ -293,6 +300,25 @@ class MetabolightsSubmissionRepository:
 
         if errors:
             return False, "Upload failures:\n" + "\n".join(errors)
+        if remove_unreferenced_metadata_files:
+            sub_path = f"/studies/{study_id}/files"
+
+            file_delete_payload = {
+                "files": [{"name": file_name} for file_name in will_be_deleted_files]
+            }
+            url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
+            response = httpx.post(
+                url=url,
+                timeout=timeout,
+                headers=headers,
+                params={},
+                json=file_delete_payload,
+            )
+            if response.status_code not in (200, 201):
+                errors.append(
+                    f"Failed to delete files: {response.status_code} {response.text}"
+                )
+
         return True, "Success"
 
     def upload_data_files(
