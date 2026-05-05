@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+## v1.4.30 (2026-05-05)
+
+### Fix
+
+- unit test errors
+- update REST API methods
+
 ## v1.4.29 (2026-04-28)
 
 ### Fix
