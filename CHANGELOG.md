@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.32 (2026-05-05)
+
+### Fix
+
+- ftp quit timeout error
+
 ## v1.4.31 (2026-05-05)
 
 ### Fix
