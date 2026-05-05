@@ -21,11 +21,17 @@ class DefaultFtpClient:
         remote_repository_root_directory: str,
         username: Union[str, None] = None,
         password: Union[str, None] = None,
+        timeout: Union[None, int] = None,
     ) -> None:
         self.ftp_server_url = ftp_server_url
         self.remote_repository_root_directory = (
             remote_repository_root_directory.replace("\\", "").rstrip("/")
         )
+        if timeout is None or not isinstance(timeout, (int, float)) or timeout <= 0:
+            self.timeout = 120.0
+        else:
+            self.timeout = float(timeout)
+
         self.local_storage_root_path = local_storage_root_path
         self.username = username if username else ""
         self.password = password if password else ""
@@ -53,7 +59,7 @@ class DefaultFtpClient:
         if not self.ftp:
             self.ftp = FTP(
                 self.ftp_server_url,
-                timeout=10.0,
+                timeout=self.timeout,
                 user=self.username,
                 passwd=self.password,
             )
