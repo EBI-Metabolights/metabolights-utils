@@ -1,6 +1,7 @@
 import logging
 import re
 import sys
+import traceback
 from functools import reduce
 from io import IOBase, TextIOWrapper
 from typing import Dict, List, Union
@@ -427,6 +428,7 @@ def read_table_file_with_filter_and_sort_option(
                 break
 
     except Exception as exc:
+        traceback.print_exc()
         message = ParserMessage(type=ParserMessageType.CRITICAL)
         message.short = "ISA table file can not be read successfully."
         message.detail = f"Returned result is not complete. {str(exc)}"
@@ -442,7 +444,10 @@ def add_tsv_file_data_row(
 ):
     for column_index in selected_column_indices:
         column = columns[selected_column_indices[column_index]]
-        column.rows[row_index] = data_row[column_index]
+        if column_index >= len(data_row):
+            column.rows[row_index] = ""
+        else:
+            column.rows[row_index] = data_row[column_index]
 
 
 def prepare_column_names(

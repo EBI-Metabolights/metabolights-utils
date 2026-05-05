@@ -20,4 +20,5 @@ __all__ = [
     "submission_model",
     "submission_repository",
     "utils",
+    "model",
 ]

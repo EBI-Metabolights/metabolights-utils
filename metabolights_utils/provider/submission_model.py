@@ -2,10 +2,11 @@ import datetime
 from enum import Enum
 from typing import Any, Dict, Generic, List, TypeVar, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing_extensions import Annotated
 
 from metabolights_utils.common import CamelCaseModel
+from metabolights_utils.provider.model import CamelCaseBaseModel
 
 
 class ValidationMessage(BaseModel):
@@ -130,7 +131,7 @@ class APIResponse(APIBaseResponse, Generic[T]):
     ] = None
 
 
-class WorkerTaskStatus(BaseModel):
+class WorkerTaskStatus(CamelCaseBaseModel):
     task_id: Annotated[
         str,
         Field(
@@ -149,6 +150,23 @@ class WorkerTaskStatus(BaseModel):
             description="Message related to the task",
         ),
     ] = ""
+    ready: Annotated[
+        None | bool,
+        Field(
+            description="This field indicates whether the task is completed.",
+        ),
+    ] = None
+    is_successful: Annotated[
+        None | bool,
+        Field(
+            description="This field indicates whether the task is completed successfully.",
+        ),
+    ] = None
+
+
+class WorkerTaskResponseContent(CamelCaseBaseModel, Generic[T]):
+    task: Annotated[None | WorkerTaskStatus, Field()] = None
+    task_result: Annotated[None | T, Field()] = None
 
 
 class PolicyMessageType(str, Enum):
@@ -177,21 +195,108 @@ class PolicyMessage(CamelCaseModel):
     override_comment: str = ""
 
 
-class OpaValidationResult(BaseModel):
+class ValidationResult(BaseModel):
     violations: Annotated[List[PolicyMessage], Field()] = []
     summary: Annotated[List[PolicyMessage], Field([])] = []
 
 
-class PolicySummaryResult(BaseModel):
-    study_id: str = ""
+class UpdateLog(CamelCaseModel):
+    action: str
+    source: str
+    old_value: str
+    new_value: str
+
+
+class ValidationOverride(CamelCaseModel):
+    override_id: str = ""
+    rule_id: str = ""
+    source_file: str = ""
+    source_column_header: str = ""
+    source_column_index: Union[str, int, None] = ""
+    title: str = ""
+    description: str = ""
+    enabled: bool = True
+    curator: str = ""
+    comment: str = ""
+    new_type: PolicyMessageType = PolicyMessageType.WARNING
+    old_type: PolicyMessageType = PolicyMessageType.ERROR
+    created_at: Union[datetime.datetime, str, None] = None
+    modified_at: Union[datetime.datetime, str, None] = None
+
+    @field_validator("new_type", mode="before")
+    @classmethod
+    def new_type_validator(cls, value):
+        if isinstance(value, PolicyMessageType):
+            return value
+        if isinstance(value, str):
+            return PolicyMessageType(value)
+
+        return PolicyMessageType.WARNING
+
+    @field_validator("old_type", mode="before")
+    @classmethod
+    def old_type_validator(cls, value):
+        if isinstance(value, PolicyMessageType):
+            return value
+        if isinstance(value, str):
+            return PolicyMessageType(value)
+
+        return PolicyMessageType.ERROR
+
+
+class ValidationOverrideList(CamelCaseModel):
+    validation_version: str = ""
+    validation_overrides: list[ValidationOverride] = []
+
+
+class PolicySummaryResult(CamelCaseBaseModel):
+    resource_id: str = ""
+    task_id: str = ""
+    status: PolicyMessageType = PolicyMessageType.ERROR
     start_time: Union[None, str, datetime.datetime] = None
     completion_time: Union[None, str, datetime.datetime] = None
     duration_in_seconds: float = 0
-    messages: OpaValidationResult = OpaValidationResult()
-    metadata_updates: List[str] = []
+    messages: ValidationResult = ValidationResult()
+    metadata_updates: List[UpdateLog] = []
     metadata_modifier_enabled: bool = False
     assay_file_techniques: Dict[str, str] = {}
     maf_file_techniques: Dict[str, str] = {}
+    overrides: ValidationOverrideList = ValidationOverrideList()
+
+    @field_validator("status", mode="before")
+    @classmethod
+    def new_type_validator(cls, value):
+        if isinstance(value, PolicyMessageType):
+            return value
+        if isinstance(value, str):
+            return PolicyMessageType(value)
+
+        return PolicyMessageType.INFO
+
+    @field_validator("metadata_updates", mode="before")
+    @classmethod
+    def metadata_updates_validator(cls, value):
+        result = []
+        if isinstance(value, list):
+            for item in value:
+                if isinstance(item, UpdateLog):
+                    result.append(item)
+                elif isinstance(item, dict):
+                    result.append(UpdateLog.model_validate(item))
+                elif isinstance(item, str):
+                    result.append(
+                        UpdateLog(action=item, source="", old_value="", new_value="")
+                    )
+        else:
+            if isinstance(value, UpdateLog):
+                result.append(value)
+            elif isinstance(value, dict):
+                result.append(UpdateLog.model_validate(value))
+            elif isinstance(value, str):
+                result.append(
+                    UpdateLog(action=value, source="", old_value="", new_value="")
+                )
+        return result
 
 
 class PolicyResultResponse(WorkerTaskStatus):

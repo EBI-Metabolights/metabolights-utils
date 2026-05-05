@@ -11,8 +11,8 @@ from metabolights_utils.provider.local_folder_metadata_collector import (
 )
 from metabolights_utils.provider.study_provider import MetabolightsStudyProvider
 from metabolights_utils.provider.submission_model import (
-    OpaValidationResult,
     PolicyMessageType,
+    ValidationResult,
 )
 
 
@@ -172,7 +172,7 @@ def local_validate(
             raw_validation_result.get("result")[0].get("expressions")[0].get("value")
         )
 
-        violation_results = OpaValidationResult.model_validate(validation_result)
+        violation_results = ValidationResult.model_validate(validation_result)
         errors = [
             x
             for x in violation_results.violations
@@ -256,15 +256,4 @@ def local_validate(
 
 
 if __name__ == "__main__":
-    local_validate(
-        [
-            "MTBLS1",
-            "tests/test-data/MTBLS1",
-            "--data_files_path",
-            "tests/test-data/MTBLS1/FILES",
-            "--output_directory",
-            "outputs",
-            "--overridden_rules_file_path",
-            "mtbls_overriden_rules.txt",
-        ]
-    )
+    local_validate()
