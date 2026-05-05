@@ -68,14 +68,24 @@ class DefaultFtpClient:
 
     def quit(self):
         if self.ftp:
-            try:
-                self.ftp.quit()
-            except Exception as ex:
-                logger.exception(
-                    "Error while disconnecting FTP server %s: %s.",
-                    self.ftp_server_url,
-                    str(ex),
-                )
+            for attempt in range(3, start=1):
+                try:
+                    self.ftp.quit()
+                    break
+                except Exception as ex:
+                    if attempt >= 2:
+                        logger.warning(
+                            "Error while disconnecting FTP server %s: %s.",
+                            self.ftp_server_url,
+                            str(ex),
+                        )
+                        break
+                    else:
+                        logger.warning(
+                            "Error while disconnecting FTP server %s: %s. Retrying...",
+                            self.ftp_server_url,
+                            str(ex),
+                        )
             self.ftp = None
 
     def list_directory(
