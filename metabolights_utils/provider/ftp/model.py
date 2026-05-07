@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from typing import Dict, List, Set
 
 from pydantic import BaseModel, Field
@@ -31,6 +32,7 @@ class FtpFileDescriptor(BaseModel):
     is_directory: Annotated[bool, Field(description="")] = False
     is_link: Annotated[bool, Field(description="")] = False
     mode: Annotated[str, Field(description="")] = ""
+    modified_time: Annotated[datetime | None, Field(description="")] = None
 
 
 class FtpFolderContent(FtpFiles):
@@ -52,8 +54,20 @@ class FtpFolderContent(FtpFiles):
                 size_in_bytes = 0
                 if size.isnumeric():
                     size_in_bytes = int(size)
+                modified_time = None
+                raw_time = groups[5].strip()
+                if raw_time:
+                    for fmt in ("%b %d %H:%M", "%b %d %Y"):
+                        try:
+                            modified_time = datetime.strptime(raw_time, fmt)
+                            break
+                        except ValueError:
+                            continue
                 descriptor = FtpFileDescriptor(
-                    mode=octal_mode, base_name=filename, size_in_bytes=size_in_bytes
+                    mode=octal_mode,
+                    base_name=filename,
+                    size_in_bytes=size_in_bytes,
+                    modified_time=modified_time,
                 )
 
                 if groups[0].startswith("l"):

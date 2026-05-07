@@ -3,7 +3,7 @@ import os
 import re
 import shutil
 from ftplib import FTP
-from typing import List, Set, Union
+from typing import List, Set, Tuple, Union
 
 from metabolights_utils.provider.ftp.model import FtpFolderContent, LocalDirectory
 from metabolights_utils.utils.filename_utils import join_path
@@ -109,18 +109,36 @@ class DefaultFtpClient:
         self,
         remote_directory: Union[str, None] = None,
         file_paths: Union[List[str], None] = None,
-    ) -> None:
+    ) -> Tuple[bool, str]:
         remote_directory = remote_directory.strip("/") if remote_directory else ""
         self.connect()
 
+        errors = []
         try:
             self.ftp.cwd(remote_directory)
             for file_path in file_paths:
                 filename = os.path.basename(file_path)
-
-                with open(file_path, "rb") as file:
-                    self.ftp.storbinary(f"STOR {filename}", file)
-                logger.info("'%s' is uploaded.", filename)
+                temp_filename = f".temp_{filename}"
+                try:
+                    with open(file_path, "rb") as file:
+                        self.ftp.storbinary(f"STOR {temp_filename}", file)
+                    # Rename temp file to original name on success
+                    self.ftp.rename(temp_filename, filename)
+                    logger.info("'%s' is uploaded.", filename)
+                except Exception as ex:
+                    message = f"FTP upload error for {filename}: {str(ex)}"
+                    logger.error(message)
+                    errors.append(message)
+                    # Remove temp file on error
+                    try:
+                        self.ftp.delete(temp_filename)
+                        logger.info("Removed temp file '%s'.", temp_filename)
+                    except Exception:
+                        logger.warning(
+                            "Failed to remove temp file '%s'.", temp_filename
+                        )
+            if errors:
+                return False, "; ".join(errors)
             return True, ""
         except Exception as ex:
             message = f"FTP directory {remote_directory} upload error: {str(ex)}"
