@@ -63,7 +63,7 @@ def submission_validate(
     )
     success, error = client.validate_study(
         study_id,
-        validation_file_path=validation_file_path,
+        validation_result_file_path=validation_file_path,
     )
 
     if success:

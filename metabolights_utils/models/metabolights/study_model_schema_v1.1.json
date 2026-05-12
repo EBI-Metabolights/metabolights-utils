@@ -1696,6 +1696,12 @@
                     "description": "Dataset accession.",
                     "title": "Accession",
                     "type": "string"
+                },
+                "url": {
+                    "default": "",
+                    "description": "Dataset URL.",
+                    "title": "Url",
+                    "type": "string"
                 }
             },
             "required": [
@@ -1821,7 +1827,7 @@
             "type": "string"
         },
         "Study": {
-            "additionalProperties": false,
+            "additionalProperties": true,
             "properties": {
                 "comments": {
                     "default": [],
@@ -1907,6 +1913,16 @@
                     "description": "Study template",
                     "title": "Study Template",
                     "type": "string"
+                },
+                "linkedStudyAccession": {
+                    "auto_fill": false,
+                    "default": [],
+                    "description": "Linked study accession.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Linked Study Accession",
+                    "type": "array"
                 },
                 "mhdAccession": {
                     "auto_fill": false,

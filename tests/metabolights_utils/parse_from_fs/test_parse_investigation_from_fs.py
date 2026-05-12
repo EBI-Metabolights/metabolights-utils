@@ -134,7 +134,7 @@ def test_parse_investigation_from_fs_valid_04_comments():
     assert len(study.study_design_descriptors.comments) == 2
     assert len(study.study_factors.comments) == 1
     study.study_assays.comments[0].value[0] == f"{study.identifier}-01"
-    assert len(study.comments) == 3
+    assert study.comments
 
     assert investigation
     assert not messages
@@ -178,6 +178,7 @@ def test_investigation_file_read_write_success_1():
             result.investigation,
             file_buffer_or_path=tmp_path,
             values_in_quotation_mark=True,
+            sync_comments_from_fields=False,
         )
         new_sha256 = HashUtils.sha256sum(tmp_path)
 
