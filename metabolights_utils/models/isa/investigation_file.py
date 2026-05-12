@@ -944,6 +944,13 @@ class Study(BaseSection):
             json_schema_extra={"auto_fill": False},
         ),
     ] = ""
+    linked_study_accession: Annotated[
+        list[str],
+        Field(
+            description="Linked study accession.",
+            json_schema_extra={"auto_fill": False},
+        ),
+    ] = []
     mhd_accession: Annotated[
         str,
         Field(
@@ -1172,14 +1179,24 @@ class Investigation(BaseSection):
             comment_values = OrderedDict()
             comment_names = set()
             for comment_name, field_name in study_comment_field_map.items():
-                val = getattr(study, field_name or "")
-                if val:
-                    comment_values[comment_name] = val
-                    comment_names.add(comment_name.lower())
+                val = ""
+                if field_name and hasattr(study, field_name):
+                    val = getattr(study, field_name)
+
+                comment_values[comment_name] = [val] if val else [""]
+                comment_names.add(comment_name.lower())
             old_study_comments = study.comments
             study.comments = [
-                Comment(name=x, value=[y]) for x, y in comment_values.items()
+                Comment(name=x, value=y) for x, y in comment_values.items()
             ]
+            linked_study_accessions = [
+                x.strip() for x in study.linked_study_accession or [] if x and x.strip()
+            ]
+            linked_comment_name = "Linked Study Accession"
+            study.comments.append(
+                Comment(name=linked_comment_name, value=linked_study_accessions or [""])
+            )
+            comment_names.add(linked_comment_name.lower())
 
             funder_comments = OrderedDict(
                 [("Funder", []), ("Funder ROR ID", []), ("Grant Identifier", [])]
@@ -1486,7 +1503,7 @@ class Investigation(BaseSection):
     ):
         empty = True
         for v in field_comments_map.values():
-            non_empty_vals = [x for x in v if str(x)]
+            non_empty_vals = [x for x in v if x and str(x).strip()]
             if non_empty_vals:
                 empty = False
                 break
@@ -1758,6 +1775,7 @@ class Investigation(BaseSection):
             "template version": "template_version",
             "sample template": "sample_template",
             "created at": "created_at",
+            "study template": "study_template",
         }
         for study in self.studies:
             if not study.comments:
@@ -1771,7 +1789,12 @@ class Investigation(BaseSection):
                 val = comments_dict.get(comment_name, [])
                 if val:
                     setattr(study, field_name, val[0] if val else "")
-
+            linked_study_accessions = comments_dict.get("linked study accession", [])
+            study.linked_study_accession = []
+            for x in linked_study_accessions:
+                study.linked_study_accession.extend(
+                    [y.strip() for y in x.split(";") if y.strip()]
+                )
             related_data_repository = comments_dict.get("related data repository", [])
             related_data_accession = comments_dict.get("related data accession", [])
             related_data_url = comments_dict.get("related data url", [])

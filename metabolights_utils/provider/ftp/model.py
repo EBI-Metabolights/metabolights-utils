@@ -57,7 +57,7 @@ class FtpFolderContent(FtpFiles):
                 modified_time = None
                 raw_time = groups[5].strip()
                 if raw_time:
-                    for fmt in ("%b %d %H:%M", "%b %d %Y"):
+                    for fmt in ("%b %d %H:%M", "%b %d %Y", "%m  %d  %Y"):
                         try:
                             modified_time = datetime.strptime(raw_time, fmt)
                             break

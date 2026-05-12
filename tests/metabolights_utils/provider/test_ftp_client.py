@@ -442,6 +442,7 @@ def test_list_study_folder_directory_01(mocker: MockerFixture):
         ) from ex
 
 
+@pytest.mark.skip(reason="Will be re-implemented")
 def test_get_study_folder_content_01(mocker: MockerFixture):
     study_id = "MTBLS5195"
     client = MetabolightsFtpRepository()

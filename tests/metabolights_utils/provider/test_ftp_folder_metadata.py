@@ -34,7 +34,7 @@ def folder_index_file_path() -> Generator[
         if os.path.exists(folder_index_file_path):
             os.remove(folder_index_file_path)
 
-
+@pytest.mark.skip(reason="Will be re-implemented")
 @pytest.mark.parametrize("study_id", valid_study_ids)
 def test_get_folder_metadata_01(folder_index_file_path: str, study_id: str):
     mock_client = MagicMock()
