@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.33 (2026-05-12)
+
+### Fix
+
+- submission method updates
+
 ## v1.4.32 (2026-05-05)
 
 ### Fix
