@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.34 (2026-05-20)
+
+### Fix
+
+- isatab investigation comment parse error & security updates
+
 ## v1.4.33 (2026-05-12)
 
 ### Fix
