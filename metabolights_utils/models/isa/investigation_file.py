@@ -1214,7 +1214,9 @@ class Investigation(BaseSection):
                         funder_comments["Grant Identifier"].append(
                             ";".join(funder.grant_ids)
                         )
-            self.add_non_empty_comments(study.comments, funder_comments, comment_names)
+            self.add_non_empty_comments(
+                study.comments, funder_comments, comment_names, join_sep=";"
+            )
 
             related_dataset_comments = OrderedDict(
                 [
@@ -1500,6 +1502,7 @@ class Investigation(BaseSection):
         field_comments_map: OrderedDict[str, list[str]],
         new_comment_names: set[str],
         old_comment_list: None | list[Comment] = None,
+        join_sep: None | str = None,
     ):
         empty = True
         for v in field_comments_map.values():
@@ -1510,10 +1513,17 @@ class Investigation(BaseSection):
 
         if not empty:
             new_comment_names.update([x.lower() for x in field_comments_map.keys()])
-
-            new_comment_list.extend(
-                [Comment(name=x, value=y) for x, y in field_comments_map.items()]
-            )
+            if join_sep:
+                new_comment_list.extend(
+                    [
+                        Comment(name=x, value=";".join(y or []))
+                        for x, y in field_comments_map.items()
+                    ]
+                )
+            else:
+                new_comment_list.extend(
+                    [Comment(name=x, value=y) for x, y in field_comments_map.items()]
+                )
         if old_comment_list:
             for old_comment in old_comment_list.copy():
                 if old_comment.name.lower() not in new_comment_names:
@@ -1782,8 +1792,12 @@ class Investigation(BaseSection):
                 continue
             comments_dict: dict[str, list[str]] = {}
             for comment in study.comments:
-                if comment.name:
-                    comments_dict[comment.name.lower()] = comment.value
+                if not comment.name:
+                    continue
+                if comment.name.lower() not in comments_dict:
+                    comments_dict[comment.name.lower()] = comment.value or []
+                else:
+                    comments_dict[comment.name.lower()].extend(comment.value or [])
 
             for comment_name, field_name in study_comment_field_map.items():
                 val = comments_dict.get(comment_name, [])
@@ -1798,65 +1812,75 @@ class Investigation(BaseSection):
             related_data_repository = comments_dict.get("related data repository", [])
             related_data_accession = comments_dict.get("related data accession", [])
             related_data_url = comments_dict.get("related data url", [])
-            counts = [
-                len(x[0].split(";"))
-                for x in (
-                    related_data_repository,
-                    related_data_accession,
-                    related_data_url,
-                )
-                if x and x[0]
-            ]
-            if counts and len(counts) > 0:
+            related_data_repository_list = []
+            for x in related_data_repository:
+                related_data_repository_list.extend([y.strip() for y in x.split(";")])
+            related_data_accession_list = []
+            for x in related_data_accession:
+                related_data_accession_list.extend([y.strip() for y in x.split(";")])
+            related_data_url_list = []
+            for x in related_data_url:
+                related_data_url_list.extend([y.strip() for y in x.split(";")])
+            counts = max(
+                len(related_data_repository_list),
+                len(related_data_accession_list),
+                len(related_data_url_list),
+            )
+            if counts > 0:
                 study.related_datasets = []
-                for idx in range(max(counts)):
+                for idx in range(counts):
                     study.related_datasets.append(
                         RelatedDataset(
-                            repository=related_data_repository[0].split(";")[idx]
-                            if related_data_repository
-                            and len(related_data_repository[0].split(";")) > idx
-                            and related_data_repository[0].split(";")[idx].strip()
+                            repository=related_data_repository_list[idx]
+                            if related_data_repository_list
+                            and len(related_data_repository_list) > idx
+                            and related_data_repository_list[idx].strip()
                             else "",
-                            accession=related_data_accession[0].split(";")[idx]
-                            if related_data_accession
-                            and len(related_data_accession[0].split(";")) > idx
-                            and related_data_accession[0].split(";")[idx].strip()
+                            accession=related_data_accession_list[idx]
+                            if related_data_accession_list
+                            and len(related_data_accession_list) > idx
+                            and related_data_accession_list[idx].strip()
                             else "",
-                            url=related_data_url[0].split(";")[idx]
-                            if related_data_url
-                            and len(related_data_url[0].split(";")) > idx
-                            and related_data_url[0].split(";")[idx].strip()
+                            url=related_data_url_list[idx]
+                            if related_data_url_list
+                            and len(related_data_url_list) > idx
+                            and related_data_url_list[idx].strip()
                             else "",
                         )
                     )
             funders = comments_dict.get("funder", [])
             funder_ids = comments_dict.get("funder ror id", [])
             grant_ids = comments_dict.get("grant identifier", [])
-            counts = [
-                len(x[0].split(";"))
-                for x in (funders, funder_ids, grant_ids)
-                if x and x[0]
-            ]
 
-            if counts and len(counts) > 0:
+            funders_list = []
+            for x in funders:
+                funders_list.extend([y.strip() for y in x.split(";")])
+            funder_ids_list = []
+            for x in funder_ids:
+                funder_ids_list.extend([y.strip() for y in x.split(";")])
+            grant_ids_list = []
+            for x in grant_ids:
+                grant_ids_list.extend([y.strip() for y in x.split(";")])
+            counts = max(len(funders_list), len(funder_ids_list), len(grant_ids_list))
+            if counts > 0:
                 study.funders = []
-                for idx in range(max(counts)):
+                for idx in range(counts):
                     study.funders.append(
                         Funder(
-                            funder_name=funders[0].split(";")[idx]
-                            if funders
-                            and len(funders[0].split(";")) > idx
-                            and funders[0].split(";")[idx].strip()
+                            funder_name=funders_list[idx]
+                            if funders_list
+                            and len(funders_list) > idx
+                            and funders_list[idx].strip()
                             else "",
-                            funder_id=funder_ids[0].split(";")[idx]
-                            if funder_ids
-                            and len(funder_ids[0].split(";")) > idx
-                            and funder_ids[0].split(";")[idx].strip()
+                            funder_id=funder_ids_list[idx]
+                            if funder_ids_list
+                            and len(funder_ids_list) > idx
+                            and funder_ids_list[idx].strip()
                             else "",
-                            grant_ids=grant_ids[0].split(";")[idx].split(";")
-                            if grant_ids
-                            and len(grant_ids[0].split(";")) > idx
-                            and grant_ids[0].split(";")[idx].strip()
+                            grant_ids=grant_ids_list[idx].split(";")
+                            if grant_ids_list
+                            and len(grant_ids_list) > idx
+                            and grant_ids_list[idx].strip()
                             else [],
                         )
                     )
@@ -1871,20 +1895,31 @@ class Investigation(BaseSection):
             characteristic_value_formats = comments_dict.get(
                 "study characteristics value format", []
             )
-            counts = [
-                len(x[0].split(";"))
-                for x in (
-                    characteristic_names,
-                    characteristic_types,
-                    characteristic_type_accessions,
-                    characteristic_type_sources,
-                    characteristic_value_formats,
+            characteristic_names_list = []
+            for x in characteristic_names:
+                characteristic_names_list.extend([y.strip() for y in x.split(";")])
+            characteristic_types_list = []
+            for x in characteristic_types:
+                characteristic_types_list.extend([y.strip() for y in x.split(";")])
+            characteristic_type_accessions_list = []
+            for x in characteristic_type_accessions:
+                characteristic_type_accessions_list.extend(
+                    [y.strip() for y in x.split(";")]
                 )
-                if x and x[0]
-            ]
-            if counts and len(counts) > 0:
+            characteristic_type_sources_list = []
+            for x in characteristic_type_sources:
+                characteristic_type_sources_list.extend(
+                    [y.strip() for y in x.split(";")]
+                )
+            characteristic_value_formats_list = []
+            for x in characteristic_value_formats:
+                characteristic_value_formats_list.extend(
+                    [y.strip() for y in x.split(";")]
+                )
+            counts = len(characteristic_names_list)
+            if counts > 0:
                 study.characteristic_types = []
-                for idx in range(max(counts)):
+                for idx in range(counts):
                     study.characteristic_types.append(
                         CharacteristicDefinition(
                             name=characteristic_names[0].split(";")[idx]

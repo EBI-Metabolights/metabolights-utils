@@ -1,8 +1,9 @@
+import io
 import logging
 import os
 import pathlib
 import sys
-from io import IOBase
+from io import IOBase, TextIOBase
 from typing import List, Union
 
 from pydantic import BaseModel
@@ -143,10 +144,17 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
         file_path = None
         try:
             if isinstance(file_buffer_or_path, IOBase):
-                parent_dir = os.path.dirname(os.path.realpath(file_buffer_or_path.name))
-                os.makedirs(parent_dir, exist_ok=True)
-                file_buffer_or_path.write(content)
-                file_path = os.path.realpath(file_buffer_or_path.name)
+                if hasattr(file_buffer_or_path, "name"):
+                    parent_dir = os.path.dirname(
+                        os.path.realpath(file_buffer_or_path.name)
+                    )
+                    os.makedirs(parent_dir, exist_ok=True)
+                    file_path = os.path.realpath(file_buffer_or_path.name)
+                if isinstance(file_buffer_or_path, TextIOBase):
+                    file_buffer_or_path.write(content)
+                else:
+                    text_obj = io.TextIOWrapper(file_buffer_or_path, encoding="utf-8")
+                    text_obj.write(content)
             else:
                 file_path = os.path.realpath(str(file_buffer_or_path))
                 parent_dir = os.path.dirname(file_path)
@@ -157,11 +165,18 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
             if verify_file_after_update:
                 read_messages: List[ParserMessage] = []
                 if isinstance(file_buffer_or_path, IOBase):
-                    investigation = get_investigation(
-                        file_buffer_or_path,
-                        file_buffer_or_path.name,
-                        messages=read_messages,
-                    )
+                    if hasattr(file_buffer_or_path, "name"):
+                        investigation = get_investigation(
+                            file_buffer_or_path,
+                            file_buffer_or_path.name,
+                            messages=read_messages,
+                        )
+                    else:
+                        investigation = get_investigation(
+                            file_buffer_or_path,
+                            None,
+                            messages=read_messages,
+                        )
                 else:
                     investigation = get_investigation(
                         None, file_buffer_or_path, messages=read_messages
@@ -178,8 +193,10 @@ class DefaultInvestigationFileWriter(InvestigationFileWriter, BaseIsaFile):
                     parser_report=report,
                     file_path=str(file_path),
                 )
-            if os.path.exists(file_path):
+            if file_path and os.path.exists(file_path):
                 result.sha256_hash = HashUtils.sha256sum(file_path)
+            else:
+                result.sha256_hash = HashUtils.sha256sum_bytes(content.encode("utf-8"))
 
             return result
         except Exception as exc:

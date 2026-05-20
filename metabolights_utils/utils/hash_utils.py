@@ -33,6 +33,16 @@ class MetabolightsHashUtils:
         return sha256_hash.hexdigest()
 
     @staticmethod
+    def sha256sum_bytes(
+        content: bytes, convert_to_linux_line_ending: bool = True
+    ) -> str:
+        sha256_hash = hashlib.sha256()
+        if convert_to_linux_line_ending:
+            content = content.replace(b"\r\n", b"\n")
+        sha256_hash.update(content)
+        return sha256_hash.hexdigest()
+
+    @staticmethod
     def get_isa_metadata_folder_hash(folder_path: str) -> IsaMetadataFolderHash:
         files: list[str] = SearchUtils.get_isa_metadata_files(
             folder_path=folder_path,

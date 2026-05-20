@@ -14,6 +14,7 @@ from metabolights_utils.isatab.reader import (
     InvestigationFileReaderResult,
 )
 from metabolights_utils.isatab.writer import InvestigationFileWriter
+from metabolights_utils.models.isa.investigation_file import Funder
 
 
 def test_investigation_file_success_01():
@@ -55,6 +56,68 @@ def test_investigation_file_success_04():
     bytes_io = io.StringIO(file_path.read_text())
     result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=bytes_io)
     assert len(result.investigation.studies) == 1
+
+
+def test_investigation_file_success_05():
+    file_path = pathlib.Path(
+        "tests/test-data/investigation-files/i_Investigation_funders_01.txt"
+    )
+    reader: InvestigationFileReader = Reader.get_investigation_file_reader()
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=file_path)
+    assert len(result.investigation.studies) == 1
+    result.investigation.sync_fields_from_comments()
+    funders = result.investigation.studies[0].funders
+    assert len(funders) == 2
+    funders.append(Funder(funder_name="Test1", funder_id="Test_ID", grant_ids=[]))
+    result.investigation.sync_comments_from_fields()
+    funder_comments = [
+        x for x in result.investigation.studies[0].comments if x.name == "Funder"
+    ]
+    assert len(funder_comments) == 1
+    assert len(funder_comments[0].value) == 1
+    assert "Test1" in funder_comments[0].value[0]
+    writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
+    val = None
+    with io.StringIO() as buffer:
+        writer.write(result.investigation, file_buffer_or_path=buffer)
+        assert buffer
+        val = buffer.getvalue()
+        assert val
+        assert ";Test1" in val
+    val_buffer = io.StringIO(val)
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=val_buffer)
+    assert len(result.investigation.studies[0].funders) == 3
+
+
+def test_investigation_file_success_06():
+    file_path = pathlib.Path(
+        "tests/test-data/investigation-files/i_Investigation_funders_02.txt"
+    )
+    reader: InvestigationFileReader = Reader.get_investigation_file_reader()
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=file_path)
+    assert len(result.investigation.studies) == 1
+    result.investigation.sync_fields_from_comments()
+    funders = result.investigation.studies[0].funders
+    assert len(funders) == 5
+    funders.append(Funder(funder_name="Test1", funder_id="Test_ID", grant_ids=[]))
+    result.investigation.sync_comments_from_fields()
+    funder_comments = [
+        x for x in result.investigation.studies[0].comments if x.name == "Funder"
+    ]
+    assert len(funder_comments) == 1
+    assert len(funder_comments[0].value) == 1
+    assert "Test1" in funder_comments[0].value[0]
+    writer: InvestigationFileWriter = Writer.get_investigation_file_writer()
+    val = None
+    with io.StringIO() as buffer:
+        writer.write(result.investigation, file_buffer_or_path=buffer)
+        assert buffer
+        val = buffer.getvalue()
+        assert val
+        assert ";Test1" in val
+    val_buffer = io.StringIO(val)
+    result: InvestigationFileReaderResult = reader.read(file_buffer_or_path=val_buffer)
+    assert len(result.investigation.studies[0].funders) == 6
 
 
 def test_investigation_file_fail_01(mocker: MockFixture):
