@@ -1,8 +1,10 @@
 import logging
 import os
+import posixpath
 import re
 import shutil
 from ftplib import FTP
+from pathlib import Path, PurePosixPath
 from typing import List, Set, Tuple, Union
 
 from metabolights_utils.provider.ftp.model import FtpFolderContent, LocalDirectory
@@ -46,6 +48,36 @@ class DefaultFtpClient:
 
         self.ftp: Union[None, FTP] = None
 
+    @staticmethod
+    def _safe_relative_path(relative_file_path: str) -> str:
+        raw_path = relative_file_path.replace("\\", "/").strip()
+        if not raw_path:
+            raise ValueError("FTP download path must not be empty.")
+        if PurePosixPath(raw_path).is_absolute():
+            raise ValueError("FTP download path must be relative.")
+
+        parts = [part for part in raw_path.split("/") if part]
+        if not parts or any(part in {".", ".."} for part in parts):
+            raise ValueError("FTP download path contains unsafe path components.")
+        return "/".join(parts)
+
+    @classmethod
+    def _resolve_local_download_path(
+        cls, local_root_path: str, relative_file_path: str
+    ) -> Tuple[str, Path]:
+        safe_relative_path = cls._safe_relative_path(relative_file_path)
+        local_root = Path(local_root_path).expanduser().resolve(strict=False)
+        target_path = local_root.joinpath(*safe_relative_path.split("/")).resolve(
+            strict=False
+        )
+        try:
+            target_path.relative_to(local_root)
+        except ValueError as exc:
+            raise ValueError(
+                "FTP download path escapes the local storage root."
+            ) from exc
+        return safe_relative_path, target_path
+
     def is_ftp_directory(self, name):
         current = self.ftp.pwd()
         try:
@@ -68,7 +100,7 @@ class DefaultFtpClient:
 
     def quit(self):
         if self.ftp:
-            for attempt in range(3, start=1):
+            for attempt in range(1, 4):
                 try:
                     self.ftp.quit()
                     break
@@ -189,20 +221,33 @@ class DefaultFtpClient:
                 code=451,
                 message="root path download does not allowed.",
             )
+        try:
+            relative_file_path, target_path = self._resolve_local_download_path(
+                local_path, relative_file_path
+            )
+        except ValueError as exc:
+            response.success = False
+            response.code = 400
+            response.message = f"Unsafe FTP download path: {exc}"
+            logger.error(response.message)
+            return response
+
         if skip_files and relative_file_path in skip_files:
             logger.debug("%s is in skip file list. Skipping...", relative_file_path)
+            response.success = True
+            response.code = 200
+            response.message = "Ok"
             return response
         remote_root_dir = self.remote_repository_root_directory
 
-        target_path = os.path.join(local_path, relative_file_path)
-        parent_path = os.path.dirname(target_path)
-        filename = os.path.basename(target_path)
+        parent_path = target_path.parent
+        filename = PurePosixPath(relative_file_path).name
 
         remote_directory = f"{remote_root_dir}/{relative_file_path}".replace("\\", "/")
-        relative_parent_path = os.path.dirname(relative_file_path)
+        relative_parent_path = posixpath.dirname(relative_file_path)
 
-        remote_parent_directory = os.path.dirname(
-            os.path.join(remote_root_dir, relative_file_path)
+        remote_parent_directory = posixpath.dirname(
+            posixpath.join(remote_root_dir, relative_file_path)
         )
         remote_parent_directory = remote_parent_directory.replace("\\", "/")
         logger.debug("List files within %s on FTP server ", relative_parent_path)
@@ -219,18 +264,19 @@ class DefaultFtpClient:
             target_exists = True
         if not target_exists:
             logger.error("%s is not on FTP server.", relative_parent_path)
-            return LocalDirectory(
-                root_path=local_path, code=result.code, message=result.message
-            )
+            response.success = False
+            response.code = result.code
+            response.message = result.message
+            return response
         try:
             if not is_directory:
                 self.connect()
                 self.ftp.cwd(remote_parent_directory)
 
-                if not os.path.exists(target_path) or override_local_files:
-                    if not os.path.exists(parent_path):
+                if not target_path.exists() or override_local_files:
+                    if not parent_path.exists():
                         logger.info("%s folder is created", parent_path)
-                        os.makedirs(parent_path, exist_ok=True)
+                        parent_path.mkdir(parents=True, exist_ok=True)
                     with open(target_path, "wb") as local_file:
                         self.ftp.retrbinary("RETR " + filename, local_file.write)
                     actions[relative_file_path] = "DOWNLOADED"
@@ -241,10 +287,10 @@ class DefaultFtpClient:
 
                 response.local_files.append(relative_file_path)
             else:
-                if not os.path.exists(target_path):
+                if not target_path.exists():
                     logger.info("%s folder is created", relative_file_path)
                     actions[relative_file_path] = "FOLDER_CREATED"
-                    os.makedirs(target_path, exist_ok=True)
+                    target_path.mkdir(parents=True, exist_ok=True)
                 else:
                     actions[relative_file_path] = "FOLDER_SKIPPED"
                     if delete_unlisted_local_files:
@@ -260,11 +306,15 @@ class DefaultFtpClient:
                         }
                         for item in local_file_list:
                             if item not in listed_folders and item not in listed_files:
-                                item_path: str = os.path.join(target_path, item)
+                                item_path = target_path / item
                                 relative_item_path = (
-                                    item_path.replace(f"{local_path}", "")
-                                    .strip("/")
-                                    .strip("\\")
+                                    item_path.resolve(strict=False)
+                                    .relative_to(
+                                        Path(local_path)
+                                        .expanduser()
+                                        .resolve(strict=False)
+                                    )
+                                    .as_posix()
                                 )
                                 if keep_local_files and item in keep_local_files:
                                     actions[relative_item_path] = "SKIPPED"
@@ -273,13 +323,13 @@ class DefaultFtpClient:
                                     )
                                     continue
                                 try:
-                                    if os.path.isdir(item_path):
+                                    if item_path.is_dir():
                                         logger.debug("%s folder is deleted.", item_path)
                                         shutil.rmtree(item_path)
                                         actions[relative_item_path] = "FOLDER_DELETED"
                                     else:
                                         logger.debug("%s file is deleted.", item_path)
-                                        os.remove(item_path)
+                                        item_path.unlink()
                                         actions[relative_item_path] = "DELETED"
                                 except Exception as ex:
                                     logger.error("%s delete error ", item_path, str(ex))
@@ -297,7 +347,8 @@ class DefaultFtpClient:
                             local_files=response,
                             skip_files=skip_files,
                         )
-                        target_path = os.path.join(local_path, relative_file_path)
+                        if not response.success:
+                            return response
                         logger.debug(
                             "%s is downloaded on %s", relative_file_path, target_path
                         )

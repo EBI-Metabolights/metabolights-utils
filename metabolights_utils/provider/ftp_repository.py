@@ -290,7 +290,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                     "\\", "/"
                 ).rstrip("/")
                 current_file = filename
-                self.ftp_client.download_file(
+                download_result = self.ftp_client.download_file(
                     relative_file_path=new_relative_file_path,
                     local_path=local_path,
                     local_files=response,
@@ -299,6 +299,8 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                     delete_unlisted_local_files=False,
                     keep_local_files=True,
                 )
+                if not download_result.success:
+                    return download_result
             if delete_unlisted_metadata_files:
                 for filename in os.listdir(local_path):
                     if filename not in listed_files:
@@ -348,7 +350,7 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                 new_relative_file_path = f"{study_id}/{file}".replace("\\", "/").rstrip(
                     "/"
                 )
-                self.ftp_client.download_file(
+                download_result = self.ftp_client.download_file(
                     relative_file_path=new_relative_file_path,
                     local_path=local_path,
                     local_files=response,
@@ -357,6 +359,8 @@ class MetabolightsFtpRepository(DefaultFtpClient):
                     delete_unlisted_local_files=delete_unlisted_local_files,
                     keep_local_files=keep_local_files,
                 )
+                if not download_result.success:
+                    return download_result
             response.success = True
             response.code = 200
             response.message = "Ok"
