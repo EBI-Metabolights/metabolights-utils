@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.35 (2026-06-05)
+
+### Fix
+
+- FTP client relative path check
+
 ## v1.4.34 (2026-05-20)
 
 ### Fix
