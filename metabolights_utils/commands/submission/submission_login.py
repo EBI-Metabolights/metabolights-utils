@@ -12,6 +12,28 @@ from metabolights_utils.commands.submission.model import (
 from metabolights_utils.provider import definitions
 
 
+def write_credentials_file(
+    credentials_file_path: str,
+    credentials: Union[LoginCredentials, None] = None,
+    json_text: Union[str, None] = None,
+):
+    parent_directory = os.path.dirname(credentials_file_path)
+    if parent_directory and not os.path.exists(parent_directory):
+        os.makedirs(parent_directory, mode=0o700, exist_ok=True)
+        os.chmod(parent_directory, 0o700)
+
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    fd = os.open(credentials_file_path, flags, 0o600)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            if json_text is not None:
+                f.write(json_text)
+            else:
+                json.dump(credentials.model_dump(), f, indent=4)
+    finally:
+        os.chmod(credentials_file_path, 0o600)
+
+
 @click.command(name="login")
 @click.option(
     "--credentials_file_path",
@@ -63,7 +85,9 @@ def submission_login(
         )
 
     if not credentials:
-        os.makedirs(parent_directory, exist_ok=True)
+        if parent_directory and not os.path.exists(parent_directory):
+            os.makedirs(parent_directory, mode=0o700, exist_ok=True)
+            os.chmod(parent_directory, 0o700)
         credentials = LoginCredentials()
     try:
         if ftp_user and ftp_user_password:
@@ -83,19 +107,15 @@ def submission_login(
             detail.api_token = api_token
 
         if api_token or ftp_user or ftp_user_password:
-            json_data = credentials.model_dump()
-            with open(credentials_file_path, "w", encoding="utf-8") as f:
-                json.dump(json_data, f, indent=4)
+            write_credentials_file(credentials_file_path, credentials=credentials)
             click.echo("User credentials are updated successfully.")
         else:
             click.echo("User credentials are not updated.")
     except Exception as ex:
         click.echo(f"Error while login: {str(ex)}")
         if initial:
-            os.makedirs(parent_directory, exist_ok=True)
             json_data = initial.model_dump_json(indent=4)
-            with open(credentials_file_path, "w", encoding="utf-8") as f:
-                f.write(json_data)
+            write_credentials_file(credentials_file_path, json_text=json_data)
         exit(1)
 
 

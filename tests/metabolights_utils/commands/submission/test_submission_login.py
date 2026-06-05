@@ -1,5 +1,7 @@
 import json
+import os
 import random
+import stat
 from pathlib import Path
 
 import pytest
@@ -8,6 +10,20 @@ from pytest_mock import MockerFixture
 
 from metabolights_utils.commands.submission.model import LoginCredentials
 from metabolights_utils.commands.submission.submission_login import submission_login
+
+
+def assert_secure_credentials_file_permissions(credentials_file_path: str):
+    if os.name == "nt":
+        return
+    path = Path(credentials_file_path)
+    assert stat.S_IMODE(path.stat().st_mode) == 0o600
+
+
+def assert_secure_credentials_directory_permissions(credentials_file_path: str):
+    if os.name == "nt":
+        return
+    path = Path(credentials_file_path)
+    assert stat.S_IMODE(path.parent.stat().st_mode) == 0o700
 
 
 @pytest.fixture
@@ -36,6 +52,7 @@ def test_submission_login_01(credentials_file_path: str):
     assert result.exit_code == 0
     assert "User credentials are updated successfully" in result.output
     assert Path(credentials_file_path).exists()
+    assert_secure_credentials_file_permissions(credentials_file_path)
 
 
 def test_submission_login_02(credentials_file_path: str):
@@ -56,6 +73,7 @@ def test_submission_login_02(credentials_file_path: str):
     assert result.exit_code == 0
     assert "User credentials are updated successfully" in result.output
     assert Path(credentials_file_path).exists()
+    assert_secure_credentials_file_permissions(credentials_file_path)
 
 
 def test_submission_login_03(credentials_file_path: str):
@@ -81,6 +99,7 @@ def test_submission_login_03(credentials_file_path: str):
     assert result.exit_code == 0
     assert "User credentials are updated successfully" in result.output
     assert Path(credentials_file_path).exists()
+    assert_secure_credentials_file_permissions(credentials_file_path)
     with Path(credentials_file_path).open("r", encoding="utf-8") as f:
         data = json.load(f)
         credentials = LoginCredentials.model_validate(data)
@@ -160,6 +179,7 @@ def test_submission_login_05(mocker: MockerFixture, credentials_file_path: str):
     assert result.exit_code == 1
     assert "Error while login" in result.output
     assert Path(credentials_file_path).exists()
+    assert_secure_credentials_file_permissions(credentials_file_path)
     with Path(credentials_file_path).open("r", encoding="utf-8") as f:
         data = json.load(f)
         credentials = LoginCredentials.model_validate(data)
@@ -219,3 +239,22 @@ def test_submission_login_06(credentials_file_path: str):
             == "z"
         )
         assert credentials.rest_api_credentials[rest_api_base_url].api_token == "c"
+
+
+def test_submission_login_07_creates_private_credentials_directory(tmp_path):
+    """
+    Test newly-created credentials directories are restricted.
+    """
+    runner = CliRunner()
+    credentials_file_path = tmp_path / "credentials" / ".login"
+
+    result = runner.invoke(
+        submission_login,
+        ["--credentials_file_path", str(credentials_file_path)],
+        input="x\ny\nz\n",
+    )
+
+    assert result.exit_code == 0
+    assert Path(credentials_file_path).exists()
+    assert_secure_credentials_file_permissions(str(credentials_file_path))
+    assert_secure_credentials_directory_permissions(str(credentials_file_path))
