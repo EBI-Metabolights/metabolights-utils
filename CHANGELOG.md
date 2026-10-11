@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.36 (2026-10-11)
+
+### Fix
+
+- related dataset description and submitter affiliation ror id update
+
 ## v1.4.35 (2026-06-05)
 
 ### Fix
