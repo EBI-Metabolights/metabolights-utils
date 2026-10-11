@@ -1,7 +1,7 @@
 import pathlib
 from abc import ABC, abstractmethod
 from io import IOBase
-from typing import List, Union
+from typing import List, Optional, Union
 
 from pydantic import Field
 from typing_extensions import Annotated
@@ -112,8 +112,8 @@ class IsaTableFileReader(ABC):
         page: int = 1,
         results_per_page: int = 100,
         selected_columns: Union[List[str], None] = None,
-        filter_options: List[TsvFileFilterOption] = None,
-        sort_options: List[TsvFileSortOption] = None,
+        filter_options: Optional[List[TsvFileFilterOption]] = None,
+        sort_options: Optional[List[TsvFileSortOption]] = None,
         filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         """Reads file and returns the selected page of file. At least one of the file_buffer and file_path parameters should be defined.
@@ -139,8 +139,8 @@ class IsaTableFileReader(ABC):
         offset: int = 0,
         limit: Union[int, None] = None,
         selected_columns: Union[None, List[str]] = None,
-        filter_options: List[TsvFileFilterOption] = None,
-        sort_options: List[TsvFileSortOption] = None,
+        filter_options: Optional[List[TsvFileFilterOption]] = None,
+        sort_options: Optional[List[TsvFileSortOption]] = None,
         filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         """Reads file and returns rows of the file starting from offset.
@@ -167,8 +167,8 @@ class IsaTableFileReader(ABC):
         limit: Union[None, int] = None,
         selected_columns: Union[None, List[str]] = None,
         skip_parser_info_messages: bool = True,
-        filter_options: List[TsvFileFilterOption] = None,
-        sort_options: List[TsvFileSortOption] = None,
+        filter_options: Optional[List[TsvFileFilterOption]] = None,
+        sort_options: Optional[List[TsvFileSortOption]] = None,
         filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         """Reads selected rows with selected columns from tsv file. If sort and filter options are enabled, offset and limit are applied to the final filter and sort result.

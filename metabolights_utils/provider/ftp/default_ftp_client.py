@@ -332,7 +332,9 @@ class DefaultFtpClient:
                                         item_path.unlink()
                                         actions[relative_item_path] = "DELETED"
                                 except Exception as ex:
-                                    logger.error("%s delete error ", item_path, str(ex))
+                                    logger.error(
+                                        "%s delete error %s", item_path, str(ex)
+                                    )
 
                 response.local_folders.append(relative_file_path)
                 for collection in (result.folders, result.files):

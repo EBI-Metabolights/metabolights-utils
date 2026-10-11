@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 from typing import Union
 
 import click
@@ -116,7 +117,7 @@ def submission_login(
         if initial:
             json_data = initial.model_dump_json(indent=4)
             write_credentials_file(credentials_file_path, json_text=json_data)
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import re
 from functools import partial
 from io import IOBase
 from pathlib import Path
-from typing import Callable, List, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 from metabolights_utils.isatab.default.parser.common import (
     SelectedTsvFileContent,
@@ -150,8 +150,8 @@ def parse_isa_table_sheet_from_fs(
     selected_columns: Union[None, List[str]] = None,
     offset: Union[int, None] = None,
     limit: Union[int, None] = None,
-    filter_options: List[TsvFileFilterOption] = None,
-    sort_options: List[TsvFileSortOption] = None,
+    filter_options: Optional[List[TsvFileFilterOption]] = None,
+    sort_options: Optional[List[TsvFileSortOption]] = None,
     fix_unicode_exceptions: bool = False,
     remove_empty_rows: bool = False,
     remove_new_lines_in_cells: bool = False,
@@ -227,8 +227,8 @@ def get_isa_table_file(
     selected_columns: Union[None, List[str]] = None,
     offset: Union[int, None] = None,
     limit: Union[int, None] = None,
-    filter_options: List[TsvFileFilterOption] = None,
-    sort_options: List[TsvFileSortOption] = None,
+    filter_options: Optional[List[TsvFileFilterOption]] = None,
+    sort_options: Optional[List[TsvFileSortOption]] = None,
 ) -> IsaTableFile:
     study_table = IsaTableFile()
     if messages is None:

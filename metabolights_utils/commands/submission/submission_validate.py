@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import Union
 
 import click
@@ -74,7 +75,7 @@ def submission_validate(
         click.echo(f"Validation report is saved as {validation_file_path}")
     else:
         click.echo(f"Validate study {study_id} error: {error}.")
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

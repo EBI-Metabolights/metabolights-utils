@@ -22,4 +22,4 @@ def get_study_model_schema(
     return study_model_jsonschema
 
 
-__all__ = ["metabolights_study", "model", "get_study_model_schema"]
+__all__ = ["get_study_model_schema", "metabolights_study", "model"]

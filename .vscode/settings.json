@@ -1,62 +1,56 @@
 {
-    "files.exclude": {
-        "**/__pycache__": true,
-        "**/.pytest_cache": true,
-        ".*cache*": true,
-        ".*coverage*": true,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    ".*cache*": true,
+    ".*coverage*": true,
+  },
+  "files.associations": {
+    "*.json": "json",
+    "*.py": "python",
+    "a_*.txt": "tsv",
+    "i_*.txt": "tsv",
+    "m_*.tsv": "tsv",
+    "s_*.txt": "tsv"
+  },
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": [
+    "-v",
+    // "--cov=${workspaceFolder}/metabolights_utils",
+    // "--cov-report=html",
+    "${workspaceFolder}/tests/"
+  ],
+  "editor.scrollbar.verticalScrollbarSize": 0.3,
+  "editor.scrollbar.vertical": "visible",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.unusedImports": "explicit",
+      "source.organizeImports": "explicit"
     },
-    "files.associations": {
-        "*.json": "json",
-        "*.py": "python",
-        "a_*.txt": "tsv",
-        "i_*.txt": "tsv",
-        "m_*.tsv": "tsv",
-        "s_*.txt": "tsv"
-      },
-
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [
-        "-v",
-        // "--cov=${workspaceFolder}/metabolights_utils",
-        // "--cov-report=html",
-        "${workspaceFolder}/tests/"
-    ],
-
-    "editor.scrollbar.verticalScrollbarSize": 0.3,
-    "editor.scrollbar.vertical": "visible",
-      "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-          "source.unusedImports": "explicit",
-          "source.organizeImports": "explicit"
-        },
-
-      },
-
-      "editor.defaultFormatter": "charliermarsh.ruff",
-      "cSpell.words": [
-        "CHEBI",
-        "commitizen",
-        "funder",
-        "funders",
-        "isatab",
-        "metabolights",
-        "metabolomics",
-        "mtbls",
-        "NCIT",
-        "omics",
-        "orcid",
-        "pytest",
-        "seperator"
-      ],
-"yaml.schemas": {
+  },
+  "editor.defaultFormatter": "charliermarsh.ruff",
+  "cSpell.words": [
+    "CHEBI",
+    "commitizen",
+    "funder",
+    "funders",
+    "isatab",
+    "metabolights",
+    "metabolomics",
+    "mtbls",
+    "NCIT",
+    "omics",
+    "orcid",
+    "pytest",
+    "seperator"
+  ],
+  "yaml.schemas": {
     "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs.yml"
   },
   "yaml.customTags": [
-
-
     "!ENV scalar",
     "!ENV sequence",
     "!relative scalar",
@@ -65,9 +59,8 @@
     "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format",
     "tag:yaml.org,2002:python/object/apply:pymdownx.slugs.slugify mapping"
   ],
-  "python-envs.defaultEnvManager": "ms-python.python:poetry",
-  "python-envs.defaultPackageManager": "ms-python.python:poetry",
-  "python-envs.pythonProjects": [],
+  "python-envs.defaultEnvManager": "ms-python.python:venv",
+  "python-envs.defaultPackageManager": "ms-python.python:pip",
   "[markdown]": {
     "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
   }

@@ -81,5 +81,5 @@ def test_assay_file_success_01():
     )
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 50
-    #
+
     assert len(result.isa_table_file.table.columns) == 4

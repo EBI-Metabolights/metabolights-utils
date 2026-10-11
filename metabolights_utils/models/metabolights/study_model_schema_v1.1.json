@@ -2750,6 +2750,12 @@
                     "title": "Affiliation",
                     "type": "string"
                 },
+                "affiliationRorId": {
+                    "default": "",
+                    "description": "ROR id of Submitter's affiliation.",
+                    "title": "Affiliation Ror Id",
+                    "type": "string"
+                },
                 "affiliationUrl": {
                     "default": "",
                     "description": "Submitter's affiliation webpage URL.",

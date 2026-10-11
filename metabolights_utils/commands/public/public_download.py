@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from typing import Union
 
@@ -100,4 +101,4 @@ def public_download(
             click.echo("There is no ISA metadata file to download.")
     else:
         click.echo(f"FTP response error: {result.message}")
-        exit(1)
+        sys.exit(1)

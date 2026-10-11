@@ -35,7 +35,7 @@ class MetabolightsFileNameUtils:
 
 def join_path(*args: tuple[str]):
     target_sep = "/" if os.sep == "/" else "\\"
-    source_sep = "/" if os.sep == "\\" else "/"
+    source_sep = "/"
     inputs = [x for x in args if x and x.strip()]
     path_ = target_sep.join(inputs).replace(source_sep, target_sep)
     return path_

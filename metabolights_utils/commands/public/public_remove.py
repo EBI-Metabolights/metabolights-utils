@@ -1,5 +1,6 @@
 import os
 import shutil
+import sys
 from typing import Union
 
 import click
@@ -47,7 +48,7 @@ def public_remove(
             click.echo(f"There is no folder for study {study_id}.")
     except Exception as ex:
         click.echo(f"Remove study {study_id} error: {ex}.")
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

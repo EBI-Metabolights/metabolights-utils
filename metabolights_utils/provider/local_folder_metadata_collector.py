@@ -235,7 +235,7 @@ class LocalFolderMetadataCollector(AbstractFolderMetadataCollector):
                 size_str = result.stdout.split()[0]
                 return int(size_str) * 1000
             else:
-                logger.error("Error", result.stderr.strip())
+                logger.error("Error: %s", result.stderr.strip())
                 return None
         except FileNotFoundError as e:
             logger.exception(e)
@@ -254,4 +254,3 @@ if __name__ == "__main__":
         data_files_path=data_files_path,
         data_files_mapping_folder_name="FILES",
     )
-    pass

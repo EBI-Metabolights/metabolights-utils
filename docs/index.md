@@ -42,7 +42,7 @@ The `metaboligts-utils` is a *lightweight API* and *command line interface* (CLI
 ///
 
 ```Python hl_lines="1 4-6" title="test_assay_file.py"
---8<-- "metabolights_utils/isatab/test_assay_file.py:1:20"
+--8 < --"metabolights_utils/isatab/test_assay_file.py:1:20"
 ```
 
 ///

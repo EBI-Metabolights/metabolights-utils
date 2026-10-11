@@ -1,3 +1,4 @@
+import sys
 from typing import Union
 
 import click
@@ -98,7 +99,7 @@ def submission_describe(
             click.echo(f"{study_id}: {[x for x in errors]}")
         else:
             click.echo(f"{study_id}: load error.")
-        exit(1)
+        sys.exit(1)
 
         # error = True
 

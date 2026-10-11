@@ -149,7 +149,9 @@ def get_investigation(
     tab: Dict[int, Dict[int, str]] = result
     for line in tab.keys():
         if len(tab[line]) == 0:
-            logger.warning("Empty line in file %s, line number: %s", str(line))
+            logger.warning(
+                "Empty line in file %s, line number: %s", file_path, str(line)
+            )
             messages.append(
                 ParserMessage(
                     short="Empty line",

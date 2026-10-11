@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import Union
 
 import click
@@ -80,7 +81,7 @@ def submission_delete_assay(
     )
     if not success:
         click.echo(error)
-        exit(1)
+        sys.exit(1)
     else:
         click.echo(
             f"Assay file and related maf file are deleted for study : {study_id}: {assay_filename}"

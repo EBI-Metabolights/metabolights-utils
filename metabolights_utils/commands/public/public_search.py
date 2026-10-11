@@ -1,4 +1,5 @@
 import json
+import sys
 from typing import Any, Callable, Dict, Literal, Union
 
 import click
@@ -89,7 +90,7 @@ def public_search(
         body = json.loads(body) if body else {}
     except Exception as ex:
         click.echo(str(ex))
-        exit(1)
+        sys.exit(1)
     headers = {}
     url = f"{search_rest_api_url.rstrip('/')}/{sub_path.lstrip('/')}"
     response, error = rest_api_post(
@@ -106,7 +107,7 @@ def public_search(
             print_search_response(study_ids, query, response, click.echo)
     else:
         click.echo(error)
-        exit(1)
+        sys.exit(1)
 
 
 def print_search_response(
@@ -116,7 +117,7 @@ def print_search_response(
         log(f"MetaboLights public study search results for query: {query}")
     else:
         log(f"Failure of MetaboLights public study search for query: {query}")
-        exit(1)
+        sys.exit(1)
 
     if (
         "content" not in response
@@ -126,7 +127,7 @@ def print_search_response(
         or "pageSize" not in response["content"]
     ):
         log("Invalid response.")
-        exit(1)
+        sys.exit(1)
 
     content = response["content"]
     page = content["page"]
@@ -137,7 +138,7 @@ def print_search_response(
         if show_only_study_ids:
             id_list = [x["studyId"] for x in page if "studyId" in x]
             log(f"[{', '.join(id_list)}]")
-            exit(0)
+            sys.exit(0)
         else:
             log(f"{page_size} of total {total} results")
     else:
@@ -145,7 +146,7 @@ def print_search_response(
             log("[]")
         else:
             log("No results found.")
-        exit(0)
+        sys.exit(0)
 
     for item in page:
         if "studyId" in item and "title" in item:

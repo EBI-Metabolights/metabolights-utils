@@ -50,8 +50,10 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
         parse_success = False
         read_messages: List[ParserMessage] = []
         try:
-            file_buffer = self._get_file_buffer(buffer_or_path)
-            investigation = get_investigation(file_buffer, path, messages=read_messages)
+            with self._get_file_buffer(buffer_or_path) as file_buffer:
+                investigation = get_investigation(
+                    file_buffer, path, messages=read_messages
+                )
 
             messages = read_messages
             parse_success = True
@@ -67,12 +69,14 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
                         detail=(str(err)),
                     )
                 )
-                file_buffer = self._get_file_buffer(buffer_or_path, encoding="ascii")
-                investigation = get_investigation(
-                    file_buffer,
-                    path,
-                    messages=read_messages,
-                )
+                with self._get_file_buffer(
+                    buffer_or_path, encoding="ascii"
+                ) as file_buffer:
+                    investigation = get_investigation(
+                        file_buffer,
+                        path,
+                        messages=read_messages,
+                    )
 
                 messages = read_messages
                 parse_success = True
@@ -94,8 +98,6 @@ class DefaultInvestigationFileReader(InvestigationFileReader, BaseIsaFile):
                     detail=(str(exc)),
                 )
             )
-        finally:
-            self._close_file(file_buffer_or_path)
         messages = read_messages if read_messages else []
         if skip_parser_info_messages:
             messages = [x for x in read_messages if x.type != ParserMessageType.INFO]
@@ -375,8 +377,8 @@ class InvestigationFileSerializer:
                                 sys.modules[module_name],
                                 default_object_name,
                             )
-                        except:  # noqa: E722
-                            pass
+                        except Exception as ex:
+                            logger.debug("Error: %s", ex)
                     # not set a value try to find on default module
                     if not obj:
                         obj: BaseModel = getattr(
@@ -417,9 +419,8 @@ class InvestigationFileSerializer:
     def add_comments(cls, model: BaseSection, rows: List[List[str]]):
         for comment in model.comments:
             comment_line = [f"Comment[{comment.name}]"]
+            comment_line.extend(comment.value)
             rows.append(comment_line)
-            for value in comment.value:
-                comment_line.append(value)
 
     @classmethod
     def add_model_content(
@@ -463,9 +464,9 @@ class InvestigationFileSerializer:
                             sys.modules[module_name],
                             class_name,
                         )
-                    except:  # noqa: E722
-                        pass
-                # not set a value try to find on default module
+                    except Exception as ex:
+                        logger.debug("Error %s", ex)
+                # not set a value tr y to find on default module
                 if not obj:
                     obj: BaseModel = getattr(
                         sys.modules[inv_module_name],

@@ -133,7 +133,7 @@ def test_parse_investigation_from_fs_valid_04_comments():
     assert len(study.study_contacts.comments) == 2
     assert len(study.study_design_descriptors.comments) == 2
     assert len(study.study_factors.comments) == 1
-    study.study_assays.comments[0].value[0] == f"{study.identifier}-01"
+    assert study.study_assays.comments[0].value[0] == f"{study.identifier}-01"
     assert study.comments
 
     assert investigation

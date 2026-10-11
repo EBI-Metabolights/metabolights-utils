@@ -1,3 +1,4 @@
+import sys
 from typing import List, Union
 
 import click
@@ -79,7 +80,7 @@ def submission_upload(
     )
     if not ftp_details:
         click.echo(f"Upload private ftp details for {study_id}: Failed {str(error)}")
-        exit(1)
+        sys.exit(1)
     success, message = client.upload_metadata_files(
         study_id=study_id,
         override_remote_files=override_remote_files,
@@ -94,7 +95,7 @@ def submission_upload(
         click.echo(message)
     else:
         click.echo(f"Upload private study {study_id} metadata files: Failed {message}")
-        exit(1)
+        sys.exit(1)
     success, message = client.upload_data_files(
         study_id=study_id,
         local_path=local_path,

@@ -401,14 +401,14 @@ mtbls submission validate <MTBLSXXX> --validation_file_path errors.tsv
 Read i_Investigation.txt, s_*,txt, a_*.txt and m_*.tsv files in a study folder.
 
 ```python
-    provider = MetabolightsStudyProvider()
-    model, messages = provider.load_study(
-        study_id,
-        study_path,
-        load_assay_files=True,
-        load_sample_file=True,
-        load_maf_files=True
-    )
+provider = MetabolightsStudyProvider()
+model, messages = provider.load_study(
+    study_id,
+    study_path,
+    load_assay_files=True,
+    load_sample_file=True,
+    load_maf_files=True,
+)
 ```
 
 ### Read and update Investigation files
@@ -423,7 +423,10 @@ import uuid
 from typing import List
 
 from metabolights_utils.isatab import Reader, Writer
-from metabolights_utils.isatab.reader import InvestigationFileReader, InvestigationFileReaderResult
+from metabolights_utils.isatab.reader import (
+    InvestigationFileReader,
+    InvestigationFileReaderResult,
+)
 from metabolights_utils.isatab.writer import InvestigationFileWriter
 from metabolights_utils.models.isa.common import OntologyItem
 from metabolights_utils.models.isa.investigation_file import Assay, Study
@@ -452,7 +455,6 @@ def test_investigation_file_write_01():
     assert assay_read.measurement_type.term_source_ref == "test source"
     assert assay_read.measurement_type.term_accession_number == "test accesion"
     os.remove(tmp_path)
-
 ```
 
 ### Read and Update ISA Table Files with Pagination Support
@@ -478,7 +480,7 @@ import pathlib
 from metabolights_utils.isatab import Reader
 from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
-    IsaTableFileReaderResult
+    IsaTableFileReaderResult,
 )
 
 
@@ -493,7 +495,9 @@ def test_assay_file_success_01():
     assert page_count == 147
 
     # get page count with custom page count.
-    page_count = reader.get_total_pages(file_buffer_or_path=file_path, results_per_page=50)
+    page_count = reader.get_total_pages(
+        file_buffer_or_path=file_path, results_per_page=50
+    )
     assert page_count == 294
 
     # get total row count
@@ -506,7 +510,9 @@ def test_assay_file_success_01():
     assert "Parameter Value[Column model]" in result.isa_table_file.table.columns
 
     # get isa table rows. Default offset is 0. Read 88 rows
-    result: IsaTableFileReaderResult = reader.get_rows(file_buffer_or_path=file_path, limit=88)
+    result: IsaTableFileReaderResult = reader.get_rows(
+        file_buffer_or_path=file_path, limit=88
+    )
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 88
 
@@ -519,7 +525,9 @@ def test_assay_file_success_01():
     assert result.isa_table_file.table.row_offset == 14600
 
     # get page 2 from isa table. Default page limit is 100. Read 100 items from offset 100
-    result: IsaTableFileReaderResult = reader.get_page(page=2, file_buffer_or_path=file_path)
+    result: IsaTableFileReaderResult = reader.get_page(
+        page=2, file_buffer_or_path=file_path
+    )
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 100
 
@@ -566,7 +574,7 @@ import shutil
 from metabolights_utils.isatab import Reader, Writer
 from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
-    IsaTableFileReaderResult
+    IsaTableFileReaderResult,
 )
 from metabolights_utils.isatab.writer import IsaTableFileWriter
 
@@ -603,7 +611,7 @@ def test_assay_file_read_write():
     isa_table = result.isa_table_file.table
 
     sha256_hash = result.isa_table_file.sha256_hash
-    # save same content without any update
+    # save same content without any update
     report = writer.save_isa_table(
         file_path=str(file_path), file_sha256_hash=sha256_hash, isa_table=isa_table
     )
@@ -618,7 +626,6 @@ def test_assay_file_read_write():
     assert report.success
     assert report.updated_file_sha256_hash != sha256
     assert not report.message
-
 ```
 
 ### Multi-column filters and sort options
@@ -663,14 +670,15 @@ import pathlib
 from metabolights_utils.isatab import Reader
 from metabolights_utils.isatab.reader import (
     IsaTableFileReader,
-    IsaTableFileReaderResult
+    IsaTableFileReaderResult,
 )
 from metabolights_utils.models.isa.common import (
     FilterOperation,
     SortType,
     TsvFileFilterOption,
     TsvFileSortOption,
-    TsvFileSortValueOrder)
+    TsvFileSortValueOrder,
+)
 
 
 def test_with_filter_and_sort_option_01():
@@ -776,7 +784,6 @@ def test_with_filter_and_sort_option_01():
     )
     assert len(result.parser_report.messages) == 0
     assert result.isa_table_file.table.row_count == 60
-
 ```
 
 ### Update ISA table files with actions

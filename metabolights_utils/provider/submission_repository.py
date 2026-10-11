@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 from typing import List, Literal, Tuple, Union
 
-import httpx
+import httpx2
 
 from metabolights_utils.commands.submission.model import (
     FtpLoginCredentials,
@@ -237,7 +237,7 @@ class MetabolightsSubmissionRepository:
         for descriptor in response.study:
             _time = descriptor.created_at
             try:
-                modified = datetime.datetime.strptime(  # noqa: DTZ007
+                modified = datetime.datetime.strptime(
                     _time, "%Y-%m-%d %H:%M:%S"
                 ).timestamp()
             except ValueError:
@@ -289,7 +289,7 @@ class MetabolightsSubmissionRepository:
             try:
                 with open(file_path, "rb") as fh:
                     files = [("file", (file_path.name, fh))]
-                    response = httpx.post(
+                    response = httpx2.post(
                         url=url,
                         timeout=timeout,
                         headers=headers,
@@ -312,7 +312,7 @@ class MetabolightsSubmissionRepository:
                 "files": [{"name": file_name} for file_name in will_be_deleted_files]
             }
             url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
-            response = httpx.post(
+            response = httpx2.post(
                 url=url,
                 timeout=timeout,
                 headers=headers,
@@ -404,7 +404,7 @@ class MetabolightsSubmissionRepository:
         try:
             url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
             parameters = {}
-            response = httpx.get(
+            response = httpx2.get(
                 url=url,
                 timeout=timeout,
                 headers=headers,
@@ -450,7 +450,7 @@ class MetabolightsSubmissionRepository:
         try:
             url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
             parameters = {}
-            response = httpx.post(
+            response = httpx2.post(
                 url=url,
                 timeout=timeout,
                 headers=headers,
@@ -477,7 +477,7 @@ class MetabolightsSubmissionRepository:
             for _ in range(retry + 1):
                 time.sleep(pool_period)
                 try:
-                    response = httpx.get(
+                    response = httpx2.get(
                         url=url,
                         timeout=timeout,
                         headers=headers,
@@ -513,7 +513,7 @@ class MetabolightsSubmissionRepository:
             )
             for _ in range(retry + 1):
                 try:
-                    response = httpx.get(
+                    response = httpx2.get(
                         url=report_url,
                         timeout=timeout,
                         headers=headers,
@@ -597,7 +597,7 @@ class MetabolightsSubmissionRepository:
         try:
             url = f"{rest_api_base_url.rstrip('/')}/{auth_sub_path.lstrip('/')}"
             parameters = {}
-            response = httpx.post(
+            response = httpx2.post(
                 url=url,
                 timeout=timeout,
                 json={"token": api_header},
@@ -633,7 +633,7 @@ class MetabolightsSubmissionRepository:
         try:
             url = f"{validation_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
             parameters = {}
-            response = httpx.post(
+            response = httpx2.post(
                 url=url,
                 timeout=timeout,
                 headers=headers,
@@ -662,7 +662,7 @@ class MetabolightsSubmissionRepository:
             for _ in range(retry + 1):
                 time.sleep(pool_period)
                 try:
-                    response = httpx.get(
+                    response = httpx2.get(
                         url=url,
                         timeout=timeout,
                         headers=headers,
@@ -721,7 +721,7 @@ class MetabolightsSubmissionRepository:
         try:
             url = f"{rest_api_base_url.rstrip('/')}/{auth_sub_path.lstrip('/')}"
             parameters = {}
-            response = httpx.post(
+            response = httpx2.post(
                 url=url,
                 timeout=timeout,
                 json={"token": api_header},
@@ -755,7 +755,7 @@ class MetabolightsSubmissionRepository:
         try:
             url = f"{validation_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
             parameters = {}
-            response = httpx.post(
+            response = httpx2.post(
                 url=url,
                 timeout=timeout,
                 headers=headers,
@@ -788,7 +788,7 @@ class MetabolightsSubmissionRepository:
             for _ in range(retry + 1):
                 time.sleep(pool_period)
                 try:
-                    response = httpx.get(
+                    response = httpx2.get(
                         url=task_check_url,
                         timeout=timeout,
                         headers=headers,
@@ -916,7 +916,7 @@ class MetabolightsSubmissionRepository:
             rest_api_base_url = self.rest_api_base_url
         url = f"{rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         parameters = {}
-        response = httpx.post(
+        response = httpx2.post(
             url=url,
             timeout=timeout,
             headers=headers,
@@ -933,7 +933,7 @@ class MetabolightsSubmissionRepository:
             if task_id:
                 for _ in range(retry + 1):
                     time.sleep(pool_period)
-                    response = httpx.get(
+                    response = httpx2.get(
                         url=url,
                         timeout=timeout,
                         headers=headers,
@@ -984,7 +984,7 @@ class MetabolightsSubmissionRepository:
         url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         data = study_creation_request.model_dump(by_alias=True)
         try:
-            response = httpx.post(
+            response = httpx2.post(
                 url=url, timeout=timeout, headers=headers, params={}, json=data
             )
             if response and response.status_code in (200, 201):
@@ -1027,7 +1027,7 @@ class MetabolightsSubmissionRepository:
                 {"name": "column type", "value": column_type.lower()}
             )
         try:
-            response = httpx.post(
+            response = httpx2.post(
                 url=url, timeout=timeout, headers=headers, params={}, json=body
             )
             if response and response.status_code in (200, 201):
@@ -1061,7 +1061,7 @@ class MetabolightsSubmissionRepository:
         sub_path = f"/studies/{study_id}/assays/{assay_filename}"
         url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
         try:
-            response = httpx.delete(
+            response = httpx2.delete(
                 url=url,
                 timeout=timeout,
                 headers=headers,
@@ -1140,7 +1140,7 @@ class MetabolightsSubmissionRepository:
                     local_modified_time = int(os.path.getmtime(file_path))
                     _time = descriptors[filename].created_at
                     try:
-                        modified = datetime.datetime.strptime(  # noqa: DTZ007
+                        modified = datetime.datetime.strptime(
                             _time, "%Y-%m-%d %H:%M:%S"
                         ).timestamp()
                     except ValueError:
@@ -1176,7 +1176,7 @@ class MetabolightsSubmissionRepository:
                 try:
                     _time = descriptors[filename].created_at
                     try:
-                        modified = datetime.datetime.strptime(  # noqa: DTZ007
+                        modified = datetime.datetime.strptime(
                             _time, "%Y-%m-%d %H:%M:%S"
                         ).timestamp()
                     except ValueError:
@@ -1250,7 +1250,7 @@ class MetabolightsSubmissionRepository:
 
         sub_path = "/studies/user"
         url = f"{self.rest_api_base_url.rstrip('/')}/{sub_path.lstrip('/')}"
-        response = httpx.get(
+        response = httpx2.get(
             url=url,
             timeout=timeout,
             headers=headers,

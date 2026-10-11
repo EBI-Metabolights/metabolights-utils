@@ -9,7 +9,7 @@ from metabolights_utils.utils.search_utils import MetabolightsSearchUtils as Sea
 
 logger = logging.getLogger(__name__)
 
-EMPTY_FILE_HASH = hashlib.sha256("".encode()).hexdigest()
+EMPTY_FILE_HASH = hashlib.sha256(b"").hexdigest()
 
 
 class IsaMetadataFolderHash(BaseModel):

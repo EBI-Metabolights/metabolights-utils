@@ -4,7 +4,7 @@ import sys
 import traceback
 from functools import reduce
 from io import IOBase, TextIOWrapper
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from metabolights_utils.models.common import MetabolightsBaseModel
 from metabolights_utils.models.isa.common import (
@@ -156,8 +156,8 @@ def read_table_file(
     selected_columns: Union[None, List[str]] = None,
     offset: Union[int, None] = None,
     limit: Union[int, None] = None,
-    filter_options: List[TsvFileFilterOption] = None,
-    sort_options: List[TsvFileSortOption] = None,
+    filter_options: Optional[List[TsvFileFilterOption]] = None,
+    sort_options: Optional[List[TsvFileSortOption]] = None,
 ) -> SelectedTsvFileContent:
     file_buffer.seek(0)
     file_content = file_buffer.read()
@@ -310,8 +310,8 @@ def read_table_file_with_filter_and_sort_option(
     selected_columns: Union[None, List[str]] = None,
     offset: Union[int, None] = None,
     limit: Union[int, None] = None,
-    filter_options: List[TsvFileFilterOption] = None,
-    sort_options: List[TsvFileSortOption] = None,
+    filter_options: Optional[List[TsvFileFilterOption]] = None,
+    sort_options: Optional[List[TsvFileSortOption]] = None,
 ) -> SelectedTsvFileContent:
     columns: Dict[str, TsvColumn] = {}
     column_indices: Dict[int, str] = {}

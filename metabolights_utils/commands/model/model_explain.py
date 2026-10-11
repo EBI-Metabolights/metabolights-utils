@@ -1,3 +1,4 @@
+import sys
 from typing import Any, Dict, Union
 
 import click
@@ -44,7 +45,7 @@ def model_explain(
         print_properties(schema, model_name, title, description, model)
     else:
         click.echo(f"Not valid search object '{search_pattern}'")
-        exit(1)
+        sys.exit(1)
 
 
 def print_properties(

@@ -76,11 +76,11 @@ class Writer:
 
 
 __all__ = [
-    "reader",
-    "default",
-    "writer",
     "Reader",
     "Writer",
+    "default",
     "get_reader_factory",
     "get_writer_factory",
+    "reader",
+    "writer",
 ]

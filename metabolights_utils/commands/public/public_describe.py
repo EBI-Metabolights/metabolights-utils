@@ -1,3 +1,4 @@
+import sys
 from typing import Union
 
 import click
@@ -116,7 +117,7 @@ def public_describe(
         or not model.investigation.studies[0]
     ):
         click.echo("Failure: There are parser error or invalid model.")
-        exit(1)
+        sys.exit(1)
 
     if jsonpath:
         try:
@@ -137,7 +138,7 @@ def public_describe(
                 click.echo(click.style(f"{study_id}: '{jsonpath}' no match", fg="red"))
         except Exception as ex:
             click.echo(f"jsonpath '{jsonpath}' expression error: {str(ex)}")
-            exit(1)
+            sys.exit(1)
     else:
         if model.parser_messages:
             for file, messages in model.parser_messages.items():

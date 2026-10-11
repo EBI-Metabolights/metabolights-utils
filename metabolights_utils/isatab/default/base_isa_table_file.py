@@ -3,7 +3,7 @@ import os
 import pathlib
 from abc import ABC, abstractmethod
 from io import IOBase
-from typing import List, Union
+from typing import List, Optional, Union
 
 from metabolights_utils.isatab.default.base_isa_file import BaseIsaFile
 from metabolights_utils.isatab.default.parser.isa_table_parser import get_isa_table_file
@@ -92,8 +92,8 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         offset: int = 0,
         limit: Union[int, None] = None,
         selected_columns: Union[None, List[str]] = None,
-        filter_options: List[TsvFileFilterOption] = None,
-        sort_options: List[TsvFileSortOption] = None,
+        filter_options: Optional[List[TsvFileFilterOption]] = None,
+        sort_options: Optional[List[TsvFileSortOption]] = None,
         filename: Union[str, None] = None,
     ) -> IsaTableFileReaderResult:
         offset = offset if offset > 0 else None
@@ -149,18 +149,18 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
         logger.debug("Basename: %s", basename)
         isa_table_file = None
         try:
-            file_buffer = self._get_file_buffer(buffer_or_path)
-            isa_table_file: IsaTableFile = get_isa_table_file(
-                file_buffer,
-                basename,
-                messages=read_messages,
-                expected_patterns=self.get_expected_patterns(),
-                offset=offset,
-                limit=limit,
-                selected_columns=selected_columns,
-                filter_options=filter_options,
-                sort_options=sort_options,
-            )
+            with self._get_file_buffer(buffer_or_path) as file_buffer:
+                isa_table_file = get_isa_table_file(
+                    file_buffer,
+                    basename,
+                    messages=read_messages,
+                    expected_patterns=self.get_expected_patterns(),
+                    offset=offset,
+                    limit=limit,
+                    selected_columns=selected_columns,
+                    filter_options=filter_options,
+                    sort_options=sort_options,
+                )
             messages = read_messages
         except UnicodeDecodeError as err:
             logger.warning(
@@ -174,18 +174,20 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
                         detail=(str(err)),
                     )
                 )
-                file_buffer = self._get_file_buffer(buffer_or_path, encoding="ascii")
-                isa_table_file: IsaTableFile = get_isa_table_file(
-                    file_buffer,
-                    basename,
-                    messages=read_messages,
-                    expected_patterns=self.get_expected_patterns(),
-                    offset=offset,
-                    limit=limit,
-                    selected_columns=selected_columns,
-                    filter_options=filter_options,
-                    sort_options=sort_options,
-                )
+                with self._get_file_buffer(
+                    buffer_or_path, encoding="ascii"
+                ) as file_buffer:
+                    isa_table_file = get_isa_table_file(
+                        file_buffer,
+                        basename,
+                        messages=read_messages,
+                        expected_patterns=self.get_expected_patterns(),
+                        offset=offset,
+                        limit=limit,
+                        selected_columns=selected_columns,
+                        filter_options=filter_options,
+                        sort_options=sort_options,
+                    )
                 messages = read_messages
             except Exception as exc:
                 logger.error("File parse error: %s", str(exc))
@@ -205,8 +207,6 @@ class BaseIsaTableFileReader(BaseIsaFile, IsaTableFileReader, ABC):
                     detail=(str(exc)),
                 )
             )
-        finally:
-            self._close_file(file_buffer_or_path)
         if isa_table_file:
             if os.path.exists(path):
                 isa_table_file.sha256_hash = HashUtils.sha256sum(path)

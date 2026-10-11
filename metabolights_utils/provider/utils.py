@@ -7,7 +7,7 @@ import zipfile
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple, Union
 
-import httpx
+import httpx2
 
 from metabolights_utils.models.isa.assay_file import AssayFile
 from metabolights_utils.models.isa.common import AssayTechnique
@@ -48,7 +48,7 @@ def download_file_from_rest_api(
         Path(local_file_path).parent.mkdir(parents=True, exist_ok=True)
         data_bytes = io.BytesIO()
 
-        with httpx.stream(
+        with httpx2.stream(
             "GET",
             url,
             timeout=timeout,
@@ -87,7 +87,7 @@ def rest_api_get(
     parameters: Union[None, Dict[str, Any]] = None,
 ):
     try:
-        response = httpx.get(
+        response = httpx2.get(
             url=url,
             timeout=timeout,
             headers=headers,
@@ -109,7 +109,7 @@ def rest_api_post(
     json_body: Union[None, Dict[str, Any]] = None,
 ):
     try:
-        response = httpx.post(
+        response = httpx2.post(
             url=url, timeout=timeout, headers=headers, params=parameters, json=json_body
         )
         if response and response.status_code in (200, 201):

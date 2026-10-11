@@ -116,30 +116,33 @@ def test_public_list_05(mocker: MockerFixture):
     assert "No public studies found on local storage" in result.output
 
 
-def test_public_list_06():
+def test_public_list_06(capsys: pytest.CaptureFixture[str]):
     runner = CliRunner()
     local_path = os.path.realpath("tests/test-data")
     result = runner.invoke(
         public_list, ["-l", "MTBLS1", "FILES", "--local_path", local_path]
     )
     assert result.exit_code == 0
-    assert "RAW_FILES" in result.output
+    output = capsys.readouterr().out
+    assert "RAW_FILES" in output
 
 
-def test_public_list_07():
+def test_public_list_07(capsys: pytest.CaptureFixture[str]):
     runner = CliRunner()
     local_path = os.path.realpath("tests/test-data")
     result = runner.invoke(public_list, ["-l", "MTBLS1", "--local_path", local_path])
     assert result.exit_code == 0
-    assert "s_MTBLS1.txt" in result.output
+    output = capsys.readouterr().out
+    assert "s_MTBLS1.txt" in output
 
 
-def test_public_list_08():
+def test_public_list_08(capsys: pytest.CaptureFixture[str]):
     runner = CliRunner()
     local_path = os.path.realpath("tests/test-data")
     result = runner.invoke(public_list, ["-l", "--local_path", local_path])
     assert result.exit_code == 0
-    assert "MTBLS1" in result.output
+    output = capsys.readouterr().out
+    assert "MTBLS1" in output
 
 
 def test_public_list_09(mocker: MockerFixture):

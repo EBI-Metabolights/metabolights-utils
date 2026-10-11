@@ -188,6 +188,9 @@ class Submitter(CamelCaseModel):
     first_name: Annotated[str, Field(description="First name of submitter.")] = ""
     last_name: Annotated[str, Field(description="Last name of submitter.")] = ""
     affiliation: Annotated[str, Field(description="Submitter's affiliation.")] = ""
+    affiliation_ror_id: Annotated[
+        str, Field(description="ROR id of Submitter's affiliation.")
+    ] = ""
     affiliation_url: Annotated[
         str, Field(description="Submitter's affiliation webpage URL.")
     ] = ""

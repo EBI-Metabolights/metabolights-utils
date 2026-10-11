@@ -67,8 +67,7 @@ class UpdateCellsTsvAction(BaseTsvAction):
                             row_data_item = row_data[row_index]
                             for column_idx in row_data_item.values:
                                 row[column_idx] = row_data_item.values[column_idx]
-                            if row_index in row_indices:
-                                row_indices.remove(row_index)
+                            row_indices.discard(row_index)
 
                         self.write_row(target, row)
                         row_index += 1

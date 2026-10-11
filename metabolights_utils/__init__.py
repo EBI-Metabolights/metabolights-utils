@@ -172,13 +172,13 @@ __version__ = "1.4.35"
 
 __all__ = [
     "commands",
+    "common",
+    "isa_file_utils",
     "isatab",
     "models",
     "provider",
     "tsv",
     "utils",
-    "common",
-    "isa_file_utils",
     # "Assay",
     # "BaseSection",
     # "Factor",

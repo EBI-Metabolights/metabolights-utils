@@ -25,7 +25,7 @@ __all__ = [
     "move_column",
     "move_row",
     "update_cell",
-    "update_column_header",
     "update_column",
+    "update_column_header",
     "update_row",
 ]

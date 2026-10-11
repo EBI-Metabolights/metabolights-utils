@@ -1,8 +1,9 @@
 import logging
 import os
 import pathlib
-from io import BytesIO, IOBase
-from typing import Tuple, Union
+from contextlib import contextmanager
+from io import BytesIO, IOBase, TextIOWrapper
+from typing import Generator, Tuple, Union
 
 logger = logging.getLogger(__name__)
 
@@ -27,25 +28,28 @@ class BaseIsaFile:
         elif isinstance(file_buffer_or_path, str):
             return file_buffer_or_path, os.path.realpath(file_buffer_or_path)
 
+    @contextmanager
     def _get_file_buffer(
         self, file: Union[str, pathlib.Path, IOBase], encoding="utf-8"
-    ) -> IOBase:
+    ) -> Generator[IOBase, None, None]:
         if isinstance(file, IOBase):
-            file_buffer = file
-        elif isinstance(file, pathlib.Path):
-            file_buffer = file.open(mode="r", encoding=encoding)
-        elif isinstance(file, str):
-            file_buffer = open(file=file, mode="r", encoding=encoding)
+            # The caller owns streams passed directly to the reader.
+            yield file
+        elif isinstance(file, (pathlib.Path, str)):
+            with self.open_file(file=file, encoding=encoding) as file_buffer:
+                yield file_buffer
         else:
             logger.error("Input type is not valid: %s.", type(file))
-            raise ValueError("file type is not defined")
+            raise TypeError("file type is not defined")
 
-        return file_buffer
-
-    def _close_file(
-        self,
-        file_buffer_or_path: Union[str, pathlib.Path, IOBase],
-    ):
-        # If we opened file, close it
-        if file_buffer_or_path and isinstance(file_buffer_or_path, IOBase):
-            file_buffer_or_path.close()
+    @contextmanager
+    def open_file(
+        self, file: pathlib.Path | str, encoding: str
+    ) -> Generator[TextIOWrapper, None, None]:
+        if isinstance(file, str):
+            file = pathlib.Path(file)
+        try:
+            with file.open(mode="r", encoding=encoding) as text_io:
+                yield text_io
+        finally:
+            logger.debug("File %s is closed.", file)

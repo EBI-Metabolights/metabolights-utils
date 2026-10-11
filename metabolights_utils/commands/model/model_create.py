@@ -57,7 +57,8 @@ def model_create(
                 click.echo(f"Messages for {file}")
                 for message in messages:
                     click.echo("-", message.type, message.short, message.detail)
-    json.dump(model.model_dump(by_alias=True), open(output_path, "w"), indent=2)
+    with open(output_path, "w") as f:
+        json.dump(model.model_dump(by_alias=True), f, indent=2)
 
 
 if __name__ == "__main__":

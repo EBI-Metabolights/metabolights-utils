@@ -853,6 +853,7 @@ class RelatedDataset(IsaAbstractModel):
     ] = ""
     accession: Annotated[str, Field(description="Dataset accession.")] = ""
     url: Annotated[str, Field(description="Dataset URL.")] = ""
+    description: Annotated[str, Field(description="Dataset URL.")] = ""
 
 
 class Study(BaseSection):
@@ -1222,6 +1223,7 @@ class Investigation(BaseSection):
                 [
                     ("Related Data Repository", []),
                     ("Related Data Accession", []),
+                    ("Related Data Description", []),
                     ("Related Data URL", []),
                 ]
             )
@@ -1233,6 +1235,9 @@ class Investigation(BaseSection):
                         )
                         related_dataset_comments["Related Data Accession"].append(
                             dataset.accession or ""
+                        )
+                        related_dataset_comments["Related Data Description"].append(
+                            dataset.description or ""
                         )
                         related_dataset_comments["Related Data URL"].append(
                             dataset.url or ""
@@ -1811,6 +1816,7 @@ class Investigation(BaseSection):
                 )
             related_data_repository = comments_dict.get("related data repository", [])
             related_data_accession = comments_dict.get("related data accession", [])
+            related_data_description = comments_dict.get("related data description", [])
             related_data_url = comments_dict.get("related data url", [])
             related_data_repository_list = []
             for x in related_data_repository:
@@ -1818,6 +1824,9 @@ class Investigation(BaseSection):
             related_data_accession_list = []
             for x in related_data_accession:
                 related_data_accession_list.extend([y.strip() for y in x.split(";")])
+            related_data_description_list = []
+            for x in related_data_description:
+                related_data_description_list.extend([y.strip() for y in x.split(";")])
             related_data_url_list = []
             for x in related_data_url:
                 related_data_url_list.extend([y.strip() for y in x.split(";")])

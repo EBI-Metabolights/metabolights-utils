@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import Callable, List, Union
 
 import click
@@ -60,6 +61,7 @@ def public_list(
 
     subdirectory (optional): Subdirectory of study to list its content. List the study root folder if not specified..
     """
+
     client = MetabolightsFtpRepository(
         ftp_server_url=ftp_server_url,
         remote_repository_root_directory=ftp_root_directory,
@@ -96,7 +98,7 @@ def public_list(
         )
         if not content_response.success:
             click.echo(f"FTP response error: {content_response.message}")
-            exit(1)
+            sys.exit(1)
         for item in content_response.files:
             click.echo(f"\t{item}")
 
@@ -114,7 +116,7 @@ def public_list(
                     click.echo(f"{message.short}")
                     error = True
         if error:
-            exit(1)
+            sys.exit(1)
 
         if len(studies) > 500:
             print_list("FTP Public study", studies, click.echo_via_pager)
