@@ -1233,7 +1233,7 @@ wheels = [
 
 [[package]]
 name = "metabolights-utils"
-version = "1.4.36"
+version = "1.4.37"
 source = { editable = "." }
 default-groups = []
 dependencies = [

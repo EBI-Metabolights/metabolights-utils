@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## v1.4.37 (2026-11-04)
+
+### Fix
+
+- study comment convertion error
+
 ## v1.4.36 (2026-10-11)
 
 ### Fix
