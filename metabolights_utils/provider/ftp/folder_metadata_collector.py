@@ -242,7 +242,7 @@ class FtpFolderMetadataCollector(AbstractFolderMetadataCollector):
                 x: metadata[x] for x in metadata if not metadata[x].is_directory
             }
 
-            now = datetime.datetime.now(datetime.timezone.utc)
+            now = datetime.datetime.now(datetime.UTC)
             file_index = FolderIndex(update_time=now, content=study_folder_metadata)
             with open(self.folder_index_file_path, "w", encoding="utf-8") as fw:
                 fw.write(file_index.model_dump_json(indent=4))

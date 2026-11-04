@@ -1187,6 +1187,11 @@ class Investigation(BaseSection):
                 comment_values[comment_name] = [val] if val else [""]
                 comment_names.add(comment_name.lower())
             old_study_comments = study.comments
+            study.comments = []
+            for x, y in comment_values.items():
+                y = str(y) if y is not None else ""
+                val = y if y not in ("", "0") else ""
+                study.comments.append(Comment(name=x, value=val))
             study.comments = [
                 Comment(name=x, value=y) for x, y in comment_values.items()
             ]
@@ -1210,10 +1215,20 @@ class Investigation(BaseSection):
                         or funder.funder_id
                         or ";".join(funder.grant_ids)
                     ):
-                        funder_comments["Funder"].append(funder.funder_name)
-                        funder_comments["Funder ROR ID"].append(funder.funder_id)
+                        funder_name = str(funder.funder_name)
+                        funder_id = str(funder.funder_id)
+                        grant_ids = [str(x) for x in funder.grant_ids or []]
+
+                        funder_comments["Funder"].append(
+                            funder_name if funder_name not in ("", "0") else ""
+                        )
+                        funder_comments["Funder ROR ID"].append(
+                            funder_id if funder_id not in ("", "0") else ""
+                        )
                         funder_comments["Grant Identifier"].append(
-                            ";".join(funder.grant_ids)
+                            ";".join(
+                                x if x not in ("", "0") else "" for x in grant_ids or []
+                            )
                         )
             self.add_non_empty_comments(
                 study.comments, funder_comments, comment_names, join_sep=";"
@@ -1229,18 +1244,22 @@ class Investigation(BaseSection):
             )
             if study.related_datasets:
                 for dataset in study.related_datasets:
+                    repository = str(dataset.repository)
+                    accession = str(dataset.accession)
+                    description = str(dataset.description)
+                    url = str(dataset.url)
                     if dataset.repository or dataset.accession:
                         related_dataset_comments["Related Data Repository"].append(
-                            dataset.repository or ""
+                            repository if repository not in ("", "0") else ""
                         )
                         related_dataset_comments["Related Data Accession"].append(
-                            dataset.accession or ""
+                            accession if accession not in ("", "0") else ""
                         )
                         related_dataset_comments["Related Data Description"].append(
-                            dataset.description or ""
+                            description if description not in ("", "0") else ""
                         )
                         related_dataset_comments["Related Data URL"].append(
-                            dataset.url or ""
+                            url if url not in ("", "0") else ""
                         )
 
             self.add_non_empty_comments(
@@ -1258,21 +1277,32 @@ class Investigation(BaseSection):
             )
             if study.characteristic_types:
                 for characteristic in study.characteristic_types:
+                    name = str(characteristic.name)
+                    type_ = str(characteristic.type)
+                    term_source_ref = str(characteristic.term_source_ref)
+                    term_accession_number = str(characteristic.term_accession_number)
+                    value_format = str(characteristic.value_format)
                     characteristic_comments["Study Characteristics Name"].append(
-                        characteristic.name
+                        name if name not in ("", "0") else ""
                     )
                     characteristic_comments["Study Characteristics Type"].append(
-                        characteristic.type
+                        type_ if type_ not in ("", "0") else ""
                     )
                     characteristic_comments[
                         "Study Characteristics Type Term Accession Number"
-                    ].append(characteristic.term_accession_number)
+                    ].append(
+                        term_accession_number
+                        if term_accession_number not in ("", "0")
+                        else ""
+                    )
                     characteristic_comments[
                         "Study Characteristics Type Term Source REF"
-                    ].append(characteristic.term_source_ref)
+                    ].append(
+                        term_source_ref if term_source_ref not in ("", "0") else ""
+                    )
                     characteristic_comments[
                         "Study Characteristics Value Format"
-                    ].append(characteristic.value_format)
+                    ].append(value_format if value_format not in ("", "0") else "")
 
             self.add_non_empty_comments(
                 study.comments,
@@ -1293,11 +1323,13 @@ class Investigation(BaseSection):
             if study.study_design_descriptors.design_types:
                 study.study_design_descriptors.comments = []
                 for characteristic in study.study_design_descriptors.design_types:
+                    category = str(characteristic.category)
+                    source = str(characteristic.source)
                     descriptor_comments["Study Design Category"].append(
-                        characteristic.category
+                        category if category not in ("", "0") else ""
                     )
                     descriptor_comments["Study Design Source"].append(
-                        characteristic.source
+                        source if source not in ("", "0") else ""
                     )
             self.add_non_empty_comments(
                 study.study_design_descriptors.comments,
@@ -1318,8 +1350,9 @@ class Investigation(BaseSection):
                 study.study_factors.comments = []
                 comment_names = set([x.lower() for x in factor_comments])
                 for factor in study.study_factors.factors:
+                    value_format = str(factor.value_format).lower()
                     factor_comments["Study Factor Value Format"].append(
-                        factor.value_format.lower() if factor.value_format else ""
+                        value_format if value_format not in ("", "0") else ""
                     )
             self.add_non_empty_comments(
                 study.study_factors.comments,
@@ -1383,8 +1416,11 @@ class Investigation(BaseSection):
                 if study.study_contacts.people:
                     for person in study.study_contacts.people:
                         val = getattr(person, field_name) or ""
+
                         if isinstance(val, list):
-                            val = ";".join(val)
+                            val = ";".join(
+                                [str(x) for x in val if str(x) not in ("", "0")]
+                            )
                         contact_comments[comment_name].append(val)
 
                 self.add_non_empty_comments(
@@ -1432,33 +1468,56 @@ class Investigation(BaseSection):
                 study.study_assays.comments = []
 
                 for assay in study.study_assays.assays:
+                    assay_identifier = (
+                        str(assay.assay_identifier) if assay.assay_identifier else ""
+                    )
+                    result_file_format = (
+                        str(assay.result_file_format)
+                        if assay.result_file_format
+                        else ""
+                    )
+                    assay_type_term = (
+                        str(assay.assay_type.term) if assay.assay_type.term else ""
+                    )
                     assay_comments["Assay Identifier"].append(
-                        assay.assay_identifier or ""
+                        assay_identifier if assay_identifier not in ("", "0") else ""
                     )
                     result_file_format_comments["Assay Result File Format"].append(
-                        assay.result_file_format or ""
+                        result_file_format
+                        if result_file_format not in ("", "0")
+                        else ""
                     )
                     assay_type_comments["Assay Type"].append(
-                        assay.assay_type.term or ""
+                        assay_type_term if assay_type_term not in ("", "0") else ""
                     )
                     assay_type_comments["Assay Type Term Accession Number"].append(
                         assay.assay_type.term_accession_number
                         if assay.assay_type
+                        and assay.assay_type.term_accession_number not in ("", "0")
                         else ""
                     )
                     assay_type_comments["Assay Type Term Source REF"].append(
-                        assay.assay_type.term_source_ref if assay.assay_type else ""
+                        assay.assay_type.term_source_ref
+                        if assay.assay_type
+                        and assay.assay_type.term_source_ref not in ("", "0")
+                        else ""
                     )
                     assay_omics_comments["Omics Type"].append(
-                        assay.omics_type.term if assay.omics_type else ""
+                        assay.omics_type.term
+                        if assay.omics_type and assay.omics_type.term not in ("", "0")
+                        else ""
                     )
                     assay_omics_comments["Omics Type Term Accession Number"].append(
                         assay.omics_type.term_accession_number
                         if assay.omics_type
+                        and assay.omics_type.term_accession_number not in ("", "0")
                         else ""
                     )
                     assay_omics_comments["Omics Type Term Source REF"].append(
-                        assay.omics_type.term_source_ref if assay.omics_type else ""
+                        assay.omics_type.term_source_ref
+                        if assay.omics_type
+                        and assay.omics_type.term_source_ref not in ("", "0")
+                        else ""
                     )
 
                     for term, field_name in [
@@ -1474,7 +1533,9 @@ class Investigation(BaseSection):
                         assay_descriptor_comments[term].append(
                             ";".join(
                                 [
-                                    getattr(x, field_name)
+                                    str(getattr(x, field_name))
+                                    if str(getattr(x, field_name)) not in ("0", "")
+                                    else ""
                                     for x in assay.assay_descriptors
                                     if x and x.term
                                 ]
@@ -1807,13 +1868,17 @@ class Investigation(BaseSection):
             for comment_name, field_name in study_comment_field_map.items():
                 val = comments_dict.get(comment_name, [])
                 if val:
-                    setattr(study, field_name, val[0] if val else "")
+                    data = str(val[0]).strip() if isinstance(val, list) else str(val)
+                    data = data if data not in ("0", "") else ""
+                    setattr(study, field_name, data)
             linked_study_accessions = comments_dict.get("linked study accession", [])
             study.linked_study_accession = []
             for x in linked_study_accessions:
-                study.linked_study_accession.extend(
-                    [y.strip() for y in x.split(";") if y.strip()]
-                )
+                x = str(x)
+                x = [
+                    a.strip() for a in x.split(";") if a and a.strip() not in ("0", "")
+                ]
+                study.linked_study_accession.extend(x)
             related_data_repository = comments_dict.get("related data repository", [])
             related_data_accession = comments_dict.get("related data accession", [])
             related_data_description = comments_dict.get("related data description", [])
@@ -1834,29 +1899,54 @@ class Investigation(BaseSection):
                 len(related_data_repository_list),
                 len(related_data_accession_list),
                 len(related_data_url_list),
+                len(related_data_description_list),
             )
             if counts > 0:
                 study.related_datasets = []
                 for idx in range(counts):
-                    study.related_datasets.append(
-                        RelatedDataset(
-                            repository=related_data_repository_list[idx]
-                            if related_data_repository_list
-                            and len(related_data_repository_list) > idx
-                            and related_data_repository_list[idx].strip()
-                            else "",
-                            accession=related_data_accession_list[idx]
-                            if related_data_accession_list
-                            and len(related_data_accession_list) > idx
-                            and related_data_accession_list[idx].strip()
-                            else "",
-                            url=related_data_url_list[idx]
-                            if related_data_url_list
-                            and len(related_data_url_list) > idx
-                            and related_data_url_list[idx].strip()
-                            else "",
-                        )
+                    related_dataset = RelatedDataset(
+                        repository=str(related_data_repository_list[idx])
+                        if related_data_repository_list
+                        and len(related_data_repository_list) > idx
+                        and related_data_repository_list[idx].strip()
+                        else "",
+                        accession=str(related_data_accession_list[idx])
+                        if related_data_accession_list
+                        and len(related_data_accession_list) > idx
+                        and related_data_accession_list[idx].strip()
+                        else "",
+                        url=str(related_data_url_list[idx])
+                        if related_data_url_list
+                        and len(related_data_url_list) > idx
+                        and related_data_url_list[idx].strip()
+                        else "",
+                        description=str(related_data_description_list[idx])
+                        if related_data_description_list
+                        and len(related_data_description_list) > idx
+                        and related_data_description_list[idx].strip()
+                        else "",
                     )
+                    related_dataset.accession = (
+                        related_dataset.accession
+                        if related_dataset.accession not in ("0", "")
+                        else ""
+                    )
+                    related_dataset.url = (
+                        related_dataset.url
+                        if related_dataset.url not in ("0", "")
+                        else ""
+                    )
+                    related_dataset.description = (
+                        related_dataset.description
+                        if related_dataset.description not in ("0", "")
+                        else ""
+                    )
+                    related_dataset.repository = (
+                        related_dataset.repository
+                        if related_dataset.repository not in ("0", "")
+                        else ""
+                    )
+                    study.related_datasets.append(related_dataset)
             funders = comments_dict.get("funder", [])
             funder_ids = comments_dict.get("funder ror id", [])
             grant_ids = comments_dict.get("grant identifier", [])
@@ -1874,25 +1964,36 @@ class Investigation(BaseSection):
             if counts > 0:
                 study.funders = []
                 for idx in range(counts):
-                    study.funders.append(
-                        Funder(
-                            funder_name=funders_list[idx]
-                            if funders_list
-                            and len(funders_list) > idx
-                            and funders_list[idx].strip()
-                            else "",
-                            funder_id=funder_ids_list[idx]
-                            if funder_ids_list
-                            and len(funder_ids_list) > idx
-                            and funder_ids_list[idx].strip()
-                            else "",
-                            grant_ids=grant_ids_list[idx].split(";")
-                            if grant_ids_list
-                            and len(grant_ids_list) > idx
-                            and grant_ids_list[idx].strip()
-                            else [],
-                        )
+                    funder = Funder(
+                        funder_name=str(funders_list[idx])
+                        if funders_list
+                        and len(funders_list) > idx
+                        and funders_list[idx].strip()
+                        else "",
+                        funder_id=str(funder_ids_list[idx])
+                        if funder_ids_list
+                        and len(funder_ids_list) > idx
+                        and funder_ids_list[idx].strip()
+                        else "",
+                        grant_ids=[
+                            a
+                            for a in grant_ids_list[idx].split(";")
+                            if a and a not in ("0", "")
+                        ]
+                        if grant_ids_list
+                        and len(grant_ids_list) > idx
+                        and grant_ids_list[idx].strip()
+                        else [],
                     )
+                    funder.funder_id = (
+                        funder.funder_id if funder.funder_id not in ("0", "") else ""
+                    )
+                    funder.funder_name = (
+                        funder.funder_name
+                        if funder.funder_name not in ("0", "")
+                        else ""
+                    )
+                    study.funders.append(funder)
             characteristic_names = comments_dict.get("study characteristics name", [])
             characteristic_types = comments_dict.get("study characteristics type", [])
             characteristic_type_accessions = comments_dict.get(

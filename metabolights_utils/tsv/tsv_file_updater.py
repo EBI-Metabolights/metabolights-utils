@@ -86,7 +86,7 @@ class TsvFileUpdater:
             if temp_path
             else pathlib.Path("/tmp/mtb-utils-temp")
         )
-        timestamp = str(int(datetime.datetime.now(datetime.timezone.utc).timestamp()))
+        timestamp = str(int(datetime.datetime.now(datetime.UTC).timestamp()))
         temp_folder = temp_root_path / pathlib.Path(
             f"isa_table_actions/{timestamp}/{task_id}"
         )

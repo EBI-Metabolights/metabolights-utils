@@ -40,7 +40,7 @@ def test_public_describe(mocker: MockerFixture, study_id: str):
     assert "Assays:" in result.output
     assert "Metabolite Assignment Files (MAF):" in result.output
 
-    result = runner.invoke(public_describe, [study_id, "assays[*].*.table.columns[*]"])
+    result = runner.invoke(public_describe, [study_id, "assays.*.table.columns[*]"])
     assert result.exit_code == 0
     assert "search result:" in result.output
 

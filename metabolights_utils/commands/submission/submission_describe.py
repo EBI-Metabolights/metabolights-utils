@@ -78,7 +78,7 @@ def submission_describe(
 
     jsonpath (optional): jsonpath expression to filter study model. Print summary of study model if not specified.
 
-        Example jsonpath expressions: "$.investigation.studies[0].title", "$.investigation.studies[0].study_protocols.protocols[*].name", "$.assays[*].*.table.columns[*]" - print column names
+        Example jsonpath expressions: "$.investigation.studies[0].title", "$.investigation.studies[0].study_protocols.protocols[*].name", "$.assays.*.table.columns[*]" - print column names
 
         Note: jsonpath expressions should be quoted with double quotes.
     """

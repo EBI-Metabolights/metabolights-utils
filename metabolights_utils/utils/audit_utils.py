@@ -22,7 +22,7 @@ class MetabolightsAuditUtils:
         if not timestamp_format or not src_root_path or not target_root_path:
             logger.error("Invalid input parameter.")
             return None
-        base = datetime.datetime.now(datetime.timezone.utc).strftime(timestamp_format)
+        base = datetime.datetime.now(datetime.UTC).strftime(timestamp_format)
         folder_name = f"{base}_{folder_suffix}" if folder_suffix else base
         folder_name = f"{folder_prefix}_{folder_name}" if folder_prefix else folder_name
         logger.info("Audit folder name: %s", folder_name)
